@@ -1,0 +1,59 @@
+const routes = [
+  {
+    path: '/',
+    component: () => import('layouts/LoginLayout.vue'),
+    children: [
+      { path: '', name: 'Iniciar Sesión', component: () => import('pages/Login.vue') },
+    ],
+  },
+  {
+    path: '/home',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Inicio', component: () => import('pages/Home.vue') },
+    ],
+  },
+  {
+    path: '/zone',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Cuidades', component: () => import('pages/Zone.vue') },
+    ],
+  },
+  {
+    path: '/yard',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Sectores', component: () => import('pages/Yard.vue') },
+    ],
+  },
+  {
+    path: '/role',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Roles', component: () => import('pages/Role.vue') },
+    ],
+  },
+  {
+    path: '/user',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Usuarios', component: () => import('pages/User.vue') },
+    ],
+  },
+  {
+    path: '/new',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Nuevos', component: () => import('pages/New.vue') },
+    ],
+  },
+  // Always leave this as last one,
+  // but you can also remove it
+  {
+    path: '*',
+    component: () => import('pages/Error404.vue'),
+  },
+];
+
+export default routes;
