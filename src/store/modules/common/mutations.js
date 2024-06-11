@@ -19,6 +19,10 @@ export default {
     localStorage.setItem('yardMC', payload === null ? 0 : payload);
     state.yard = payload;
   },
+  [types.mutations.SET_CITY](state, payload) {
+    localStorage.setItem('cityMC', payload === null ? 0 : payload);
+    state.city = payload;
+  },
   [types.mutations.SET_CURRENT_YARD](state, payload) {
     localStorage.setItem('currentYardMC', payload === null ? 0 : payload);
     state.currentYard = payload;

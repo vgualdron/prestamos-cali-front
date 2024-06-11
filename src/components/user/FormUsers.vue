@@ -55,11 +55,13 @@
             />
             <q-select
               v-model="user.yard"
-              class="q-mt-xs"
+              class="q-mt-md"
               use-input
               clearable
+              outlined
               input-debounce="0"
-              label="Patio"
+              label="Sector *"
+              :rules="rules.sector"
               :disable="disableInputs || !user.editable"
               :options="optionYards"
               option-label="name"
@@ -121,15 +123,6 @@
               color="green"
               :disable="disableInputs || !user.editable"
               label="El usuario se encuentra activo"
-            />
-            <q-checkbox
-              class="q-mt-none"
-              left-label
-              v-model="user.changeYard"
-              text-h6
-              color="green"
-              :disable="disableInputs || !user.editable"
-              label="Puede cambiar su patio predeterminado en tiquetes"
             />
             <q-separator />
             <div class="bg-gray-9 q-mt-xs">
@@ -224,6 +217,9 @@ export default {
           (val) => (!!val) || 'El teléfono es requerido',
           (val) => (val.length >= 5) || 'El número de telefono debe tener un mínimo de 5 caracteres',
           (val) => (val.length <= 15) || 'El número de telefono debe tener un máximo de 15 caracteres',
+        ],
+        sector: [
+          (val) => (!!val) || 'El sector es requerido',
         ],
         password: [
           (val) => (!val || val.length >= 5) || 'La contraseña debe tener un mínimo de 5 caracteres',

@@ -5,6 +5,10 @@ export default {
     url: `${process.env.URL_API}/api/yard/list/${data.id}/${data.displayAll}`,
     method: 'GET',
   }),
+  listByZone: (data) => http({
+    url: `${process.env.URL_API}/api/yard/list-by-zone/${data.id}/${data.displayAll}`,
+    method: 'GET',
+  }),
   get: (id) => http({
     url: `${process.env.URL_API}/api/yard/get/${id}`,
     method: 'GET',

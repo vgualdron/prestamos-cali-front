@@ -50,7 +50,7 @@
               use-input
               clearable
               input-debounce="0"
-              label="Zona *"
+              label="Ciudad *"
               :disable="disableInputs"
               :options="optionZones"
               @filter="filterZone"
@@ -104,7 +104,7 @@
               v-model="yard.active"
               text-h6
               color="green"
-              label="El patio se encuentra activo"
+              label="Se encuentra activo"
             />
             <q-separator />
             <div class="row text-center">
@@ -167,7 +167,7 @@ export default {
           (val) => (val.length <= 30) || 'El nombre debe tener un máximo de 30 caracteres',
         ],
         zone: [
-          (val) => (!!val) || 'La zona es requerida',
+          (val) => (!!val) || 'La Ciudad es requerida',
         ],
         longitude: [
           (val) => ((val === null || val.length === 0) || (((/^(-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|[0-1][0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/).test(val)) === true)) || 'El formato de la longitud no es válido',
@@ -212,13 +212,13 @@ export default {
     }),
     async onSubmit() {
       if (this.modal.type === 'C') {
-        showLoading('Guardando Patio ...', 'Por favor, espere', true);
+        showLoading('Guardando ...', 'Por favor, espere', true);
         await this.saveYard(this.yard);
       } else if (this.modal.type === 'E') {
-        showLoading('Actualizando Patio ...', 'Por favor, espere', true);
+        showLoading('Actualizando ...', 'Por favor, espere', true);
         await this.updateYard(this.yard);
       } else if (this.modal.type === 'D') {
-        showLoading('Eliminando Patio ...', 'Por favor, espere', true);
+        showLoading('Eliminando ...', 'Por favor, espere', true);
         await this.deleteYard(this.yard.id);
       }
       if (this.status === true) {
@@ -244,7 +244,7 @@ export default {
         this.yard.longitude = id !== null ? yard.longitude : '';
         this.yard.latitude = id !== null ? yard.latitude : '';
         this.yard.active = id !== null ? yard.active === 1 : true;
-        this.modal.title = type === 'C' ? 'Agregar Patio' : (type === 'E' ? 'Editar Patio' : 'Eliminar Patio');
+        this.modal.title = type === 'C' ? 'Agregar' : (type === 'E' ? 'Editar' : 'Eliminar');
         this.modal.type = type;
         this.$q.loading.hide();
         this.modal.show = true;

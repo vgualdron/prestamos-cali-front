@@ -10,6 +10,7 @@
           class="q-ml-xs"
           placeholder="Buscar usuario"
           clearable
+          outlined
         >
           <template v-slot:append>
             <q-icon name="search" />
@@ -36,6 +37,8 @@
       :filter="filter"
       :pagination="pagination"
       class="q-mt-md"
+      separator="cell"
+      dense
     >
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
@@ -44,6 +47,8 @@
               color="primary"
               field="edit"
               icon="edit"
+              size="xs"
+              round
               :disabled="!validatedPermissions.edit.status"
               :title="validatedPermissions.edit.title"
               @click="showForm(props.row.id, 'E')"
@@ -53,6 +58,8 @@
               color="red"
               field="delete"
               icon="delete"
+              size="xs"
+              round
               :disabled="!validatedPermissions.delete.status"
               :title="validatedPermissions.delete.title"
               @click="showForm(props.row.id, 'D')"
@@ -148,6 +155,7 @@ export default {
           field: 'documentNumber',
           sortable: true,
           visible: true,
+          headerStyle: 'height: 50px',
         },
         {
           name: 'name',
@@ -156,6 +164,14 @@ export default {
           field: 'name',
           style: 'max-width: 300px',
           classes: 'ellipsis',
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'status',
+          align: 'left',
+          label: 'Estado',
+          field: 'status',
           sortable: true,
           visible: true,
         },
@@ -170,8 +186,16 @@ export default {
         {
           name: 'yard',
           align: 'left',
-          label: 'Patio',
+          label: 'Sector',
           field: 'yard',
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'zone',
+          align: 'left',
+          label: 'Ciudad',
+          field: 'zone',
           sortable: true,
           visible: true,
         },

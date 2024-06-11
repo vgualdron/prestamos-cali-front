@@ -5,6 +5,10 @@ export default {
     url: `${process.env.URL_API}/api/user/list/${data.displayAll}`,
     method: 'GET',
   }),
+  listByNameRole: (data) => http({
+    url: `${process.env.URL_API}/api/user/list-by-role-name/${data.status}/${data.roleName}/${data.city}`,
+    method: 'GET',
+  }),
   get: (id) => http({
     url: `${process.env.URL_API}/api/user/get/${id}`,
     method: 'GET',

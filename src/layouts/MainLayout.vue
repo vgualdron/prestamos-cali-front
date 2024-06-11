@@ -192,9 +192,6 @@ export default {
     versionApp() {
       return `Version ${process.env.LATEST_VERSION_APP}`;
     },
-    pendingTickets() {
-      return this.localDataManagementData.filter((result) => (result.modified === 1 && !(result.synchronized === 0 && result.deleted === 1)));
-    },
   },
   methods: {
     ...mapActions(commonTypes.PATH, {

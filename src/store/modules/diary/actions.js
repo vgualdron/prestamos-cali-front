@@ -1,12 +1,12 @@
 import types from './types';
-import userApi from '../../../api/user/userApi';
+import diaryApi from '../../../api/diary/diaryApi';
 
 export default {
-  async [types.actions.LIST_USERS]({ commit }, payload) {
+  async [types.actions.LIST_DIARIES]({ commit }, status) {
     try {
-      const response = await userApi.list(payload);
+      const response = await diaryApi.list(status);
       commit(types.mutations.SET_STATUS, true);
-      commit(types.mutations.SET_USERS, response.data.data);
+      commit(types.mutations.SET_DIARIES, response.data.data);
     } catch (error) {
       commit(types.mutations.SET_STATUS, false);
       if (error.message !== 'Network Error') {
@@ -21,11 +21,11 @@ export default {
       }
     }
   },
-  async [types.actions.LIST_USERS_BY_NAME_ROLE]({ commit }, payload) {
+  async [types.actions.LIST_DIARIES_DAY_BY_DAY]({ commit }, payload) {
     try {
-      const response = await userApi.listByNameRole(payload);
+      const response = await diaryApi.listDayByDay(payload);
       commit(types.mutations.SET_STATUS, true);
-      commit(types.mutations.SET_USERS, response.data.data);
+      commit(types.mutations.SET_DIARIES_DAY_BY_DAY, response.data.data);
     } catch (error) {
       commit(types.mutations.SET_STATUS, false);
       if (error.message !== 'Network Error') {
@@ -40,11 +40,11 @@ export default {
       }
     }
   },
-  async [types.actions.GET_USER]({ commit }, id) {
+  async [types.actions.GET_DIARY]({ commit }, id) {
     try {
-      const response = await userApi.get(id);
+      const response = await diaryApi.get(id);
       commit(types.mutations.SET_STATUS, true);
-      commit(types.mutations.SET_USER, response.data.data);
+      commit(types.mutations.SET_DIARY, response.data.data);
     } catch (error) {
       commit(types.mutations.SET_STATUS, false);
       if (error.message !== 'Network Error') {
@@ -59,28 +59,9 @@ export default {
       }
     }
   },
-  async [types.actions.SAVE_USER]({ commit }, payload) {
+  async [types.actions.SAVE_DIARY]({ commit }, payload) {
     try {
-      const response = await userApi.save(payload);
-      commit(types.mutations.SET_STATUS, true);
-      commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
-    } catch (error) {
-      commit(types.mutations.SET_STATUS, false);
-      if (error.message !== 'Network Error') {
-        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
-      } else {
-        commit(types.mutations.SET_RESPONSE_MESSAGES, [
-          {
-            text: 'Error de red',
-            detail: 'Intente conectarse a otra red de internet',
-          },
-        ]);
-      }
-    }
-  },
-  async [types.actions.UPDATE_USER]({ commit }, payload) {
-    try {
-      const response = await userApi.update(payload);
+      const response = await diaryApi.save(payload);
       commit(types.mutations.SET_STATUS, true);
       commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
     } catch (error) {
@@ -97,9 +78,9 @@ export default {
       }
     }
   },
-  async [types.actions.DELETE_USER]({ commit }, payload) {
+  async [types.actions.UPDATE_DIARY]({ commit }, payload) {
     try {
-      const response = await userApi.delete(payload);
+      const response = await diaryApi.update(payload);
       commit(types.mutations.SET_STATUS, true);
       commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
     } catch (error) {
@@ -116,9 +97,28 @@ export default {
       }
     }
   },
-  async [types.actions.UPDATE_PROFILE]({ commit }, payload) {
+  async [types.actions.UPDATE_STATUS_DIARY]({ commit }, payload) {
     try {
-      const response = await userApi.updateProfile(payload);
+      const response = await diaryApi.updateStatus(payload);
+      commit(types.mutations.SET_STATUS, true);
+      commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
+    } catch (error) {
+      commit(types.mutations.SET_STATUS, false);
+      if (error.message !== 'Network Error') {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
+      } else {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, [
+          {
+            text: 'Error de red',
+            detail: 'Intente conectarse a otra red de internet',
+          },
+        ]);
+      }
+    }
+  },
+  async [types.actions.DELETE_DIARY]({ commit }, payload) {
+    try {
+      const response = await diaryApi.delete(payload);
       commit(types.mutations.SET_STATUS, true);
       commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
     } catch (error) {

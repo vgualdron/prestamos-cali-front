@@ -3,13 +3,14 @@
     <div class="row q-mt-md">
       <div class="col-9 text-center">
         <q-input
-          dense
           debounce="400"
           color="primary"
           v-model="filter"
           class="q-ml-xs"
           placeholder="Buscar"
           clearable
+          dense
+          outlined
         >
           <template v-slot:append>
             <q-icon name="search" />
@@ -31,31 +32,51 @@
     </div>
     <q-table
       :grid="$q.screen.xs"
-      :data="data"
+      :data="dataTable"
       :columns="columns"
       :filter="filter"
       :pagination="pagination"
+      separator="cell"
       class="q-mt-md"
+      dense
     >
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <div>
             <q-btn
+              v-if="props.row.showEdit"
               color="primary"
               field="edit"
               icon="edit"
+              size="xs"
               :disabled="!validatedPermissions.edit.status"
               :title="validatedPermissions.edit.title"
-              @click="showForm(props.row.id, 'E')"
+              @click="showForm(props.row, 'E')"
+              round
             />
             <q-btn
+              v-if="props.row.showDelete"
               class="q-ml-xs"
               color="red"
               field="delete"
               icon="delete"
+              size="xs"
               :disabled="!validatedPermissions.delete.status"
               :title="validatedPermissions.delete.title"
-              @click="showForm(props.row.id, 'D')"
+              @click="showForm(props.row, 'D')"
+              round
+            />
+            <q-btn
+              v-if="props.row.showChangeStatus"
+              class="q-ml-xs"
+              color="green"
+              field="changeStatus"
+              icon="save"
+              size="xs"
+              :disabled="!validatedPermissions.changeStatus.status"
+              :title="validatedPermissions.changeStatus.title"
+              @click="changeStatus(props.row, 'CS')"
+              round
             />
           </div>
         </q-td>
@@ -90,24 +111,38 @@
                 <q-item-section side>
                   <div>
                     <q-btn
-                      round
+                      v-if="props.row.showEdit"
                       icon="edit"
                       size="xs"
                       color="primary"
                       :disabled="!validatedPermissions.edit.status"
                       :title="validatedPermissions.edit.title"
-                      @click="showForm(props.row.id, 'E')"
+                      @click="showForm(props.row, 'E')"
+                      round
                     ></q-btn>
                   </div>
                   <div class="q-mt-xs">
                     <q-btn
-                      round
+                      v-if="props.row.showDelete"
                       icon="delete"
                       size="xs"
                       color="red"
                       :disabled="!validatedPermissions.delete.status"
                       :title="validatedPermissions.delete.title"
-                      @click="showForm(props.row.id, 'D')"
+                      @click="showForm(props.row, 'D')"
+                      round
+                    ></q-btn>
+                  </div>
+                  <div class="q-mt-xs">
+                    <q-btn
+                      v-if="props.row.showChangeStatus"
+                      icon="save"
+                      size="xs"
+                      color="green"
+                      :disabled="!validatedPermissions.changeStatus.status"
+                      :title="validatedPermissions.changeStatus.title"
+                      @click="changeStatus(props.row, 'CS')"
+                      round
                     ></q-btn>
                   </div>
                 </q-item-section>
@@ -117,30 +152,41 @@
         </div>
       </template>
     </q-table>
-    <form-users
-      ref="formUserReference"
-      :showNotificationsRef="showNotification"
-      :listUsersMountedRef="listUsersMounted"
+    <form-news
+      v-if="showModal"
+      v-model="showModal"
+      :type="type"
+      :obj="obj"
     />
   </div>
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
-import FormUsers from 'components/user/FormUsers.vue';
-import userTypes from '../../store/modules/user/types';
+import FormNews from 'components/new/FormNews.vue';
+import newTypes from '../../store/modules/new/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { havePermission } from '../../helpers/havePermission';
+import { formatDateWithTime } from '../../helpers/formatDate';
 
 export default {
   components: {
-    FormUsers,
+    FormNews,
   },
   data() {
     return {
-      route: '/user',
-      name: 'Usuarios',
+      showModal: false,
+      obj: {},
+      type: 'C',
+      route: '/new',
+      name: 'Información de nuevos',
       columns: [
+        {
+          name: 'actions',
+          label: 'Acciones',
+          align: 'center',
+          visible: false,
+        },
         {
           name: 'documentNumber',
           label: 'Documento',
@@ -148,6 +194,7 @@ export default {
           field: 'documentNumber',
           sortable: true,
           visible: true,
+          headerStyle: 'height: 50px',
         },
         {
           name: 'name',
@@ -168,18 +215,68 @@ export default {
           visible: true,
         },
         {
-          name: 'yard',
+          name: 'address',
           align: 'left',
-          label: 'Patio',
-          field: 'yard',
+          label: 'Dirección',
+          field: 'address',
           sortable: true,
           visible: true,
         },
         {
-          name: 'actions',
-          label: 'Acciones',
-          align: 'center',
-          visible: false,
+          name: 'city',
+          align: 'left',
+          label: 'Cuidad',
+          field: 'cityName',
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'sector',
+          align: 'left',
+          label: 'Sector',
+          field: 'sectorName',
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'district',
+          align: 'left',
+          label: 'Barrio',
+          field: 'district',
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'occupation',
+          align: 'left',
+          label: 'Ocupación',
+          field: 'occupation',
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'userSendName',
+          align: 'left',
+          label: 'Enviado por',
+          field: 'userSendName',
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'status',
+          align: 'left',
+          label: 'Estado',
+          field: 'status',
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'date',
+          align: 'left',
+          label: 'Fecha',
+          field: 'date',
+          sortable: true,
+          visible: true,
         },
       ],
       pagination: {
@@ -193,73 +290,89 @@ export default {
     this.validateLogin();
   },
   computed: {
-    ...mapState(userTypes.PATH, [
-      'users',
+    ...mapState(newTypes.PATH, [
+      'news',
       'responseMessages',
       'status',
-      'user',
+      'new',
     ]),
+    dataTable() {
+      const data = this.news.map((element) => ({
+        ...element,
+        date: formatDateWithTime(element.date),
+        showEdit: element.status === 'borrador',
+        showDelete: element.status === 'borrador',
+        showChangeStatus: element.status === 'borrador',
+      }));
+      return data;
+    },
     validatedPermissions() {
-      const statusCreate = havePermission('user.create');
-      const statusEdit = havePermission('user.update');
-      const statusDelete = havePermission('user.delete');
+      const statusCreate = havePermission('new.create');
+      const statusEdit = havePermission('new.update');
+      const statusDelete = havePermission('new.delete');
+      const statuschangeStatus = havePermission('new.changeStatus');
       return {
         create: {
-          title: statusCreate ? 'Registrar usuario' : 'No tiene permisos para registrar usuarios',
+          title: statusCreate ? 'Registrar nuevos' : 'No tiene permisos para registrar nuevos',
           status: statusCreate,
         },
         edit: {
-          title: statusEdit ? 'Editar usuario' : 'No tiene permisos para editar usuarios',
+          title: statusEdit ? 'Editar nuevo' : 'No tiene permisos para editar nuevos',
           status: statusEdit,
         },
         delete: {
-          title: statusDelete ? 'Eliminar usuario' : 'No tiene permisos para eliminar usuarios',
+          title: statusDelete ? 'Eliminar nuevo' : 'No tiene permisos para eliminar nuevos',
           status: statusDelete,
+        },
+        changeStatus: {
+          title: statuschangeStatus ? 'Guardar el registro' : 'No tiene permisos',
+          status: statuschangeStatus,
         },
       };
     },
   },
   methods: {
-    ...mapActions(userTypes.PATH, {
-      listUsers: userTypes.actions.LIST_USERS,
-      getUser: userTypes.actions.GET_USER,
+    ...mapActions(newTypes.PATH, {
+      listNews: newTypes.actions.LIST_NEWS,
+      updateStatusNew: newTypes.actions.UPDATE_STATUS_NEW,
     }),
-    async listUsersMounted() {
-      showLoading('Cargando Usuarios ...', 'Por favor, espere', true);
-      await this.listUsers({ displayAll: 1 });
-      if (this.status === true) {
-        this.data = this.users.map((element) => ({
-          ...element,
-          showEdit: true,
-          showDelete: true,
-        }));
-        this.$q.loading.hide();
-      } else {
+    async listNewsMounted() {
+      showLoading('Cargando ...', 'Por favor, espere', true);
+      await this.listNews(['borrador', 'creado']);
+      if (this.status === false) {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
         this.data = [];
-        this.$q.loading.hide();
       }
+      this.$q.loading.hide();
     },
-    async showForm(id, type) {
+    async showForm(obj, type) {
+      this.obj = obj;
+      this.type = type;
       showLoading('Preparando formulario ...', 'Por favor, espere', true);
-      if (id === null) {
-        this.$refs.formUserReference.showModal(id, null, type);
-      } else {
-        await this.getUser(id);
-        if (this.status === true) {
-          this.$refs.formUserReference.showModal(id, { ...this.user }, type);
-        } else {
-          this.$q.loading.hide();
-          this.showNotification(this.responseMessages, 'red', 'top-right', 5000);
-        }
+      this.showModal = true;
+    },
+    async changeStatus(obj, type) {
+      this.obj = obj;
+      this.type = type;
+      showLoading('Guardando ...', 'Por favor, espere', true);
+      await this.updateStatusNew({
+        ...obj,
+        status: 'creado',
+      });
+
+      if (this.status === true) {
+        this.user = { ...this.copyUser };
+        await this.listNewsMounted();
       }
+      this.$q.loading.hide();
+      this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
     },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
     validateLogin() {
       if (localStorage.getItem('tokenMC')) {
-        this.listUsersMounted();
+        this.listNewsMounted();
       } else {
         this.$router.push('/');
       }

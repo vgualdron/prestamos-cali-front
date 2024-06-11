@@ -2,6 +2,7 @@ export default {
   PATH: '@module/user',
   actions: {
     LIST_USERS: '@actions/listUsers',
+    LIST_USERS_BY_NAME_ROLE: '@actions/listUsersByNameRole',
     GET_USER: '@actions/getUser',
     SAVE_USER: '@actions/saveUser',
     UPDATE_USER: '@actions/updateUser',

@@ -23,7 +23,7 @@ jobs:
         run: |
           npm install
           npm run build:pwa
-      - name: Sync files 📂 Server flamecol.com
+      - name: Sync files 📂 Server hostinger
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
           server: ${{ secrets.FTP_SERVER_NAME }}

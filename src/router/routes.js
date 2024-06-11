@@ -45,7 +45,14 @@ const routes = [
     path: '/new',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Nuevos', component: () => import('pages/New.vue') },
+      { path: '', name: 'Recolección de datos', component: () => import('pages/New.vue') },
+    ],
+  },
+  {
+    path: '/review',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Revisión de datos', component: () => import('pages/Review.vue') },
     ],
   },
   // Always leave this as last one,

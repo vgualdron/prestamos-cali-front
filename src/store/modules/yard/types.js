@@ -2,6 +2,7 @@ export default {
   PATH: '@module/yard',
   actions: {
     LIST_YARDS: '@actions/listYards',
+    LIST_YARDS_BY_ZONE: '@actions/listYardsByZone',
     GET_YARD: '@actions/getYard',
     SAVE_YARD: '@actions/saveYard',
     UPDATE_YARD: '@actions/updateYard',

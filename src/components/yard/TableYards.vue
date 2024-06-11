@@ -8,8 +8,9 @@
           color="primary"
           v-model="filter"
           class="q-ml-xs"
-          placeholder="Buscar patio"
+          placeholder="Buscar"
           clearable
+          outlined
         >
           <template v-slot:append>
             <q-icon name="search" />
@@ -36,6 +37,8 @@
       :filter="filter"
       :pagination="pagination"
       class="q-mt-md"
+      separator="cell"
+      dense
     >
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
@@ -44,6 +47,8 @@
               color="primary"
               field="edit"
               icon="edit"
+              size="xs"
+              round
               :disabled="!validatedPermissions.edit.status"
               :title="validatedPermissions.edit.title"
               @click="showForm(props.row.id, 'E')"
@@ -53,6 +58,8 @@
               color="red"
               field="delete"
               icon="delete"
+              size="xs"
+              round
               :disabled="!validatedPermissions.delete.status"
               :title="validatedPermissions.delete.title"
               @click="showForm(props.row.id, 'D')"
@@ -139,7 +146,7 @@ export default {
   data() {
     return {
       route: '/yard',
-      name: 'Patios',
+      name: 'Ciudad',
       columns: [
         {
           name: 'code',
@@ -148,6 +155,7 @@ export default {
           field: 'code',
           sortable: true,
           visible: true,
+          headerStyle: 'height: 50px',
         },
         {
           name: 'name',
@@ -160,7 +168,7 @@ export default {
         {
           name: 'zone',
           align: 'left',
-          label: 'Zona',
+          label: 'Ciudad',
           field: 'zone',
           sortable: true,
           visible: true,
@@ -195,15 +203,15 @@ export default {
       const statusDelete = havePermission('yard.delete');
       return {
         create: {
-          title: statusCreate ? 'Registrar patio' : 'No tiene permisos para registrar patios',
+          title: statusCreate ? 'Registrar' : 'No tiene permisos para registrar',
           status: statusCreate,
         },
         edit: {
-          title: statusEdit ? 'Editar patio' : 'No tiene permisos para editar patios',
+          title: statusEdit ? 'Editar' : 'No tiene permisos para editar',
           status: statusEdit,
         },
         delete: {
-          title: statusDelete ? 'Eliminar patio' : 'No tiene permisos para eliminar patios',
+          title: statusDelete ? 'Eliminar' : 'No tiene permisos para eliminar',
           status: statusDelete,
         },
       };
@@ -215,7 +223,7 @@ export default {
       getYard: yardTypes.actions.GET_YARD,
     }),
     async listYardsMounted() {
-      showLoading('Cargando Patios ...', 'Por favor, espere', true);
+      showLoading('Cargando ...', 'Por favor, espere', true);
       await this.listYards({ id: 0, displayAll: 1 });
       if (this.status === true) {
         this.data = this.yards.map((element) => ({

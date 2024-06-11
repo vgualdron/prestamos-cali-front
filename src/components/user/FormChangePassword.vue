@@ -81,7 +81,7 @@ export default {
     return {
       modal: {
         show: false,
-        title: 'Actualizar Perfil',
+        title: 'Cambiar contraseña',
       },
       password: '',
       confirmPassword: '',
@@ -115,7 +115,7 @@ export default {
       updateProfile: userTypes.actions.UPDATE_PROFILE,
     }),
     async onSubmit() {
-      showLoading('Actualizando Perfil ...', 'Por favor, espere', true);
+      showLoading('Actualizando ...', 'Por favor, espere', true);
       await this.updateProfile({
         id: this.user,
         password: this.password,
@@ -123,7 +123,7 @@ export default {
       });
       this.$q.loading.hide();
       if (this.status === true) {
-        this.showNotificationsRef(this.responseMessages, this.status, 'top-right', 5000);
+        this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
         this.modal.show = false;
       } else {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
