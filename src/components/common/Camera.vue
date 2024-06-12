@@ -14,6 +14,8 @@
         {{ responseMessages }}
         <br>
         {{ status }}
+        <br>
+        {{ status }}
         <img src="" ref="imgTakePhoto" width="250rem" />
       </div>
     </div>
@@ -32,6 +34,7 @@ export default {
       cameraStart: false,
       imageCapture: null,
       track: null,
+      image: null,
     };
   },
   computed: {
@@ -66,10 +69,10 @@ export default {
           const reader = new FileReader();
           reader.readAsDataURL(blob);
           reader.onloadend = () => {
-            const image = reader.result;
-            this.$refs.imgTakePhoto.src = image;
-            console.log(reader.result);
-            this.saveImage({ image });
+            this.image = reader.result;
+            this.$refs.imgTakePhoto.src = this.image;
+            console.log(this.image);
+            this.saveImage({ image: this.image });
           };
         })
         .catch((error) => console.log(error));
