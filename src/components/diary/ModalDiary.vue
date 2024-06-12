@@ -52,7 +52,7 @@
 import Moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import TableDiary from 'components/diary/TableDiary.vue';
-import diaryTypes from '../../store/modules/diary/types';
+import diaryTypes from '../../store/modules/image/types';
 // import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 

@@ -262,7 +262,7 @@ import newTypes from '../../store/modules/new/types';
 import zoneTypes from '../../store/modules/zone/types';
 import yardTypes from '../../store/modules/yard/types';
 import userTypes from '../../store/modules/user/types';
-import diaryTypes from '../../store/modules/diary/types';
+import diaryTypes from '../../store/modules/image/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { havePermission } from '../../helpers/havePermission';
@@ -531,7 +531,7 @@ export default {
       this.userSelected = [];
       showLoading('Cargando ...', 'Por favor, espere', true);
       this.listYardsByZone({ id: newVal, displayAll: 1 });
-      await this.listUsersByRoleName({ roleName: 'Cobrador', status: 1, city: this.citySelected });
+      await this.listUsersByRoleName({ roleName: 'Prestador', status: 1, city: this.citySelected });
       if (this.optionsUsers && this.optionsUsers.length > 0) {
         this.userSelected = this.optionsUsers[0].value;
       }
@@ -727,7 +727,7 @@ export default {
         showLoading('Cargando ...', 'Por favor, espere', true);
         await this.listNewsMounted();
         await this.listZones();
-        await this.listUsersByRoleName({ roleName: 'Cobrador', status: 1, city: this.citySelected });
+        await this.listUsersByRoleName({ roleName: 'Prestador', status: 1, city: this.citySelected });
         this.$q.loading.hide();
         if (this.optionsUsers && this.optionsUsers.length > 0) {
           this.userSelected = this.optionsUsers[0].value;
