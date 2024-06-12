@@ -11,6 +11,9 @@
         <q-btn v-else label="Tirar Foto" color="primary" icon="camera" @click="takePhoto" />
       </div>
       <div class="col-12 text-center">
+        {{ responseMessages }}
+        <br>
+        {{ status }}
         <img src="" ref="imgTakePhoto" width="250rem" />
       </div>
     </div>
