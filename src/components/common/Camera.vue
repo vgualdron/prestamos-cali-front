@@ -15,7 +15,7 @@
         <br>
         {{ status }}
         <br>
-        {{ status }}
+        {{ image }}
         <img src="" ref="imgTakePhoto" width="250rem" />
       </div>
     </div>
