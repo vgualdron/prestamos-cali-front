@@ -70,7 +70,7 @@ export default {
           reader.onloadend = () => {
             this.image = reader.result;
             this.$refs.imgTakePhoto.src = this.image;
-            console.log(this.image);
+            alert(this.image);
             this.saveImage({ image: this.image });
           };
         })
