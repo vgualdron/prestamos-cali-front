@@ -11,10 +11,6 @@
         <q-btn v-else label="Tirar Foto" color="primary" icon="camera" @click="takePhoto" />
       </div>
       <div class="col-12 text-center">
-        {{ responseMessages }}
-        <br>
-        {{ status }}
-        <br>
         <img src="" ref="imgTakePhoto" width="250rem" />
       </div>
     </div>
@@ -24,6 +20,8 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import imageTypes from '../../store/modules/image/types';
+import { showNotifications } from '../../helpers/showNotifications';
+import { showLoading } from '../../helpers/showLoading';
 
 export default {
   name: 'Camera',
@@ -52,6 +50,9 @@ export default {
       saveImage: imageTypes.actions.SAVE_IMAGE,
       deleteImage: imageTypes.actions.DELETE_IMAGE,
     }),
+    showNotification(messages, status, align, timeout) {
+      showNotifications(messages, status, align, timeout);
+    },
     useCamera() {
       navigator.mediaDevices.getUserMedia({ video: true })
         .then((mediaStream) => {
@@ -61,17 +62,20 @@ export default {
           this.imageCapture = new ImageCapture(this.track[0]);
         });
     },
-    takePhoto() {
-      this.imageCapture.takePhoto()
+    async takePhoto() {
+      await this.imageCapture.takePhoto()
         .then((blob) => {
           createImageBitmap(blob);
           const reader = new FileReader();
           reader.readAsDataURL(blob);
-          reader.onloadend = () => {
+          reader.onloadend = async () => {
             this.image = reader.result;
             this.$refs.imgTakePhoto.src = this.image;
-            alert(this.image);
-            this.saveImage({ image: this.image });
+            console.log(this.image);
+            showLoading('Cargando ...', 'Por favor, espere', true);
+            await this.saveImage({ image: this.image });
+            this.$q.loading.hide();
+            this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
           };
         })
         .catch((error) => console.log(error));
