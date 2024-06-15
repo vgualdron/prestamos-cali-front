@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <q-dialog v-model="showModal" persistent>
-      <q-card style="width: 500px; max-width: 80vw;">
+      <q-card style="max-width: 80vw;">
         <q-card-section class="row items-center q-pb-none">
           <div class="text-h6">Tomar foto</div>
           <q-space />
@@ -9,17 +9,17 @@
         </q-card-section>
         <q-separator />
         <q-card-section style="max-height: 60vh" class="scroll">
-          <div class="row">
+          <div class="row q-mb-md">
             <div class="col-12 text-center">
               <q-select v-model="selectedDeviceId" :options="videoInputDevices" label="Seleccione la camara"
                 option-value="deviceId" option-label="label" @input="openCamera" color="primary" />
             </div>
           </div>
           <div class="row">
-            <div class="col-12 text-center">
+            <div v-show="showVideo" class="col-12 text-center">
               <video autoplay width="250rem" ref="videoplay"></video>
             </div>
-            <div class="col-12 text-center">
+            <div v-if="!showVideo" class="col-12 text-center">
               <img src="" ref="imgTakePhoto" width="250rem" />
             </div>
           </div>
@@ -31,10 +31,10 @@
                 color="primary"
                 icon="camera"
                 ref="camera"
-                :disable="!enableCamera"
+                :disabled="!enableCamera"
                 @click="openCamera" />
               <q-btn
-                v-else
+                v-else-if="showVideo"
                 label="Tomar Foto"
                 color="primary"
                 icon="camera"
@@ -43,18 +43,21 @@
           </div>
         </q-card-section>
         <q-separator />
-        <div class="row text-center q-p-md">
-          <q-btn label="cancelar"
-            type="reset"
+        <div class="row text-center q-pa-md">
+          <q-btn
+            label="Cambiar foto"
             color="primary"
-            outline class="col"
-            v-close-popup
-            @click="showDialog = false"
+            class="col"
+            icon="change_circle"
+            @click="showVideo = true"
+            :disabled="showVideo"
+            outline
           />
           <q-btn
-            label="Aceptar"
+            label="Guardar imagen"
             color="primary"
             class="col q-ml-sm"
+            :disabled="showVideo"
             @click="sendImage"
           />
         </div>
@@ -80,6 +83,7 @@ export default {
       imageCapture: null,
       track: null,
       image: null,
+      showVideo: true,
     };
   },
   props: {
@@ -147,6 +151,7 @@ export default {
         });
     },
     async takePhoto() {
+      this.showVideo = false;
       await this.imageCapture.takePhoto()
         .then((blob) => {
           createImageBitmap(blob);
