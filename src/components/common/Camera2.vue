@@ -57,8 +57,8 @@ export default {
           this.stopVideo();
         }
         const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } });
-        this.$refs.video.srcObject = stream;
         this.showVideo = true;
+        this.$refs.video.srcObject = stream;
       } catch (error) {
         console.error('Error accessing the camera', error);
       }

@@ -1,20 +1,66 @@
 <template>
-  <q-page padding>
-    <p class="text-h6">Camera</p>
-    <div class="row">
-      <div class="col-12 text-center">
-        <video autoplay width="250rem" ref="videoplay"></video>
-      </div>
-      <div class="col-12 text-center">
-        <q-btn v-if="!cameraStart" label="Acessar Camera" color="primary" icon="camera" :disable="!enableCamera"
-          @click="useCamera" />
-        <q-btn v-else label="Tirar Foto" color="primary" icon="camera" @click="takePhoto" />
-      </div>
-      <div class="col-12 text-center">
-        <img src="" ref="imgTakePhoto" width="250rem" />
-      </div>
-    </div>
-  </q-page>
+  <div class="q-pa-md">
+    <q-dialog v-model="showModal" persistent>
+      <q-card style="width: 500px; max-width: 80vw;">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">Tomar foto</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+        <q-separator />
+        <q-card-section style="max-height: 60vh" class="scroll">
+          <div class="row">
+            <div class="col-12 text-center">
+              <q-select v-model="selectedDeviceId" :options="videoInputDevices" label="Seleccione la camara"
+                option-value="deviceId" option-label="label" @input="openCamera" color="primary" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 text-center">
+              <video autoplay width="250rem" ref="videoplay"></video>
+            </div>
+            <div class="col-12 text-center">
+              <img src="" ref="imgTakePhoto" width="250rem" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 text-center">
+              <q-btn
+                v-if="!cameraStart"
+                label="Acessar Camera"
+                color="primary"
+                icon="camera"
+                ref="camera"
+                :disable="!enableCamera"
+                @click="openCamera" />
+              <q-btn
+                v-else
+                label="Tomar Foto"
+                color="primary"
+                icon="camera"
+                @click="takePhoto" />
+            </div>
+          </div>
+        </q-card-section>
+        <q-separator />
+        <div class="row text-center q-p-md">
+          <q-btn label="cancelar"
+            type="reset"
+            color="primary"
+            outline class="col"
+            v-close-popup
+            @click="showDialog = false"
+          />
+          <q-btn
+            label="Aceptar"
+            color="primary"
+            class="col q-ml-sm"
+            @click="sendImage"
+          />
+        </div>
+      </q-card>
+    </q-dialog>
+  </div>
 </template>
 
 <script>
@@ -27,6 +73,8 @@ export default {
   name: 'Camera',
   data() {
     return {
+      videoInputDevices: [],
+      selectedDeviceId: null,
       enableCamera: false,
       cameraStart: false,
       imageCapture: null,
@@ -34,29 +82,65 @@ export default {
       image: null,
     };
   },
+  props: {
+    value: {
+      type: Boolean,
+      default: false,
+    },
+    config: {
+      type: Object,
+    },
+  },
   computed: {
     ...mapState(imageTypes.PATH, [
       'responseMessages',
       'status',
     ]),
+    showModal: {
+      get() {
+        return this.value;
+      },
+      set(val) {
+        this.$emit('input', val);
+      },
+    },
   },
-  mounted() {
-    if (navigator.mediaDevices.getUserMedia) {
-      this.enableCamera = true;
-    }
+  async mounted() {
+    await this.initCamera();
   },
   methods: {
     ...mapActions(imageTypes.PATH, {
       saveImage: imageTypes.actions.SAVE_IMAGE,
       deleteImage: imageTypes.actions.DELETE_IMAGE,
     }),
+    async initCamera() {
+      if (navigator.mediaDevices.getUserMedia) {
+        this.enableCamera = true;
+        await this.getVideoInputDevices();
+      }
+    },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
-    useCamera() {
-      navigator.mediaDevices.getUserMedia({ video: true })
+    async getVideoInputDevices() {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        this.videoInputDevices = devices.filter((device) => device.kind === 'videoinput');
+        if (this.videoInputDevices.length > 0) {
+          console.log(this.videoInputDevices);
+          this.selectedDeviceId = this.videoInputDevices[0].deviceId;
+          this.openCamera(this.selectedDeviceId);
+        }
+      } catch (error) {
+        console.error('Error fetching video input devices', error);
+      }
+    },
+    async openCamera(deviceId) {
+      this.showModal = true;
+      navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } })
         .then((mediaStream) => {
           this.cameraStart = true;
+          console.log(this.$refs);
           this.$refs.videoplay.srcObject = mediaStream;
           this.track = mediaStream.getVideoTracks();
           this.imageCapture = new ImageCapture(this.track[0]);
@@ -72,13 +156,15 @@ export default {
             this.image = reader.result;
             this.$refs.imgTakePhoto.src = this.image;
             console.log(this.image);
-            showLoading('Cargando ...', 'Por favor, espere', true);
-            await this.saveImage({ image: this.image });
-            this.$q.loading.hide();
-            this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
           };
         })
         .catch((error) => console.log(error));
+    },
+    async sendImage() {
+      showLoading('Cargando ...', 'Por favor, espere', true);
+      await this.saveImage({ image: this.image });
+      this.$q.loading.hide();
+      this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
     },
   },
 };
