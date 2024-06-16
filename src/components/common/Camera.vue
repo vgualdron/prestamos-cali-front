@@ -152,16 +152,16 @@ export default {
       navigator.mediaDevices.getUserMedia({
         video: {
           deviceId: {
-            exact: deviceId && deviceId.deviceId ? deviceId.deviceId : deviceId
-          }
-        }
+            exact: deviceId && deviceId.deviceId ? deviceId.deviceId : deviceId,
+          },
+        },
       }).then((mediaStream) => {
-          this.cameraStart = true;
-          console.log(this.$refs);
-          this.$refs.videoplay.srcObject = mediaStream;
-          this.track = mediaStream.getVideoTracks();
-          this.imageCapture = new ImageCapture(this.track[0]);
-        });
+        this.cameraStart = true;
+        console.log(this.$refs);
+        this.$refs.videoplay.srcObject = mediaStream;
+        this.track = mediaStream.getVideoTracks();
+        this.imageCapture = new ImageCapture(this.track[0]);
+      });
     },
     async takePhoto() {
       this.showVideo = false;
