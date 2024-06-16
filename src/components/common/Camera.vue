@@ -11,8 +11,15 @@
         <q-card-section style="max-height: 60vh" class="scroll">
           <div class="row q-mb-md">
             <div class="col-12 text-center">
-              <q-select v-model="selectedDeviceId" :options="videoInputDevices" label="Seleccione la camara"
-                option-value="deviceId" option-label="label" @input="openCamera" color="primary" />
+              <q-select
+                v-model="selectedDeviceId"
+                :options="videoInputDevices"
+                label="Seleccione la camara"
+                option-value="deviceId"
+                option-label="label"
+                @input="openCamera"
+                color="primary"
+                outlined />
             </div>
           </div>
           <div class="row">
@@ -140,6 +147,7 @@ export default {
       }
     },
     async openCamera(deviceId) {
+      alert('change camera: ', deviceId);
       this.showModal = true;
       navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } })
         .then((mediaStream) => {
