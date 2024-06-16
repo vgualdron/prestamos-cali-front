@@ -139,20 +139,20 @@ export default {
         this.videoInputDevices = devices.filter((device) => device.kind === 'videoinput');
         if (this.videoInputDevices.length > 0) {
           console.log(this.videoInputDevices);
-          this.selectedDeviceId = this.videoInputDevices[0].deviceId;
+          this.selectedDeviceId = this.videoInputDevices[0];
           this.openCamera(this.selectedDeviceId);
         }
       } catch (error) {
         console.error('Error fetching video input devices', error);
       }
     },
-    async openCamera(deviceId) {
+    async openCamera({ deviceId }) {
       alert(deviceId);
       this.showModal = true;
       navigator.mediaDevices.getUserMedia({
         video: {
           deviceId: {
-            exact: deviceId && deviceId.deviceId ? deviceId.deviceId : deviceId,
+            exact: deviceId,
           },
         },
       }).then((mediaStream) => {
