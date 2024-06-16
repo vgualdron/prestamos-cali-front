@@ -139,7 +139,8 @@ export default {
         this.videoInputDevices = devices.filter((device) => device.kind === 'videoinput');
         if (this.videoInputDevices.length > 0) {
           console.log(this.videoInputDevices);
-          this.selectedDeviceId = this.videoInputDevices[0];
+          const selectedDeviceId = this.videoInputDevices;
+          this.selectedDeviceId = selectedDeviceId;
           this.openCamera(this.selectedDeviceId);
         }
       } catch (error) {
