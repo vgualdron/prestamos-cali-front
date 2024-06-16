@@ -147,7 +147,7 @@ export default {
       }
     },
     async openCamera(deviceId) {
-      alert('change camera: ', deviceId);
+      alert(deviceId);
       this.showModal = true;
       navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } })
         .then((mediaStream) => {
