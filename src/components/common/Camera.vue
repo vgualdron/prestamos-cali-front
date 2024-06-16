@@ -149,8 +149,13 @@ export default {
     async openCamera(deviceId) {
       alert(deviceId);
       this.showModal = true;
-      navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } })
-        .then((mediaStream) => {
+      navigator.mediaDevices.getUserMedia({
+        video: {
+          deviceId: {
+            exact: deviceId && deviceId.deviceId ? deviceId.deviceId : deviceId
+          }
+        }
+      }).then((mediaStream) => {
           this.cameraStart = true;
           console.log(this.$refs);
           this.$refs.videoplay.srcObject = mediaStream;
