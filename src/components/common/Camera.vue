@@ -23,14 +23,15 @@
             </div>
           </div>
           <div class="row">
-            <div v-show="showVideo" class="col-12 text-center">
-              <video autoplay width="250rem" ref="videoplay"></video>
+            <div v-show="showVideo" class="col-12 text-center video-container">
+              <video autoplay width="250rem" ref="videoplay" id="video"></video>
+              <div class="overlay-square"></div>
             </div>
             <div v-if="!showVideo" class="col-12 text-center">
               <img src="" ref="imgTakePhoto" width="250rem" />
             </div>
           </div>
-          <div class="row">
+          <div class="row q-ma-sm">
             <div class="col-12 text-center">
               <q-btn
                 v-if="!cameraStart"
@@ -138,8 +139,7 @@ export default {
         const devices = await navigator.mediaDevices.enumerateDevices();
         this.videoInputDevices = devices.filter((device) => device.kind === 'videoinput');
         if (this.videoInputDevices.length > 0) {
-          console.log(this.videoInputDevices);
-          this.selectedDeviceId = this.videoInputDevices.length === 2 ? this.videoInputDevices[1].deviceId : this.videoInputDevices[0].deviceId;
+          this.selectedDeviceId = this.videoInputDevices.length === 2 ? this.videoInputDevices[1] : this.videoInputDevices[0];
           this.openCamera(this.selectedDeviceId);
         }
       } catch (error) {
@@ -156,13 +156,13 @@ export default {
         },
       }).then((mediaStream) => {
         this.cameraStart = true;
-        console.log(this.$refs);
         this.$refs.videoplay.srcObject = mediaStream;
         this.track = mediaStream.getVideoTracks();
         this.imageCapture = new ImageCapture(this.track[0]);
       });
     },
     async takePhoto() {
+      showLoading('Tomando foto ...', 'Por favor, espere', true);
       this.showVideo = false;
       await this.imageCapture.takePhoto()
         .then((blob) => {
@@ -172,10 +172,9 @@ export default {
           reader.onloadend = async () => {
             this.image = reader.result;
             this.$refs.imgTakePhoto.src = this.image;
-            console.log(this.image);
           };
-        })
-        .catch((error) => console.log(error));
+        }).catch((error) => console.log(error));
+      this.$q.loading.hide();
     },
     async sendImage() {
       showLoading('Cargando ...', 'Por favor, espere', true);
@@ -186,3 +185,24 @@ export default {
   },
 };
 </script>
+<style scoped>
+  .video-container {
+    position: relative;
+    display: inline-block;
+  }
+  video {
+    display: block;
+    max-width: 640px;
+    margin: auto;
+  }
+  .overlay-square {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    border: 2px solid red;
+    transform: translate(-50%, -50%);
+    pointer-events: none; /* Make sure the square doesn't block interactions with the video */
+  }
+</style>
