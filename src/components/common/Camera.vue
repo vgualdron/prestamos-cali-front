@@ -139,7 +139,7 @@ export default {
         this.videoInputDevices = devices.filter((device) => device.kind === 'videoinput');
         if (this.videoInputDevices.length > 0) {
           console.log(this.videoInputDevices);
-          this.selectedDeviceId = this.videoInputDevices[0].deviceId;
+          this.selectedDeviceId = this.videoInputDevices.length === 2 ? this.videoInputDevices[1].deviceId : this.videoInputDevices[0].deviceId;
           this.openCamera(this.selectedDeviceId);
         }
       } catch (error) {
@@ -147,7 +147,6 @@ export default {
       }
     },
     async openCamera(deviceId) {
-      alert(deviceId);
       this.showModal = true;
       navigator.mediaDevices.getUserMedia({
         video: {
