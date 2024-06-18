@@ -35,12 +35,12 @@
             <div class="col-12 text-center">
               <q-btn
                 v-if="!cameraStart"
-                label="Acessar Camera"
+                label="Dar permiso de camara"
                 color="primary"
                 icon="camera"
                 ref="camera"
                 :disabled="!enableCamera"
-                @click="openCamera" />
+                @click="startCamera" />
               <q-btn
                 v-else-if="showVideo"
                 label="Tomar Foto"
@@ -144,6 +144,20 @@ export default {
         }
       } catch (error) {
         console.error('Error fetching video input devices', error);
+      }
+    },
+    async startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const video = document.getElementById('video');
+        video.srcObject = stream;
+        window.location.reload();
+      } catch (error) {
+        const e = [{
+          text: 'Error al acceder a la camara',
+          detail: error.message,
+        }];
+        this.showNotification(e, false, 'top-right', 5000);
       }
     },
     async openCamera(deviceId) {
