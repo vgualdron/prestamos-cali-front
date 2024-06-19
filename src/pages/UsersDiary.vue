@@ -76,7 +76,12 @@ export default {
   },
   watch: {
     async citySelected() {
-      await this.validateLogin();
+      showLoading('Cargando ...', 'Por favor, espere', true);
+      await this.listUsersByRoleName({ roleName: 'Prestador', status: 1, city: this.citySelected });
+      if (this.optionsUsers && this.optionsUsers.length > 0) {
+        const [userId] = this.optionsUsers;
+        this.userSelected = userId.value;
+      }
     },
     async userSelected() {
       showLoading('Cargando ...', 'Por favor, espere', true);
@@ -135,20 +140,6 @@ export default {
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
-    async validateLogin() {
-      if (localStorage.getItem('tokenMC')) {
-        showLoading('Cargando ...', 'Por favor, espere', true);
-        await this.listUsersByRoleName({ roleName: 'Prestador', status: 1, city: this.citySelected });
-        if (this.optionsUsers && this.optionsUsers.length > 0) {
-          const [userId] = this.optionsUsers;
-          this.userSelected = userId.value;
-        }
-        await this.viewDiary('current');
-        this.$q.loading.hide();
-      } else {
-        this.$router.push('/');
-      }
-    },
     async viewDiary(moment) {
       showLoading('Consultando diario ...', 'Por favor, espere', true);
       await this.listDiaries({
@@ -171,7 +162,7 @@ export default {
       });
       this.showModalDiaryRead = true;
       this.$q.loading.hide();
-      this.showNotification(this.diaryResponseMessages, this.status, 'top-right', 5000);
+      this.showNotification(this.diaryResponseMessages, this.diaryStatus, 'top-right', 5000);
     },
     addVisit(item) {
       this.$emit('addVisit', item);

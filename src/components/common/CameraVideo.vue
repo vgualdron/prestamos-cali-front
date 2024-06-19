@@ -42,7 +42,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import imageTypes from '../../store/modules/image/types';
+import fileTypes from '../../store/modules/file/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 
@@ -67,7 +67,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(imageTypes.PATH, [
+    ...mapState(fileTypes.PATH, [
       'responseMessages',
       'status',
     ]),
@@ -90,8 +90,8 @@ export default {
     },
   },
   methods: {
-    ...mapActions(imageTypes.PATH, {
-      saveImage: imageTypes.actions.SAVE_IMAGE,
+    ...mapActions(fileTypes.PATH, {
+      saveFile: fileTypes.actions.SAVE_FILE,
     }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
@@ -140,7 +140,7 @@ export default {
     },
     async send() {
       showLoading('Guardando ...', 'Por favor, espere', true);
-      await this.saveImage({
+      await this.saveFile({
         file: this.file,
         extension: this.extension,
       });

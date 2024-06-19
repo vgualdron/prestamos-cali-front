@@ -81,7 +81,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import imageTypes from '../../store/modules/image/types';
+import fileTypes from '../../store/modules/file/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 
@@ -110,7 +110,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(imageTypes.PATH, [
+    ...mapState(fileTypes.PATH, [
       'responseMessages',
       'status',
     ]),
@@ -136,8 +136,8 @@ export default {
     await this.initCamera();
   },
   methods: {
-    ...mapActions(imageTypes.PATH, {
-      saveImage: imageTypes.actions.SAVE_IMAGE,
+    ...mapActions(fileTypes.PATH, {
+      saveFile: fileTypes.actions.SAVE_FILE,
     }),
     async initCamera() {
       if (navigator.mediaDevices.getUserMedia) {
@@ -209,7 +209,7 @@ export default {
     },
     async sendImage() {
       showLoading('Guardando ...', 'Por favor, espere', true);
-      await this.saveImage({
+      await this.saveFile({
         file: this.file,
         extension: this.extension,
       });

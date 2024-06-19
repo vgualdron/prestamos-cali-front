@@ -2,12 +2,12 @@ import { http } from '../../helpers/http';
 
 export default {
   save: (data) => http({
-    url: `${process.env.URL_API}/api/image/create`,
+    url: `${process.env.URL_API}/api/file/create`,
     method: 'POST',
     data,
   }),
   delete: (id) => http({
-    url: `${process.env.URL_API}/api/image/delete/${id}`,
+    url: `${process.env.URL_API}/api/file/delete/${id}`,
     method: 'DELETE',
   }),
 };

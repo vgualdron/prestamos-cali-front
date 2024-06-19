@@ -19,10 +19,11 @@
               <b>{{ formatHour(e.date) }}</b>
             </span>
             <template v-else-if="e.new_id">
-              <q-badge color="blue">
+              <p>
+                <b>
                 {{ e.new_name }}
-              </q-badge>
-              <br>
+                </b>
+              </p>
               <span>
                 {{ e.new_phone }}
               </span>
@@ -33,6 +34,17 @@
               <span>
                 {{ e.new_occupation }}
               </span>
+              <p>
+                <q-btn
+                  v-if="type === 'visitor'"
+                  label="Iniciar visita"
+                  color="primary"
+                  class="col"
+                  icon="arrow_forward"
+                  @click="showVideo = true"
+                  outline
+                />
+              </p>
             </template>
             <template v-else-if="e.id === tdSelected.id">
               <div class="td-selected">

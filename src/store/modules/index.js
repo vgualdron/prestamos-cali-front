@@ -7,7 +7,7 @@ import user, { name as userName } from './user';
 import home, { name as homeName } from './home';
 import news, { name as newName } from './new';
 import diaries, { name as diarieName } from './diary';
-import image, { name as imageName } from './image';
+import file, { name as fileName } from './file';
 
 export default {
   [homeName]: home,
@@ -19,5 +19,5 @@ export default {
   [userName]: user,
   [newName]: news,
   [diarieName]: diaries,
-  [imageName]: image,
+  [fileName]: file,
 };

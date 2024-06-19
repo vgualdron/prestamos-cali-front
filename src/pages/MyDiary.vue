@@ -2,7 +2,8 @@
   <q-page class="">
     <table-diary
       v-if="diariesDayByDay && diariesDayByDay.length > 0"
-      :data="dataTable"
+      :data="diariesDayByDay"
+      type="visitor"
       @addVisit="addVisit"/>
   </q-page>
 </template>
@@ -89,7 +90,7 @@ export default {
       });
       this.showModalDiaryRead = true;
       this.$q.loading.hide();
-      this.showNotification(this.diaryResponseMessages, this.status, 'top-right', 5000);
+      this.showNotification(this.diaryResponseMessages, this.diaryStatus, 'top-right', 5000);
     },
     addVisit(item) {
       this.$emit('addVisit', item);

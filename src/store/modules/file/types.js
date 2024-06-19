@@ -1,8 +1,8 @@
 export default {
-  PATH: '@module/image',
+  PATH: '@module/file',
   actions: {
-    SAVE_IMAGE: '@actions/saveImage',
-    DELETE_IMAGE: '@actions/deleteImage',
+    SAVE_FILE: '@actions/saveFile',
+    DELETE_FILE: '@actions/deleteFile',
   },
   getters: {
   },

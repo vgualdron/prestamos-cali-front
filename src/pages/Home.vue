@@ -6,7 +6,7 @@
         <q-btn
           label="Agregar foto"
           color="primary"
-          icon="camera"
+          icon="add_a_photo"
           ref="camera"
           @click="showModalCameraPhoto = true" />
       </div>
@@ -16,7 +16,7 @@
         <q-btn
           label="Agregar video"
           color="primary"
-          icon="camera"
+          icon="video_call"
           ref="camera"
           @click="showModalCameraVideo = true" />
       </div>

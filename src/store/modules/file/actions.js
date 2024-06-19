@@ -1,11 +1,10 @@
 import types from './types';
-import imageApi from '../../../api/image/imageApi';
+import fileApi from '../../../api/file/fileApi';
 
 export default {
-  async [types.actions.SAVE_IMAGE]({ commit }, payload) {
+  async [types.actions.SAVE_FILE]({ commit }, payload) {
     try {
-      console.log(payload);
-      const response = await imageApi.save(payload);
+      const response = await fileApi.save(payload);
       commit(types.mutations.SET_STATUS, true);
       commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
     } catch (error) {
@@ -22,9 +21,9 @@ export default {
       }
     }
   },
-  async [types.actions.DELETE_IMAGE]({ commit }, payload) {
+  async [types.actions.DELETE_FILE]({ commit }, payload) {
     try {
-      const response = await imageApi.delete(payload);
+      const response = await fileApi.delete(payload);
       commit(types.mutations.SET_STATUS, true);
       commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
     } catch (error) {
