@@ -2,7 +2,7 @@
   <q-page class="">
     <table-diary
       v-if="diariesDayByDay && diariesDayByDay.length > 0"
-      :data="diariesDayByDay"
+      :data="dataTable"
       @addVisit="addVisit"/>
   </q-page>
 </template>
@@ -13,7 +13,7 @@ import { mapState, mapActions } from 'vuex';
 import TableDiary from 'components/diary/TableDiary.vue';
 import commonTypes from '../store/modules/common/types';
 import diaryTypes from '../store/modules/diary/types';
-// import { showNotifications } from '../helpers/showNotifications';
+import { showNotifications } from '../helpers/showNotifications';
 import { showLoading } from '../helpers/showLoading';
 
 export default {
@@ -36,6 +36,27 @@ export default {
       diaryStatus: 'status',
       diaryResponseMessages: 'responseMessages',
     }),
+    dataTable() {
+      const a = [];
+      this.diariesDayByDay.forEach(({ date, items }) => {
+        const b = {
+          date,
+          items: [],
+        };
+        items.forEach((item) => {
+          const dateItem = new Date(item.date);
+          const currentDate = new Date();
+          currentDate.setDate(currentDate.getDate() - 1);
+          const endDate = new Date();
+          endDate.setDate(endDate.getDate() + 2);
+          if (dateItem.getTime() > currentDate.getTime() && dateItem.getTime() < endDate.getTime()) {
+            b.items.push(item);
+          }
+        });
+        a.push(b);
+      });
+      return a;
+    },
   },
   methods: {
     ...mapActions(diaryTypes.PATH, {
@@ -43,6 +64,9 @@ export default {
       listDiariesDayByDay: diaryTypes.actions.LIST_DIARIES_DAY_BY_DAY,
       saveDiary: diaryTypes.actions.SAVE_DIARY,
     }),
+    showNotification(messages, status, align, timeout) {
+      showNotifications(messages, status, align, timeout);
+    },
     async viewDiary(moment) {
       showLoading('Consultando ...', 'Por favor, espere', true);
       await this.listDiaries({
@@ -65,6 +89,7 @@ export default {
       });
       this.showModalDiaryRead = true;
       this.$q.loading.hide();
+      this.showNotification(this.diaryResponseMessages, this.status, 'top-right', 5000);
     },
     addVisit(item) {
       this.$emit('addVisit', item);

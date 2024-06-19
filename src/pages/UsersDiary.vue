@@ -56,7 +56,7 @@ import TableDiary from 'components/diary/TableDiary.vue';
 import diaryTypes from '../store/modules/diary/types';
 import userTypes from '../store/modules/user/types';
 import zoneTypes from '../store/modules/zone/types';
-// import { showNotifications } from '../helpers/showNotifications';
+import { showNotifications } from '../helpers/showNotifications';
 import { showLoading } from '../helpers/showLoading';
 
 export default {
@@ -69,8 +69,10 @@ export default {
   },
   name: 'PageUsersDiary',
   async mounted() {
+    showLoading('Cargando ...', 'Por favor, espere', true);
     await this.listZones();
     this.citySelected = parseInt(localStorage.getItem('cityMC'), 10);
+    this.$q.loading.hide();
   },
   watch: {
     async citySelected() {
@@ -130,6 +132,9 @@ export default {
     ...mapActions(zoneTypes.PATH, {
       listZones: zoneTypes.actions.LIST_ZONES,
     }),
+    showNotification(messages, status, align, timeout) {
+      showNotifications(messages, status, align, timeout);
+    },
     async validateLogin() {
       if (localStorage.getItem('tokenMC')) {
         showLoading('Cargando ...', 'Por favor, espere', true);
@@ -166,6 +171,7 @@ export default {
       });
       this.showModalDiaryRead = true;
       this.$q.loading.hide();
+      this.showNotification(this.diaryResponseMessages, this.status, 'top-right', 5000);
     },
     addVisit(item) {
       this.$emit('addVisit', item);
