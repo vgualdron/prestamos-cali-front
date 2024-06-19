@@ -19,8 +19,6 @@
         <q-select
           v-model="userSelected"
           class="q-mt-md"
-          clearable
-          outlined
           input-debounce="0"
           label="Seleccionar usuario"
           :options="optionsUsers"
@@ -28,6 +26,7 @@
           option-value="value"
           map-options
           emit-value
+          outlined
         >
           <template v-slot:no-option>
             <q-item>

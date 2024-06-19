@@ -23,8 +23,9 @@
             </div>
           </div>
           <div class="row">
+            <a :href="responseMessages[0].detail" target="_blank">Abrir</a>
             <div v-show="showVideo" class="col-12 text-center video-container">
-              <video autoplay width="250rem" ref="videoplay" id="video"></video>
+              <video autoplay width="250rem" ref="video" id="video"></video>
               <div class="overlay-square"></div>
             </div>
             <div v-if="!showVideo" class="col-12 text-center">
@@ -81,7 +82,7 @@ import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 
 export default {
-  name: 'Camera',
+  name: 'CameraPhoto',
   data() {
     return {
       videoInputDevices: [],
@@ -91,6 +92,7 @@ export default {
       imageCapture: null,
       track: null,
       image: null,
+      blob: null,
       showVideo: true,
     };
   },
@@ -116,6 +118,15 @@ export default {
         this.$emit('input', val);
       },
     },
+    file() {
+      const f = this.image.split('base64,');
+      return f.length > 1 ? f[1] : f[0];
+    },
+    extension() {
+      const { type } = this.blob;
+      const ext = type.split('/');
+      return ext.length > 1 ? ext[1] : ext[0];
+    },
   },
   async mounted() {
     await this.initCamera();
@@ -123,7 +134,6 @@ export default {
   methods: {
     ...mapActions(imageTypes.PATH, {
       saveImage: imageTypes.actions.SAVE_IMAGE,
-      deleteImage: imageTypes.actions.DELETE_IMAGE,
     }),
     async initCamera() {
       if (navigator.mediaDevices.getUserMedia) {
@@ -170,7 +180,7 @@ export default {
         },
       }).then((mediaStream) => {
         this.cameraStart = true;
-        this.$refs.videoplay.srcObject = mediaStream;
+        this.$refs.video.srcObject = mediaStream;
         this.track = mediaStream.getVideoTracks();
         this.imageCapture = new ImageCapture(this.track[0]);
       });
@@ -181,18 +191,24 @@ export default {
       await this.imageCapture.takePhoto()
         .then((blob) => {
           createImageBitmap(blob);
+          this.blob = blob;
+          console.log(this.blob);
           const reader = new FileReader();
           reader.readAsDataURL(blob);
           reader.onloadend = async () => {
             this.image = reader.result;
+            console.log(this.image);
             this.$refs.imgTakePhoto.src = this.image;
           };
         }).catch((error) => console.log(error));
       this.$q.loading.hide();
     },
     async sendImage() {
-      showLoading('Cargando ...', 'Por favor, espere', true);
-      await this.saveImage({ image: this.image });
+      showLoading('Guardando ...', 'Por favor, espere', true);
+      await this.saveImage({
+        file: this.file,
+        extension: this.extension,
+      });
       this.$q.loading.hide();
       this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
     },
