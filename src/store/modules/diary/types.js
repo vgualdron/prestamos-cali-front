@@ -1,5 +1,5 @@
 export default {
-  PATH: '@module/diaries',
+  PATH: '@module/diary',
   actions: {
     LIST_DIARIES: '@actions/listDiaries',
     LIST_DIARIES_DAY_BY_DAY: '@actions/listDiariesDayByDay',

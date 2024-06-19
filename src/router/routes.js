@@ -55,6 +55,20 @@ const routes = [
       { path: '', name: 'Revisión de datos', component: () => import('pages/Review.vue') },
     ],
   },
+  {
+    path: '/my-diary',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Mi agenda', component: () => import('pages/MyDiary.vue') },
+    ],
+  },
+  {
+    path: '/users-diary',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Agenda de usuarios', component: () => import('pages/UsersDiary.vue') },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

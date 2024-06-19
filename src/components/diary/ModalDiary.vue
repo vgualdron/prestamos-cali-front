@@ -41,7 +41,8 @@
             </div>
           </div>
           <table-diary
-            v-if="diariesDayByDay.length > 0" :data="diariesDayByDay" :type="type"
+            v-if="diariesDayByDay && diariesDayByDay.length > 0"
+            :data="diariesDayByDay" :type="type"
             @addVisit="addVisit"/>
         </q-card-section>
       </q-card>
@@ -52,7 +53,7 @@
 import Moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import TableDiary from 'components/diary/TableDiary.vue';
-import diaryTypes from '../../store/modules/image/types';
+import diaryTypes from '../../store/modules/diary/types';
 // import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 

@@ -1,5 +1,5 @@
 export default {
-  PATH: '@module/news',
+  PATH: '@module/new',
   actions: {
     LIST_NEWS: '@actions/listNews',
     GET_NEW: '@actions/getNew',

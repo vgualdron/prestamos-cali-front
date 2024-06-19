@@ -166,7 +166,7 @@ import newTypes from '../../store/modules/new/types';
 import zoneTypes from '../../store/modules/zone/types';
 import yardTypes from '../../store/modules/yard/types';
 import userTypes from '../../store/modules/user/types';
-import diaryTypes from '../../store/modules/image/types';
+import diaryTypes from '../../store/modules/diary/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { havePermission } from '../../helpers/havePermission';

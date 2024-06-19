@@ -24,11 +24,14 @@
               </q-badge>
               <br>
               <span>
-                {{ e.sectorName }}
+                {{ e.new_phone }}
               </span>
               <br>
+              <div class="wrap-text">
+                {{ e.new_address }}, {{ e.new_district }}, {{ e.sectorName }}
+              </div>
               <span>
-                {{ e.new_phone }}
+                {{ e.new_occupation }}
               </span>
             </template>
             <template v-else-if="e.id === tdSelected.id">
@@ -118,5 +121,11 @@ export default {
   }
   tr > td {
     max-width: 60px;
+  }
+  .wrap-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
   }
 </style>
