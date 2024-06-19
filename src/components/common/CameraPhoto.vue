@@ -23,7 +23,11 @@
             </div>
           </div>
           <div class="row">
-            <a :href="responseMessages[0].detail" target="_blank">Abrir</a>
+            <a v-if="responseMessages && responseMessages.length > 0"
+              :href="responseMessages[0].detail"
+              target="_blank">
+              Abrir
+            </a>
             <div v-show="showVideo" class="col-12 text-center video-container">
               <video autoplay width="250rem" ref="video" id="video"></video>
               <div class="overlay-square"></div>

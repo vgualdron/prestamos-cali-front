@@ -10,7 +10,11 @@
         <q-separator />
         <q-card-section style="max-height: 60vh" class="scroll">
           <div class="video-recorder">
-            <a :href="responseMessages[0].detail" target="_blank">Abrir</a>
+            <a v-if="responseMessages && responseMessages.length > 0"
+              :href="responseMessages[0].detail"
+              target="_blank">
+              Abrir
+            </a>
             <video ref="video" autoplay></video>
             <div>
               <button @click="startRecording">Start Recording</button>
