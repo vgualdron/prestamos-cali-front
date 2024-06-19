@@ -19,7 +19,7 @@
       </div>
     </div> -->
     <div class="row q-mt-md justify-center">
-      <div class="col-4">
+      <div class="col-8">
         <q-btn-toggle
           v-if="zones && zones.length > 0"
           v-model="citySelected"

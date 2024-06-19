@@ -1,7 +1,7 @@
 <template>
   <q-page class="">
     <div class="row q-mt-md justify-center">
-      <div class="col-4">
+      <div class="col-8">
         <q-btn-toggle
           v-if="zones && zones.length > 0"
           v-model="citySelected"
@@ -15,7 +15,7 @@
       </div>
     </div>
     <div class="row q-mt-md justify-center">
-      <div class="col-4 text-center">
+      <div class="col-8 text-center">
         <q-select
           v-model="userSelected"
           class="q-mt-md"

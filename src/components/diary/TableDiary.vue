@@ -120,7 +120,8 @@ export default {
     background-color: lightblue;
   }
   tr > td {
-    max-width: 60px;
+    min-width: 160px;
+    max-width: 160px;
   }
   .wrap-text {
     word-wrap: break-word;
