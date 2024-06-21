@@ -9,16 +9,41 @@
         </q-card-section>
         <q-separator />
         <q-card-section style="max-height: 60vh" class="scroll">
+          <div class="row q-mb-md">
+            <div class="col-12 text-center">
+              <q-select
+                v-model="selectedDeviceId"
+                :options="videoInputDevices"
+                label="Seleccione la camara"
+                option-value="deviceId"
+                option-label="label"
+                @input="startRecording"
+                color="primary"
+                outlined />
+            </div>
+          </div>
           <div class="video-recorder">
-            <!-- <a v-if="link"
-              :href="link"
-              target="_blank">
-              Abrir
-            </a> -->
             <video autoplay width="250rem" ref="video" id="video"></video>
             <div>
               <button @click="startRecording" :disabled="isRecording">Iniciar Grabación</button>
               <button @click="stopRecording" :disabled="!isRecording">Detener Grabación</button>
+            </div>
+            <div class="row q-ma-sm">
+              <div class="col-12 text-center">
+                <q-btn
+                  v-if="!cameraStart"
+                  label="Dar permiso de camara"
+                  color="primary"
+                  icon="camera"
+                  ref="camera"
+                  @click="startCamera" />
+                <q-btn
+                  v-else-if="showVideo"
+                  label="Tomar Foto"
+                  color="primary"
+                  icon="camera"
+                  @click="takePhoto" />
+              </div>
             </div>
             <div v-if="videoURL">
               <h3>Recorded Video:</h3>
@@ -49,6 +74,9 @@ import { showLoading } from '../../helpers/showLoading';
 export default {
   data() {
     return {
+      cameraStart: false,
+      videoInputDevices: [],
+      selectedDeviceId: null,
       mediaRecorder: null,
       chunks: [],
       videoURL: null,
@@ -65,6 +93,9 @@ export default {
     config: {
       type: Object,
     },
+  },
+  async mounted() {
+    await this.initCamera();
   },
   computed: {
     ...mapState(fileTypes.PATH, [
@@ -102,18 +133,53 @@ export default {
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
-    async startRecording() {
+    async initCamera() {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         const e = [{
           text: 'Error al acceder a la camara',
           detail: 'getUserMedia is not supported in this browser.',
         }];
         this.showNotification(e, false, 'top-right', 5000);
-        return;
+      } else {
+        await this.getVideoInputDevices();
       }
-
+    },
+    async startCamera() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        const video = document.getElementById('video');
+        video.srcObject = stream;
+        this.cameraStart = true;
+        window.location.reload();
+      } catch (error) {
+        const e = [{
+          text: 'Error al acceder a la camara',
+          detail: error.message,
+        }];
+        this.showNotification(e, false, 'top-right', 5000);
+      }
+    },
+    async getVideoInputDevices() {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        this.videoInputDevices = devices.filter((device) => device.kind === 'videoinput');
+        if (this.videoInputDevices.length > 0) {
+          this.selectedDeviceId = this.videoInputDevices.length === 2 ? this.videoInputDevices[1] : this.videoInputDevices[0];
+        }
+      } catch (error) {
+        console.error('Error fetching video input devices', error);
+      }
+    },
+    async startRecording(deviceId) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            deviceId: {
+              exact: deviceId && deviceId.deviceId ? deviceId.deviceId : deviceId,
+            },
+          },
+          audio: true,
+        });
         this.$refs.video.srcObject = stream;
         this.mediaRecorder = new MediaRecorder(stream);
         this.mediaRecorder.ondataavailable = (event) => {

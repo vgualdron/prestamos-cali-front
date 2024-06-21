@@ -23,11 +23,6 @@
             </div>
           </div>
           <div class="row">
-            <!-- <a v-if="link"
-              :href="link"
-              target="_blank">
-              Abrir
-            </a> -->
             <div v-show="showVideo" class="col-12 text-center video-container">
               <video autoplay width="250rem" ref="video" id="video"></video>
               <div class="overlay-square"></div>
@@ -146,7 +141,13 @@ export default {
       saveFile: fileTypes.actions.SAVE_FILE,
     }),
     async initCamera() {
-      if (navigator.mediaDevices.getUserMedia) {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        const e = [{
+          text: 'Error al acceder a la camara',
+          detail: 'getUserMedia is not supported in this browser.',
+        }];
+        this.showNotification(e, false, 'top-right', 5000);
+      } else {
         this.enableCamera = true;
         await this.getVideoInputDevices();
       }
@@ -202,12 +203,10 @@ export default {
         .then((blob) => {
           createImageBitmap(blob);
           this.blob = blob;
-          console.log(this.blob);
           const reader = new FileReader();
           reader.readAsDataURL(blob);
           reader.onloadend = async () => {
             this.image = reader.result;
-            console.log(this.image);
             this.$refs.imgTakePhoto.src = this.image;
           };
         }).catch((error) => console.log(error));
