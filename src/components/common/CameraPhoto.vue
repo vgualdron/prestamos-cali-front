@@ -41,28 +41,26 @@
                 ref="camera"
                 :disabled="!enableCamera"
                 @click="startCamera" />
-              <q-btn
-                v-else-if="showVideo"
-                label="Tomar Foto"
-                color="primary"
-                icon="camera"
-                @click="takePhoto" />
             </div>
           </div>
         </q-card-section>
         <q-separator />
         <div class="row text-center q-pa-md">
           <q-btn
-            label="Cambiar foto"
+            label="Tomar"
             color="primary"
-            class="col"
-            icon="change_circle"
+            :disabled="!showVideo || !cameraStart"
+            @click="takePhoto" />
+          <q-btn
+            label="Cambiar"
+            color="primary"
+            class="col q-ml-sm"
             @click="showVideo = true"
             :disabled="showVideo"
             outline
           />
           <q-btn
-            label="Guardar imagen"
+            label="Guardar"
             color="primary"
             class="col q-ml-sm"
             :disabled="showVideo"

@@ -23,40 +23,36 @@
             </div>
           </div>
           <div class="video-recorder">
-            <video autoplay width="250rem" ref="video" id="video"></video>
-            <div>
-              <button @click="startRecording" :disabled="isRecording">Iniciar Grabación</button>
-              <button @click="stopRecording" :disabled="!isRecording">Detener Grabación</button>
+            <div v-show="!videoURL || isRecording" class="col-12 text-center video-container">
+              <video autoplay width="250rem" ref="video" id="video"></video>
+              <div class="overlay-square"></div>
             </div>
-            <div class="row q-ma-sm">
-              <div class="col-12 text-center">
-                <q-btn
-                  v-if="!cameraStart"
-                  label="Dar permiso de camara"
-                  color="primary"
-                  icon="camera"
-                  ref="camera"
-                  @click="startCamera" />
-                <q-btn
-                  v-else-if="showVideo"
-                  label="Tomar Foto"
-                  color="primary"
-                  icon="camera"
-                  @click="takePhoto" />
-              </div>
-            </div>
-            <div v-if="videoURL">
-              <h3>Recorded Video:</h3>
-              <video :src="videoURL" controls></video>
+            <div v-if="videoURL && !isRecording">
+              <video width="250rem" :src="videoURL" controls></video>
             </div>
           </div>
         </q-card-section>
         <q-separator />
         <div class="row text-center q-pa-md">
           <q-btn
+            :disabled="isRecording"
+            @click="startRecording(selectedDeviceId)"
+            color="primary">
+              Iniciar
+          </q-btn>
+          <q-btn
+            @click="stopRecording"
+            :disabled="!isRecording"
+            color="primary"
+            class="q-ml-sm"
+            outline>
+              Detener
+          </q-btn>
+          <q-btn
+            :disabled="isRecording || !videoURL"
             label="Guardar"
             color="primary"
-            class="col q-ml-sm"
+            class="q-ml-sm"
             @click="send"
           />
         </div>
@@ -74,7 +70,6 @@ import { showLoading } from '../../helpers/showLoading';
 export default {
   data() {
     return {
-      cameraStart: false,
       videoInputDevices: [],
       selectedDeviceId: null,
       mediaRecorder: null,
@@ -144,21 +139,6 @@ export default {
         await this.getVideoInputDevices();
       }
     },
-    async startCamera() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        const video = document.getElementById('video');
-        video.srcObject = stream;
-        this.cameraStart = true;
-        window.location.reload();
-      } catch (error) {
-        const e = [{
-          text: 'Error al acceder a la camara',
-          detail: error.message,
-        }];
-        this.showNotification(e, false, 'top-right', 5000);
-      }
-    },
     async getVideoInputDevices() {
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
@@ -172,6 +152,7 @@ export default {
     },
     async startRecording(deviceId) {
       try {
+        this.videoURL = null;
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
             deviceId: {
@@ -180,6 +161,7 @@ export default {
           },
           audio: true,
         });
+        this.isRecording = true;
         this.$refs.video.srcObject = stream;
         this.mediaRecorder = new MediaRecorder(stream);
         this.mediaRecorder.ondataavailable = (event) => {
@@ -191,7 +173,6 @@ export default {
         this.mediaRecorder.onstop = this.handleStop;
 
         this.mediaRecorder.start();
-        this.isRecording = true;
       } catch (error) {
         console.error('Error accessing camera:', error);
       }
@@ -234,19 +215,29 @@ export default {
 </script>
 
 <style scoped>
-.video-recorder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+  .video-recorder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-video {
-  width: 100%;
-  max-width: 640px;
-  border: 1px solid #000;
-}
-
-button {
-  margin: 10px;
-}
+  .video-container {
+    position: relative;
+    display: inline-block;
+  }
+  video {
+    display: block;
+    max-width: 640px;
+    margin: auto;
+  }
+  .overlay-square {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    border: 2px solid red;
+    transform: translate(-50%, -50%);
+    pointer-events: none; /* Make sure the square doesn't block interactions with the video */
+  }
 </style>
