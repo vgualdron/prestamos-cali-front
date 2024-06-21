@@ -198,11 +198,12 @@ export default {
     },
     async send() {
       showLoading('Guardando ...', 'Por favor, espere', true);
+      const { name, storage, model_id, model_name } = this.config;
       await this.saveFile({
-        name: '1_fiador',
-        storage: 'news',
-        model_name: 'news',
-        model_id: 100,
+        name,
+        storage,
+        model_name,
+        model_id,
         type: 'video',
         file: this.file,
         extension: this.extension,

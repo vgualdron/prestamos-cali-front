@@ -212,11 +212,12 @@ export default {
     },
     async sendImage() {
       showLoading('Guardando ...', 'Por favor, espere', true);
+      const { name, storage, model_id, model_name } = this.config;
       await this.saveFile({
-        name: '1_casa',
-        storage: 'news',
-        model_name: 'news',
-        model_id: 100,
+        name,
+        storage,
+        model_name,
+        model_id,
         type: 'image',
         file: this.file,
         extension: this.extension,
