@@ -53,6 +53,7 @@ module.exports = function (ctx) {
       env: {
         URL_API: ctx.dev ? process.env.URL_API : process.env.URL_API_PROD,
         LATEST_VERSION_APP: process.env.LATEST_VERSION_APP,
+        URL_FILES: process.env.URL_FILES,
       },
       // transpile: false,
 

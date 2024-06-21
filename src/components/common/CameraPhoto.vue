@@ -23,11 +23,11 @@
             </div>
           </div>
           <div class="row">
-            <a v-if="responseMessages && responseMessages.length > 0"
-              :href="responseMessages[0].detail"
+            <!-- <a v-if="link"
+              :href="link"
               target="_blank">
               Abrir
-            </a>
+            </a> -->
             <div v-show="showVideo" class="col-12 text-center video-container">
               <video autoplay width="250rem" ref="video" id="video"></video>
               <div class="overlay-square"></div>
@@ -131,6 +131,12 @@ export default {
       const ext = type.split('/');
       return ext.length > 1 ? ext[1] : ext[0];
     },
+    link() {
+      if (this.responseMessages && this.responseMessages.length > 0) {
+        return `${process.env.URL_FILES}${this.responseMessages[0].text}`;
+      }
+      return '';
+    },
   },
   async mounted() {
     await this.initCamera();
@@ -210,6 +216,11 @@ export default {
     async sendImage() {
       showLoading('Guardando ...', 'Por favor, espere', true);
       await this.saveFile({
+        name: '1_casa',
+        storage: 'news',
+        model_name: 'news',
+        model_id: 100,
+        type: 'image',
         file: this.file,
         extension: this.extension,
       });

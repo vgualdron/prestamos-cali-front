@@ -10,15 +10,15 @@
         <q-separator />
         <q-card-section style="max-height: 60vh" class="scroll">
           <div class="video-recorder">
-            <a v-if="responseMessages && responseMessages.length > 0"
-              :href="responseMessages[0].detail"
+            <!-- <a v-if="link"
+              :href="link"
               target="_blank">
               Abrir
-            </a>
-            <video ref="video" autoplay></video>
+            </a> -->
+            <video autoplay width="250rem" ref="video" id="video"></video>
             <div>
-              <button @click="startRecording">Start Recording</button>
-              <button @click="stopRecording" :disabled="!isRecording">Stop Recording</button>
+              <button @click="startRecording" :disabled="isRecording">Iniciar Grabación</button>
+              <button @click="stopRecording" :disabled="!isRecording">Detener Grabación</button>
             </div>
             <div v-if="videoURL">
               <h3>Recorded Video:</h3>
@@ -88,6 +88,12 @@ export default {
       const ext = type.split('/');
       return ext.length > 1 ? ext[1] : ext[0];
     },
+    link() {
+      if (this.responseMessages && this.responseMessages.length > 0) {
+        return `${process.env.URL_FILES}${this.responseMessages[0].text}`;
+      }
+      return '';
+    },
   },
   methods: {
     ...mapActions(fileTypes.PATH, {
@@ -107,11 +113,15 @@ export default {
       }
 
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         this.$refs.video.srcObject = stream;
-
         this.mediaRecorder = new MediaRecorder(stream);
-        this.mediaRecorder.ondataavailable = (e) => this.chunks.push(e.data);
+        this.mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            this.chunks.push(event.data);
+          }
+        };
+
         this.mediaRecorder.onstop = this.handleStop;
 
         this.mediaRecorder.start();
@@ -123,6 +133,7 @@ export default {
     stopRecording() {
       this.mediaRecorder.stop();
       this.isRecording = false;
+      this.$refs.video.srcObject.getTracks().forEach((track) => track.stop());
     },
     handleStop() {
       const blob = new Blob(this.chunks, { type: 'video/webm' });
@@ -141,6 +152,11 @@ export default {
     async send() {
       showLoading('Guardando ...', 'Por favor, espere', true);
       await this.saveFile({
+        name: '1_fiador',
+        storage: 'news',
+        model_name: 'news',
+        model_id: 100,
+        type: 'video',
         file: this.file,
         extension: this.extension,
       });
