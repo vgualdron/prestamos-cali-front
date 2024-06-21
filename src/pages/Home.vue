@@ -10,8 +10,8 @@
           ref="camera"
           :config="{ name: '1_casa',
             storage: 'news',
-            model_name: 'news',
-            model_id: 110}"
+            modelName: 'news',
+            modelId: 110}"
           @click="showModalCameraPhoto = true" />
       </div>
     </div>
