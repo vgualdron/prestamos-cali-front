@@ -46,7 +46,7 @@
             color="primary"
             class="q-ml-sm"
             outline>
-              Detener
+              Parar
           </q-btn>
           <q-btn
             :disabled="isRecording || !videoURL"
