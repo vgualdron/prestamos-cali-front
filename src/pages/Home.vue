@@ -8,7 +8,8 @@
           color="primary"
           icon="add_a_photo"
           ref="camera"
-          :config="{ name: '1_casa',
+          :config="{
+            name: '1-casa',
             storage: 'news',
             modelName: 'news',
             modelId: 110}"
@@ -22,10 +23,11 @@
           color="primary"
           icon="video_call"
           ref="camera"
-          :config="{ name: '1_fiador',
+          :config="{
+            name: '1-fiador',
             storage: 'news',
-            model_name: 'news',
-            model_id: 100}"
+            modelName: 'news',
+            modelId: 100}"
           @click="showModalCameraVideo = true" />
       </div>
     </div>

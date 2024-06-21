@@ -198,7 +198,13 @@ export default {
     },
     async send() {
       showLoading('Guardando ...', 'Por favor, espere', true);
-      const { name, storage, modelId, modelName } = this.config;
+      const {
+        name,
+        storage,
+        modelId,
+        modelName,
+      } = this.config;
+
       await this.saveFile({
         name,
         storage,
