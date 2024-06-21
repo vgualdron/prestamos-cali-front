@@ -99,7 +99,6 @@ export default {
       default: false,
     },
     config: {
-      type: Object,
     },
   },
   computed: {

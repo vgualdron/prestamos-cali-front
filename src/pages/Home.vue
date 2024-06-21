@@ -8,11 +8,6 @@
           color="primary"
           icon="add_a_photo"
           ref="camera"
-          :config="{
-            name: '1-casa',
-            storage: 'news',
-            modelName: 'news',
-            modelId: 110}"
           @click="showModalCameraPhoto = true" />
       </div>
     </div>
@@ -23,22 +18,25 @@
           color="primary"
           icon="video_call"
           ref="camera"
-          :config="{
-            name: '1-fiador',
-            storage: 'news',
-            modelName: 'news',
-            modelId: 100}"
           @click="showModalCameraVideo = true" />
       </div>
     </div>
     <camera-photo
       v-if="showModalCameraPhoto"
-      :config="configCamera"
+      :config="{
+        name: '1-casa',
+        storage: 'news',
+        modelName: 'news',
+        modelId: 100}"
       v-model="showModalCameraPhoto"
       />
     <camera-video
       v-if="showModalCameraVideo"
-      :config="configCamera"
+      :config="{
+        name: '1-fiador',
+        storage: 'news',
+        modelName: 'news',
+        modelId: 110}"
       v-model="showModalCameraVideo"
       />
   </q-page>
