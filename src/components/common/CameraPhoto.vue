@@ -1,6 +1,19 @@
 <template>
   <div class="q-pa-md">
-    <q-dialog v-model="showModal" persistent>
+    <div class="row">
+      <div class="col-12 text-center">
+        <q-btn
+          label="Agregar foto"
+          color="primary"
+          icon="add_a_photo"
+          ref="camera"
+          @click="initCamera" />
+      </div>
+    </div>
+    <q-dialog
+      v-if="showModal"
+      v-model="showModal"
+      persistent>
       <q-card style="max-width: 80vw;">
         <q-card-section class="row items-center q-pb-none">
           <div class="text-h6">Tomar foto</div>
@@ -91,13 +104,10 @@ export default {
       image: null,
       blob: null,
       showVideo: true,
+      showModal: false,
     };
   },
   props: {
-    value: {
-      type: Boolean,
-      default: false,
-    },
     config: {
     },
   },
@@ -106,14 +116,6 @@ export default {
       'responseMessages',
       'status',
     ]),
-    showModal: {
-      get() {
-        return this.value;
-      },
-      set(val) {
-        this.$emit('input', val);
-      },
-    },
     file() {
       const f = this.image.split('base64,');
       return f.length > 1 ? f[1] : f[0];
@@ -130,14 +132,12 @@ export default {
       return '';
     },
   },
-  async mounted() {
-    await this.initCamera();
-  },
   methods: {
     ...mapActions(fileTypes.PATH, {
       saveFile: fileTypes.actions.SAVE_FILE,
     }),
     async initCamera() {
+      this.showModal = true;
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         const e = [{
           text: 'Error al acceder a la camara',
@@ -179,7 +179,7 @@ export default {
       }
     },
     async openCamera(deviceId) {
-      this.showModal = true;
+      // this.showModal = true;
       navigator.mediaDevices.getUserMedia({
         video: {
           deviceId: {

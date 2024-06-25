@@ -69,6 +69,13 @@ const routes = [
       { path: '', name: 'Agenda de usuarios', component: () => import('pages/UsersDiary.vue') },
     ],
   },
+  {
+    path: '/zip',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Exportar comprimidos', component: () => import('pages/Zip.vue') },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

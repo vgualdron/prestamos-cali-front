@@ -1,43 +1,19 @@
 <template>
   <q-page class="">
     <home />
-    <div class="row">
-      <div class="col-12 text-center">
-        <q-btn
-          label="Agregar foto"
-          color="primary"
-          icon="add_a_photo"
-          ref="camera"
-          @click="showModalCameraPhoto = true" />
-      </div>
-    </div>
-    <div class="row q-ma-md">
-      <div class="col-12 text-center">
-        <q-btn
-          label="Agregar video"
-          color="primary"
-          icon="video_call"
-          ref="camera"
-          @click="showModalCameraVideo = true" />
-      </div>
-    </div>
     <camera-photo
-      v-if="showModalCameraPhoto"
       :config="{
         name: '1-casa',
         storage: 'news',
         modelName: 'news',
         modelId: 100}"
-      v-model="showModalCameraPhoto"
       />
     <camera-video
-      v-if="showModalCameraVideo"
       :config="{
         name: '1-fiador',
         storage: 'news',
         modelName: 'news',
         modelId: 110}"
-      v-model="showModalCameraVideo"
       />
   </q-page>
 </template>
@@ -55,8 +31,6 @@ export default {
   },
   data() {
     return {
-      showModalCameraPhoto: false,
-      showModalCameraVideo: false,
       configCamera: {
         type: 'photo',
       },

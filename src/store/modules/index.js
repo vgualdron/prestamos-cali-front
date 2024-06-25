@@ -8,6 +8,7 @@ import home, { name as homeName } from './home';
 import news, { name as newName } from './new';
 import diaries, { name as diarieName } from './diary';
 import file, { name as fileName } from './file';
+import zip, { name as zipName } from './zip';
 
 export default {
   [homeName]: home,
@@ -20,4 +21,5 @@ export default {
   [newName]: news,
   [diarieName]: diaries,
   [fileName]: file,
+  [zipName]: zip,
 };

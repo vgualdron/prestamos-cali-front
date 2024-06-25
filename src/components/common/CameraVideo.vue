@@ -1,6 +1,19 @@
 <template>
   <div class="q-pa-md">
-    <q-dialog v-model="showModal" persistent>
+    <div class="row q-ma-md">
+      <div class="col-12 text-center">
+        <q-btn
+          label="Agregar video"
+          color="primary"
+          icon="video_call"
+          ref="camera"
+          @click="initCamera" />
+      </div>
+    </div>
+    <q-dialog
+      v-if="showModal"
+      v-model="showModal"
+      persistent>
       <q-card style="max-width: 80vw;">
         <q-card-section class="row items-center q-pb-none">
           <div class="text-h6">Grabar video</div>
@@ -78,33 +91,19 @@ export default {
       isRecording: false,
       video: null,
       blob: null,
+      showModal: false,
     };
   },
   props: {
-    value: {
-      type: Boolean,
-      default: false,
-    },
     config: {
       type: Object,
     },
-  },
-  async mounted() {
-    await this.initCamera();
   },
   computed: {
     ...mapState(fileTypes.PATH, [
       'responseMessages',
       'status',
     ]),
-    showModal: {
-      get() {
-        return this.value;
-      },
-      set(val) {
-        this.$emit('input', val);
-      },
-    },
     file() {
       const f = this.video.split('base64,');
       return f.length > 1 ? f[1] : f[0];
@@ -129,6 +128,7 @@ export default {
       showNotifications(messages, status, align, timeout);
     },
     async initCamera() {
+      this.showModal = true;
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         const e = [{
           text: 'Error al acceder a la camara',
