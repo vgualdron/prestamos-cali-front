@@ -186,13 +186,10 @@ export default {
       const blob = new Blob(this.chunks, { type: 'video/webm' });
       this.videoURL = URL.createObjectURL(blob);
       this.blob = blob;
-      console.log(this.blob);
-      console.log(this.videoURL);
       const reader = new FileReader();
       reader.readAsDataURL(blob);
       reader.onloadend = async () => {
         this.video = reader.result;
-        console.log(this.video);
       };
       this.chunks = [];
     },

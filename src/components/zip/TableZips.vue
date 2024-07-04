@@ -23,7 +23,7 @@
       >
         <q-btn
           color="primary"
-          label="Exportar datos"
+          label="Exportar archivos"
           @click="exportData"
           :disabled="!validatedPermissions.create.status"
           :title="validatedPermissions.create.title"
@@ -32,7 +32,7 @@
     </div>
     <q-table
       :grid="$q.screen.xs"
-      :data="data"
+      :data="dataTable"
       :columns="columns"
       :filter="filter"
       :pagination="pagination"
@@ -126,7 +126,6 @@ export default {
         rowsPerPage: 50,
       },
       filter: '',
-      data: [],
     };
   },
   async mounted() {
@@ -138,6 +137,9 @@ export default {
       'responseMessages',
       'status',
     ]),
+    dataTable() {
+      return [...this.zips];
+    },
     validatedPermissions() {
       const statusCreate = havePermission('zip.create');
       return {
@@ -157,9 +159,6 @@ export default {
       showLoading('Cargando Zips ...', 'Por favor, espere', true);
       await this.listZips();
       if (this.status === true) {
-        this.data = this.zips.map((element) => ({
-          ...element,
-        }));
         this.$q.loading.hide();
       } else {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
@@ -170,8 +169,13 @@ export default {
     async exportData() {
       showLoading('Exportando archivos ...', 'Por favor, espere', true);
       await this.createZip();
-      this.openUrlFile();
       this.$q.loading.hide();
+      if (this.status) {
+        this.openUrlFile();
+        await this.listZips();
+      } else {
+        this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
+      }
     },
     openUrlFile() {
       if (this.responseMessages && this.responseMessages.length > 0) {

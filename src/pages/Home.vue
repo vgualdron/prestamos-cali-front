@@ -3,17 +3,17 @@
     <home />
     <camera-photo
       :config="{
-        name: '1-casa',
+        name: 'casa',
         storage: 'news',
         modelName: 'news',
-        modelId: 100}"
+        modelId: 2}"
       />
     <camera-video
       :config="{
-        name: '1-fiador',
+        name: 'fiador',
         storage: 'news',
         modelName: 'news',
-        modelId: 110}"
+        modelId: 2}"
       />
   </q-page>
 </template>
