@@ -24,8 +24,8 @@ module.exports = function (ctx) {
     // --> boot files are part of "main.js"
     // https://v1.quasar.dev/quasar-cli/boot-files
     boot: [
-
       'axios',
+      'firebase',
     ],
 
     // https://v1.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
@@ -125,9 +125,11 @@ module.exports = function (ctx) {
 
     // https://v1.quasar.dev/quasar-cli/developing-pwa/configuring-pwa
     pwa: {
-      workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
+      workboxPluginMode: 'InjectManifest', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {
         skipWaiting: true,
+        swSrc: 'public/firebase-messaging-sw.js', // Asegúrate de que la ruta sea correcta
+        swDest: 'firebase-messaging-sw.js'
       }, // only for GenerateSW
       manifest: {
         name: 'Control de Prestamos',
