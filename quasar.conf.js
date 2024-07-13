@@ -127,7 +127,6 @@ module.exports = function (ctx) {
     pwa: {
       workboxPluginMode: 'InjectManifest', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {
-        skipWaiting: true,
         swSrc: 'public/firebase-messaging-sw.js', // Asegúrate de que la ruta sea correcta
         swDest: 'firebase-messaging-sw.js'
       }, // only for GenerateSW
