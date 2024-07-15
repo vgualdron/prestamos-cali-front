@@ -2,11 +2,29 @@
   <div class="q-pa-md">
     <div class="row q-ma-md">
       <div class="col-12 text-center">
+        <video
+          v-if="urlFile"
+          :src="urlFile"
+          width="250rem"
+          controls>
+        </video>
+        <p v-else class="text-subtitle1 text-center">No se ha cargado archivo</p>
+        <q-banner
+          v-if="item && item.status == 'rechazado' && item.observation"
+          class="bg-red text-white q-ma-md">
+          {{ item.status }}: {{ item.observation }}
+        </q-banner>
+        <q-banner
+          v-if="item && item.status == 'aprobado'"
+          class="bg-green text-white q-ma-md">
+          {{ item.status }}
+        </q-banner>
         <q-btn
           label="Agregar video"
           color="primary"
           icon="video_call"
           ref="camera"
+          class="q-mt-sm"
           @click="initCamera" />
       </div>
     </div>
@@ -83,6 +101,8 @@ import { showLoading } from '../../helpers/showLoading';
 export default {
   data() {
     return {
+      item: null,
+      urlFile: null,
       videoInputDevices: [],
       selectedDeviceId: null,
       mediaRecorder: null,
@@ -98,6 +118,9 @@ export default {
     config: {
       type: Object,
     },
+  },
+  async mounted() {
+    await this.fetchFile();
   },
   computed: {
     ...mapState(fileTypes.PATH, [
@@ -123,6 +146,7 @@ export default {
   methods: {
     ...mapActions(fileTypes.PATH, {
       saveFile: fileTypes.actions.SAVE_FILE,
+      getFile: fileTypes.actions.GET_FILE,
     }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
@@ -212,7 +236,32 @@ export default {
         extension: this.extension,
       });
       this.$q.loading.hide();
+      if (this.responseMessages && this.status) {
+        this.showModal = false;
+        this.$emit('savedFile', this.link);
+      }
       this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
+    },
+    async fetchFile() {
+      showLoading('consultando archivo ...', 'Por favor, espere', true);
+      const {
+        name,
+        modelId,
+        modelName,
+      } = this.config;
+
+      const response = await this.getFile({
+        name,
+        modelName,
+        modelId,
+      });
+
+      this.$q.loading.hide();
+
+      if (response.data) {
+        this.item = response.data;
+        this.urlFile = `${process.env.URL_FILES}${this.item.url}`;
+      }
     },
   },
 };

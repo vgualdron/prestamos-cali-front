@@ -1,48 +1,45 @@
 <template>
   <q-page class="">
-    <div class="row q-mt-sm">
-      <div class="col-12 text-center">
-        <q-btn
-          class="q-ml-xs"
-          color="primary"
-          label="Agenda actual"
-          size="md"
-          @click="viewDiary('current')"
-        />
-        <q-btn
-          class="q-ml-xs"
-          color="primary"
-          label="Agenda proxima semana"
-          size="md"
-          @click="viewDiary('next')"
-        />
-      </div>
-    </div>
-    <table-diary
-      v-if="diariesDayByDay && diariesDayByDay.length > 0"
-      :data="diariesDayByDay"
-      type="visitor"
-      @addVisit="addVisit"/>
+    <q-btn
+      round
+      icon="west"
+      class="q-ml-md q-mt-md"
+      color="primary"
+      @click="$router.go(-1)">
+    </q-btn>
+    <q-btn
+      round
+      icon="refresh"
+      class="q-ml-md q-mt-md"
+      color="primary">
+    </q-btn>
+    <StepperVisit :id="newId"/>
   </q-page>
 </template>
 
 <script>
 import Moment from 'moment';
 import { mapState, mapActions } from 'vuex';
-import TableDiary from 'components/diary/TableDiary.vue';
+import StepperVisit from 'components/visit/StepperVisit.vue';
 import commonTypes from '../store/modules/common/types';
 import diaryTypes from '../store/modules/diary/types';
 import { showNotifications } from '../helpers/showNotifications';
 import { showLoading } from '../helpers/showLoading';
 
 export default {
-  components: { TableDiary },
+  components: {
+    StepperVisit,
+  },
   data() {
     return {
+      newId: null,
     };
   },
-  name: 'PageMyDiary',
+  name: 'PageVisit',
   async mounted() {
+    const { id } = this.$route.params;
+    this.newId = id;
+    console.log(id);
     await this.viewDiary('current');
   },
   computed: {

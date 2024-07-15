@@ -21,6 +21,10 @@ export default {
       }
     }
   },
+  async [types.actions.GET_FILE](context, payload) {
+    const response = await fileApi.get(payload);
+    return response.data;
+  },
   async [types.actions.DELETE_FILE]({ commit }, payload) {
     try {
       const response = await fileApi.delete(payload);

@@ -45,13 +45,21 @@
     </div>
     <div class="row q-mt-md">
       <div class="col-12 text-center">
-        <q-option-group
+        <div class="q-px-sm">
+          <b>Cobrador seleccionado:</b>
+        </div>
+        <q-radio
+          v-for="user in optionsUsers"
           v-model="userSelected"
-          :options="optionsUsers"
-          color="primary"
-          type="radio"
-          inline
-        />
+          checked-icon="task_alt"
+          :val="user.value"
+          :label="user.label"
+          :key="user.value"
+          class="q-ml-lg q-mt-sm">
+          <q-btn round icon="notifications" class="q-ml-sm">
+            <q-badge floating color="red" rounded />
+          </q-btn><br>
+        </q-radio>
       </div>
     </div>
     <q-table
@@ -75,7 +83,7 @@
               field="changeStatus"
               icon="edit_calendar"
               size="sm"
-              :disabled="!validatedPermissions.changeStatus.status"
+              :disabled="!validatedPermissions.changeStatus.status || disabledBtnAddVisit(props.row)"
               :title="validatedPermissions.changeStatus.title"
               @click="openModalVisit(props.row)"
               round
@@ -87,7 +95,7 @@
               field="changeStatus"
               icon="pending_actions"
               size="sm"
-              :disabled="!validatedPermissions.changeStatusPending.status"
+              :disabled="!validatedPermissions.changeStatusPending.status || disabledBtnPending(props.row)"
               :title="validatedPermissions.changeStatusPending.title"
               @click="changeStatus(props.row, 'pendiente')"
               round
@@ -99,11 +107,48 @@
               field="changeStatus"
               icon="do_disturb_alt"
               size="sm"
-              :disabled="!validatedPermissions.changeStatusReject.status"
+              :disabled="!validatedPermissions.changeStatusReject.status || disabledBtnDenied(props.row)"
               :title="validatedPermissions.changeStatusReject.title"
               @click="changeStatus(props.row, 'rechazado')"
               round
             />
+          </q-td>
+          <q-td key="address_house" :props="props">
+            <q-icon size="xs" name="edit" />
+            {{ props.row.address_house }}
+            <q-popup-edit :value="props.row.address_house" v-slot="scope" buttons
+              @input="val => save('address_house', val)">
+              <q-input v-model="scope.value" dense autofocus />
+            </q-popup-edit>
+          </q-td>
+          <q-td key="address_work" :props="props">
+            <q-icon size="xs" name="edit" />
+            {{ props.row.address_work }}
+            <q-popup-edit :value="props.row.address_work" v-slot="scope" buttons
+              @input="val => save('address_work', val)">
+              <q-input v-model="scope.value" dense autofocus />
+            </q-popup-edit>
+          </q-td>
+          <q-td key="site_visit" :props="props">
+            <q-icon size="xs" name="edit" />
+            {{ props.row.site_visit }}
+            <q-popup-edit :value="props.row.site_visit" v-slot="scope" buttons
+              @input="val => save('site_visit', val)">
+              <q-option-group
+                v-model="scope.value"
+                :options="[
+                  {
+                    label: 'casa',
+                    value: 'casa'
+                  },
+                  {
+                    label: 'trabajo',
+                    value: 'trabajo'
+                  },
+                ]"
+                color="primary"
+              />
+            </q-popup-edit>
           </q-td>
           <q-td key="observation" :props="props">
             <q-icon size="xs" name="edit" />
@@ -190,6 +235,30 @@ export default {
           label: 'Acciones',
           align: 'center',
           visible: false,
+        },
+        {
+          name: 'address_house',
+          align: 'left',
+          label: 'Dirección casa',
+          field: 'address_house',
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'address_work',
+          align: 'left',
+          label: 'Dirección trabajo',
+          field: 'address_work',
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'site_visit',
+          align: 'left',
+          label: 'Lugar de visita',
+          field: 'site_visit',
+          sortable: true,
+          visible: true,
         },
         {
           name: 'observation',
@@ -454,6 +523,15 @@ export default {
     ...mapActions(userTypes.PATH, {
       listUsersByRoleName: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
     }),
+    disabledBtnPending(row) {
+      return !row.observation;
+    },
+    disabledBtnDenied(row) {
+      return !row.observation;
+    },
+    disabledBtnAddVisit(row) {
+      return !row.address_house || !row.address_work || !row.site_visit;
+    },
     async listNewsMounted() {
       await this.listNews(this.tab === 'one' ? ['creado'] : ['pendiente']);
       if (this.status === false) {

@@ -1,6 +1,7 @@
 export default {
   PATH: '@module/file',
   actions: {
+    GET_FILE: '@actions/getFile',
     SAVE_FILE: '@actions/saveFile',
     DELETE_FILE: '@actions/deleteFile',
   },

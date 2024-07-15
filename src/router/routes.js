@@ -70,10 +70,24 @@ const routes = [
     ],
   },
   {
+    path: '/visit/:id',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Visita', component: () => import('pages/Visit.vue') },
+    ],
+  },
+  {
     path: '/zip',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', name: 'Exportar comprimidos', component: () => import('pages/Zip.vue') },
+    ],
+  },
+  {
+    path: '/param',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Parametros', component: () => import('pages/Configuration.vue') },
     ],
   },
   // Always leave this as last one,

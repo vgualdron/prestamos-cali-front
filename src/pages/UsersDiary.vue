@@ -38,6 +38,24 @@
         </q-select>
       </div>
     </div>
+    <div class="row q-mt-sm">
+      <div class="col-12 text-center">
+        <q-btn
+          class="q-ml-xs"
+          color="primary"
+          label="Agenda actual"
+          size="md"
+          @click="viewDiary('current')"
+        />
+        <q-btn
+          class="q-ml-xs"
+          color="primary"
+          label="Agenda proxima semana"
+          size="md"
+          @click="viewDiary('next')"
+        />
+      </div>
+    </div>
     <div class="row q-mt-md">
       <div class="col-12 text-center">
         <table-diary

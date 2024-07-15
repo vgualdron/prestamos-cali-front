@@ -1,12 +1,23 @@
 <template>
   <div class="q-pa-md">
-    <div class="row">
+    <div class="row q-ma-md">
       <div class="col-12 text-center">
+        <img
+          v-if="urlFile"
+          :src="urlFile"
+          width="250rem" />
+        <p v-else class="text-subtitle1 text-center">No se ha cargado archivo</p>
+        <q-banner
+          v-if="item && item.status == 'rechazado' && item.observation"
+          class="bg-red text-white q-ma-md">
+          {{ item.observation }}
+        </q-banner>
         <q-btn
           label="Agregar foto"
           color="primary"
           icon="add_a_photo"
           ref="camera"
+          class="q-mt-sm"
           @click="initCamera" />
       </div>
     </div>
@@ -95,6 +106,8 @@ export default {
   name: 'CameraPhoto',
   data() {
     return {
+      item: null,
+      urlFile: null,
       videoInputDevices: [],
       selectedDeviceId: null,
       enableCamera: false,
@@ -110,6 +123,9 @@ export default {
   props: {
     config: {
     },
+  },
+  async mounted() {
+    await this.fetchFile();
   },
   computed: {
     ...mapState(fileTypes.PATH, [
@@ -135,6 +151,7 @@ export default {
   methods: {
     ...mapActions(fileTypes.PATH, {
       saveFile: fileTypes.actions.SAVE_FILE,
+      getFile: fileTypes.actions.GET_FILE,
     }),
     async initCamera() {
       this.showModal = true;
@@ -228,7 +245,32 @@ export default {
         extension: this.extension,
       });
       this.$q.loading.hide();
+      if (this.responseMessages && this.status) {
+        this.showModal = false;
+        this.$emit('savedFile', this.link);
+      }
       this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
+    },
+    async fetchFile() {
+      showLoading('consultando archivo ...', 'Por favor, espere', true);
+      const {
+        name,
+        modelId,
+        modelName,
+      } = this.config;
+
+      const response = await this.getFile({
+        name,
+        modelName,
+        modelId,
+      });
+
+      this.$q.loading.hide();
+
+      if (response.data) {
+        this.item = response.data;
+        this.urlFile = `${process.env.URL_FILES}${this.item.url}`;
+      }
     },
   },
 };
@@ -237,6 +279,11 @@ export default {
   .video-container {
     position: relative;
     display: inline-block;
+  }
+  img {
+    display: block;
+    max-width: 640px;
+    margin: auto;
   }
   video {
     display: block;

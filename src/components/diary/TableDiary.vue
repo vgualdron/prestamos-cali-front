@@ -28,8 +28,12 @@
                 {{ e.new_phone }}
               </span>
               <br>
+              <span>
+                Lugar de visita: <b>{{ e.site_visit }}</b>
+              </span>
+              <br>
               <div class="wrap-text">
-                {{ e.new_address }}, {{ e.new_district }}, {{ e.sectorName }}
+                {{ e.site_visit === 'trabajo' ? e.address_work : e.address_house }}
               </div>
               <span>
                 {{ e.new_occupation }}
@@ -37,11 +41,11 @@
               <p>
                 <q-btn
                   v-if="type === 'visitor'"
-                  label="Iniciar visita"
+                  label="Entrar a visita"
                   color="primary"
                   class="col"
                   icon="arrow_forward"
-                  @click="showVideo = true"
+                  @click="goVisit(e)"
                   outline
                 />
               </p>
@@ -106,11 +110,28 @@ export default {
       console.log(item);
     },
     clickTd(item) {
-      console.log(item);
-      this.tdSelected = { ...item };
+      const fecha1 = new Date();
+      const fecha2 = new Date(item.date);
+      if (fecha1.getTime() > fecha2.getTime()) {
+        this.showNotification(
+          [
+            {
+              text: 'No puedes asignar visitas a fechas inferiores a la actual',
+              detail: 'Prueba con alguna fecha superior a la actual',
+            },
+          ],
+          false,
+        );
+      } else {
+        this.tdSelected = { ...item };
+      }
     },
     addVisit(item) {
       this.$emit('addVisit', item);
+    },
+    goVisit(item) {
+      console.log(item);
+      this.$router.push(`/visit/${item.new_id}`);
     },
   },
   components: {
