@@ -1,6 +1,6 @@
 <template>
   <q-page class="">
-    <div class="row q-mt-sm">
+    <!-- <div class="row q-mt-sm">
       <div class="col-12 text-center">
         <q-btn
           class="q-ml-xs"
@@ -17,10 +17,10 @@
           @click="viewDiary('next')"
         />
       </div>
-    </div>
+    </div> -->
     <table-diary
       v-if="diariesDayByDay && diariesDayByDay.length > 0"
-      :data="diariesDayByDay"
+      :data="dataTable"
       type="visitor"
       @addVisit="addVisit"/>
   </q-page>
@@ -62,13 +62,16 @@ export default {
           date,
           items: [],
         };
+
+        const now = new Moment();
+        const startDate = now.startOf('day');
+        const end = new Moment().add(2, 'days');
+        const endDate = end.endOf('day');
+
         items.forEach((item) => {
-          const dateItem = new Date(item.date);
-          const currentDate = new Date();
-          currentDate.setDate(currentDate.getDate() - 1);
-          const endDate = new Date();
-          endDate.setDate(endDate.getDate() + 2);
-          if (dateItem.getTime() > currentDate.getTime() && dateItem.getTime() < endDate.getTime()) {
+          const dateItem = new Moment(item.date);
+          const isInRangeExclusive = dateItem.isBetween(startDate, endDate);
+          if (isInRangeExclusive) {
             b.items.push(item);
           }
         });
