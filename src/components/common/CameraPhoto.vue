@@ -196,7 +196,6 @@ export default {
       }
     },
     async openCamera(deviceId) {
-      // this.showModal = true;
       navigator.mediaDevices.getUserMedia({
         video: {
           deviceId: {
@@ -247,7 +246,7 @@ export default {
       this.$q.loading.hide();
       if (this.responseMessages && this.status) {
         this.showModal = false;
-        this.$emit('savedFile', this.link);
+        await this.fetchFile();
       }
       this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
     },

@@ -1,10 +1,25 @@
 <template>
   <div class="q-pa-md">
+    <q-btn
+      round
+      icon="refresh"
+      class="q-ml-xl q-mb-md fixed"
+      color="primary"
+      @click="reloadStatusFiles">
+    </q-btn>
+    <q-btn
+      round
+      icon="west"
+      class="q-mr-xs q-mb-md fixed"
+      color="primary"
+      @click="$router.go(-1)">
+    </q-btn>
     <q-stepper
       v-if="id > 0"
       v-model="step"
-      vertical
       color="primary"
+      class="q-mt-xl"
+      vertical
       animated
     >
       <q-step
@@ -14,6 +29,7 @@
         caption="Cargar datos, videos y fotos"
         :done="step > 1"
       >
+        <hr>
         <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA CLIENTE</p>
         <camera-photo
           :config="{
@@ -22,7 +38,6 @@
             modelName: 'news',
             modelId: id
           }"
-          @savedFile="savedFile"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">VIDEO TOCANDO CASA CLIENTE</p>
@@ -33,7 +48,6 @@
             modelName: 'news',
             modelId: id
           }"
-          @savedFile="savedFile"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">FOTO CLIENTE</p>
@@ -44,7 +58,6 @@
             modelName: 'news',
             modelId: id
           }"
-          @savedFile="savedFile"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA CLIENTE FRONTAL</p>
@@ -55,7 +68,6 @@
             modelName: 'news',
             modelId: id
           }"
-          @savedFile="savedFile"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA CLIENTE POSTERIOR</p>
@@ -66,7 +78,6 @@
             modelName: 'news',
             modelId: id
           }"
-          @savedFile="savedFile"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">FOTO LETRA</p>
@@ -77,7 +88,6 @@
             modelName: 'news',
             modelId: id
           }"
-          @savedFile="savedFile"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">FOTO FIRMANDO LETRA CLIENTE</p>
@@ -88,7 +98,6 @@
             modelName: 'news',
             modelId: id
           }"
-          @savedFile="savedFile"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">FOTO CERTIFICADO DE TRABAJO CLIENTE</p>
@@ -99,7 +108,6 @@
             modelName: 'news',
             modelId: id
           }"
-          @savedFile="savedFile"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">FOTO RECIBO CASA CLIENTE</p>
@@ -110,7 +118,6 @@
             modelName: 'news',
             modelId: id
           }"
-          @savedFile="savedFile"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
@@ -207,8 +214,73 @@
         caption="Cargar datos y video"
         :done="step > 2"
       >
-        An ad group contains one or more ads which target a shared set of keywords.
-
+        <hr>
+        <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 1</p>
+        <camera-video
+          :config="{
+            name: 'VIDEO_REFERENCIA_FAMILIAR_1',
+            storage: 'news',
+            modelName: 'news',
+            modelId: id
+          }"
+        />
+        <hr>
+        <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
+        <div class="table-container">
+          <q-markup-table
+            class="markup-table q-mt-md"
+            separator="cell"
+            dense
+          >
+            <tbody>
+              <tr class="tr-table">
+                <td class="td-table">
+                  <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
+                  <q-icon size="xs" name="edit" />
+                  {{ item.family_reference_name }}
+                  <q-popup-edit :value="item.family_reference_name" v-slot="scope" buttons
+                    @input="val => saveDateNew('family_reference_name', val)">
+                    <q-input v-model="scope.value" dense autofocus />
+                  </q-popup-edit>
+                </td>
+              </tr>
+              <tr class="tr-table">
+                <td class="td-table">
+                  <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
+                  <q-icon size="xs" name="edit" />
+                  {{ item.family_reference_address }}
+                  <q-popup-edit :value="item.family_reference_address" v-slot="scope" buttons
+                    @input="val => saveDateNew('family_reference_address', val)">
+                    <q-input v-model="scope.value" dense autofocus />
+                  </q-popup-edit>
+                </td>
+              </tr>
+              <tr class="tr-table">
+                <td class="td-table">
+                  <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
+                  <q-icon size="xs" name="edit" />
+                  {{ item.family_reference_phone }}
+                  <q-popup-edit :value="item.family_reference_phone" v-slot="scope" buttons
+                    @input="val => saveDateNew('family_reference_phone', val)">
+                    <q-input v-model="scope.value" type="number" dense autofocus />
+                  </q-popup-edit>
+                </td>
+              </tr>
+              <tr class="tr-table">
+                <td class="td-table">
+                  <p class="text-subtitle1 text-weight-bold text-center">Parentesco:</p>
+                  <q-icon size="xs" name="edit" />
+                  {{ item.family_reference_relationship }}
+                  <q-popup-edit :value="item.family_reference_relationship" v-slot="scope" buttons
+                    @input="val => saveDateNew('family_reference_relationship', val)">
+                    <q-input v-model="scope.value" dense autofocus />
+                  </q-popup-edit>
+                </td>
+              </tr>
+            </tbody>
+          </q-markup-table>
+        </div>
+        <hr>
         <q-stepper-navigation>
           <q-btn @click="step = 3" color="primary" label="Siguiente" />
           <q-btn flat @click="step = 1" color="primary" label="Anterior" class="q-ml-sm" />
@@ -222,7 +294,73 @@
         caption="Cargar datos y video"
         :done="step > 2"
       >
-        This step won't show up because it is disabled.
+      <hr>
+        <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 2</p>
+        <camera-video
+          :config="{
+            name: 'VIDEO_REFERENCIA_FAMILIAR_2',
+            storage: 'news',
+            modelName: 'news',
+            modelId: id
+          }"
+        />
+        <hr>
+        <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
+        <div class="table-container">
+          <q-markup-table
+            class="markup-table q-mt-md"
+            separator="cell"
+            dense
+          >
+            <tbody>
+              <tr class="tr-table">
+                <td class="td-table">
+                  <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
+                  <q-icon size="xs" name="edit" />
+                  {{ item.family2_reference_name }}
+                  <q-popup-edit :value="item.family2_reference_name" v-slot="scope" buttons
+                    @input="val => saveDateNew('family2_reference_name', val)">
+                    <q-input v-model="scope.value" dense autofocus />
+                  </q-popup-edit>
+                </td>
+              </tr>
+              <tr class="tr-table">
+                <td class="td-table">
+                  <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
+                  <q-icon size="xs" name="edit" />
+                  {{ item.family2_reference_address }}
+                  <q-popup-edit :value="item.family2_reference_address" v-slot="scope" buttons
+                    @input="val => saveDateNew('family2_reference_address', val)">
+                    <q-input v-model="scope.value" dense autofocus />
+                  </q-popup-edit>
+                </td>
+              </tr>
+              <tr class="tr-table">
+                <td class="td-table">
+                  <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
+                  <q-icon size="xs" name="edit" />
+                  {{ item.family2_reference_phone }}
+                  <q-popup-edit :value="item.family2_reference_phone" v-slot="scope" buttons
+                    @input="val => saveDateNew('family2_reference_phone', val)">
+                    <q-input v-model="scope.value" type="number" dense autofocus />
+                  </q-popup-edit>
+                </td>
+              </tr>
+              <tr class="tr-table">
+                <td class="td-table">
+                  <p class="text-subtitle1 text-weight-bold text-center">Parentesco:</p>
+                  <q-icon size="xs" name="edit" />
+                  {{ item.family2_reference_relationship }}
+                  <q-popup-edit :value="item.family2_reference_relationship" v-slot="scope" buttons
+                    @input="val => saveDateNew('family2_reference_relationship', val)">
+                    <q-input v-model="scope.value" dense autofocus />
+                  </q-popup-edit>
+                </td>
+              </tr>
+            </tbody>
+          </q-markup-table>
+        </div>
+        <hr>
         <q-stepper-navigation>
           <q-btn @click="step = 4" color="primary" label="Siguiente" />
           <q-btn flat @click="step = 2" color="primary" label="Anterior" class="q-ml-sm" />
@@ -260,6 +398,7 @@ export default {
   data() {
     return {
       step: 1,
+      stepTmp: 0,
     };
   },
   props: {
@@ -296,6 +435,15 @@ export default {
     formatHour(date) {
       return moment(date).format('hh:mm A');
     },
+    reloadStatusFiles() {
+      showLoading('consultando archivo ...', 'Por favor, espere', true);
+      this.stepTmp = this.step;
+      this.step = 0;
+      setTimeout(() => {
+        this.$q.loading.hide();
+        this.step = this.stepTmp;
+      }, 3000);
+    },
     async getItem() {
       const { id } = this.$route.params;
       await this.getNew(id);
@@ -307,9 +455,6 @@ export default {
       await this.completeDataNew(item);
       await this.getItem();
       this.$q.loading.hide();
-    },
-    savedFile(value) {
-      console.log(value);
     },
   },
   components: {
@@ -332,11 +477,5 @@ export default {
     max-width: 640px;
     margin: auto;
     border: solid 1px black;
-  }
-  .tr-table {
-    border-color: black !important;
-  }
-  .td-table {
-    height: 80px;
   }
 </style>

@@ -1,18 +1,5 @@
 <template>
   <q-page class="">
-    <q-btn
-      round
-      icon="west"
-      class="q-ml-md q-mt-md"
-      color="primary"
-      @click="$router.go(-1)">
-    </q-btn>
-    <q-btn
-      round
-      icon="refresh"
-      class="q-ml-md q-mt-md"
-      color="primary">
-    </q-btn>
     <StepperVisit :id="newId"/>
   </q-page>
 </template>
