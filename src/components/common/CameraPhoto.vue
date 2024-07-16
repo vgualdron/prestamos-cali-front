@@ -12,6 +12,11 @@
           class="bg-red text-white q-ma-md">
           {{ item.observation }}
         </q-banner>
+        <q-banner
+          v-else-if="item && item.status == 'aprobado'"
+          class="bg-green text-white q-ma-md">
+          {{ item.status }}
+        </q-banner>
         <q-btn
           label="Agregar foto"
           color="primary"

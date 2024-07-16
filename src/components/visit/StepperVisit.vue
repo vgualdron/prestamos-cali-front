@@ -3,32 +3,58 @@
     <q-btn
       round
       icon="refresh"
-      class="q-ml-xl q-mb-md fixed"
+      class="q-ml-xl q-mb-md fixed q-z-index-2"
       color="primary"
       @click="reloadStatusFiles">
     </q-btn>
     <q-btn
       round
       icon="west"
-      class="q-mr-xs q-mb-md fixed"
+      class="q-mr-xs q-mb-md fixed q-z-index-2"
       color="primary"
       @click="$router.go(-1)">
     </q-btn>
+    <TableInfoVisit :item="item"/>
     <q-stepper
       v-if="id > 0"
       v-model="step"
       color="primary"
-      class="q-mt-xl"
-      vertical
+      class="q-mt-md"
+      ref="stepper"
       animated
+      vertical
+      header-nav
     >
+      <template v-slot:message>
+        <q-stepper-navigation class="text-center q-mb-xl">
+          <q-btn
+            v-if="step < 4 && step > 0"
+            @click="$refs.stepper.next()"
+            color="primary"
+            icon="chevron_right"
+            class="float-right"/>
+          <q-btn
+            v-if="step == 0"
+            @click="$refs.stepper.next()"
+            color="primary"
+            label="Iniciar"
+            class=""/>
+          <q-btn
+            v-if="step > 1"
+            color="primary"
+            @click="$refs.stepper.previous()"
+            icon="chevron_left"
+            class="float-left"
+            outline />
+        </q-stepper-navigation>
+      </template>
       <q-step
         :name="1"
-        title="BLOQUE DE DATOS DE CLIENTE"
-        icon="people"
+        title="DATOS DE CLIENTE"
+        prefix="1"
         caption="Cargar datos, videos y fotos"
         :done="step > 1"
-      >
+       >
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA CLIENTE</p>
         <camera-photo
@@ -202,15 +228,12 @@
           </q-markup-table>
         </div>
         <hr>
-        <q-stepper-navigation>
-          <q-btn @click="step = 2" color="primary" label="Siguiente" />
-        </q-stepper-navigation>
       </q-step>
 
       <q-step
         :name="2"
-        title="BLOQUE DE DATOS DE REFERENCIA FAMILIAR 1"
-        icon="people"
+        title="DATOS DE REFERENCIA FAMILIAR 1"
+        prefix="2"
         caption="Cargar datos y video"
         :done="step > 2"
       >
@@ -281,20 +304,16 @@
           </q-markup-table>
         </div>
         <hr>
-        <q-stepper-navigation>
-          <q-btn @click="step = 3" color="primary" label="Siguiente" />
-          <q-btn flat @click="step = 1" color="primary" label="Anterior" class="q-ml-sm" />
-        </q-stepper-navigation>
       </q-step>
 
       <q-step
         :name="3"
-        title="BLOQUE DE DATOS DE REFERENCIA FAMILIAR 2"
-        icon="people"
+        title="DATOS DE REFERENCIA FAMILIAR 2"
+        prefix="3"
         caption="Cargar datos y video"
-        :done="step > 2"
+        :done="step > 3"
       >
-      <hr>
+        <hr>
         <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 2</p>
         <camera-video
           :config="{
@@ -361,27 +380,42 @@
           </q-markup-table>
         </div>
         <hr>
-        <q-stepper-navigation>
-          <q-btn @click="step = 4" color="primary" label="Siguiente" />
-          <q-btn flat @click="step = 2" color="primary" label="Anterior" class="q-ml-sm" />
-        </q-stepper-navigation>
       </q-step>
 
       <q-step
         :name="4"
-        title="BLOQUE DE DATOS DE FIADOR"
-        icon="people"
+        title="DATOS DE FIADOR"
+        prefix="4"
         caption="Cargar datos, videos y fotos"
+        :done="step > 4"
       >
         Try out different ad text to see what brings in the most customers, and learn how to
         enhance your ads using features like ad extensions. If you run into any problems with
         your ads, find out how to tell if they're running and how to resolve approval issues.
-
-        <q-stepper-navigation>
-          <q-btn color="primary" label="Finalizar" />
-          <q-btn flat @click="step = 3" color="primary" label="Anterior" class="q-ml-sm" />
-        </q-stepper-navigation>
       </q-step>
+      <template v-slot:navigation>
+        <q-stepper-navigation class="text-center q-mb-xl">
+          <q-btn
+            v-if="step < 4 && step > 0"
+            @click="$refs.stepper.next()"
+            color="primary"
+            icon="chevron_right"
+            class="float-right"/>
+          <q-btn
+            v-if="step == 0"
+            @click="$refs.stepper.next()"
+            color="primary"
+            label="Iniciar"
+            class=""/>
+          <q-btn
+            v-if="step > 1"
+            color="primary"
+            @click="$refs.stepper.previous()"
+            icon="chevron_left"
+            class="float-left"
+            outline />
+        </q-stepper-navigation>
+      </template>
     </q-stepper>
   </div>
 </template>
@@ -390,6 +424,7 @@ import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import CameraPhoto from 'components/common/CameraPhoto.vue';
 import CameraVideo from 'components/common/CameraVideo.vue';
+import TableInfoVisit from 'components/visit/TableInfoVisit.vue';
 import { showNotifications } from '../../helpers/showNotifications';
 import newTypes from '../../store/modules/new/types';
 import { showLoading } from '../../helpers/showLoading';
@@ -397,7 +432,7 @@ import { showLoading } from '../../helpers/showLoading';
 export default {
   data() {
     return {
-      step: 1,
+      step: 0,
       stepTmp: 0,
     };
   },
@@ -415,6 +450,10 @@ export default {
   },
   async mounted() {
     await this.getItem();
+    await this.updateStatusNew({
+      ...this.item,
+      status: 'visitando',
+    });
   },
   methods: {
     ...mapActions(newTypes.PATH, {
@@ -460,6 +499,7 @@ export default {
   components: {
     CameraPhoto,
     CameraVideo,
+    TableInfoVisit,
   },
 };
 </script>
