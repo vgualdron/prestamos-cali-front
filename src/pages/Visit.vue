@@ -39,7 +39,6 @@ export default {
   async mounted() {
     const { id } = this.$route.params;
     this.newId = id;
-    console.log(id);
     await this.viewDiary('current');
   },
   computed: {
