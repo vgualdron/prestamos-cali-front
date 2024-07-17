@@ -55,7 +55,7 @@
           </div>
           <div class="video-recorder">
             <div v-show="!videoURL || isRecording" class="col-12 text-center video-container">
-              <video autoplay width="250rem" ref="video" id="video"></video>
+              <video autoplay muted width="250rem" ref="video" id="video"></video>
               <div class="overlay-square"></div>
             </div>
             <div v-if="videoURL && !isRecording">
@@ -238,6 +238,7 @@ export default {
       this.$q.loading.hide();
       if (this.responseMessages && this.status) {
         this.showModal = false;
+        this.$emit('savedFile');
         await this.fetchFile();
       }
       this.showNotification(this.responseMessages, this.status, 'top-right', 5000);

@@ -28,6 +28,12 @@
         </tr>
         <tr class="tr-table">
           <td class="td-table">
+            <p class="text-subtitle1 text-weight-bold text-center">Inicio de la visita:</p>
+            {{ formatDate(item.visit_start_date) }}
+          </td>
+        </tr>
+        <tr class="tr-table">
+          <td class="td-table">
             <p class="text-subtitle1 text-weight-bold text-center">Estado:</p>
             <q-badge :color="item.status === 'aprobado' ? 'green' : 'blue'">
               {{ item.status }}
@@ -39,6 +45,8 @@
   </div>
 </template>
 <script>
+import moment from 'moment';
+
 export default {
   data() {
     return {
@@ -50,6 +58,9 @@ export default {
   computed: {
   },
   methods: {
+    formatDate(date) {
+      return moment(date).format('DD/MM/YYYY hh:mm A');
+    },
   },
 };
 </script>

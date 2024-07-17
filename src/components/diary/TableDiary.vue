@@ -41,9 +41,9 @@
               <p>
                 <q-btn
                   v-if="type === 'visitor'"
-                  label="Entrar a visita"
+                  label="visita"
                   color="primary"
-                  class="col"
+                  class="q-mt-sm"
                   icon="arrow_forward"
                   @click="goVisit(e)"
                   outline

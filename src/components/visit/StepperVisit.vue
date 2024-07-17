@@ -3,18 +3,18 @@
     <q-btn
       round
       icon="refresh"
-      class="q-ml-xl q-mb-md fixed q-z-index-2"
+      class="q-ml-xl q-mb-md fixed z-index-btn"
       color="primary"
       @click="reloadStatusFiles">
     </q-btn>
     <q-btn
       round
       icon="west"
-      class="q-mr-xs q-mb-md fixed q-z-index-2"
+      class="q-mr-xs q-mb-md fixed z-index-btn"
       color="primary"
       @click="$router.go(-1)">
     </q-btn>
-    <TableInfoVisit :item="item"/>
+    <TableInfoVisit class="q-mt-xl" :item="item"/>
     <q-stepper
       v-if="id > 0"
       v-model="step"
@@ -64,6 +64,7 @@
             modelName: 'news',
             modelId: id
           }"
+          @savedFile="savedFileCasaCliente"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">VIDEO TOCANDO CASA CLIENTE</p>
@@ -450,10 +451,12 @@ export default {
   },
   async mounted() {
     await this.getItem();
-    await this.updateStatusNew({
-      ...this.item,
-      status: 'visitando',
-    });
+    if (this.item.status !== 'aprobado') {
+      await this.updateStatusNew({
+        ...this.item,
+        status: 'visitando',
+      });
+    }
   },
   methods: {
     ...mapActions(newTypes.PATH, {
@@ -495,6 +498,12 @@ export default {
       await this.getItem();
       this.$q.loading.hide();
     },
+    async savedFileCasaCliente() {
+      console.log('saved filed casa cliente');
+      if (!this.item.visit_start_date) {
+        await this.saveDateNew('visit_start_date', moment(new Date()).format('YYYY-MM-DD HH:mm:ss'));
+      }
+    },
   },
   components: {
     CameraPhoto,
@@ -517,5 +526,8 @@ export default {
     max-width: 640px;
     margin: auto;
     border: solid 1px black;
+  }
+  .z-index-btn {
+    z-index: 20;
   }
 </style>

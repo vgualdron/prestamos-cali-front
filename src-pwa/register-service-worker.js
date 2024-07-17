@@ -1,5 +1,6 @@
 import { register } from 'register-service-worker';
 import { Notify } from 'quasar';
+import { messaging } from './firebaseConfig';
 
 // The ready(), registered(), cached(), updatefound() and updated()
 // events passes a ServiceWorkerRegistration instance in their arguments.
@@ -46,3 +47,19 @@ register(process.env.SERVICE_WORKER_FILE, {
     console.error('Error during service worker registration:', err);
   },
 });
+
+// Solicitar permiso para notificaciones
+try {
+  await messaging.requestPermission()
+  const token = await messaging.getToken()
+  console.log('FCM Token:', token)
+  // Envía este token a tu servidor para almacenarlo
+} catch (error) {
+  console.error('Unable to get permission to notify.', error)
+}
+
+// Manejo de mensajes cuando la aplicación está en primer plano
+messaging.onMessage((payload) => {
+  console.log('Message received. ', payload)
+  // Aquí puedes manejar la notificación recibida
+})

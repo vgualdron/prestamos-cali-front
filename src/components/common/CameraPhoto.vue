@@ -10,7 +10,7 @@
         <q-banner
           v-if="item && item.status == 'rechazado' && item.observation"
           class="bg-red text-white q-ma-md">
-          {{ item.observation }}
+          {{ item.status }}: {{ item.observation }}
         </q-banner>
         <q-banner
           v-else-if="item && item.status == 'aprobado'"
@@ -251,6 +251,7 @@ export default {
       this.$q.loading.hide();
       if (this.responseMessages && this.status) {
         this.showModal = false;
+        this.$emit('savedFile');
         await this.fetchFile();
       }
       this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
