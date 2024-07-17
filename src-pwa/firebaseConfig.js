@@ -1,7 +1,5 @@
-// src/firebaseConfig.js
-
-import firebase from 'firebase/app'
-import 'firebase/messaging'
+import firebase from 'firebase/app';
+import 'firebase/messaging';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCyjlzgtUlFwYGf7s5iq7DLYXiiMPKwvjE',
@@ -13,8 +11,6 @@ const firebaseConfig = {
   measurementId: 'G-C26N9YLJCL',
 };
 
-firebase.initializeApp(firebaseConfig)
-
-const messaging = firebase.messaging()
-
+firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging();
 export { messaging }

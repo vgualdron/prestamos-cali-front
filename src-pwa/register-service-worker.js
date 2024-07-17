@@ -48,6 +48,7 @@ export default async ({ Vue }) => {
     },
   });
 
+  console.log(Vue);
   // Solicitar permiso para notificaciones
   try {
     await messaging.requestPermission();
@@ -63,4 +64,4 @@ export default async ({ Vue }) => {
     console.log('Message received. ', payload);
     // Aquí puedes manejar la notificación recibida
   });
-}
+};
