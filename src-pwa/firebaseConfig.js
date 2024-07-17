@@ -13,4 +13,4 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
-export { messaging }
+export { messaging };
