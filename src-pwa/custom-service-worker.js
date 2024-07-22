@@ -1,6 +1,6 @@
 import { register } from 'register-service-worker';
 import { Notify } from 'quasar';
-import { messaging } from './firebaseConfig';
+import { messaging } from '../src/firebaseConfig';
 
 // The ready(), registered(), cached(), updatefound() and updated()
 // events passes a ServiceWorkerRegistration instance in their arguments.
