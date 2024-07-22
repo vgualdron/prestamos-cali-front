@@ -17,7 +17,7 @@ export default async ({ Vue }) => {
     // registrationOptions: { scope: './' },
     async ready(/* registration */) {
       console.log('Service worker is active');
-        // Solicitar permiso para notificaciones
+      // Solicitar permiso para notificaciones
       try {
         await messaging.requestPermission();
         const token = await messaging.getToken();
