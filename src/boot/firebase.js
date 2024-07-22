@@ -13,7 +13,7 @@ const firebaseConfig = {
   appId: '1:305627145746:web:e4e5f7808eb9452ef91acb',
   measurementId: 'G-C26N9YLJCL',
 };
-console.log('Bot Firebase ...');
+console.log('Bot Firebase ...', firebaseConfig);
 // Inicializa Firebase
 // const firebaseApp = initializeApp(firebaseConfig);
 // const messaging = getMessaging(firebaseApp);
