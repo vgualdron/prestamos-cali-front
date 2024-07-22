@@ -21,7 +21,7 @@ const messaging = getMessaging(firebaseApp);
 export default boot(({ app }) => {
   console.log(app);
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('../../src-pwa/firebase-messaging-sw.js')
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
       .then((registration) => {
         messaging.useServiceWorker(registration);
         Notification.requestPermission().then((permission) => {
