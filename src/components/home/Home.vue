@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md" justify-center items-center>
     <div class="justify-center q-mt-sm">
-      Bienvenidos ...
+      Bienvenidos .... {{ versionApp }}
     </div>
   </div>
 </template>
@@ -13,6 +13,9 @@ export default {
   },
   props: [],
   computed: {
+    versionApp() {
+      return `Version ${process.env.LATEST_VERSION_APP}`;
+    },
   },
   components: {
   },
