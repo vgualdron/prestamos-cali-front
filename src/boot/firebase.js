@@ -21,7 +21,7 @@ const messaging = getMessaging(firebaseApp);
 export default boot(({ app }) => {
   console.log(app);
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    /* navigator.serviceWorker.register('/firebase-messaging-sw.js')
       .then((registration) => {
         messaging.useServiceWorker(registration);
         Notification.requestPermission().then((permission) => {
@@ -51,6 +51,13 @@ export default boot(({ app }) => {
           console.log('Unable to get permission to notify.', err);
         });
       }).catch((err) => {
+        console.log('Service Worker registration failed: ', err);
+      }); */
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+      .then(function(registration) {
+        console.log('Service Worker registration successful with scope: ', registration.scope);
+      })
+      .catch(function(err) {
         console.log('Service Worker registration failed: ', err);
       });
   }
