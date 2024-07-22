@@ -10,7 +10,7 @@ const firebaseConfig = {
   appId: '1:305627145746:web:e4e5f7808eb9452ef91acb',
   measurementId: 'G-C26N9YLJCL',
 };
-
+console.log('Firebase Config ...');
 const firebaseApp = initializeApp(firebaseConfig);
 const messaging = getMessaging(firebaseApp);
 export { messaging, getToken, onMessage };
