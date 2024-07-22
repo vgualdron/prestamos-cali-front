@@ -67,5 +67,4 @@ export default async ({ Vue }) => {
     console.log('Message received. ', payload);
     // Aquí puedes manejar la notificación recibida
   });
-
 };
