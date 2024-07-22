@@ -127,7 +127,7 @@ module.exports = function (ctx) {
     pwa: {
       workboxPluginMode: 'InjectManifest',
       workboxOptions: {
-        swSrc: 'firebase-messaging-sw.js', // Ruta al custom service worker
+        swSrc: './src-pwa/firebase-messaging-sw.js', // Ruta al custom service worker
         swDest: 'service-worker.js'
       },
       manifest: {
