@@ -66,5 +66,5 @@ export default async ({ Vue }) => {
     // Aquí puedes manejar la notificación recibida
   });
 
-  console.log('Firebase Config ...');
+  console.log('Register service worker ...');
 };
