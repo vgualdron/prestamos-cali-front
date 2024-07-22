@@ -1,6 +1,6 @@
 import { register } from 'register-service-worker';
 import { Notify } from 'quasar';
-import { messaging } from '../src/firebaseConfig';
+// import { messaging } from '../src/firebaseConfig';
 
 console.log('Register service worker ...');
 
