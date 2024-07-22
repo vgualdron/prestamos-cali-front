@@ -28,7 +28,7 @@ export default boot(({ app }) => {
           if (permission === 'granted') {
             console.log('Notification permission granted.');
             getToken(messaging, {
-              vapidKey: 'BCNW0_ZWMaTUoLCp-h-oQgYj7OZaX6kbOPeymnZT79sJPNlU5RY7jqqIWSAa4leByqHM_v6Ejrkwkg__htRTRRI'
+              vapidKey: 'BCNW0_ZWMaTUoLCp-h-oQgYj7OZaX6kbOPeymnZT79sJPNlU5RY7jqqIWSAa4leByqHM_v6Ejrkwkg__htRTRRI',
             }).then((currentToken) => {
               if (currentToken) {
                 console.log('FCM Token:', currentToken);
