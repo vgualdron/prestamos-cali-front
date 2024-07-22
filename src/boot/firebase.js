@@ -1,7 +1,7 @@
 // src/boot/firebase.js
 import { boot } from 'quasar/wrappers';
-import { initializeApp } from 'firebase/app';
-import { getMessaging, getToken, onMessage } from 'firebase/messaging';
+// import { initializeApp } from 'firebase/app';
+// import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
 // Tu configuración de Firebase
 const firebaseConfig = {
@@ -15,8 +15,8 @@ const firebaseConfig = {
 };
 console.log('Bot Firebase ...');
 // Inicializa Firebase
-const firebaseApp = initializeApp(firebaseConfig);
-const messaging = getMessaging(firebaseApp);
+// const firebaseApp = initializeApp(firebaseConfig);
+// const messaging = getMessaging(firebaseApp);
 
 export default boot(({ app }) => {
   console.log(app);
