@@ -21,14 +21,15 @@ const messaging = getMessaging(firebaseApp);
 export default boot(({ app }) => {
   console.log(app);
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    navigator.serviceWorker.register('../../src-pwa/firebase-messaging-sw.js')
       .then((registration) => {
         messaging.useServiceWorker(registration);
         Notification.requestPermission().then((permission) => {
           if (permission === 'granted') {
             console.log('Notification permission granted.');
-
-            getToken(messaging, { vapidKey: 'BCNW0_ZWMaTUoLCp-h-oQgYj7OZaX6kbOPeymnZT79sJPNlU5RY7jqqIWSAa4leByqHM_v6Ejrkwkg__htRTRRI' }).then((currentToken) => {
+            getToken(messaging, {
+              vapidKey: 'BCNW0_ZWMaTUoLCp-h-oQgYj7OZaX6kbOPeymnZT79sJPNlU5RY7jqqIWSAa4leByqHM_v6Ejrkwkg__htRTRRI'
+            }).then((currentToken) => {
               if (currentToken) {
                 console.log('FCM Token:', currentToken);
                 // Envía este token a tu servidor para guardar y usar en notificaciones push
