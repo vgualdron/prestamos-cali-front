@@ -16,7 +16,7 @@ register(process.env.SERVICE_WORKER_FILE, {
     console.log('Service worker is active');
     try {
       messaging.requestPermission().then((data) => {
-        console.log('FCM Token:', dat);
+        console.log('FCM Token:', data);
       });
     } catch (error) {
       console.error('Unable to get permission to notify.', error);
