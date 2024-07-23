@@ -25,7 +25,7 @@ module.exports = function (ctx) {
     // https://v1.quasar.dev/quasar-cli/boot-files
     boot: [
       'axios',
-      // 'firebase',
+      'firebase',
     ],
 
     // https://v1.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
@@ -125,11 +125,10 @@ module.exports = function (ctx) {
 
     // https://v1.quasar.dev/quasar-cli/developing-pwa/configuring-pwa
     pwa: {
-      workboxPluginMode: 'InjectManifest',
+      workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {
-        swSrc: './src-pwa/firebase-messaging-sw.js', // Ruta al custom service worker
-        swDest: 'service-worker.js'
-      },
+        skipWaiting: true,
+      }, // only for GenerateSW
       manifest: {
         name: 'Control de Prestamos',
         short_name: 'Control de Prestamos',
