@@ -1,5 +1,6 @@
 import { register } from 'register-service-worker';
 import { Notify } from 'quasar';
+import { messaging } from '../src/firebaseConfig';
 
 // The ready(), registered(), cached(), updatefound() and updated()
 // events passes a ServiceWorkerRegistration instance in their arguments.
@@ -13,6 +14,13 @@ register(process.env.SERVICE_WORKER_FILE, {
   // registrationOptions: { scope: './' },
   ready(/* registration */) {
     console.log('Service worker is active');
+    try {
+      messaging.requestPermission().then((data) => {
+        console.log('FCM Token:', dat);
+      });
+    } catch (error) {
+      console.error('Unable to get permission to notify.', error);
+    }
   },
   registered(/* registration */) {
     console.log('Service worker has been registered.');
