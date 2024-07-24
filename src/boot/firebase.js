@@ -23,6 +23,7 @@ export default boot(({ app }) => {
     navigator.serviceWorker.register('/firebase-messaging-sw.js')
       .then((registration) => {
         // messaging.useServiceWorker(registration);
+        console.log(registration);
         Notification.requestPermission().then((permission) => {
           if (permission === 'granted') {
             console.log('Notification permission granted.');
