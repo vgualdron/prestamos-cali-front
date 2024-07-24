@@ -29,7 +29,7 @@ register(process.env.SERVICE_WORKER_FILE, {
         }).catch((err) => {
           console.log('An error occurred while retrieving token. ', err);
         });
-    
+
         onMessage(messaging, (payload) => {
           console.log('Message received. ', payload);
           // Muestra una notificación usando payload.notification
