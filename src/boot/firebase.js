@@ -14,10 +14,10 @@ const firebaseConfig = {
   measurementId: 'G-C26N9YLJCL',
 };
 console.log('Bot Firebase ...', firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
+const messaging = getMessaging(firebaseApp);
 export default boot(({ app }) => {
   // Inicializa Firebase
-  const firebaseApp = initializeApp(firebaseConfig);
-  const messaging = getMessaging(firebaseApp);
   console.log(app);
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/firebase-messaging-sw.js')
@@ -28,7 +28,7 @@ export default boot(({ app }) => {
           if (permission === 'granted') {
             console.log('Notification permission granted.');
             getToken(messaging, {
-              vapidKey: 'BCNW0_ZWMaTUoLCp-h-oQgYj7OZaX6kbOPeymnZT79sJPNlU5RY7jqqIWSAa4leByqHM_v6Ejrkwkg__htRTRRI',
+              vapidKey: 'BF5ukQnwtL2YN7onGRxABMcxQRj3kWIaVjChoNp_6EqtPM_DQlF-uvhf5HwYDzN-BHNi8VoBr_ZQyLy_R4LDHoI',
             }).then((currentToken) => {
               if (currentToken) {
                 console.log('FCM Token:', currentToken);
