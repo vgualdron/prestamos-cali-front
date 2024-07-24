@@ -1,7 +1,7 @@
 // src/boot/firebase.js
 import { boot } from 'quasar/wrappers';
-// import { initializeApp } from 'firebase/app';
-// import { getMessaging, getToken, onMessage } from 'firebase/messaging';
+import { initializeApp } from 'firebase/app';
+import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
 // Tu configuración de Firebase
 const firebaseConfig = {
@@ -15,13 +15,13 @@ const firebaseConfig = {
 };
 console.log('Bot Firebase ...', firebaseConfig);
 // Inicializa Firebase
-// const firebaseApp = initializeApp(firebaseConfig);
-// const messaging = getMessaging(firebaseApp);
+const firebaseApp = initializeApp(firebaseConfig);
+const messaging = getMessaging(firebaseApp);
 
 export default boot(({ app }) => {
   console.log(app);
   if ('serviceWorker' in navigator) {
-    /* navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
       .then((registration) => {
         messaging.useServiceWorker(registration);
         Notification.requestPermission().then((permission) => {
@@ -52,11 +52,11 @@ export default boot(({ app }) => {
         });
       }).catch((err) => {
         console.log('Service Worker registration failed: ', err);
-      }); */
-    navigator.serviceWorker.register('/firebase-messaging-sw.js').then((registration) => {
+      });
+    /* navigator.serviceWorker.register('/firebase-messaging-sw.js').then((registration) => {
       console.log('FIREBASE BOOT Service Worker registration successful with scope: ', registration.scope);
     }).catch((err) => {
       console.log('FIREBASE BOOT Service Worker registration failed: ', err);
-    });
+    }); */
   }
 });
