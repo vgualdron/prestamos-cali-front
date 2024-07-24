@@ -14,33 +14,6 @@ register(process.env.SERVICE_WORKER_FILE, {
   // registrationOptions: { scope: './' },
   ready(/* registration */) {
     console.log('Service worker is active');
-    Notification.requestPermission().then((permission) => {
-      if (permission === 'granted') {
-        console.log('Notification permission granted.');
-        console.log('geToken', getToken);
-        getToken(messaging, {
-          vapidKey: 'BCNW0_ZWMaTUoLCp-h-oQgYj7OZaX6kbOPeymnZT79sJPNlU5RY7jqqIWSAa4leByqHM_v6Ejrkwkg__htRTRRI',
-        }).then((currentToken) => {
-          if (currentToken) {
-            console.log('FCM Token:', currentToken);
-            // Envía este token a tu servidor para guardar y usar en notificaciones push
-          } else {
-            console.log('No registration token available. Request permission to generate one.');
-          }
-        }).catch((err) => {
-          console.log('An error occurred while retrieving token. ', err);
-        });
-
-        onMessage(messaging, (payload) => {
-          console.log('Message received. ', payload);
-          // Muestra una notificación usando payload.notification
-        });
-      } else {
-        console.log('Unable to get permission to notify.');
-      }
-    }).catch((err) => {
-      console.log('Unable to get permission to notify.', err);
-    });
   },
   registered(/* registration */) {
     console.log('Service worker has been registered.');
