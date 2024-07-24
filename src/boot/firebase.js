@@ -14,11 +14,10 @@ const firebaseConfig = {
   measurementId: 'G-C26N9YLJCL',
 };
 console.log('Bot Firebase ...', firebaseConfig);
-// Inicializa Firebase
-const firebaseApp = initializeApp(firebaseConfig);
-const messaging = getMessaging(firebaseApp);
-
 export default boot(({ app }) => {
+  // Inicializa Firebase
+  const firebaseApp = initializeApp(firebaseConfig);
+  const messaging = getMessaging(firebaseApp);
   console.log(app);
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/firebase-messaging-sw.js')
