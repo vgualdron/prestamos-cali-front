@@ -53,12 +53,10 @@ export default boot(({ app }) => {
       }).catch((err) => {
         console.log('Service Worker registration failed: ', err);
       }); */
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
-      .then((registration) => {
-        console.log('Service Worker registration successful with scope: ', registration.scope);
-      })
-      .catch((err) => {
-        console.log('Service Worker registration failed: ', err);
-      });
+    navigator.serviceWorker.register('/firebase-messaging-sw.js').then((registration) => {
+      console.log('FIREBASE BOOT Service Worker registration successful with scope: ', registration.scope);
+    }).catch((err) => {
+      console.log('FIREBASE BOOT Service Worker registration failed: ', err);
+    });
   }
 });
