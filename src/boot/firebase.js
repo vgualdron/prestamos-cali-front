@@ -2,6 +2,7 @@
 import { boot } from 'quasar/wrappers';
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
+import userApi from '../api/user/userApi';
 
 // Tu configuración de Firebase
 const firebaseConfig = {
@@ -32,6 +33,7 @@ export default boot(({ app }) => {
             }).then((currentToken) => {
               if (currentToken) {
                 console.log('FCM Token:', currentToken);
+                userApi.updatePushToken({ pushToken: currentToken });
                 // Envía este token a tu servidor para guardar y usar en notificaciones push
               } else {
                 console.log('No registration token available. Request permission to generate one.');

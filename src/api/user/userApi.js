@@ -32,4 +32,9 @@ export default {
     method: 'PUT',
     data,
   }),
+  updatePushToken: (data) => http({
+    url: `${process.env.URL_API}/api/user/update-push-token`,
+    method: 'PUT',
+    data,
+  }),
 };
