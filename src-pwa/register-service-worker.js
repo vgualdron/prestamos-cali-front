@@ -17,6 +17,7 @@ register(process.env.SERVICE_WORKER_FILE, {
     Notification.requestPermission().then((permission) => {
       if (permission === 'granted') {
         console.log('Notification permission granted.');
+        console.log('geToken', getToken);
         getToken(messaging, {
           vapidKey: 'BCNW0_ZWMaTUoLCp-h-oQgYj7OZaX6kbOPeymnZT79sJPNlU5RY7jqqIWSAa4leByqHM_v6Ejrkwkg__htRTRRI',
         }).then((currentToken) => {
