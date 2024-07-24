@@ -1,13 +1,9 @@
 // src/firebase-messaging-sw.js
 importScripts('https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/9.6.10/firebase-messaging.js');
-import { precacheAndRoute } from 'workbox-precaching';
-import { clientsClaim } from 'workbox-core';
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 // Configura la precaché y la ruta
-precacheAndRoute(self.__WB_MANIFEST || []);
-
 const firebaseConfig = {
   apiKey: 'AIzaSyCyjlzgtUlFwYGf7s5iq7DLYXiiMPKwvjE',
   authDomain: 'prestamos-cali.firebaseapp.com',
@@ -55,4 +51,3 @@ messaging.onBackgroundMessage(function(payload) {
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
-clientsClaim();
