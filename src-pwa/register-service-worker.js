@@ -33,7 +33,7 @@ register(process.env.SERVICE_WORKER_FILE, {
       classes: 'glossy',
       progress: true,
       onDismiss() {
-        // window.location.reload(true);
+        window.location.reload(true);
       },
     });
   },
