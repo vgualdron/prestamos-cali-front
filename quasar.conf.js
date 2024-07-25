@@ -25,6 +25,7 @@ module.exports = function (ctx) {
     // https://v1.quasar.dev/quasar-cli/boot-files
     boot: [
       'axios',
+      'onesignal',
     ],
 
     // https://v1.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
@@ -124,10 +125,11 @@ module.exports = function (ctx) {
 
     // https://v1.quasar.dev/quasar-cli/developing-pwa/configuring-pwa
     pwa: {
-      workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
+      workboxPluginMode: 'InjectManifest',
       workboxOptions: {
-        skipWaiting: true,
-      }, // only for GenerateSW
+        swSrc: 'src-pwa/custom-service-worker.js',
+        swDest: 'service-worker.js',
+      },
       manifest: {
         name: 'Control de Prestamos',
         short_name: 'Control de Prestamos',

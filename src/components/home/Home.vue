@@ -3,6 +3,7 @@
     <div class="justify-center q-mt-sm">
       Bienvenidos <br> {{ versionApp }}
     </div>
+    <q-btn @click="subscribeToNotifications" label="Subscribe to Notifications" />
   </div>
 </template>
 <script>
@@ -26,6 +27,13 @@ export default {
     validateLogin() {
       if (!localStorage.getItem('tokenMC')) {
         this.$router.push('/');
+      }
+    },
+    subscribeToNotifications() {
+      if (window.OneSignal) {
+        OneSignal.push(function() {
+          OneSignal.showNativePrompt();
+        });
       }
     },
   },
