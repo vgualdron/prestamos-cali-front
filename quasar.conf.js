@@ -127,7 +127,7 @@ module.exports = function (ctx) {
     pwa: {
       workboxPluginMode: 'InjectManifest',
       workboxOptions: {
-        swSrc: 'src-pwa/custom-service-worker.js',
+        swSrc: './src-pwa/custom-service-worker.js',
         swDest: 'service-worker.js',
       },
       manifest: {
