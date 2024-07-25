@@ -31,8 +31,8 @@ export default {
     },
     subscribeToNotifications() {
       if (window.OneSignal) {
-        OneSignal.push(function() {
-          OneSignal.showNativePrompt();
+        window.OneSignal.push(() => {
+          window.OneSignal.showNativePrompt();
         });
       }
     },
