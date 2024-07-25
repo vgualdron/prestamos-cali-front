@@ -33,3 +33,6 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.jks
+
+serviceAccountKey.json
+sendNotification.js
