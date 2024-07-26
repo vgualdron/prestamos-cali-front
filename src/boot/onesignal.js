@@ -11,7 +11,7 @@ export default async () => {
     window.OneSignal = window.OneSignal || [];
     window.OneSignal.push(() => {
       window.OneSignal.init({
-        appId: 'YOUR_ONESIGNAL_APP_ID',
+        appId: '987c3bae-b888-435d-9809-8f4342661d8c',
         allowLocalhostAsSecureOrigin: true,
         notifyButton: {
           enable: true,
