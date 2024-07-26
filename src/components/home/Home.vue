@@ -30,8 +30,11 @@ export default {
       }
     },
     subscribeToNotifications() {
+      console.log('subscribeToNotifications 1');
       if (window.OneSignal) {
+        console.log('subscribeToNotifications 2');
         window.OneSignal.push(() => {
+          console.log('subscribeToNotifications 3');
           window.OneSignal.showNativePrompt();
         });
       }
