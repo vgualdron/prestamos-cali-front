@@ -51,7 +51,7 @@ export default {
 
         const headers = {
           'Content-Type': 'application/json; charset=utf-8',
-          Authorization: 'Basic Y2Y4ZTM1NTMtYjNjYi00NTg1LThhYzUtNTNiNWRmYThkNWY3',
+          Authorization: 'Basic MGM2OTI2NzYtM2ExMy00MGI4LWIwZWMtMjYxNzRkNDI0NGRj',
         };
 
         const body = JSON.stringify({
