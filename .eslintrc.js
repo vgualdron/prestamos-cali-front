@@ -51,6 +51,7 @@ module.exports = {
 
   // add your custom rules here
   rules: {
+    'camelcase': 'off',
     'linebreak-style': 0,
     'no-param-reassign': 'off',
     'no-void': 'off',
@@ -69,9 +70,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'max-len': 'off',
     'prefer-promise-reject-errors': 'off',
-
     'vue/multi-word-component-names': 'off',
-
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'global-require': 0

@@ -42,11 +42,16 @@ export default {
     },
     async sendNotification() {
       const sendPushNotification = async (data) => {
-        const { app_id, headings, contents, included_segments } = data;
+        const {
+          app_id,
+          headings,
+          contents,
+          included_segments,
+        } = data;
 
         const headers = {
-          "Content-Type": "application/json; charset=utf-8",
-          "Authorization": "Basic Y2Y4ZTM1NTMtYjNjYi00NTg1LThhYzUtNTNiNWRmYThkNWY3",
+          'Content-Type': 'application/json; charset=utf-8',
+          Authorization: 'Basic Y2Y4ZTM1NTMtYjNjYi00NTg1LThhYzUtNTNiNWRmYThkNWY3',
         };
 
         const body = JSON.stringify({
@@ -57,24 +62,24 @@ export default {
         });
 
         try {
-          const response = await fetch("https://onesignal.com/api/v1/notifications", {
-            method: "POST",
+          const response = await fetch('https://onesignal.com/api/v1/notifications', {
+            method: 'POST',
             headers,
             body,
           });
 
           const responseData = await response.json();
-          console.log("Notification sent successfully:", responseData);
+          console.log('Notification sent successfully:', responseData);
         } catch (error) {
-          console.error("Error sending notification:", error);
+          console.error('Error sending notification:', error);
         }
       };
       // Uso de la función
       await sendPushNotification({
-        app_id: "987c3bae-b888-435d-9809-8f4342661d8c",
-        headings: { en: "Título de la notificación" },
-        contents: { en: "Contenido de la notificación" },
-        included_segments: ["Subscribed Users"]
+        app_id: '987c3bae-b888-435d-9809-8f4342661d8c',
+        headings: { en: 'Título de la notificación' },
+        contents: { en: 'Contenido de la notificación' },
+        included_segments: ['Subscribed Users'],
       });
     },
   },
