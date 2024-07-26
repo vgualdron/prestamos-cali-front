@@ -76,7 +76,7 @@ export default {
       };
       // Uso de la función
       await sendPushNotification({
-        app_id: '987c3bae-b888-435d-9809-8f4342661d8c',
+        app_id: 'da2c1da8-0e9d-4fd0-b66d-522fa6a77841',
         headings: { en: 'Título de la notificación' },
         contents: { en: 'Contenido de la notificación' },
         included_segments: ['Subscribed Users'],
