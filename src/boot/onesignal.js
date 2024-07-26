@@ -9,12 +9,12 @@ export default async () => {
     });
     await loadOneSignalSDK; */
     window.OneSignal = window.OneSignal || [];
-    window.OneSignal.push(() => {
-      window.OneSignal.init({
-        appId: '987c3bae-b888-435d-9809-8f4342661d8c',
-        allowLocalhostAsSecureOrigin: true,
+    window.OneSignal.push(async () => {
+      await OneSignal.init({
+        appId: "da2c1da8-0e9d-4fd0-b66d-522fa6a77841",
+        safari_web_id: "web.onesignal.auto.212e621b-efc2-4b2a-9d36-9f4cd158ecec",
         notifyButton: {
-          enable: true,
+            enable: true,
         },
       });
     });
