@@ -1,13 +1,13 @@
 export default async () => {
   if (process.env.NODE_ENV === 'production') {
-    /* const loadOneSignalSDK = new Promise((resolve) => {
+    const loadOneSignalSDK = new Promise((resolve) => {
       const script = document.createElement('script');
       script.src = 'https://cdn.onesignal.com/sdks/OneSignalSDK.js';
       script.async = true;
       script.onload = resolve;
       document.head.appendChild(script);
     });
-    await loadOneSignalSDK; */
+    await loadOneSignalSDK;
     window.OneSignal = window.OneSignal || [];
     window.OneSignal.push(async () => {
       await window.OneSignal.init({
