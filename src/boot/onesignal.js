@@ -11,8 +11,8 @@ export default async () => {
     window.OneSignal = window.OneSignal || [];
     window.OneSignal.push(async () => {
       await OneSignal.init({
-        appId: "da2c1da8-0e9d-4fd0-b66d-522fa6a77841",
-        safari_web_id: "web.onesignal.auto.212e621b-efc2-4b2a-9d36-9f4cd158ecec",
+        appId: 'da2c1da8-0e9d-4fd0-b66d-522fa6a77841',
+        safari_web_id: 'web.onesignal.auto.212e621b-efc2-4b2a-9d36-9f4cd158ecec',
         notifyButton: {
           enable: true,
         },
@@ -25,9 +25,9 @@ export default async () => {
         },
       });
     });
-    window.OneSignal.on('subscriptionChange', (isSubscribed) =>{
+    window.OneSignal.on('subscriptionChange', (isSubscribed) => {
       if (isSubscribed) {
-        OneSignal.getUserId((userId) => {
+        window.OneSignal.getUserId((userId) => {
           console.log('OneSignal User ID:', userId);
         });
       }
