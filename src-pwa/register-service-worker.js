@@ -24,18 +24,22 @@ register(process.env.SERVICE_WORKER_FILE, {
   },
   updated(/* registration */) {
     console.log('New content is available; please refresh.');
-    Notify.create({
-      message: `Hay una versión más reciente que la ${process.env.LATEST_VERSION_APP}, se actualizará automaticamente en un momento`,
-      icon: 'cloud_download',
-      color: 'green',
-      timeout: 5000,
-      textColor: 'white',
-      classes: 'glossy',
-      progress: true,
-      onDismiss() {
-        window.location.reload(true);
-      },
-    });
+    const version = localStorage.getItem('versionApp');
+    if (version !== process.env.LATEST_VERSION_APP) {
+      Notify.create({
+        message: `Hay una versión más reciente que la ${process.env.LATEST_VERSION_APP}, se actualizará automaticamente en un momento`,
+        icon: 'cloud_download',
+        color: 'green',
+        timeout: 5000,
+        textColor: 'white',
+        classes: 'glossy',
+        progress: true,
+        onDismiss() {
+          window.location.reload(true);
+        },
+      });
+      localStorage.setItem('versionApp', process.env.LATEST_VERSION_APP);
+    }
   },
   offline() {
     console.log('No internet connection found. App is running in offline mode.');
