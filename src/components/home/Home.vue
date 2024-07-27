@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md" justify-center items-center>
     <div class="justify-center q-mt-sm">
-      Bienvenidos <br> {{ versionApp }}
+      Bienvenidos <br> {{ versionApp }} <br>
       Token <br> {{ userId }}
       <q-input
           outlined
@@ -15,6 +15,7 @@
     <q-btn @click="subscribeToNotifications" label="Subscribe to Notifications" />
     <q-btn @click="unsubscribeFromNotifications" label="Unsubscribe from Notifications" />
     <q-btn @click="sendNotification" label="Send Push Notification" />
+    <q-btn @click="getUser" label="GET USER" />
   </div>
 </template>
 <script>
@@ -108,6 +109,21 @@ export default {
         include_player_ids: [this.userId],
       });
     },
+    getUser() {
+      window.OneSignal.push(function() {
+        OneSignal.isPushNotificationsEnabled(function(isEnabled) {
+          if (isEnabled) {
+            console.log('Push notifications are enabled!');
+            OneSignal.getUserId(function(userId) {
+              console.log('OneSignal User ID:', userId);
+              // Asegúrate de guardar este userId en tu base de datos para usarlo más tarde
+            });
+          } else {
+            console.log('Push notifications are not enabled.');
+          }
+        });
+      });
+    }
   },
 };
 </script>
