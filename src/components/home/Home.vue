@@ -4,6 +4,7 @@
       Bienvenidos <br> {{ versionApp }}
     </div>
     <q-btn @click="subscribeToNotifications" label="Subscribe to Notifications" />
+    <q-btn @click="unsubscribeFromNotifications" label="Unsubscribe from Notifications" />
     <q-btn @click="sendNotification" label="Send Push Notification" />
   </div>
 </template>
@@ -44,6 +45,13 @@ export default {
               console.log('Push notifications are already enabled!');
             }
           });
+        });
+      }
+    },
+    unsubscribeFromNotifications() {
+      if (window.OneSignal) {
+        window.OneSignal.push(() => {
+          window.OneSignal.setSubscription(false);
         });
       }
     },
