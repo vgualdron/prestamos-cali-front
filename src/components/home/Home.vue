@@ -2,6 +2,15 @@
   <div class="q-pa-md" justify-center items-center>
     <div class="justify-center q-mt-sm">
       Bienvenidos <br> {{ versionApp }}
+      Token <br> {{ userId }}
+      <q-input
+          outlined
+          v-model.trim="userId"
+          label="Token *"
+          hint="Escriba el token"
+          lazy-rules
+          :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
+        />
     </div>
     <q-btn @click="subscribeToNotifications" label="Subscribe to Notifications" />
     <q-btn @click="unsubscribeFromNotifications" label="Unsubscribe from Notifications" />
@@ -12,7 +21,9 @@
 
 export default {
   data() {
-    return {};
+    return {
+      userId: null,
+    };
   },
   props: [],
   computed: {
@@ -94,7 +105,7 @@ export default {
         app_id: 'da2c1da8-0e9d-4fd0-b66d-522fa6a77841',
         headings: { en: 'Título de la notificación' },
         contents: { en: 'Contenido de la notificación' },
-        include_player_ids: ['189c5b27-5163-4f67-9f20-d52cb60aea74'],
+        include_player_ids: [this.userId],
       });
     },
   },
