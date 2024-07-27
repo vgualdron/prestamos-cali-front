@@ -40,8 +40,8 @@ register(process.env.SERVICE_WORKER_FILE, {
           window.location.reload(true);
         },
       });
-      localStorage.setItem('versionApp', process.env.LATEST_VERSION_APP);
     }
+    localStorage.setItem('versionApp', process.env.LATEST_VERSION_APP);
   },
   offline() {
     console.log('No internet connection found. App is running in offline mode.');
