@@ -94,7 +94,7 @@ export default {
         app_id: 'da2c1da8-0e9d-4fd0-b66d-522fa6a77841',
         headings: { en: 'Título de la notificación' },
         contents: { en: 'Contenido de la notificación' },
-        included_segments: ['Subscribed Users'],
+        include_player_ids: ['2fe99c46-d028-4c13-bbce-c4478c31abd0'],
       });
     },
   },
