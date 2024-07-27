@@ -110,11 +110,11 @@ export default {
       });
     },
     getUser() {
-      window.OneSignal.push(function() {
-        OneSignal.isPushNotificationsEnabled(function(isEnabled) {
+      window.OneSignal.push(() => {
+        window.OneSignal.isPushNotificationsEnabled((isEnabled) => {
           if (isEnabled) {
             console.log('Push notifications are enabled!');
-            OneSignal.getUserId(function(userId) {
+            window.OneSignal.getUserId((userId) => {
               console.log('OneSignal User ID:', userId);
               // Asegúrate de guardar este userId en tu base de datos para usarlo más tarde
             });
@@ -123,7 +123,7 @@ export default {
           }
         });
       });
-    }
+    },
   },
 };
 </script>
