@@ -28,6 +28,7 @@ export default async () => {
         serviceWorkerParam: {
           scope: '/',
         },
+        autoRegister: false, // No registrar automáticamente
         serviceWorkerPath: '/OneSignalSDKWorker.js',
         serviceWorkerUpdaterPath: '/OneSignalSDKUpdaterWorker.js',
       });

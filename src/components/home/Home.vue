@@ -61,8 +61,11 @@ export default {
       }
     },
     unsubscribeFromNotifications() {
+      console.log('unsubscribeFromNotifications 1');
       if (window.OneSignal) {
+        console.log('unsubscribeFromNotifications 2');
         window.OneSignal.push(() => {
+          console.log('unsubscribeFromNotifications 3');
           window.OneSignal.setSubscription(false);
         });
       }
