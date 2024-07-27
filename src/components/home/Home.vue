@@ -49,17 +49,17 @@ export default {
         console.log('subscribeToNotifications 2');
         window.OneSignal.push(() => {
           console.log('subscribeToNotifications 3');
-          window.OneSignal.registerForPushNotifications();
+          // window.OneSignal.registerForPushNotifications();
           console.log('subscribeToNotifications 4');
-          /* window.OneSignal.isPushNotificationsEnabled((isEnabled) => {
+          window.OneSignal.isPushNotificationsEnabled((isEnabled) => {
             console.log('subscribeToNotifications 3', isEnabled);
             if (!isEnabled) {
               console.log('subscribeToNotifications 4');
-              window.OneSignal.showNativePrompt();
+              window.OneSignal.registerForPushNotifications();
             } else {
               console.log('Push notifications are already enabled!');
             }
-          }); */
+          });
         });
       }
     },
