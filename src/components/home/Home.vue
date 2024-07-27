@@ -52,9 +52,9 @@ export default {
           // window.OneSignal.registerForPushNotifications();
           console.log('subscribeToNotifications 4');
           window.OneSignal.isPushNotificationsEnabled((isEnabled) => {
-            console.log('subscribeToNotifications 3', isEnabled);
+            console.log('subscribeToNotifications 5', isEnabled);
             if (!isEnabled) {
-              console.log('subscribeToNotifications 4');
+              console.log('subscribeToNotifications 6');
               window.OneSignal.registerForPushNotifications();
             } else {
               console.log('Push notifications are already enabled!');
