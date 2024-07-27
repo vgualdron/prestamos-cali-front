@@ -1,4 +1,5 @@
 import userApi from '../api/user/userApi';
+
 export default async () => {
   if (process.env.NODE_ENV === 'production') {
     const loadOneSignalSDK = new Promise((resolve) => {
@@ -35,7 +36,7 @@ export default async () => {
       if (isSubscribed) {
         window.OneSignal.getUserId((userId) => {
           console.log('OneSignal User ID:', userId);
-          userApi.updatePushToken({ pushToken: userId})
+          userApi.updatePushToken({ pushToken: userId });
         });
       }
     });
