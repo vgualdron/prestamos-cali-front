@@ -25,6 +25,8 @@ register(process.env.SERVICE_WORKER_FILE, {
   updated(/* registration */) {
     console.log('New content is available; please refresh.');
     const version = localStorage.getItem('versionApp');
+    console.log(process.env.LATEST_VERSION_APP);
+    console.log(version);
     if (version !== process.env.LATEST_VERSION_APP) {
       Notify.create({
         message: `Hay una versión más reciente que la ${process.env.LATEST_VERSION_APP}, se actualizará automaticamente en un momento`,
