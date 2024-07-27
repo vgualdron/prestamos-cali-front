@@ -116,15 +116,20 @@ export default {
       });
     },
     getUser() {
+      console.log('getUser 1');
       window.OneSignal.push(() => {
+        console.log('getUser 2');
         window.OneSignal.isPushNotificationsEnabled((isEnabled) => {
+          console.log('getUser 3');
           if (isEnabled) {
+            console.log('getUser 4');
             console.log('Push notifications are enabled!');
             window.OneSignal.getUserId((userId) => {
               console.log('OneSignal User ID:', userId);
               // Asegúrate de guardar este userId en tu base de datos para usarlo más tarde
             });
           } else {
+            console.log('getUser 5');
             console.log('Push notifications are not enabled.');
           }
         });
