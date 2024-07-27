@@ -14,12 +14,14 @@
     </div>
     <q-btn @click="subscribeToNotifications" label="Subscribe to Notifications" />
     <q-btn @click="unsubscribeFromNotifications" label="Unsubscribe from Notifications" />
-    <q-btn @click="sendNotification" label="Send Push Notification" />
+    <q-btn @click="sendNotificationPush" label="Send Push Notification" />
     <q-btn @click="getUser" label="GET USER" />
     <div class='onesignal-customlink-container'></div>
   </div>
 </template>
 <script>
+import { mapState, mapActions } from 'vuex';
+import notificationTypes from '../../store/modules/notification/types';
 
 export default {
   data() {
@@ -29,6 +31,10 @@ export default {
   },
   props: [],
   computed: {
+    ...mapState(notificationTypes.PATH, [
+      'status',
+      'responseMessages',
+    ]),
     versionApp() {
       return `Version ${process.env.LATEST_VERSION_APP}`;
     },
@@ -39,6 +45,9 @@ export default {
     this.validateLogin();
   },
   methods: {
+    ...mapActions(notificationTypes.PATH, {
+      sendNotification: notificationTypes.actions.SEND_NOTIFICATION,
+    }),
     validateLogin() {
       if (!localStorage.getItem('tokenMC')) {
         this.$router.push('/');
@@ -74,47 +83,14 @@ export default {
         });
       }
     },
-    async sendNotification() {
-      const sendPushNotification = async (data) => {
-        const {
-          app_id,
-          headings,
-          contents,
-          include_player_ids,
-        } = data;
-
-        const headers = {
-          'Content-Type': 'application/json; charset=utf-8',
-          Authorization: 'Basic MGM2OTI2NzYtM2ExMy00MGI4LWIwZWMtMjYxNzRkNDI0NGRj',
-        };
-
-        const body = JSON.stringify({
-          app_id,
-          headings,
-          contents,
-          include_player_ids,
-        });
-
-        try {
-          const response = await fetch('https://onesignal.com/api/v1/notifications', {
-            method: 'POST',
-            headers,
-            body,
-          });
-
-          const responseData = await response.json();
-          console.log('Notification sent successfully:', responseData);
-        } catch (error) {
-          console.error('Error sending notification:', error);
-        }
-      };
-      // Uso de la función
-      await sendPushNotification({
+    async sendNotificationPush() {
+      const data = {
         app_id: 'da2c1da8-0e9d-4fd0-b66d-522fa6a77841',
         headings: { en: 'Título de la notificación' },
         contents: { en: 'Contenido de la notificación' },
         include_player_ids: [this.userId],
-      });
+      };
+     await this.sendNotification(data);
     },
     getUser() {
       console.log('getUser 1');
