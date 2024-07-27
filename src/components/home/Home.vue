@@ -61,7 +61,7 @@ export default {
           app_id,
           headings,
           contents,
-          included_segments,
+          include_player_ids,
         } = data;
 
         const headers = {
@@ -73,7 +73,7 @@ export default {
           app_id,
           headings,
           contents,
-          included_segments,
+          include_player_ids,
         });
 
         try {
