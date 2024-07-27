@@ -24,10 +24,10 @@ export default async () => {
           exampleNotificationCaption: 'You can unsubscribe at any time YYY',
         },
         serviceWorkerParam: {
-          scope: '/'
+          scope: '/',
         },
         serviceWorkerPath: '/OneSignalSDKWorker.js',
-        serviceWorkerUpdaterPath: '/OneSignalSDKUpdaterWorker.js'
+        serviceWorkerUpdaterPath: '/OneSignalSDKUpdaterWorker.js',
       });
     });
     window.OneSignal.on('subscriptionChange', (isSubscribed) => {
