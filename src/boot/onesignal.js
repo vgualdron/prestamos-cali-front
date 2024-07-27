@@ -10,7 +10,7 @@ export default async () => {
       document.head.appendChild(script);
     });
     await loadOneSignalSDK;
-    window.OneSignal = window.OneSignal || [];
+    /* window.OneSignal = window.OneSignal || [];
     window.OneSignal.push(async () => {
       await window.OneSignal.init({
         appId: 'da2c1da8-0e9d-4fd0-b66d-522fa6a77841',
@@ -41,6 +41,6 @@ export default async () => {
           userApi.updatePushToken({ pushToken: userId });
         });
       }
-    });
+    }); */
   }
 };
