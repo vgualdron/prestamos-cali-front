@@ -36,7 +36,9 @@ export default {
         console.log('subscribeToNotifications 2');
         window.OneSignal.push(() => {
           window.OneSignal.isPushNotificationsEnabled((isEnabled) => {
+            console.log('subscribeToNotifications 3', isEnabled);
             if (!isEnabled) {
+              console.log('subscribeToNotifications 4');
               window.OneSignal.showNativePrompt();
             } else {
               console.log('Push notifications are already enabled!');
