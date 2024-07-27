@@ -1,5 +1,4 @@
-import userApi from '../api/user/userApi';
-
+// import userApi from '../api/user/userApi';
 export default async () => {
   if (process.env.NODE_ENV === 'production') {
     const loadOneSignalSDK = new Promise((resolve) => {
