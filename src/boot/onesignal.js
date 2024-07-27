@@ -9,7 +9,7 @@ export default async () => {
       document.head.appendChild(script);
     });
     await loadOneSignalSDK;
-    /* window.OneSignal = window.OneSignal || [];
+    window.OneSignal = window.OneSignal || [];
     window.OneSignal.push(async () => {
       await window.OneSignal.init({
         appId: 'da2c1da8-0e9d-4fd0-b66d-522fa6a77841',
@@ -31,15 +31,15 @@ export default async () => {
         serviceWorkerPath: '/OneSignalSDKWorker.js',
         serviceWorkerUpdaterPath: '/OneSignalSDKUpdaterWorker.js',
       });
+      window.OneSignal.on('subscriptionChange', (isSubscribed) => {
+        console.log('subscriptionChange:', isSubscribed);
+        if (isSubscribed) {
+          window.OneSignal.getUserId((userId) => {
+            console.log('OneSignal User ID:', userId);
+            userApi.updatePushToken({ pushToken: userId });
+          });
+        }
+      });
     });
-    window.OneSignal.on('subscriptionChange', (isSubscribed) => {
-      console.log('subscriptionChange:', isSubscribed);
-      if (isSubscribed) {
-        window.OneSignal.getUserId((userId) => {
-          console.log('OneSignal User ID:', userId);
-          userApi.updatePushToken({ pushToken: userId });
-        });
-      }
-    }); */
   }
 };
