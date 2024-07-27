@@ -16,6 +16,7 @@
     <q-btn @click="unsubscribeFromNotifications" label="Unsubscribe from Notifications" />
     <q-btn @click="sendNotification" label="Send Push Notification" />
     <q-btn @click="getUser" label="GET USER" />
+    <div class='onesignal-customlink-container'></div>
   </div>
 </template>
 <script>
