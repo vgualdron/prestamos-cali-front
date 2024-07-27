@@ -34,6 +34,7 @@ export default async () => {
       });
     });
     window.OneSignal.on('subscriptionChange', (isSubscribed) => {
+      console.log('subscriptionChange:', isSubscribed);
       if (isSubscribed) {
         window.OneSignal.getUserId((userId) => {
           console.log('OneSignal User ID:', userId);
