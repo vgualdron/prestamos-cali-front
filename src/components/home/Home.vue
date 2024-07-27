@@ -35,8 +35,13 @@ export default {
       if (window.OneSignal) {
         console.log('subscribeToNotifications 2');
         window.OneSignal.push(() => {
-          console.log('subscribeToNotifications 3');
-          window.OneSignal.showNativePrompt();
+          window.OneSignal.isPushNotificationsEnabled((isEnabled) => {
+            if (!isEnabled) {
+              window.OneSignal.showNativePrompt();
+            } else {
+              console.log('Push notifications are already enabled!');
+            }
+          });
         });
       }
     },
