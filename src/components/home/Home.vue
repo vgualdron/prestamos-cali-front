@@ -2,20 +2,29 @@
   <div class="q-pa-md" justify-center items-center>
     <div class="justify-center q-mt-sm">
       Bienvenidos ... <br> {{ versionApp }} <br>
-      Token: <br> {{ userId }}
       <q-input
-          outlined
-          v-model.trim="userId"
-          label="Token *"
-          hint="Escriba el token"
-          lazy-rules
-          :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
-        />
+        outlined
+        v-model.trim="userId"
+        label="Token *"
+        hint="Escriba el token"
+        class="q-mt-sm"
+        lazy-rules
+        :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
+      />
+      <q-input
+        outlined
+        v-model.trim="title"
+        label="Titulo *"
+        hint="Escriba el titulo"
+        class="q-mt-sm"
+        lazy-rules
+        :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
+      />
     </div>
-    <q-btn @click="subscribeToNotifications" label="Subscribe to Notifications" />
+    <!-- <q-btn @click="subscribeToNotifications" label="Subscribe to Notifications" />
     <q-btn @click="unsubscribeFromNotifications" label="Unsubscribe from Notifications" />
     <q-btn @click="sendNotificationPush" label="Send Push Notification" />
-    <q-btn @click="getUser" label="GET USER" />
+    <q-btn @click="getUser" label="GET USER" /> -->
     <div class='onesignal-customlink-container'></div>
   </div>
 </template>
@@ -26,7 +35,10 @@ import notificationTypes from '../../store/modules/notification/types';
 export default {
   data() {
     return {
-      userId: null,
+      userId: 'f2f506fe-1afa-46ad-a60c-299f17c2a6ea',
+      title: 'Titulo',
+      content: 'Contenido',
+      url: 'https://documentation.onesignal.com/docs/permission-requests',
     };
   },
   props: [],
@@ -86,9 +98,10 @@ export default {
     async sendNotificationPush() {
       const data = {
         app_id: 'da2c1da8-0e9d-4fd0-b66d-522fa6a77841',
-        headings: { en: 'Título de la notificación' },
-        contents: { en: 'Contenido de la notificación' },
+        headings: { en: this.title },
+        contents: { en: this.content },
         include_player_ids: [this.userId],
+        url: [this.url],
       };
       await this.sendNotification(data);
     },
