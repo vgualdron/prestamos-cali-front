@@ -119,7 +119,7 @@ export default {
         headings: { en: this.title },
         contents: { en: this.content },
         include_player_ids: [this.userId],
-        url: [this.url],
+        url: this.url,
       };
       await this.sendNotification(data);
     },
