@@ -10,6 +10,7 @@ import diaries, { name as diarieName } from './diary';
 import file, { name as fileName } from './file';
 import zip, { name as zipName } from './zip';
 import configuration, { name as configurationName } from './configuration';
+import notification, { name as notificationName } from './notification';
 
 export default {
   [homeName]: home,
@@ -24,4 +25,5 @@ export default {
   [fileName]: file,
   [zipName]: zip,
   [configurationName]: configuration,
+  [notificationName]: notification,
 };
