@@ -90,7 +90,7 @@ export default {
         contents: { en: 'Contenido de la notificación' },
         include_player_ids: [this.userId],
       };
-     await this.sendNotification(data);
+      await this.sendNotification(data);
     },
     getUser() {
       console.log('getUser 1');
