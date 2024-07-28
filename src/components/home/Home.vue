@@ -20,6 +20,24 @@
         lazy-rules
         :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
       />
+      <q-input
+        outlined
+        v-model.trim="content"
+        label="Contenido *"
+        hint="Escriba el contenido"
+        class="q-mt-sm"
+        lazy-rules
+        :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
+      />
+      <q-input
+        outlined
+        v-model.trim="url"
+        label="URL *"
+        hint="Escriba la url"
+        class="q-mt-sm"
+        lazy-rules
+        :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
+      />
     </div>
     <!-- <q-btn @click="subscribeToNotifications" label="Subscribe to Notifications" />
     <q-btn @click="unsubscribeFromNotifications" label="Unsubscribe from Notifications" />
