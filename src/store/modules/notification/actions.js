@@ -4,6 +4,7 @@ import notificationApi from '../../../api/notification/notificationApi';
 export default {
   async [types.actions.SEND_NOTIFICATION]({ commit }, payload) {
     try {
+      console.log(payload);
       const response = await notificationApi.send(payload);
       commit(types.mutations.SET_STATUS, true);
       commit(types.mutations.SET_RESPONSE_MESSAGES, response);
