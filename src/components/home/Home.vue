@@ -123,7 +123,7 @@ export default {
             console.log('subscribeToNotifications 5', isEnabled);
             if (!isEnabled) {
               console.log('subscribeToNotifications 6');
-              window.OneSignal.registerForPushNotifications();
+              window.OneSignal.showNativePrompt();
             } else {
               console.log('Push notifications are already enabled!');
             }
