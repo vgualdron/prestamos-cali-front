@@ -200,6 +200,14 @@ export default {
           visible: true,
         },
         {
+          name: 'pushToken',
+          align: 'left',
+          label: 'Token Push',
+          field: 'pushToken',
+          sortable: false,
+          visible: true,
+        },
+        {
           name: 'actions',
           label: 'Acciones',
           align: 'center',
