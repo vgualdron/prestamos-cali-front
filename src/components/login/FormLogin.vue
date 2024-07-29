@@ -42,6 +42,7 @@
         </q-card-section>
       </q-card-section>
     </q-card>
+    {{ versionApp }}
   </div>
 </template>
 <script>
@@ -63,6 +64,9 @@ export default {
       'statusSign',
       'responseMessages',
     ]),
+    versionApp() {
+      return `Version ${process.env.LATEST_VERSION_APP}`;
+    },
   },
   created() {
     this.validateLogin();
