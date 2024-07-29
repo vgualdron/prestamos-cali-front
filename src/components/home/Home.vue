@@ -7,7 +7,7 @@
         v-model.trim="userId"
         label="Token *"
         hint="Escriba el token"
-        class="q-mt-sm"
+        class="q-mt-md"
         lazy-rules
         :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
       />
@@ -34,16 +34,30 @@
         v-model.trim="url"
         label="URL *"
         hint="Escriba la url"
-        class="q-mt-sm"
+        class="q-mt-sm q-mb-md"
         lazy-rules
         :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
       />
     </div>
-    <!-- <q-btn @click="subscribeToNotifications" label="Subscribe to Notifications" />
-    <q-btn @click="unsubscribeFromNotifications" label="Unsubscribe from Notifications" />  -->
-    <q-btn @click="getUser" label="GET USER" />
-    <q-btn @click="sendNotificationPush" label="Send Push Notification" />
-    <div class='onesignal-customlink-container'></div>
+    <q-btn
+      v-if="!subscribed"
+      @click="subscribeToNotifications"
+      label="Subscribe to Notifications"
+      class="q-m-sm"/>
+    <q-btn
+      v-else
+      @click="unsubscribeFromNotifications"
+      label="Unsubscribe from Notifications"
+      class="q-m-sm"/>
+    <q-btn
+      @click="getUser"
+      label="GET USER"
+      class="q-m-sm"/>
+    <q-btn
+      @click="sendNotificationPush"
+      label="Send Push Notification"
+      class="q-m-sm"/>
+    <div class='onesignal-customlink-container q-mt-md'></div>
   </div>
 </template>
 <script>
@@ -59,6 +73,7 @@ export default {
       title: 'Titulo',
       content: 'Contenido',
       url: 'https://documentation.onesignal.com/docs/permission-requests',
+      subscribed: false,
     };
   },
   props: [],
@@ -146,14 +161,16 @@ export default {
             console.log('getUser 4');
             console.log('Push notifications are enabled!');
             window.OneSignal.getUserId((userId) => {
-              console.log('OneSignal User ID:', userId);
+              console.log('OneSignal Home User ID:', userId);
               this.updatePushToken({ pushToken: userId });
               this.showNotification(this.userResponseMessages, this.userStatus, 'top-right', 5000);
               // Asegúrate de guardar este userId en tu base de datos para usarlo más tarde
             });
+            this.subscribed = true;
           } else {
             console.log('getUser 5');
             console.log('Push notifications are not enabled.');
+            this.subscribed = false;
           }
         });
       });

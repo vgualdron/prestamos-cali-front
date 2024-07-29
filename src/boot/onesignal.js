@@ -36,7 +36,7 @@ export default async () => {
         console.log('subscriptionChange:', isSubscribed);
         if (isSubscribed) {
           window.OneSignal.getUserId((userId) => {
-            console.log('OneSignal User ID:', userId);
+            console.log('OneSignal.js User ID:', userId);
             userApi.updatePushToken({ pushToken: userId });
           });
         }
