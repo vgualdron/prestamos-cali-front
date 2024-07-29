@@ -71,8 +71,9 @@ export default {
   },
   components: {
   },
-  mounted() {
+  async mounted() {
     this.validateLogin();
+    this.getUser();
   },
   methods: {
     ...mapActions(notificationTypes.PATH, {
