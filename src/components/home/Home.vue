@@ -42,22 +42,22 @@
     <q-btn
       v-if="!subscribed"
       @click="subscribeToNotifications"
-      label="Subscribe to Notifications"
+      label="Subscribirse a las Notificaciones"
       class="q-m-sm"/>
     <q-btn
       v-else
       @click="unsubscribeFromNotifications"
-      label="Unsubscribe from Notifications"
+      label="Desubscribirse a las Notificaciones"
       class="q-m-sm"/>
-    <q-btn
+    <!-- <q-btn
       @click="getUser"
       label="GET USER"
-      class="q-m-sm"/>
+      class="q-m-sm"/> -->
     <q-btn
       @click="sendNotificationPush"
       label="Send Push Notification"
       class="q-m-sm"/>
-    <div class='onesignal-customlink-container q-mt-md'></div>
+    <!-- <div class='onesignal-customlink-container q-mt-md'></div> -->
   </div>
 </template>
 <script>
