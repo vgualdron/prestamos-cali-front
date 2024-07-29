@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md" justify-center items-center>
     <div class="justify-center q-mt-sm">
-      Bienvenidos <br> {{ versionApp }} <br>
+      Bienvenidos ... <br> {{ versionApp }} <br>
       <q-input
         outlined
         v-model.trim="userId"
