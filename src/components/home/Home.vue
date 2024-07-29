@@ -152,6 +152,7 @@ export default {
       await this.sendNotification(data);
     },
     getUser() {
+      const self = this;
       console.log('getUser 1');
       window.OneSignal.push(() => {
         console.log('getUser 2');
@@ -162,15 +163,15 @@ export default {
             console.log('Push notifications are enabled!');
             window.OneSignal.getUserId((userId) => {
               console.log('OneSignal Home User ID:', userId);
-              this.updatePushToken({ pushToken: userId });
-              this.showNotification(this.userResponseMessages, this.userStatus, 'top-right', 5000);
+              self.updatePushToken({ pushToken: userId });
+              self.showNotification(self.userResponseMessages, self.userStatus, 'top-right', 5000);
               // Asegúrate de guardar este userId en tu base de datos para usarlo más tarde
             });
-            this.subscribed = true;
+            self.subscribed = true;
           } else {
             console.log('getUser 5');
             console.log('Push notifications are not enabled.');
-            this.subscribed = false;
+            self.subscribed = false;
           }
         });
       });
