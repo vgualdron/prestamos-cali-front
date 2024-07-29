@@ -101,7 +101,7 @@ export default {
       sendNotification: notificationTypes.actions.SEND_NOTIFICATION,
     }),
     ...mapActions(userTypes.PATH, {
-      updatePushToken: notificationTypes.actions.UPDATE_PUSH_TOKEN,
+      updatePushToken: userTypes.actions.UPDATE_PUSH_TOKEN,
     }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
