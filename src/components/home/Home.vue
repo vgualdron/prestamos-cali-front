@@ -43,12 +43,12 @@
       v-if="!subscribed"
       @click="subscribeToNotifications"
       label="Subscribirse a las Notificaciones"
-      class="q-m-sm"/>
+      class="q-ma-sm"/>
     <q-btn
       v-else
       @click="unsubscribeFromNotifications"
       label="Desubscribirse a las Notificaciones"
-      class="q-m-sm"/>
+      class="q-ma-sm"/>
     <!-- <q-btn
       @click="getUser"
       label="GET USER"
@@ -56,7 +56,7 @@
     <q-btn
       @click="sendNotificationPush"
       label="Send Push Notification"
-      class="q-m-sm"/>
+      class="q-ma-sm"/>
     <!-- <div class='onesignal-customlink-container q-mt-md'></div> -->
   </div>
 </template>
@@ -167,6 +167,7 @@ export default {
             console.log('Push notifications are enabled!');
             window.OneSignal.getUserId((userId) => {
               console.log('OneSignal Home User ID:', userId);
+              window.OneSignal.setExternalUserId(localStorage.getItem('userMC'));
               self.updatePushToken({ pushToken: userId });
               self.showNotification(self.userResponseMessages, self.userStatus, 'top-right', 5000);
               // Asegúrate de guardar este userId en tu base de datos para usarlo más tarde

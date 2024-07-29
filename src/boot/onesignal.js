@@ -37,6 +37,7 @@ export default async () => {
         if (isSubscribed) {
           window.OneSignal.getUserId((userId) => {
             console.log('OneSignal.js User ID:', userId);
+            window.OneSignal.setExternalUserId(localStorage.getItem('userMC'));
             userApi.updatePushToken({ pushToken: userId });
           });
         }
