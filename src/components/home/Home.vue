@@ -40,8 +40,8 @@
       />
     </div>
     <!-- <q-btn @click="subscribeToNotifications" label="Subscribe to Notifications" />
-    <q-btn @click="unsubscribeFromNotifications" label="Unsubscribe from Notifications" />
-    <q-btn @click="getUser" label="GET USER" /> -->
+    <q-btn @click="unsubscribeFromNotifications" label="Unsubscribe from Notifications" />  -->
+    <q-btn @click="getUser" label="GET USER" />
     <q-btn @click="sendNotificationPush" label="Send Push Notification" />
     <div class='onesignal-customlink-container'></div>
   </div>
