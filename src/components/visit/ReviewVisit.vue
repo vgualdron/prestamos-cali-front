@@ -15,6 +15,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_CASA_CLIENTE')"
           />
         </div>
@@ -27,6 +28,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('VIDEO_TOCANDO_CASA_CLIENTE')"
           />
         </div>
@@ -39,6 +41,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_CLIENTE')"
           />
         </div>
@@ -51,6 +54,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_CEDULA_CLIENTE_FRONTAL')"
           />
         </div>
@@ -63,6 +67,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_CEDULA_CLIENTE_POSTERIOR')"
           />
         </div>
@@ -75,6 +80,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_LETRA_CLIENTE')"
           />
         </div>
@@ -87,6 +93,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_FIRMANDO_LETRA_CLIENTE')"
           />
         </div>
@@ -99,6 +106,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_CERTIFICADO_TRABAJO_CLIENTE')"
           />
         </div>
@@ -111,6 +119,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_RECIBO_CASA_CLIENTE')"
           />
         </div>
@@ -131,6 +140,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('VIDEO_REFERENCIA_FAMILIAR_1')"
           />
         </div>
@@ -151,6 +161,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('VIDEO_REFERENCIA_FAMILIAR_2')"
           />
         </div>
@@ -171,6 +182,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_CASA_FIADOR')"
           />
         </div>
@@ -183,6 +195,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('VIDEO_TOCANDO_CASA_FIADOR')"
           />
         </div>
@@ -195,6 +208,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_FIADOR')"
           />
         </div>
@@ -207,6 +221,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_CEDULA_FIADOR_FRONTAL')"
           />
         </div>
@@ -219,6 +234,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_CEDULA_FIADOR_POSTERIOR')"
           />
         </div>
@@ -231,6 +247,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_LETRA_FIADOR')"
           />
         </div>
@@ -243,6 +260,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_FIRMANDO_LETRA_FIADOR')"
           />
         </div>
@@ -255,6 +273,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_CERTIFICADO_TRABAJO_FIADOR')"
           />
         </div>
@@ -267,6 +286,7 @@
               modelName: 'news',
               modelId: id
             }"
+            type="read"
             @updateStatus="sendNotificationPush('FOTO_RECIBO_CASA_FIADOR')"
           />
         </div>
