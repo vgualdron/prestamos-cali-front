@@ -49,6 +49,8 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import notificationTypes from '../../store/modules/notification/types';
+import userTypes from '../../store/modules/user/types';
+import { showNotifications } from '../../helpers/showNotifications';
 
 export default {
   data() {
@@ -61,10 +63,14 @@ export default {
   },
   props: [],
   computed: {
-    ...mapState(notificationTypes.PATH, [
-      'status',
-      'responseMessages',
-    ]),
+    ...mapState(notificationTypes.PATH, {
+      userStatus: 'status',
+      userResponseMessages: 'responseMessages',
+    }),
+    ...mapState(userTypes.PATH, {
+      userStatus: 'status',
+      userResponseMessages: 'responseMessages',
+    }),
     versionApp() {
       return `Version ${process.env.LATEST_VERSION_APP}`;
     },
@@ -79,6 +85,12 @@ export default {
     ...mapActions(notificationTypes.PATH, {
       sendNotification: notificationTypes.actions.SEND_NOTIFICATION,
     }),
+    ...mapActions(userTypes.PATH, {
+      updatePushToken: notificationTypes.actions.UPDATE_PUSH_TOKEN,
+    }),
+    showNotification(messages, status, align, timeout) {
+      showNotifications(messages, status, align, timeout);
+    },
     validateLogin() {
       if (!localStorage.getItem('tokenMC')) {
         this.$router.push('/');
@@ -135,6 +147,8 @@ export default {
             console.log('Push notifications are enabled!');
             window.OneSignal.getUserId((userId) => {
               console.log('OneSignal User ID:', userId);
+              this.updatePushToken({ pushToken: userId });
+              this.showNotification(this.userResponseMessages, this.userStatus, 'top-right', 5000);
               // Asegúrate de guardar este userId en tu base de datos para usarlo más tarde
             });
           } else {

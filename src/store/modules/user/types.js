@@ -8,6 +8,7 @@ export default {
     UPDATE_USER: '@actions/updateUser',
     DELETE_USER: '@actions/deleteUser',
     UPDATE_PROFILE: '@actions/updateProfile',
+    UPDATE_PUSH_TOKEN: '@actions/updatePushToken',
   },
   getters: {
   },
