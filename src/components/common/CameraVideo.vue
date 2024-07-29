@@ -296,6 +296,14 @@ export default {
         this.urlFile = `${process.env.URL_FILES}${this.item.url}`;
       }
     },
+    async save(field, value) {
+      this.item[field] = value.value ? value.value : value;
+      await this.updateFile(this.item);
+      if (this.responseMessages && this.status) {
+        this.$emit('updateStatus');
+        await this.fetchFile();
+      }
+    },
   },
 };
 </script>
