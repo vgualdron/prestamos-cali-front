@@ -113,6 +113,7 @@ export default {
     },
     subscribeToNotifications() {
       console.log('subscribeToNotifications 1');
+      const self = this;
       if (window.OneSignal) {
         console.log('subscribeToNotifications 2');
         window.OneSignal.push(() => {
@@ -127,17 +128,20 @@ export default {
             } else {
               console.log('Push notifications are already enabled!');
             }
+            self.getUser();
           });
         });
       }
     },
     unsubscribeFromNotifications() {
+      const self = this;
       console.log('unsubscribeFromNotifications 1');
       if (window.OneSignal) {
         console.log('unsubscribeFromNotifications 2');
         window.OneSignal.push(() => {
           console.log('unsubscribeFromNotifications 3');
           window.OneSignal.setSubscription(false);
+          self.getUser();
         });
       }
     },

@@ -137,6 +137,7 @@ export default {
   },
   async [types.actions.UPDATE_PUSH_TOKEN]({ commit }, payload) {
     try {
+      console.log(payload);
       const response = await userApi.updatePushToken(payload);
       commit(types.mutations.SET_STATUS, true);
       commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
