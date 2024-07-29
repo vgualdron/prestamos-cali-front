@@ -147,7 +147,7 @@ export default {
     },
     async sendNotificationPush() {
       const data = {
-        app_id: 'da2c1da8-0e9d-4fd0-b66d-522fa6a77841',
+        app_id: `${process.env.APP_ID_ONE_SIGNAL}`,
         headings: { en: this.title },
         contents: { en: this.content },
         include_player_ids: [this.userId],

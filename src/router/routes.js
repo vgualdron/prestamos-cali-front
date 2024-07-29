@@ -77,6 +77,13 @@ const routes = [
     ],
   },
   {
+    path: '/review-visit/:id',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Revisar Visita', component: () => import('pages/ReviewVisit.vue') },
+    ],
+  },
+  {
     path: '/zip',
     component: () => import('layouts/MainLayout.vue'),
     children: [

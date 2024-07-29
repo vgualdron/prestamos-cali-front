@@ -3,6 +3,7 @@ export default {
   actions: {
     GET_FILE: '@actions/getFile',
     SAVE_FILE: '@actions/saveFile',
+    UPDATE_FILE: '@actions/updateFile',
     DELETE_FILE: '@actions/deleteFile',
   },
   getters: {

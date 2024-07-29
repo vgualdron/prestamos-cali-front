@@ -64,7 +64,7 @@
             modelName: 'news',
             modelId: id
           }"
-          @savedFile="savedFileCasaCliente"
+          @savedFile="savedFileCasaCliente('FOTO_CASA_CLIENTE')"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">VIDEO TOCANDO CASA CLIENTE</p>
@@ -75,6 +75,7 @@
             modelName: 'news',
             modelId: id
           }"
+          @savedFile="sendNotificationPush('VIDEO_TOCANDO_CASA_CLIENTE')"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">FOTO CLIENTE</p>
@@ -85,6 +86,7 @@
             modelName: 'news',
             modelId: id
           }"
+          @savedFile="sendNotificationPush('FOTO_CLIENTE')"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA CLIENTE FRONTAL</p>
@@ -95,6 +97,7 @@
             modelName: 'news',
             modelId: id
           }"
+          @savedFile="sendNotificationPush('FOTO_CEDULA_CLIENTE_FRONTAL')"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA CLIENTE POSTERIOR</p>
@@ -105,16 +108,18 @@
             modelName: 'news',
             modelId: id
           }"
+          @savedFile="sendNotificationPush('FOTO_CEDULA_CLIENTE_POSTERIOR')"
         />
         <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO LETRA</p>
+        <p class="text-subtitle1 text-weight-bold text-center">FOTO LETRA CLIENTE</p>
         <camera-photo
           :config="{
-            name: 'FOTO_LETRA',
+            name: 'FOTO_LETRA_CLIENTE',
             storage: 'news',
             modelName: 'news',
             modelId: id
           }"
+          @savedFile="sendNotificationPush('FOTO_LETRA_CLIENTE')"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">FOTO FIRMANDO LETRA CLIENTE</p>
@@ -125,6 +130,7 @@
             modelName: 'news',
             modelId: id
           }"
+          @savedFile="sendNotificationPush('FOTO_FIRMANDO_LETRA_CLIENTE')"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">FOTO CERTIFICADO DE TRABAJO CLIENTE</p>
@@ -135,6 +141,7 @@
             modelName: 'news',
             modelId: id
           }"
+          @savedFile="sendNotificationPush('FOTO_CERTIFICADO_TRABAJO_CLIENTE')"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">FOTO RECIBO CASA CLIENTE</p>
@@ -145,6 +152,7 @@
             modelName: 'news',
             modelId: id
           }"
+          @savedFile="sendNotificationPush('FOTO_RECIBO_CASA_CLIENTE')"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
@@ -247,6 +255,7 @@
             modelName: 'news',
             modelId: id
           }"
+          @savedFile="sendNotificationPush('VIDEO_REFERENCIA_FAMILIAR_1')"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
@@ -323,6 +332,7 @@
             modelName: 'news',
             modelId: id
           }"
+          @savedFile="sendNotificationPush('VIDEO_REFERENCIA_FAMILIAR_2')"
         />
         <hr>
         <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
@@ -389,10 +399,163 @@
         prefix="4"
         caption="Cargar datos, videos y fotos"
         :done="step > 4"
-      >
-        Try out different ad text to see what brings in the most customers, and learn how to
-        enhance your ads using features like ad extensions. If you run into any problems with
-        your ads, find out how to tell if they're running and how to resolve approval issues.
+       >
+        <hr>
+        <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA FIADOR</p>
+        <camera-photo
+          :config="{
+            name: 'FOTO_CASA_FIADOR',
+            storage: 'news',
+            modelName: 'news',
+            modelId: id
+          }"
+          @savedFile="sendNotificationPush('FOTO_CASA_FIADOR')"
+        />
+        <hr>
+        <p class="text-subtitle1 text-weight-bold text-center">VIDEO TOCANDO CASA FIADOR</p>
+        <camera-video
+          :config="{
+            name: 'VIDEO_TOCANDO_CASA_FIADOR',
+            storage: 'news',
+            modelName: 'news',
+            modelId: id
+          }"
+          @savedFile="sendNotificationPush('VIDEO_TOCANDO_CASA_FIADOR')"
+        />
+        <hr>
+        <p class="text-subtitle1 text-weight-bold text-center">FOTO FIADOR</p>
+        <camera-photo
+          :config="{
+            name: 'FOTO_FIADOR',
+            storage: 'news',
+            modelName: 'news',
+            modelId: id
+          }"
+          @savedFile="sendNotificationPush('FOTO_FIADOR')"
+        />
+        <hr>
+        <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FIADOR FRONTAL</p>
+        <camera-photo
+          :config="{
+            name: 'FOTO_CEDULA_FIADOR_FRONTAL',
+            storage: 'news',
+            modelName: 'news',
+            modelId: id
+          }"
+          @savedFile="sendNotificationPush('FOTO_CEDULA_FIADOR_FRONTAL')"
+        />
+        <hr>
+        <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FIADOR POSTERIOR</p>
+        <camera-photo
+          :config="{
+            name: 'FOTO_CEDULA_FIADOR_POSTERIOR',
+            storage: 'news',
+            modelName: 'news',
+            modelId: id
+          }"
+          @savedFile="sendNotificationPush('FOTO_CEDULA_FIADOR_POSTERIOR')"
+        />
+        <hr>
+        <p class="text-subtitle1 text-weight-bold text-center">FOTO LETRA FIADOR</p>
+        <camera-photo
+          :config="{
+            name: 'FOTO_LETRA_FIADOR',
+            storage: 'news',
+            modelName: 'news',
+            modelId: id
+          }"
+          @savedFile="sendNotificationPush('FOTO_LETRA_FIADOR')"
+        />
+        <hr>
+        <p class="text-subtitle1 text-weight-bold text-center">FOTO FIRMANDO LETRA FIADOR</p>
+        <camera-photo
+          :config="{
+            name: 'FOTO_FIRMANDO_LETRA_FIADOR',
+            storage: 'news',
+            modelName: 'news',
+            modelId: id
+          }"
+          @savedFile="sendNotificationPush('FOTO_FIRMANDO_LETRA_FIADOR')"
+        />
+        <hr>
+        <p class="text-subtitle1 text-weight-bold text-center">FOTO CERTIFICADO DE TRABAJO FIADOR</p>
+        <camera-photo
+          :config="{
+            name: 'FOTO_CERTIFICADO_TRABAJO_FIADOR',
+            storage: 'news',
+            modelName: 'news',
+            modelId: id
+          }"
+          @savedFile="sendNotificationPush('FOTO_CERTIFICADO_TRABAJO_FIADOR')"
+        />
+        <hr>
+        <p class="text-subtitle1 text-weight-bold text-center">FOTO RECIBO CASA FIADOR</p>
+        <camera-photo
+          :config="{
+            name: 'FOTO_RECIBO_CASA_FIADOR',
+            storage: 'news',
+            modelName: 'news',
+            modelId: id
+          }"
+          @savedFile="sendNotificationPush('FOTO_RECIBO_CASA_FIADOR')"
+        />
+        <hr>
+        <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
+        <div class="table-container">
+          <q-markup-table
+            class="markup-table q-mt-md"
+            separator="cell"
+            dense
+          >
+            <tbody>
+              <tr class="tr-table">
+                <td class="td-table">
+                  <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
+                  <q-icon size="xs" name="edit" />
+                  {{ item.guarantor_name }}
+                  <q-popup-edit :value="item.guarantor_name" v-slot="scope" buttons
+                    @input="val => saveDateNew('guarantor_name', val)">
+                    <q-input v-model="scope.value" dense autofocus />
+                  </q-popup-edit>
+                </td>
+              </tr>
+              <tr class="tr-table">
+                <td class="td-table">
+                  <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
+                  <q-icon size="xs" name="edit" />
+                  {{ item.guarantor_address }}
+                  <q-popup-edit :value="item.guarantor_address" v-slot="scope" buttons
+                    @input="val => saveDateNew('guarantor_address', val)">
+                    <q-input v-model="scope.value" dense autofocus />
+                  </q-popup-edit>
+                </td>
+              </tr>
+              <tr class="tr-table">
+                <td class="td-table">
+                  <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
+                  <q-icon size="xs" name="edit" />
+                  {{ item.guarantor_phone }}
+                  <q-popup-edit :value="item.guarantor_phone" v-slot="scope" buttons
+                    @input="val => saveDateNew('guarantor_phone', val)">
+                    <q-input v-model="scope.value" type="number" dense autofocus />
+                  </q-popup-edit>
+                </td>
+              </tr>
+              <tr class="tr-table">
+                <td class="td-table">
+                  <p class="text-subtitle1 text-weight-bold text-center">Parentesco:</p>
+                  <q-icon size="xs" name="edit" />
+                  {{ item.guarantor_relationship }}
+                  <q-popup-edit :value="item.guarantor_relationship" v-slot="scope" buttons
+                    @input="val => saveDateNew('guarantor_relationship', val)">
+                    <q-input v-model="scope.value" dense autofocus />
+                  </q-popup-edit>
+                </td>
+              </tr>
+            </tbody>
+          </q-markup-table>
+        </div>
+        <hr>
       </q-step>
       <template v-slot:navigation>
         <q-stepper-navigation class="text-center q-mb-xl">
@@ -428,6 +591,8 @@ import CameraVideo from 'components/common/CameraVideo.vue';
 import TableInfoVisit from 'components/visit/TableInfoVisit.vue';
 import { showNotifications } from '../../helpers/showNotifications';
 import newTypes from '../../store/modules/new/types';
+import notificationTypes from '../../store/modules/notification/types';
+import userTypes from '../../store/modules/user/types';
 import { showLoading } from '../../helpers/showLoading';
 
 export default {
@@ -448,8 +613,12 @@ export default {
       newStatus: 'status',
       newResponseMessages: 'responseMessages',
     }),
+    ...mapState(userTypes.PATH, {
+      users: 'users',
+    }),
   },
   async mounted() {
+    this.listUsersReviews();
     await this.getItem();
     if (this.item.status !== 'aprobado') {
       await this.updateStatusNew({
@@ -464,8 +633,22 @@ export default {
       updateStatusNew: newTypes.actions.UPDATE_STATUS_NEW,
       completeDataNew: newTypes.actions.COMPLETE_DATA_NEW,
     }),
+    ...mapActions(notificationTypes.PATH, {
+      sendNotification: notificationTypes.actions.SEND_NOTIFICATION,
+    }),
+    ...mapActions(userTypes.PATH, {
+      listUsersByNameRole: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
+    }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
+    },
+    async listUsersReviews() {
+      await this.listUsersByNameRole({
+        roleName: 'Revisor de datos visita',
+        status: 1,
+        // city: localStorage.getItem('cityMC'),
+        city: 0,
+      });
     },
     formatDateToDay(date) {
       moment.locale('es');
@@ -498,11 +681,24 @@ export default {
       await this.getItem();
       this.$q.loading.hide();
     },
-    async savedFileCasaCliente() {
+    async savedFileCasaCliente(name) {
       console.log('saved filed casa cliente');
+      this.sendNotificationPush(name);
       if (!this.item.visit_start_date) {
         await this.saveDateNew('visit_start_date', moment(new Date()).format('YYYY-MM-DD HH:mm:ss'));
       }
+    },
+    async sendNotificationPush(name) {
+      await this.listUsersReviews();
+      const players = this.users.map((user) => user.pushToken);
+      const data = {
+        app_id: `${process.env.APP_ID_ONE_SIGNAL}`,
+        headings: { en: 'Se ha cargado un archivo para la visita' },
+        contents: { en: `Haz click aquí y revisa el archivo cargado ${name}` },
+        include_player_ids: players,
+        url: `${process.env.URL_FRONT}${this.id}`,
+      };
+      await this.sendNotification(data);
     },
   },
   components: {

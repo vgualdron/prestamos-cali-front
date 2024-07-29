@@ -54,6 +54,8 @@ module.exports = function (ctx) {
         URL_API: ctx.dev ? process.env.URL_API : process.env.URL_API_PROD,
         LATEST_VERSION_APP: process.env.LATEST_VERSION_APP,
         URL_FILES: process.env.URL_FILES,
+        APP_ID_ONE_SIGNAL: process.env.APP_ID_ONE_SIGNAL,
+        URL_FRONT: process.env.URL_FRONT,
       },
       // transpile: false,
 

@@ -11,6 +11,11 @@ export default {
     method: 'POST',
     data,
   }),
+  update: (data) => http({
+    url: `${process.env.URL_API}/api/file/update/${data.id}`,
+    method: 'PUT',
+    data,
+  }),
   delete: (id) => http({
     url: `${process.env.URL_API}/api/file/delete/${id}`,
     method: 'DELETE',

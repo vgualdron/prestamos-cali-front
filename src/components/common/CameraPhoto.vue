@@ -18,12 +18,39 @@
           {{ item.status }}
         </q-banner>
         <q-btn
+          v-if="type === 'read'"
           label="Agregar foto"
           color="primary"
           icon="add_a_photo"
           ref="camera"
           class="q-mt-sm"
           @click="initCamera" />
+        <template v-else-if="item && item.status === 'creado'">
+          <div class="q-mt-md">
+            <q-icon size="xs" name="edit" />
+            {{ item.observation ? item.observation : 'HAZ CLICK PARA ESCRIBIR OBSERVACIÓN' }} <br>
+            <q-popup-edit :value="item.observation" v-slot="scope" buttons
+              @input="val => save('observation', val)">
+              <q-input v-model="scope.value" dense autofocus />
+            </q-popup-edit>
+          </div>
+          <q-btn
+          label="Aprobar"
+          color="primary"
+          icon="check"
+          ref="camera"
+          class="q-mt-sm"
+          @click="save('status', 'aprobado')" />
+          <q-btn
+          label="Rechazar"
+          color="primary"
+          icon="close"
+          ref="camera"
+          class="q-mt-sm q-ml-sm"
+          :disabled="!item.observation"
+          outline
+          @click="save('status', 'rechazado')" />
+        </template>
       </div>
     </div>
     <q-dialog
@@ -126,7 +153,10 @@ export default {
     };
   },
   props: {
-    config: {
+    config: {},
+    type: {
+      type: String,
+      default: '',
     },
   },
   async mounted() {
@@ -156,6 +186,7 @@ export default {
   methods: {
     ...mapActions(fileTypes.PATH, {
       saveFile: fileTypes.actions.SAVE_FILE,
+      updateFile: fileTypes.actions.UPDATE_FILE,
       getFile: fileTypes.actions.GET_FILE,
     }),
     async initCamera() {
@@ -275,6 +306,14 @@ export default {
       if (response.data) {
         this.item = response.data;
         this.urlFile = `${process.env.URL_FILES}${this.item.url}`;
+      }
+    },
+    async save(field, value) {
+      this.item[field] = value.value ? value.value : value;
+      await this.updateFile(this.item);
+      if (this.responseMessages && this.status) {
+        this.$emit('updateStatus');
+        await this.fetchFile();
       }
     },
   },
