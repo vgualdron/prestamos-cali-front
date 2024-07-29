@@ -42,7 +42,7 @@
         </q-card-section>
       </q-card-section>
     </q-card>
-    {{ versionApp }}
+    <p class="text-center">{{ versionApp }}</p>
   </div>
 </template>
 <script>
