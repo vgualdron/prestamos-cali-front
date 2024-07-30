@@ -20,7 +20,7 @@
           {{ item.status }}
         </q-banner>
         <q-btn
-          v-if="type !== 'read' && (item || item.status !== 'aprobado')"
+          v-if="!item || (item && item.status !== 'aprobado') || type !== 'read'"
           label="Agregar video"
           color="primary"
           icon="video_call"
