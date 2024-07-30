@@ -325,6 +325,7 @@ export default {
       newResponseMessages: 'responseMessages',
     }),
     ...mapState(userTypes.PATH, {
+      user: 'user',
       users: 'users',
     }),
   },
