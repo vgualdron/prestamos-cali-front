@@ -196,6 +196,10 @@
                       v-model="scope.value"
                       :options="[
                         {
+                          label: 'familiar',
+                          value: 'familiar'
+                        },
+                        {
                           label: 'propia',
                           value: 'propia'
                         },
