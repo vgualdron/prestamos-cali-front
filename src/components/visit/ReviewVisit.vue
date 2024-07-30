@@ -385,6 +385,7 @@ export default {
       this.$q.loading.hide();
     },
     async sendNotificationPush(name) {
+      await this.getItem();
       const players = [this.item.userVisitToken];
       const data = {
         app_id: `${process.env.APP_ID_ONE_SIGNAL}`,
