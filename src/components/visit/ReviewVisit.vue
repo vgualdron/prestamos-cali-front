@@ -331,7 +331,6 @@ export default {
   },
   async mounted() {
     await this.getItem();
-    await this.getUserVisit();
     if (this.item.status !== 'aprobado') {
       await this.updateStatusNew({
         ...this.item,
@@ -353,9 +352,6 @@ export default {
     }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
-    },
-    async getUserVisit() {
-      await this.getUser(47); // TO DO
     },
     formatDateToDay(date) {
       moment.locale('es');
@@ -389,8 +385,7 @@ export default {
       this.$q.loading.hide();
     },
     async sendNotificationPush(name) {
-      await this.getUserVisit();
-      const players = [this.user.pushToken];
+      const players = [this.item.userVisitToken];
       const data = {
         app_id: `${process.env.APP_ID_ONE_SIGNAL}`,
         headings: { en: 'Se ha actualizado el estado un archivo' },
