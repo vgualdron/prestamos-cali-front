@@ -696,7 +696,7 @@ export default {
         headings: { en: 'Se ha cargado un archivo para la visita' },
         contents: { en: `Haz click aquí y revisa el archivo cargado ${name}` },
         include_player_ids: players,
-        url: `${process.env.URL_FRONT}${this.id}`,
+        url: `${process.env.URL_FRONT}/review-visit/${this.id}`,
       };
       await this.sendNotification(data);
     },

@@ -392,7 +392,7 @@ export default {
         headings: { en: 'Se ha actualizado el estado un archivo' },
         contents: { en: `Haz click aquí y revisa el estado del archivo ${name}` },
         include_player_ids: players,
-        url: `${process.env.URL_FRONT}${this.id}`,
+        url: `${process.env.URL_FRONT}/visit/${this.id}`,
       };
       await this.sendNotification(data);
     },
