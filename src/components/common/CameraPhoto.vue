@@ -18,7 +18,7 @@
           {{ item.status }}
         </q-banner>
         <q-btn
-          v-if="type !== 'read' && item && item.status !== 'aprobado'"
+          v-if="type !== 'read' && (item || item.status !== 'aprobado')"
           label="Agregar foto"
           color="primary"
           icon="add_a_photo"
