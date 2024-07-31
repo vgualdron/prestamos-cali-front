@@ -2,6 +2,7 @@
   <div class="q-pa-md" justify-center items-center>
     <div class="justify-center q-mt-sm">
       Bienvenidos ... <br> {{ versionApp }} <br>
+      Mi token pusk: {{ myTokenPush }} <br>
       <q-input
         outlined
         v-model.trim="userId"
@@ -69,6 +70,7 @@ import { showNotifications } from '../../helpers/showNotifications';
 export default {
   data() {
     return {
+      myTokenPush: '',
       userId: 'f2f506fe-1afa-46ad-a60c-299f17c2a6ea',
       title: 'Titulo',
       content: 'Contenido',
@@ -168,6 +170,7 @@ export default {
             window.OneSignal.getUserId((userId) => {
               console.log('OneSignal Home User ID:', userId);
               window.OneSignal.setExternalUserId(localStorage.getItem('userMC'));
+              self.myTokenPush = userId;
               self.updatePushToken({ pushToken: userId });
               self.showNotification(self.userResponseMessages, self.userStatus, 'top-right', 5000);
               // Asegúrate de guardar este userId en tu base de datos para usarlo más tarde
