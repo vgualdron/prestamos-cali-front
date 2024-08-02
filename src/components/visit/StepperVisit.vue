@@ -100,17 +100,6 @@
                   </tr>
                   <tr class="tr-table">
                     <td class="td-table">
-                      <p class="text-subtitle1 text-weight-bold text-center">Ocupación:</p>
-                      <q-icon size="xs" name="edit" />
-                      {{ item.occupation }}
-                      <q-popup-edit :value="item.occupation" v-slot="scope" buttons
-                        @input="val => saveDateNew('occupation', val)">
-                        <q-input v-model="scope.value" dense autofocus />
-                      </q-popup-edit>
-                    </td>
-                  </tr>
-                  <tr class="tr-table">
-                    <td class="td-table">
                       <p class="text-subtitle1 text-weight-bold text-center">Tipo de vivienda:</p>
                       <q-icon size="xs" name="edit" />
                       {{ item.type_house }}
@@ -173,25 +162,25 @@
                           :options="[
                             {
                               label: '200.000',
-                              value: '200000',
+                              value: 200000,
                             },
                             {
                               label: '300.000',
-                              value: '300000',
+                              value: 300000,
                             },
                             {
                               label: '400.000',
-                              value: '400000',
+                              value: 400000,
                               disable: item.type_work !== 'propietario',
                             },
                             {
                               label: '500.000',
-                              value: '500000',
+                              value: 500000,
                               disable: item.type_work !== 'propietario',
                             },
                             {
                               label: '600.000',
-                              value: '600000',
+                              value: 600000,
                               disable: item.type_work !== 'propietario',
                             },
                           ]"

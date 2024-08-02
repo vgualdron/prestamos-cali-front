@@ -35,12 +35,6 @@
                 </tr>
                 <tr class="tr-table">
                   <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Ocupación:</p>
-                    {{ item.occupation }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
                     <p class="text-subtitle1 text-weight-bold text-center">Tipo de vivienda:</p>
                     {{ item.type_house }}
                   </td>
