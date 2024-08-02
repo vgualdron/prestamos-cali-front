@@ -155,7 +155,7 @@
                       <p class="text-subtitle1 text-weight-bold text-center">Cantidad préstamo:</p>
                       <q-icon size="xs" name="edit" />
                       {{ item.quantity }}
-                      <q-popup-edit :value="item.period" v-slot="scope" buttons
+                      <q-popup-edit :value="item.quantity" v-slot="scope" buttons
                         @input="val => saveDateNew('quantity', val)">
                         <q-option-group
                           v-model="scope.value"
