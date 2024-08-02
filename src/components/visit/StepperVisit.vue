@@ -55,192 +55,304 @@
         caption="Cargar datos, videos y fotos"
         :done="step > 1"
        >
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA CLIENTE</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_CASA_CLIENTE',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="savedFileCasaCliente('FOTO_CASA_CLIENTE')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">VIDEO TOCANDO CASA CLIENTE</p>
-        <camera-video
-          :config="{
-            name: 'VIDEO_TOCANDO_CASA_CLIENTE',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('VIDEO_TOCANDO_CASA_CLIENTE')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO CLIENTE</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_CLIENTE',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('FOTO_CLIENTE')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA CLIENTE FRONTAL</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_CEDULA_CLIENTE_FRONTAL',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('FOTO_CEDULA_CLIENTE_FRONTAL')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA CLIENTE POSTERIOR</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_CEDULA_CLIENTE_POSTERIOR',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('FOTO_CEDULA_CLIENTE_POSTERIOR')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO LETRA CLIENTE</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_LETRA_CLIENTE',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('FOTO_LETRA_CLIENTE')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO FIRMANDO LETRA CLIENTE</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_FIRMANDO_LETRA_CLIENTE',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('FOTO_FIRMANDO_LETRA_CLIENTE')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO CERTIFICADO DE TRABAJO CLIENTE</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_CERTIFICADO_TRABAJO_CLIENTE',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('FOTO_CERTIFICADO_TRABAJO_CLIENTE')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO RECIBO CASA CLIENTE</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_RECIBO_CASA_CLIENTE',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('FOTO_RECIBO_CASA_CLIENTE')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
-        <div class="table-container">
-          <q-markup-table
-            class="markup-table q-mt-md"
-            separator="cell"
-            dense
-          >
-            <tbody>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Ocupación:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.occupation }}
-                  <q-popup-edit :value="item.occupation" v-slot="scope" buttons
-                    @input="val => saveDateNew('occupation', val)">
-                    <q-input v-model="scope.value" dense autofocus />
-                  </q-popup-edit>
-                </td>
-              </tr>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Cantidad préstamo:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.quantity }}
-                  <q-popup-edit :value="item.quantity" v-slot="scope" buttons
-                    @input="val => saveDateNew('quantity', val)">
-                    <q-input v-model="scope.value" type="number" dense autofocus />
-                  </q-popup-edit>
-                </td>
-              </tr>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Tipo de vivienda:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.type_house }}
-                  <q-popup-edit :value="item.type_house" v-slot="scope" buttons
-                    @input="val => saveDateNew('type_house', val)">
-                    <q-option-group
-                      v-model="scope.value"
-                      :options="[
-                        {
-                          label: 'familiar',
-                          value: 'familiar'
-                        },
-                        {
-                          label: 'propia',
-                          value: 'propia'
-                        },
-                        {
-                          label: 'arrendada',
-                          value: 'arrendada'
-                        },
-                      ]"
-                      color="primary"
-                    />
-                  </q-popup-edit>
-                </td>
-              </tr>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Tipo de trabajo:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.type_work }}
-                  <q-popup-edit :value="item.type_work" v-slot="scope" buttons
-                    @input="val => saveDateNew('type_work', val)">
-                    <q-option-group
-                      v-model="scope.value"
-                      :options="[
-                        {
-                          label: 'empleado',
-                          value: 'empleado'
-                        },
-                        {
-                          label: 'propietario',
-                          value: 'propietario'
-                        },
-                      ]"
-                      color="primary"
-                    />
-                  </q-popup-edit>
-                </td>
-              </tr>
-            </tbody>
-          </q-markup-table>
+        <div class="scroll flex">
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
+            <div class="table-container">
+              <q-markup-table
+                class="markup-table q-mt-md"
+                separator="cell"
+                dense
+              >
+                <tbody>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
+                      <!-- <q-icon size="xs" name="edit" /> -->
+                      {{ item.name }}
+                      <!-- <q-popup-edit :value="item.name" v-slot="scope" buttons
+                        @input="val => saveDateNew('name', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit> -->
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Número de doc:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.documentNumber }}
+                      <q-popup-edit :value="item.documentNumber" v-slot="scope" buttons
+                        @input="val => saveDateNew('document_number', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Ocupación:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.occupation }}
+                      <q-popup-edit :value="item.occupation" v-slot="scope" buttons
+                        @input="val => saveDateNew('occupation', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Ocupación:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.occupation }}
+                      <q-popup-edit :value="item.occupation" v-slot="scope" buttons
+                        @input="val => saveDateNew('occupation', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Tipo de vivienda:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.type_house }}
+                      <q-popup-edit :value="item.type_house" v-slot="scope" buttons
+                        @input="val => saveDateNew('type_house', val)">
+                        <q-option-group
+                          v-model="scope.value"
+                          :options="[
+                            {
+                              label: 'familiar',
+                              value: 'familiar'
+                            },
+                            {
+                              label: 'propia',
+                              value: 'propia'
+                            },
+                            {
+                              label: 'arrendada',
+                              value: 'arrendada'
+                            },
+                          ]"
+                          color="primary"
+                        />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Tipo de trabajo:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.type_work }}
+                      <q-popup-edit :value="item.type_work" v-slot="scope" buttons
+                        @input="val => saveDateNew('type_work', val)">
+                        <q-option-group
+                          v-model="scope.value"
+                          :options="[
+                            {
+                              label: 'empleado',
+                              value: 'empleado'
+                            },
+                            {
+                              label: 'propietario',
+                              value: 'propietario'
+                            },
+                          ]"
+                          color="primary"
+                        />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Cantidad préstamo:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.quantity }}
+                      <q-popup-edit :value="item.period" v-slot="scope" buttons
+                        @input="val => saveDateNew('quantity', val)">
+                        <q-option-group
+                          v-model="scope.value"
+                          :options="[
+                            {
+                              label: '200.000',
+                              value: '200000',
+                            },
+                            {
+                              label: '300.000',
+                              value: '300000',
+                            },
+                            {
+                              label: '400.000',
+                              value: '400000',
+                              disable: item.type_work !== 'propietario',
+                            },
+                            {
+                              label: '500.000',
+                              value: '500000',
+                              disable: item.type_work !== 'propietario',
+                            },
+                            {
+                              label: '600.000',
+                              value: '600000',
+                              disable: item.type_work !== 'propietario',
+                            },
+                          ]"
+                          color="primary"
+                        />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Período:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.period }}
+                      <q-popup-edit :value="item.period" v-slot="scope" buttons
+                        @input="val => saveDateNew('period', val)">
+                        <q-option-group
+                          v-model="scope.value"
+                          :options="[
+                            {
+                              label: 'diario',
+                              value: 'diario'
+                            },
+                            {
+                              label: 'semanal',
+                              value: 'semanal'
+                            },
+                            {
+                              label: 'quincenal',
+                              value: 'quincenal'
+                            },
+                          ]"
+                          color="primary"
+                        />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                </tbody>
+              </q-markup-table>
+            </div>
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA CLIENTE</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_CASA_CLIENTE',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="savedFileCasaCliente('FOTO_CASA_CLIENTE')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">VIDEO TOCANDO CASA CLIENTE</p>
+            <camera-video
+              :config="{
+                name: 'VIDEO_TOCANDO_CASA_CLIENTE',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('VIDEO_TOCANDO_CASA_CLIENTE')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO CLIENTE</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_CLIENTE',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_CLIENTE')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA CLIENTE FRONTAL</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_CEDULA_CLIENTE_FRONTAL',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_CEDULA_CLIENTE_FRONTAL')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA CLIENTE POSTERIOR</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_CEDULA_CLIENTE_POSTERIOR',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_CEDULA_CLIENTE_POSTERIOR')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO LETRA CLIENTE</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_LETRA_CLIENTE',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_LETRA_CLIENTE')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO FIRMANDO LETRA CLIENTE</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_FIRMANDO_LETRA_CLIENTE',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_FIRMANDO_LETRA_CLIENTE')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO CERTIFICADO DE TRABAJO CLIENTE</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_CERTIFICADO_TRABAJO_CLIENTE',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_CERTIFICADO_TRABAJO_CLIENTE')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO RECIBO CASA CLIENTE</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_RECIBO_CASA_CLIENTE',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_RECIBO_CASA_CLIENTE')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO FACEBOOK</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_FACEBOOK',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_FACEBOOK')"
+            />
+          </div>
         </div>
-        <hr>
       </q-step>
 
       <q-step
@@ -250,74 +362,77 @@
         caption="Cargar datos y video"
         :done="step > 2"
       >
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 1</p>
-        <camera-video
-          :config="{
-            name: 'VIDEO_REFERENCIA_FAMILIAR_1',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('VIDEO_REFERENCIA_FAMILIAR_1')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
-        <div class="table-container">
-          <q-markup-table
-            class="markup-table q-mt-md"
-            separator="cell"
-            dense
-          >
-            <tbody>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.family_reference_name }}
-                  <q-popup-edit :value="item.family_reference_name" v-slot="scope" buttons
-                    @input="val => saveDateNew('family_reference_name', val)">
-                    <q-input v-model="scope.value" dense autofocus />
-                  </q-popup-edit>
-                </td>
-              </tr>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.family_reference_address }}
-                  <q-popup-edit :value="item.family_reference_address" v-slot="scope" buttons
-                    @input="val => saveDateNew('family_reference_address', val)">
-                    <q-input v-model="scope.value" dense autofocus />
-                  </q-popup-edit>
-                </td>
-              </tr>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.family_reference_phone }}
-                  <q-popup-edit :value="item.family_reference_phone" v-slot="scope" buttons
-                    @input="val => saveDateNew('family_reference_phone', val)">
-                    <q-input v-model="scope.value" type="number" dense autofocus />
-                  </q-popup-edit>
-                </td>
-              </tr>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Parentesco:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.family_reference_relationship }}
-                  <q-popup-edit :value="item.family_reference_relationship" v-slot="scope" buttons
-                    @input="val => saveDateNew('family_reference_relationship', val)">
-                    <q-input v-model="scope.value" dense autofocus />
-                  </q-popup-edit>
-                </td>
-              </tr>
-            </tbody>
-          </q-markup-table>
+      <div class="scroll flex">
+        <div style="width: fit-content;">
+          <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
+          <div class="table-container">
+            <q-markup-table
+              class="markup-table q-mt-md"
+              separator="cell"
+              dense
+            >
+              <tbody>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
+                    <q-icon size="xs" name="edit" />
+                    {{ item.family_reference_name }}
+                    <q-popup-edit :value="item.family_reference_name" v-slot="scope" buttons
+                      @input="val => saveDateNew('family_reference_name', val)">
+                      <q-input v-model="scope.value" dense autofocus />
+                    </q-popup-edit>
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
+                    <q-icon size="xs" name="edit" />
+                    {{ item.family_reference_address }}
+                    <q-popup-edit :value="item.family_reference_address" v-slot="scope" buttons
+                      @input="val => saveDateNew('family_reference_address', val)">
+                      <q-input v-model="scope.value" dense autofocus />
+                    </q-popup-edit>
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
+                    <q-icon size="xs" name="edit" />
+                    {{ item.family_reference_phone }}
+                    <q-popup-edit :value="item.family_reference_phone" v-slot="scope" buttons
+                      @input="val => saveDateNew('family_reference_phone', val)">
+                      <q-input v-model="scope.value" type="number" dense autofocus />
+                    </q-popup-edit>
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Parentesco:</p>
+                    <q-icon size="xs" name="edit" />
+                    {{ item.family_reference_relationship }}
+                    <q-popup-edit :value="item.family_reference_relationship" v-slot="scope" buttons
+                      @input="val => saveDateNew('family_reference_relationship', val)">
+                      <q-input v-model="scope.value" dense autofocus />
+                    </q-popup-edit>
+                  </td>
+                </tr>
+              </tbody>
+            </q-markup-table>
+          </div>
         </div>
-        <hr>
+        <div style="width: fit-content;">
+          <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 1</p>
+          <camera-video
+            :config="{
+              name: 'VIDEO_REFERENCIA_FAMILIAR_1',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            @savedFile="sendNotificationPush('VIDEO_REFERENCIA_FAMILIAR_1')"
+          />
+        </div>
+      </div>
       </q-step>
 
       <q-step
@@ -327,74 +442,77 @@
         caption="Cargar datos y video"
         :done="step > 3"
       >
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 2</p>
-        <camera-video
-          :config="{
-            name: 'VIDEO_REFERENCIA_FAMILIAR_2',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('VIDEO_REFERENCIA_FAMILIAR_2')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
-        <div class="table-container">
-          <q-markup-table
-            class="markup-table q-mt-md"
-            separator="cell"
-            dense
-          >
-            <tbody>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.family2_reference_name }}
-                  <q-popup-edit :value="item.family2_reference_name" v-slot="scope" buttons
-                    @input="val => saveDateNew('family2_reference_name', val)">
-                    <q-input v-model="scope.value" dense autofocus />
-                  </q-popup-edit>
-                </td>
-              </tr>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.family2_reference_address }}
-                  <q-popup-edit :value="item.family2_reference_address" v-slot="scope" buttons
-                    @input="val => saveDateNew('family2_reference_address', val)">
-                    <q-input v-model="scope.value" dense autofocus />
-                  </q-popup-edit>
-                </td>
-              </tr>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.family2_reference_phone }}
-                  <q-popup-edit :value="item.family2_reference_phone" v-slot="scope" buttons
-                    @input="val => saveDateNew('family2_reference_phone', val)">
-                    <q-input v-model="scope.value" type="number" dense autofocus />
-                  </q-popup-edit>
-                </td>
-              </tr>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Parentesco:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.family2_reference_relationship }}
-                  <q-popup-edit :value="item.family2_reference_relationship" v-slot="scope" buttons
-                    @input="val => saveDateNew('family2_reference_relationship', val)">
-                    <q-input v-model="scope.value" dense autofocus />
-                  </q-popup-edit>
-                </td>
-              </tr>
-            </tbody>
-          </q-markup-table>
+        <div class="scroll flex">
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
+            <div class="table-container">
+              <q-markup-table
+                class="markup-table q-mt-md"
+                separator="cell"
+                dense
+              >
+                <tbody>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.family2_reference_name }}
+                      <q-popup-edit :value="item.family2_reference_name" v-slot="scope" buttons
+                        @input="val => saveDateNew('family2_reference_name', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.family2_reference_address }}
+                      <q-popup-edit :value="item.family2_reference_address" v-slot="scope" buttons
+                        @input="val => saveDateNew('family2_reference_address', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.family2_reference_phone }}
+                      <q-popup-edit :value="item.family2_reference_phone" v-slot="scope" buttons
+                        @input="val => saveDateNew('family2_reference_phone', val)">
+                        <q-input v-model="scope.value" type="number" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Parentesco:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.family2_reference_relationship }}
+                      <q-popup-edit :value="item.family2_reference_relationship" v-slot="scope" buttons
+                        @input="val => saveDateNew('family2_reference_relationship', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                </tbody>
+              </q-markup-table>
+            </div>
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 2</p>
+            <camera-video
+              :config="{
+                name: 'VIDEO_REFERENCIA_FAMILIAR_2',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('VIDEO_REFERENCIA_FAMILIAR_2')"
+            />
+          </div>
         </div>
-        <hr>
       </q-step>
 
       <q-step
@@ -404,162 +522,161 @@
         caption="Cargar datos, videos y fotos"
         :done="step > 4"
        >
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA FIADOR</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_CASA_FIADOR',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('FOTO_CASA_FIADOR')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">VIDEO TOCANDO CASA FIADOR</p>
-        <camera-video
-          :config="{
-            name: 'VIDEO_TOCANDO_CASA_FIADOR',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('VIDEO_TOCANDO_CASA_FIADOR')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO FIADOR</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_FIADOR',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('FOTO_FIADOR')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FIADOR FRONTAL</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_CEDULA_FIADOR_FRONTAL',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('FOTO_CEDULA_FIADOR_FRONTAL')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FIADOR POSTERIOR</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_CEDULA_FIADOR_POSTERIOR',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('FOTO_CEDULA_FIADOR_POSTERIOR')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO LETRA FIADOR</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_LETRA_FIADOR',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('FOTO_LETRA_FIADOR')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO FIRMANDO LETRA FIADOR</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_FIRMANDO_LETRA_FIADOR',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('FOTO_FIRMANDO_LETRA_FIADOR')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO CERTIFICADO DE TRABAJO FIADOR</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_CERTIFICADO_TRABAJO_FIADOR',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('FOTO_CERTIFICADO_TRABAJO_FIADOR')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">FOTO RECIBO CASA FIADOR</p>
-        <camera-photo
-          :config="{
-            name: 'FOTO_RECIBO_CASA_FIADOR',
-            storage: 'news',
-            modelName: 'news',
-            modelId: id
-          }"
-          @savedFile="sendNotificationPush('FOTO_RECIBO_CASA_FIADOR')"
-        />
-        <hr>
-        <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
-        <div class="table-container">
-          <q-markup-table
-            class="markup-table q-mt-md"
-            separator="cell"
-            dense
-          >
-            <tbody>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.guarantor_name }}
-                  <q-popup-edit :value="item.guarantor_name" v-slot="scope" buttons
-                    @input="val => saveDateNew('guarantor_name', val)">
-                    <q-input v-model="scope.value" dense autofocus />
-                  </q-popup-edit>
-                </td>
-              </tr>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.guarantor_address }}
-                  <q-popup-edit :value="item.guarantor_address" v-slot="scope" buttons
-                    @input="val => saveDateNew('guarantor_address', val)">
-                    <q-input v-model="scope.value" dense autofocus />
-                  </q-popup-edit>
-                </td>
-              </tr>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.guarantor_phone }}
-                  <q-popup-edit :value="item.guarantor_phone" v-slot="scope" buttons
-                    @input="val => saveDateNew('guarantor_phone', val)">
-                    <q-input v-model="scope.value" type="number" dense autofocus />
-                  </q-popup-edit>
-                </td>
-              </tr>
-              <tr class="tr-table">
-                <td class="td-table">
-                  <p class="text-subtitle1 text-weight-bold text-center">Parentesco:</p>
-                  <q-icon size="xs" name="edit" />
-                  {{ item.guarantor_relationship }}
-                  <q-popup-edit :value="item.guarantor_relationship" v-slot="scope" buttons
-                    @input="val => saveDateNew('guarantor_relationship', val)">
-                    <q-input v-model="scope.value" dense autofocus />
-                  </q-popup-edit>
-                </td>
-              </tr>
-            </tbody>
-          </q-markup-table>
+        <div class="scroll flex">
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
+            <div class="table-container">
+              <q-markup-table
+                class="markup-table q-mt-md"
+                separator="cell"
+                dense
+              >
+                <tbody>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.guarantor_name }}
+                      <q-popup-edit :value="item.guarantor_name" v-slot="scope" buttons
+                        @input="val => saveDateNew('guarantor_name', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.guarantor_address }}
+                      <q-popup-edit :value="item.guarantor_address" v-slot="scope" buttons
+                        @input="val => saveDateNew('guarantor_address', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.guarantor_phone }}
+                      <q-popup-edit :value="item.guarantor_phone" v-slot="scope" buttons
+                        @input="val => saveDateNew('guarantor_phone', val)">
+                        <q-input v-model="scope.value" type="number" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Parentesco:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.guarantor_relationship }}
+                      <q-popup-edit :value="item.guarantor_relationship" v-slot="scope" buttons
+                        @input="val => saveDateNew('guarantor_relationship', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                </tbody>
+              </q-markup-table>
+            </div>
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA FIADOR</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_CASA_FIADOR',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_CASA_FIADOR')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO FIADOR</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_FIADOR',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_FIADOR')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FIADOR FRONTAL</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_CEDULA_FIADOR_FRONTAL',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_CEDULA_FIADOR_FRONTAL')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FIADOR POSTERIOR</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_CEDULA_FIADOR_POSTERIOR',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_CEDULA_FIADOR_POSTERIOR')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO LETRA FIADOR</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_LETRA_FIADOR',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_LETRA_FIADOR')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO FIRMANDO LETRA FIADOR</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_FIRMANDO_LETRA_FIADOR',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_FIRMANDO_LETRA_FIADOR')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO CERTIFICADO DE TRABAJO FIADOR</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_CERTIFICADO_TRABAJO_FIADOR',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_CERTIFICADO_TRABAJO_FIADOR')"
+            />
+          </div>
+          <div style="width: fit-content;">
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO RECIBO CASA FIADOR</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_RECIBO_CASA_FIADOR',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush('FOTO_RECIBO_CASA_FIADOR')"
+            />
+          </div>
         </div>
-        <hr>
       </q-step>
       <template v-slot:navigation>
         <q-stepper-navigation class="text-center q-mb-xl">
@@ -720,8 +837,9 @@ export default {
   }
   .table-container {
     text-align: center;
+    padding: 0px;
   }
-  .markup-table {
+  ._markup-table {
     display: block;
     max-width: 640px;
     margin: auto;
@@ -729,5 +847,14 @@ export default {
   }
   .z-index-btn {
     z-index: 20;
+  }
+  .q-stepper--vertical .q-stepper__step-inner {
+    display: flex !important;
+  }
+  .q-stepper__step-inner > div > div {
+    border: solid 1px rgb(145, 140, 140);
+    margin: 10px;
+    padding: 15px;
+    border-radius: 10px;
   }
 </style>

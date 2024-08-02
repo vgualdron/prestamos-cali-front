@@ -28,10 +28,9 @@
           >
             <q-input
               v-model.trim="user.documentNumber"
-              label="Número de Documento *"
+              label="Número de Documento"
               outlined
               lazy-rules
-              :rules="rules.documentNumber"
               :disable="disableInputs"
               type="number"
               hide-bottom-space

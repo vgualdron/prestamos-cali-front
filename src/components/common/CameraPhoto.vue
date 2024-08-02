@@ -344,4 +344,7 @@ export default {
     transform: translate(-50%, -50%);
     pointer-events: none; /* Make sure the square doesn't block interactions with the video */
   }
+  .q-banner {
+    width: 210px;
+  }
 </style>

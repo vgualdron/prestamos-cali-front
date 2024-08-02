@@ -7,6 +7,67 @@
       <q-separator />
       <q-card-section class="scroll flex">
         <div style="width: fit-content;">
+          <p class="text-subtitle1 text-weight-bold text-center">DATOS:</p>
+          <div class="table-container">
+            <q-markup-table
+              class="markup-table q-mt-md"
+              separator="cell"
+              dense
+            >
+              <tbody>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
+                    {{ item.name }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Número de doc:</p>
+                    {{ item.documentNumber }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Ocupación:</p>
+                    {{ item.occupation }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Ocupación:</p>
+                    {{ item.occupation }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Tipo de vivienda:</p>
+                    {{ item.type_house }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Tipo de trabajo:</p>
+                    {{ item.type_work }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Cantidad préstamo:</p>
+                    {{ item.quantity }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Período:</p>
+                    {{ item.period }}
+                  </td>
+                </tr>
+              </tbody>
+            </q-markup-table>
+          </div>
+        </div>
+        <div style="width: fit-content;">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA CLIENTE</p>
           <camera-photo
             :config="{
@@ -123,14 +184,65 @@
             @updateStatus="sendNotificationPush('FOTO_RECIBO_CASA_CLIENTE')"
           />
         </div>
+        <div style="width: fit-content;">
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO FACEBOOK</p>
+          <camera-photo
+            :config="{
+              name: 'FOTO_FACEBOOK',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            type="read"
+            @updateStatus="sendNotificationPush('FOTO_FACEBOOK')"
+          />
+        </div>
       </q-card-section>
     </q-card>
+    <br><hr>
     <q-card v-if="id" class="q-mt-lg">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">DATOS DE REFERENCIA FAMILIAR 1</div>
       </q-card-section>
       <q-separator />
       <q-card-section class="scroll flex">
+        <div style="width: fit-content;">
+          <p class="text-subtitle1 text-weight-bold text-center">DATOS:</p>
+          <div class="table-container">
+            <q-markup-table
+              class="markup-table q-mt-md"
+              separator="cell"
+              dense
+            >
+              <tbody>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
+                    {{ item.family_reference_name }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
+                    {{ item.family_reference_address }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
+                    {{ item.family_reference_phone }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Parentesco:</p>
+                    {{ item.family_reference_relationship }}
+                  </td>
+                </tr>
+              </tbody>
+            </q-markup-table>
+          </div>
+        </div>
         <div style="width: fit-content;">
           <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 1</p>
           <camera-video
@@ -146,12 +258,50 @@
         </div>
       </q-card-section>
     </q-card>
+    <br><hr>
     <q-card v-if="id" class="q-mt-lg">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">DATOS DE REFERENCIA FAMILIAR 2</div>
       </q-card-section>
       <q-separator />
       <q-card-section class="scroll flex">
+        <div style="width: fit-content;">
+          <p class="text-subtitle1 text-weight-bold text-center">DATOS:</p>
+          <div class="table-container">
+            <q-markup-table
+              class="markup-table q-mt-md"
+              separator="cell"
+              dense
+            >
+              <tbody>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
+                    {{ item.family2_reference_name }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
+                    {{ item.family2_reference_address }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
+                    {{ item.family2_reference_phone }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Parentesco:</p>
+                    {{ item.family2_reference_relationship }}
+                  </td>
+                </tr>
+              </tbody>
+            </q-markup-table>
+          </div>
+        </div>
         <div style="width: fit-content;">
           <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 2</p>
           <camera-video
@@ -167,12 +317,50 @@
         </div>
       </q-card-section>
     </q-card>
+    <br><hr>
     <q-card v-if="id" class="q-mt-lg">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">DATOS DE FIADOR</div>
       </q-card-section>
       <q-separator />
       <q-card-section class="scroll flex">
+        <div style="width: fit-content;">
+          <p class="text-subtitle1 text-weight-bold text-center">DATOS:</p>
+          <div class="table-container">
+            <q-markup-table
+              class="markup-table q-mt-md"
+              separator="cell"
+              dense
+            >
+              <tbody>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
+                    {{ item.guarantor_name }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
+                    {{ item.guarantor_address }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
+                    {{ item.guarantor_phone }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Parentesco:</p>
+                    {{ item.guarantor_relationship }}
+                  </td>
+                </tr>
+              </tbody>
+            </q-markup-table>
+          </div>
+        </div>
         <div style="width: fit-content;">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA FIADOR</p>
           <camera-photo
@@ -184,19 +372,6 @@
             }"
             type="read"
             @updateStatus="sendNotificationPush('FOTO_CASA_FIADOR')"
-          />
-        </div>
-        <div style="width: fit-content;">
-          <p class="text-subtitle1 text-weight-bold text-center">VIDEO TOCANDO CASA FIADOR</p>
-          <camera-video
-            :config="{
-              name: 'VIDEO_TOCANDO_CASA_FIADOR',
-              storage: 'news',
-              modelName: 'news',
-              modelId: id
-            }"
-            type="read"
-            @updateStatus="sendNotificationPush('VIDEO_TOCANDO_CASA_FIADOR')"
           />
         </div>
         <div style="width: fit-content;">
@@ -413,12 +588,6 @@ export default {
   .table-container {
     text-align: center;
   }
-  .markup-table {
-    display: block;
-    max-width: 640px;
-    margin: auto;
-    border: solid 1px black;
-  }
   .z-index-btn {
     z-index: 20;
   }
@@ -426,9 +595,9 @@ export default {
     border: none;
   }
   .q-card__section > div {
-    border: solid 1px black;
-    margin: 5px;
-    padding: 5px;
+    border: solid 1px rgb(145, 140, 140);
+    margin: 10px;
+    padding: 15px;
     border-radius: 10px;
   }
 </style>

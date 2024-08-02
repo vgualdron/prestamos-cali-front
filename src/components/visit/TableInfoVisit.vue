@@ -2,7 +2,7 @@
   <div class="table-container">
     <q-markup-table class="markup-table q-mt-md" separator="cell" dense>
       <tbody>
-        <tr class="tr-table">
+        <!-- <tr class="tr-table">
           <td class="td-table">
             <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
             {{ item.name }}
@@ -25,7 +25,7 @@
             <p class="text-subtitle1 text-weight-bold text-center">Tipo de trabajo:</p>
             {{ item.type_work }}
           </td>
-        </tr>
+        </tr> -->
         <tr class="tr-table">
           <td class="td-table">
             <p class="text-subtitle1 text-weight-bold text-center">Inicio de la visita:</p>
