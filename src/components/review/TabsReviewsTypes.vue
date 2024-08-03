@@ -4,9 +4,11 @@
       <q-tabs
         v-model="tab"
         dense
-        class="bg-text-grey"
-        active-color="primary"
-        indicator-color="primary"
+        class="bg-white text-grey shadow-2"
+        active-color="white"
+        indicator-color="white"
+        active-bg-color="primary"
+        active-class="XXX"
         align="justify"
         narrow-indicator
       >
@@ -35,8 +37,10 @@ export default {
   data() {
     return {
       tab: 'one',
-      labelOne: 'Revisión de información',
-      labelTwo: 'Revisión de información segunda opción',
+      prefixLabelOne: 'Primera vez',
+      labelOne: 'Primera vez',
+      prefixLabelTwo: 'Segunda vez',
+      labelTwo: 'Segunda vez',
       polling: null,
     };
   },
@@ -69,21 +73,21 @@ export default {
       showLoading('Consultando ...', 'Por favor, espere', true);
       if (this.tab === 'one') {
         await this.listNews(['pendiente']);
-        this.labelTwo = `Revisión de información segunda opción [${this.news.length}]`;
+        this.labelTwo = `${this.prefixLabelTwo} [ ${this.news.length} ]`;
         await this.listNews(['creado']);
-        this.labelOne = `Revisión de información [${this.news.length}]`;
+        this.labelOne = `${this.prefixLabelOne} [ ${this.news.length} ]`;
       } else {
         await this.listNews(['creado']);
-        this.labelOne = `Revisión de información [${this.news.length}]`;
+        this.labelOne = `${this.prefixLabelOne} [ ${this.news.length} ]`;
         await this.listNews(['pendiente']);
-        this.labelTwo = `Revisión de información segunda opción [${this.news.length}]`;
+        this.labelTwo = `${this.prefixLabelTwo} [ ${this.news.length} ]`;
       }
       this.$q.loading.hide();
     },
     async pollData() {
       this.polling = setInterval(async () => {
         await this.getData();
-      }, 30000);
+      }, 60000);
     },
   },
 };

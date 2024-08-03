@@ -135,4 +135,10 @@ export default {
       }
     }
   },
+  async [types.actions.UPDATE_USER_SELECTED_REVIEW]({ commit }, payload) {
+    commit(types.mutations.SET_USER_SELECTED_REVIEW, payload);
+  },
+  async [types.actions.UPDATE_SECTOR_SELECTED_REVIEW]({ commit }, payload) {
+    commit(types.mutations.SET_SECTOR_SELECTED_REVIEW, payload);
+  },
 };

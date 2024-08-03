@@ -25,10 +25,12 @@
           v-model="citySelected"
           class="my-custom-toggle"
           :options="optionsZones"
-          toggle-color="primary"
+          toggle-color="grey"
+          toggle-text-color="white"
           color="white"
-          text-color="primary"
+          text-color="grey"
           spread
+          rounded
         />
       </div>
     </div>
@@ -45,9 +47,10 @@
     </div>
     <div class="row q-mt-md">
       <div class="col-12 text-center">
-        <div class="q-px-sm">
+        <!-- <div class="q-px-sm">
           <b>Cobrador seleccionado:</b>
-        </div>
+        </div> -->
+        <b>Cobrador:</b>
         <q-radio
           v-for="user in optionsUsers"
           v-model="userSelected"
@@ -55,10 +58,7 @@
           :val="user.value"
           :label="user.label"
           :key="user.value"
-          class="q-ml-lg q-mt-sm">
-          <q-btn round icon="notifications" class="q-ml-sm">
-            <q-badge floating color="red" rounded />
-          </q-btn><br>
+          class="q-ml-lg">
         </q-radio>
       </div>
     </div>
@@ -367,8 +367,6 @@ export default {
       data: [],
       itemSelected: {},
       citySelected: 0,
-      sectorSelected: [],
-      userSelected: null,
     };
   },
   props: {
@@ -383,13 +381,20 @@ export default {
   },
   watch: {
     async citySelected(newVal) {
-      this.sectorSelected = [];
-      this.userSelected = [];
       showLoading('Cargando ...', 'Por favor, espere', true);
-      this.listYardsByZone({ id: newVal, displayAll: 1 });
+      await this.listYardsByZone({ id: newVal, displayAll: 1 });
       await this.listUsersByRoleName({ roleName: 'Prestador', status: 1, city: this.citySelected });
+      /* if (this.optionsSectors && this.optionsSectors.length > 0) {
+        const hasItem = this.optionsSectors.some((sectors) => this.sectorSelected.includes(sectors.value));
+        if (!hasItem) {
+          this.sectorSelected = [];
+        }
+      } */
       if (this.optionsUsers && this.optionsUsers.length > 0) {
-        this.userSelected = this.optionsUsers[0].value;
+        const users = this.optionsUsers.filter((user) => parseInt(user.value, 10) === parseInt(this.userSelected, 10));
+        if (users.length === 0) {
+          this.userSelected = this.optionsUsers[0].value;
+        }
       }
       this.$q.loading.hide();
     },
@@ -400,6 +405,8 @@ export default {
       'responseMessages',
       'status',
       'new',
+      'userSelectedReview',
+      'sectorSelectedReview',
     ]),
     ...mapState(zoneTypes.PATH, {
       zones: 'zones',
@@ -502,12 +509,30 @@ export default {
     title() {
       return '';
     },
+    userSelected: {
+      get() {
+        return this.userSelectedReview;
+      },
+      set(newValue) {
+        this.updateUserSelectedReview(parseInt(newValue, 10));
+      },
+    },
+    sectorSelected: {
+      get() {
+        return this.sectorSelectedReview;
+      },
+      set(newValue) {
+        this.updateSectorSelectedReview(newValue);
+      },
+    },
   },
   methods: {
     ...mapActions(newTypes.PATH, {
       listNews: newTypes.actions.LIST_NEWS,
       updateStatusNew: newTypes.actions.UPDATE_STATUS_NEW,
       completeDataNew: newTypes.actions.COMPLETE_DATA_NEW,
+      updateUserSelectedReview: newTypes.actions.UPDATE_USER_SELECTED_REVIEW,
+      updateSectorSelectedReview: newTypes.actions.UPDATE_SECTOR_SELECTED_REVIEW,
     }),
     ...mapActions(zoneTypes.PATH, {
       listZones: zoneTypes.actions.LIST_ZONES,
@@ -595,7 +620,10 @@ export default {
         await this.listUsersByRoleName({ roleName: 'Prestador', status: 1, city: this.citySelected });
         this.$q.loading.hide();
         if (this.optionsUsers && this.optionsUsers.length > 0) {
-          this.userSelected = this.optionsUsers[0].value;
+          const users = this.optionsUsers.filter((user) => parseInt(user.value, 10) === parseInt(this.userSelected, 10));
+          if (users.length === 0) {
+            this.userSelected = this.optionsUsers[0].value;
+          }
         }
       } else {
         this.$router.push('/');
