@@ -26,7 +26,7 @@
             @submit="onSubmit"
             class="q-gutter-md"
           >
-            <q-input
+            <!-- <q-input
               v-model.trim="user.documentNumber"
               label="Número de Documento"
               outlined
@@ -34,7 +34,7 @@
               :disable="disableInputs"
               type="number"
               hide-bottom-space
-            />
+            /> -->
             <q-input
               outlined
               v-model.trim="user.name"
@@ -208,7 +208,7 @@ export default {
       optionsZones: [],
       user: {
         id: null,
-        documentNumber: '',
+        documentNumber: null,
         name: '',
         address: '',
         phone: '',
@@ -221,7 +221,7 @@ export default {
       },
       copyUser: {
         id: null,
-        documentNumber: '',
+        documentNumber: null,
         name: '',
         address: '',
         phone: '',

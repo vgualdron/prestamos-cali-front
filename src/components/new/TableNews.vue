@@ -187,7 +187,7 @@ export default {
           align: 'center',
           visible: false,
         },
-        {
+        /* {
           name: 'documentNumber',
           label: 'Documento',
           align: 'left',
@@ -195,7 +195,7 @@ export default {
           sortable: true,
           visible: true,
           headerStyle: 'height: 50px',
-        },
+        }, */
         {
           name: 'name',
           align: 'left',
