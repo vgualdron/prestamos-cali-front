@@ -27,7 +27,7 @@ register(process.env.SERVICE_WORKER_FILE, {
     console.log('New content is downloading.');
   },
   updated(/* registration */) {
-    console.log('New content is available; please refresh.');
+    console.log('New content is available; please refresh.!');
     const version = localStorage.getItem('versionApp');
     console.log(process.env.LATEST_VERSION_APP);
     console.log(version);
