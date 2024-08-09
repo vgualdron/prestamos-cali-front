@@ -101,6 +101,9 @@
       <q-item-label header class="text-grey-8 text-center q-mt-md">
         {{ versionApp }}
       </q-item-label>
+      <q-item-label header class="text-grey-8 text-center q-mt-md">
+        {{ tokenPush }}
+      </q-item-label>
     </q-drawer>
 
     <q-page-container>
@@ -192,6 +195,9 @@ export default {
     },
     versionApp() {
       return `Version ${process.env.LATEST_VERSION_APP}`;
+    },
+    tokenPush() {
+      return `Mi token push: ${localStorage.getItem('tokenPush')}`;
     },
   },
   methods: {

@@ -176,6 +176,7 @@ export default {
               console.log('OneSignal Home User ID:', userId);
               window.OneSignal.setExternalUserId(localStorage.getItem('userMC'));
               self.myTokenPush = userId;
+              localStorage.setItem('tokenPush', userId);
               self.userId = userId;
               self.updatePushToken({ pushToken: userId });
               self.showNotification(self.userResponseMessages, self.userStatus, 'top-right', 5000);
