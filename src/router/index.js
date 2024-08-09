@@ -1,7 +1,9 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import { Notify } from 'quasar';
 
 import routes from './routes';
+import authApi from '../api/auth/authApi';
 
 Vue.use(VueRouter);
 
@@ -24,6 +26,41 @@ export default (/* { store, ssrContext } */) => {
     // quasar.conf.js -> build -> publicPath
     mode: process.env.VUE_ROUTER_MODE,
     base: process.env.VUE_ROUTER_BASE,
+  });
+
+  Router.beforeEach(async (to, from, next) => {
+    console.log(to.path);
+    console.log(from);
+    console.log(next);
+
+    if (to.path === '/') {
+      next();
+      return;
+    }
+
+    try {
+      await authApi.session();
+      next();
+      return;
+    } catch (error) {
+      console.log(error.response);
+      if (error.response.status === 401) {
+        Notify.create({
+          message: 'No hay una sesión activa, vuelva a iniciar sesión por favor!',
+          icon: 'error',
+          color: 'red',
+          timeout: 2000,
+          textColor: 'white',
+          classes: 'glossy',
+          progress: true,
+          onDismiss() {
+            Router.push('/');
+          },
+        });
+      } else {
+        next();
+      }
+    }
   });
 
   return Router;

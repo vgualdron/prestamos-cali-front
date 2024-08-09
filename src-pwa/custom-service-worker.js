@@ -31,20 +31,20 @@ register(process.env.SERVICE_WORKER_FILE, {
     const version = localStorage.getItem('versionApp');
     console.log(process.env.LATEST_VERSION_APP);
     console.log(version);
-    if (version !== process.env.LATEST_VERSION_APP) {
-      Notify.create({
-        message: `Hay una versión más reciente que la ${process.env.LATEST_VERSION_APP}, se actualizará automaticamente en un momento`,
-        icon: 'cloud_download',
-        color: 'green',
-        timeout: 5000,
-        textColor: 'white',
-        classes: 'glossy',
-        progress: true,
-        onDismiss() {
-          window.location.reload(true);
-        },
-      });
-    }
+    // if (version !== process.env.LATEST_VERSION_APP) {
+    Notify.create({
+      message: `Hay una versión más reciente que la ${process.env.LATEST_VERSION_APP}, se actualizará automaticamente en un momento`,
+      icon: 'cloud_download',
+      color: 'green',
+      timeout: 5000,
+      textColor: 'white',
+      classes: 'glossy',
+      progress: true,
+      onDismiss() {
+        window.location.reload(true);
+      },
+    });
+    // }
     localStorage.setItem('versionApp', process.env.LATEST_VERSION_APP);
   },
   offline() {
