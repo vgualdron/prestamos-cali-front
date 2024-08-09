@@ -18,6 +18,7 @@ export default {
     SET_DOCUMENT: '@mutations/setDocument',
     SET_TOKEN: '@mutations/setToken',
     SET_ROLES: '@mutations/setRoles',
+    SET_ROLES_ARRAY: '@mutations/setRolesArray',
     SET_USER: '@mutations/setUser',
   },
 };

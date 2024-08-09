@@ -11,6 +11,7 @@ export default function () {
     name: localStorage.getItem('nameMC') ? localStorage.getItem('nameMC') : '',
     token: localStorage.getItem('tokenMC') ? localStorage.getItem('tokenMC') : '',
     roles: localStorage.getItem('rolesMC') ? JSON.parse(localStorage.getItem('rolesMC')) : '',
+    rolesArray: localStorage.getItem('rolesArrayMC') ? JSON.parse(localStorage.getItem('rolesArrayMC')) : [],
     user: localStorage.getItem('userMC') ? JSON.parse(localStorage.getItem('userMC')) : '',
   };
 }

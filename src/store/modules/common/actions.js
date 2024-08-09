@@ -16,6 +16,7 @@ export default {
       commit(types.mutations.SET_NAME, response.data.user.name);
       commit(types.mutations.SET_TOKEN, response.data.token);
       commit(types.mutations.SET_ROLES, response.data.roles);
+      commit(types.mutations.SET_ROLES_ARRAY, response.data.rolesArray);
     } catch (error) {
       if (error.message !== 'Network Error') {
         commit(types.mutations.SET_STATUS_SIGN, false);
@@ -42,6 +43,7 @@ export default {
       commit(types.mutations.SET_NAME, '');
       commit(types.mutations.SET_TOKEN, '');
       commit(types.mutations.SET_ROLES, []);
+      commit(types.mutations.SET_ROLES_ARRAY, []);
     } catch (error) {
       if (error.message !== 'Network Error') {
         if (error.response.status && error.response.status === 401) {
@@ -54,6 +56,7 @@ export default {
           commit(types.mutations.SET_NAME, '');
           commit(types.mutations.SET_TOKEN, '');
           commit(types.mutations.SET_ROLES, []);
+          commit(types.mutations.SET_ROLES_ARRAY, []);
         } else {
           commit(types.mutations.SET_STATUS_SIGN, false);
           commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);

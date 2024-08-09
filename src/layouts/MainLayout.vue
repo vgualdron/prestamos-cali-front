@@ -69,7 +69,7 @@
         <q-item-label header class="text-grey-8">
           <img src="~/assets/logo-rectangle.png" width="250" class="q-mr-auto q-ml-auto">
         </q-item-label>
-        <EssentialLink
+        <!-- <EssentialLink
             key="home-menu"
             title="Inicio"
             link="/home"
@@ -77,7 +77,7 @@
             :class="'/home' === $router.currentRoute.name && 'bg-blue-grey-3'"
             :clickable="'/home' !== $router.currentRoute.path"
             :active="'/home' === $router.currentRoute.path"
-          />
+          /> -->
         <q-expansion-item
           v-for="({ name, icon, label, options }) in linksData"
           expand-separator
@@ -148,6 +148,7 @@ export default {
       'currentRoute',
       'name',
       'roles',
+      'rolesArray',
     ]),
     showWarningCreatedSection() {
       if (

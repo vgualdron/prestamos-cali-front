@@ -42,6 +42,10 @@ export default {
     localStorage.setItem('rolesMC', JSON.stringify(payload));
     state.roles = payload;
   },
+  [types.mutations.SET_ROLES_ARRAY](state, payload) {
+    localStorage.setItem('rolesArrayMC', JSON.stringify(payload));
+    state.rolesArray = payload;
+  },
   [types.mutations.SET_USER](state, payload) {
     localStorage.setItem('userMC', payload);
     state.user = payload;

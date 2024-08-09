@@ -2,7 +2,7 @@
   <div class="q-pa-md" justify-center items-center>
     <div class="justify-center q-mt-sm">
       Bienvenidos ... <br> {{ versionApp }} <br>
-      Mi token pusk: {{ myTokenPush }} <br>
+      Mi token push: {{ myTokenPush }} <br>
       <q-input
         outlined
         v-model.trim="userId"
@@ -111,6 +111,11 @@ export default {
     validateLogin() {
       if (!localStorage.getItem('tokenMC')) {
         this.$router.push('/');
+      } else {
+        const roles = localStorage.getItem('rolesArrayMC') ? JSON.parse(localStorage.getItem('rolesArrayMC')) : [];
+        if (roles && roles.length > 0) {
+          this.$router.push(roles[0].route);
+        }
       }
     },
     subscribeToNotifications() {

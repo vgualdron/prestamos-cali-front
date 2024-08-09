@@ -34,6 +34,15 @@
               :disable="disableInputs || !role.editable"
               hide-bottom-space
             />
+            <q-input
+              outlined
+              v-model.trim="role.route"
+              label="Url vista principal *"
+              lazy-rules
+              :rules="rules.route"
+              :disable="disableInputs || !role.editable"
+              hide-bottom-space
+            />
             <q-separator />
             <div class="bg-gray-9 q-mt-xs">
               <div class="col q-mr-auto q-ml-auto text-center text-weight-bold">
@@ -104,6 +113,7 @@ export default {
       role: {
         id: null,
         name: '',
+        route: '/home',
         permissions: [],
         editable: true,
       },
@@ -112,6 +122,11 @@ export default {
           (val) => (!!val) || 'El nombre es requerido',
           (val) => (val.length >= 4) || 'El nombre debe tener un mínimo de 4 caracteres',
           (val) => (val.length <= 30) || 'El nombre debe tener un máximo de 30 caracteres',
+        ],
+        route: [
+          (val) => (!!val) || 'El link  es requerido',
+          (val) => (val.length >= 4) || 'El link debe tener un mínimo de 4 caracteres',
+          (val) => (val.length <= 20) || 'El link debe tener un máximo de 20 caracteres',
         ],
       },
     };
@@ -159,6 +174,7 @@ export default {
         this.$q.loading.hide();
         this.role.id = null;
         this.role.name = '';
+        this.role.route = '/home';
         this.role.permissions = [];
         this.role.editable = true;
         this.listRolesMountedRef();
@@ -173,6 +189,7 @@ export default {
       if (this.permissionStatus === true) {
         this.role.id = id !== null ? id : null;
         this.role.name = id !== null ? role.name : '';
+        this.role.route = id !== null ? role.route : '/home';
         this.role.permissions = id !== null ? role.permissions : [];
         this.role.editable = id !== null ? role.editable === 1 : true;
         this.modal.title = type === 'C' ? 'Agregar Rol' : (type === 'E' ? 'Editar Rol' : 'Eliminar Rol');
