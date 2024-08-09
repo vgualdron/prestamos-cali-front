@@ -40,7 +40,7 @@
         :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
       />
     </div>
-    <q-btn
+    <!-- <q-btn
       v-if="!subscribed"
       @click="subscribeToNotifications"
       label="Subscribirse a las Notificaciones"
@@ -49,7 +49,7 @@
       v-else
       @click="unsubscribeFromNotifications"
       label="Desubscribirse a las Notificaciones"
-      class="q-ma-sm"/>
+      class="q-ma-sm"/> -->
     <!-- <q-btn
       @click="getUser"
       label="GET USER"
