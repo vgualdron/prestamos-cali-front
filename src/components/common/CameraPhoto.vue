@@ -28,7 +28,7 @@
         <template v-else-if="item && item.status === 'creado'">
           <div class="q-mt-md">
             <q-icon size="xs" name="edit" />
-            {{ item.observation ? item.observation : 'HAZ CLICK PARA ESCRIBIR OBSERVACIÓN' }} <br>
+            {{ item.observation ? item.observation : 'Haz click para agregar una observación' }} <br>
             <q-popup-edit :value="item.observation" v-slot="scope" buttons
               @input="val => save('observation', val)">
               <q-input v-model="scope.value" dense autofocus />
