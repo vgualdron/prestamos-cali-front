@@ -6,7 +6,7 @@
       </q-card-section>
       <q-separator />
       <q-card-section class="scroll flex">
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">DATOS:</p>
           <div class="table-container">
             <q-markup-table
@@ -61,7 +61,7 @@
             </q-markup-table>
           </div>
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA CLIENTE</p>
           <camera-photo
             :config="{
@@ -71,11 +71,11 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_CASA_CLIENTE')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
-          <p class="text-subtitle1 text-weight-bold text-center">VIDEO TOCANDO CASA CLIENTE</p>
+        <div class="div-container">
+          <p class="wrap-text text-subtitle1 text-weight-bold text-center">VIDEO TOCANDO CASA CLIENTE</p>
           <camera-video
             :config="{
               name: 'VIDEO_TOCANDO_CASA_CLIENTE',
@@ -84,10 +84,10 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('VIDEO_TOCANDO_CASA_CLIENTE')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CLIENTE</p>
           <camera-photo
             :config="{
@@ -97,10 +97,10 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_CLIENTE')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA CLIENTE FRONTAL</p>
           <camera-photo
             :config="{
@@ -110,10 +110,10 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_CEDULA_CLIENTE_FRONTAL')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA CLIENTE POSTERIOR</p>
           <camera-photo
             :config="{
@@ -123,10 +123,10 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_CEDULA_CLIENTE_POSTERIOR')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO LETRA CLIENTE</p>
           <camera-photo
             :config="{
@@ -136,10 +136,10 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_LETRA_CLIENTE')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO FIRMANDO LETRA CLIENTE</p>
           <camera-photo
             :config="{
@@ -149,10 +149,10 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_FIRMANDO_LETRA_CLIENTE')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CERTIFICADO DE TRABAJO CLIENTE</p>
           <camera-photo
             :config="{
@@ -162,10 +162,10 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_CERTIFICADO_TRABAJO_CLIENTE')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO RECIBO CASA CLIENTE</p>
           <camera-photo
             :config="{
@@ -175,10 +175,10 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_RECIBO_CASA_CLIENTE')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO FACEBOOK</p>
           <camera-photo
             :config="{
@@ -188,7 +188,7 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_FACEBOOK')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
       </q-card-section>
@@ -200,7 +200,7 @@
       </q-card-section>
       <q-separator />
       <q-card-section class="scroll flex">
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">DATOS:</p>
           <div class="table-container">
             <q-markup-table
@@ -237,7 +237,20 @@
             </q-markup-table>
           </div>
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA REF FAMILIAR 1</p>
+          <camera-photo
+            :config="{
+              name: 'FOTO_CASA_REFERENCIA_FAMILIAR_1',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            type="read"
+            @updateStatus="sendNotificationPush"
+          />
+        </div>
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 1</p>
           <camera-video
             :config="{
@@ -247,7 +260,7 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('VIDEO_REFERENCIA_FAMILIAR_1')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
       </q-card-section>
@@ -259,7 +272,7 @@
       </q-card-section>
       <q-separator />
       <q-card-section class="scroll flex">
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">DATOS:</p>
           <div class="table-container">
             <q-markup-table
@@ -296,7 +309,20 @@
             </q-markup-table>
           </div>
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA REF FAMILIAR 2</p>
+          <camera-photo
+            :config="{
+              name: 'FOTO_CASA_REFERENCIA_FAMILIAR_2',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            type="read"
+            @updateStatus="sendNotificationPush"
+          />
+        </div>
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 2</p>
           <camera-video
             :config="{
@@ -306,7 +332,7 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('VIDEO_REFERENCIA_FAMILIAR_2')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
       </q-card-section>
@@ -318,7 +344,7 @@
       </q-card-section>
       <q-separator />
       <q-card-section class="scroll flex">
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">DATOS:</p>
           <div class="table-container">
             <q-markup-table
@@ -355,7 +381,7 @@
             </q-markup-table>
           </div>
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA FIADOR</p>
           <camera-photo
             :config="{
@@ -365,10 +391,10 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_CASA_FIADOR')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO FIADOR</p>
           <camera-photo
             :config="{
@@ -378,10 +404,10 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_FIADOR')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FIADOR FRONTAL</p>
           <camera-photo
             :config="{
@@ -391,10 +417,10 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_CEDULA_FIADOR_FRONTAL')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FIADOR POSTERIOR</p>
           <camera-photo
             :config="{
@@ -404,10 +430,10 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_CEDULA_FIADOR_POSTERIOR')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO LETRA FIADOR</p>
           <camera-photo
             :config="{
@@ -417,10 +443,10 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_LETRA_FIADOR')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO FIRMANDO LETRA FIADOR</p>
           <camera-photo
             :config="{
@@ -430,10 +456,10 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_FIRMANDO_LETRA_FIADOR')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CERTIFICADO DE TRABAJO FIADOR</p>
           <camera-photo
             :config="{
@@ -443,10 +469,10 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_CERTIFICADO_TRABAJO_FIADOR')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO RECIBO CASA FIADOR</p>
           <camera-photo
             :config="{
@@ -456,7 +482,7 @@
               modelId: id
             }"
             type="read"
-            @updateStatus="sendNotificationPush('FOTO_RECIBO_CASA_FIADOR')"
+            @updateStatus="sendNotificationPush"
           />
         </div>
       </q-card-section>
@@ -553,13 +579,13 @@ export default {
       await this.getItem();
       this.$q.loading.hide();
     },
-    async sendNotificationPush(name) {
+    async sendNotificationPush({ name, value }) {
       await this.getItem();
       const players = [this.item.userVisitToken];
       const data = {
         app_id: `${process.env.APP_ID_ONE_SIGNAL}`,
-        headings: { en: 'Se ha actualizado el estado un archivo' },
-        contents: { en: `Haz click aquí y revisa el estado del archivo ${name}` },
+        headings: { en: `Se ha ${value} el archivo ${name} de una visita` },
+        contents: { en: 'Haz click aquí y revisa' },
         include_player_ids: players,
         url: `${process.env.URL_FRONT}/visit/${this.id}`,
       };
@@ -582,16 +608,29 @@ export default {
   .table-container {
     text-align: center;
   }
+  .markup-table {
+    display: block;
+    max-width: 250px;
+    min-width: 250px;
+    margin: auto;
+  }
   .z-index-btn {
     z-index: 20;
   }
   .q-card__section > .text-h6 {
     border: none;
   }
-  .q-card__section > div {
+  .wrap-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+  }
+  .div-container {
     border: solid 1px rgb(145, 140, 140);
     margin: 10px;
-    padding: 15px;
+    padding: 5px;
     border-radius: 10px;
+    width: 300px;
   }
 </style>

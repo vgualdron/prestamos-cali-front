@@ -1,6 +1,6 @@
 <template>
-  <div class="q-pa-md">
-    <div class="row q-ma-md">
+  <div class="q-pa-xs">
+    <div class="row q-ma-xs">
       <div class="col-12 text-center">
         <video
           v-if="urlFile"
@@ -37,21 +37,21 @@
             </q-popup-edit>
           </div>
           <q-btn
-          label="Aprobar"
-          color="primary"
-          icon="check"
-          ref="camera"
-          class="q-mt-sm"
-          @click="save('status', 'aprobado')" />
+            label="Aprobar"
+            color="primary"
+            ref="camera"
+            class="q-mt-sm"
+            @click="save('status', 'aprobado')"
+          />
           <q-btn
-          label="Rechazar"
-          color="primary"
-          icon="close"
-          ref="camera"
-          class="q-mt-sm q-ml-sm"
-          :disabled="!item.observation"
-          outline
-          @click="save('status', 'rechazado')" />
+            label="Rechazar"
+            color="primary"
+            ref="camera"
+            class="q-mt-sm q-ml-sm"
+            :disabled="!item.observation"
+            outline
+            @click="save('status', 'rechazado')"
+          />
         </template>
       </div>
     </div>
@@ -239,7 +239,7 @@ export default {
       this.$refs.video.srcObject.getTracks().forEach((track) => track.stop());
     },
     handleStop() {
-      const blob = new Blob(this.chunks, { type: 'video/webm' });
+      const blob = new Blob(this.chunks, { type: 'video/mp4' });
       this.videoURL = URL.createObjectURL(blob);
       this.blob = blob;
       const reader = new FileReader();
@@ -270,7 +270,7 @@ export default {
       this.$q.loading.hide();
       if (this.responseMessages && this.status) {
         this.showModal = false;
-        this.$emit('savedFile');
+        this.$emit('savedFile', { name });
         await this.fetchFile();
       }
       this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
@@ -297,10 +297,14 @@ export default {
       }
     },
     async save(field, value) {
+      const {
+        name,
+      } = this.config;
+
       this.item[field] = value.value ? value.value : value;
       await this.updateFile(this.item);
       if (this.responseMessages && this.status) {
-        this.$emit('updateStatus');
+        this.$emit('updateStatus', { name, field, value });
         await this.fetchFile();
       }
     },

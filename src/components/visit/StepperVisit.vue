@@ -55,8 +55,8 @@
         caption="Cargar datos, videos y fotos"
         :done="step > 1"
        >
-        <div class="scroll flex">
-          <div style="width: fit-content;">
+        <div class="block-container">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
             <div class="table-container">
               <q-markup-table
@@ -68,12 +68,12 @@
                   <tr class="tr-table">
                     <td class="td-table">
                       <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
-                      <!-- <q-icon size="xs" name="edit" /> -->
+                      <q-icon size="xs" name="edit" />
                       {{ item.name }}
-                      <!-- <q-popup-edit :value="item.name" v-slot="scope" buttons
+                      <q-popup-edit :value="item.name" v-slot="scope" buttons
                         @input="val => saveDateNew('name', val)">
                         <q-input v-model="scope.value" dense autofocus />
-                      </q-popup-edit> -->
+                      </q-popup-edit>
                     </td>
                   </tr>
                   <tr class="tr-table">
@@ -83,6 +83,28 @@
                       {{ item.documentNumber }}
                       <q-popup-edit :value="item.documentNumber" v-slot="scope" buttons
                         @input="val => saveDateNew('document_number', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Dirección casa:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.address_house }}
+                      <q-popup-edit :value="item.address_house" v-slot="scope" buttons
+                        @input="val => saveDateNew('address_house', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Dirección trabajo:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.address_work }}
+                      <q-popup-edit :value="item.address_work" v-slot="scope" buttons
+                        @input="val => saveDateNew('address_work', val)">
                         <q-input v-model="scope.value" dense autofocus />
                       </q-popup-edit>
                     </td>
@@ -221,7 +243,7 @@
               </q-markup-table>
             </div>
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA CLIENTE</p>
             <camera-photo
               :config="{
@@ -230,10 +252,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="savedFileCasaCliente('FOTO_CASA_CLIENTE')"
+              @savedFile="savedFileCasaCliente({ name: 'FOTO_CASA_CLIENTE' })"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">VIDEO TOCANDO CASA CLIENTE</p>
             <camera-video
               :config="{
@@ -242,10 +264,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('VIDEO_TOCANDO_CASA_CLIENTE')"
+              @savedFile="sendNotificationPush"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO CLIENTE</p>
             <camera-photo
               :config="{
@@ -254,10 +276,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_CLIENTE')"
+              @savedFile="sendNotificationPush"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA CLIENTE FRONTAL</p>
             <camera-photo
               :config="{
@@ -266,10 +288,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_CEDULA_CLIENTE_FRONTAL')"
+              @savedFile="sendNotificationPush"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA CLIENTE POSTERIOR</p>
             <camera-photo
               :config="{
@@ -278,10 +300,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_CEDULA_CLIENTE_POSTERIOR')"
+              @savedFile="sendNotificationPush"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO LETRA CLIENTE</p>
             <camera-photo
               :config="{
@@ -290,10 +312,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_LETRA_CLIENTE')"
+              @savedFile="sendNotificationPush"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO FIRMANDO LETRA CLIENTE</p>
             <camera-photo
               :config="{
@@ -302,10 +324,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_FIRMANDO_LETRA_CLIENTE')"
+              @savedFile="sendNotificationPush"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO CERTIFICADO DE TRABAJO CLIENTE</p>
             <camera-photo
               :config="{
@@ -314,10 +336,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_CERTIFICADO_TRABAJO_CLIENTE')"
+              @savedFile="sendNotificationPush"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO RECIBO CASA CLIENTE</p>
             <camera-photo
               :config="{
@@ -326,10 +348,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_RECIBO_CASA_CLIENTE')"
+              @savedFile="sendNotificationPush"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO FACEBOOK</p>
             <camera-photo
               :config="{
@@ -338,7 +360,7 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_FACEBOOK')"
+              @savedFile="sendNotificationPush"
             />
           </div>
         </div>
@@ -351,8 +373,8 @@
         caption="Cargar datos y video"
         :done="step > 2"
       >
-      <div class="scroll flex">
-        <div style="width: fit-content;">
+      <div class="block-container">
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
           <div class="table-container">
             <q-markup-table
@@ -409,7 +431,19 @@
             </q-markup-table>
           </div>
         </div>
-        <div style="width: fit-content;">
+        <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA REF FAMILIAR 1</p>
+          <camera-photo
+            :config="{
+              name: 'FOTO_CASA_REFERENCIA_FAMILIAR_1',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            @savedFile="sendNotificationPush"
+          />
+        </div>
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 1</p>
           <camera-video
             :config="{
@@ -418,7 +452,7 @@
               modelName: 'news',
               modelId: id
             }"
-            @savedFile="sendNotificationPush('VIDEO_REFERENCIA_FAMILIAR_1')"
+            @savedFile="sendNotificationPush"
           />
         </div>
       </div>
@@ -431,8 +465,8 @@
         caption="Cargar datos y video"
         :done="step > 3"
       >
-        <div class="scroll flex">
-          <div style="width: fit-content;">
+        <div class="block-container">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
             <div class="table-container">
               <q-markup-table
@@ -489,7 +523,19 @@
               </q-markup-table>
             </div>
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA REF FAMILIAR 2</p>
+          <camera-photo
+            :config="{
+              name: 'FOTO_CASA_REFERENCIA_FAMILIAR_2',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            @savedFile="sendNotificationPush"
+          />
+        </div>
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 2</p>
             <camera-video
               :config="{
@@ -498,7 +544,7 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('VIDEO_REFERENCIA_FAMILIAR_2')"
+              @savedFile="sendNotificationPush"
             />
           </div>
         </div>
@@ -511,8 +557,8 @@
         caption="Cargar datos, videos y fotos"
         :done="step > 4"
        >
-        <div class="scroll flex">
-          <div style="width: fit-content;">
+        <div class="block-container">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
             <div class="table-container">
               <q-markup-table
@@ -569,7 +615,7 @@
               </q-markup-table>
             </div>
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA FIADOR</p>
             <camera-photo
               :config="{
@@ -578,10 +624,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_CASA_FIADOR')"
+              @savedFile="sendNotificationPush"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO FIADOR</p>
             <camera-photo
               :config="{
@@ -590,10 +636,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_FIADOR')"
+              @savedFile="sendNotificationPush"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FIADOR FRONTAL</p>
             <camera-photo
               :config="{
@@ -602,10 +648,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_CEDULA_FIADOR_FRONTAL')"
+              @savedFile="sendNotificationPush"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FIADOR POSTERIOR</p>
             <camera-photo
               :config="{
@@ -614,10 +660,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_CEDULA_FIADOR_POSTERIOR')"
+              @savedFile="sendNotificationPush"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO LETRA FIADOR</p>
             <camera-photo
               :config="{
@@ -626,10 +672,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_LETRA_FIADOR')"
+              @savedFile="sendNotificationPush"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO FIRMANDO LETRA FIADOR</p>
             <camera-photo
               :config="{
@@ -638,10 +684,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_FIRMANDO_LETRA_FIADOR')"
+              @savedFile="sendNotificationPush"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO CERTIFICADO DE TRABAJO FIADOR</p>
             <camera-photo
               :config="{
@@ -650,10 +696,10 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_CERTIFICADO_TRABAJO_FIADOR')"
+              @savedFile="sendNotificationPush"
             />
           </div>
-          <div style="width: fit-content;">
+          <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO RECIBO CASA FIADOR</p>
             <camera-photo
               :config="{
@@ -662,7 +708,7 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="sendNotificationPush('FOTO_RECIBO_CASA_FIADOR')"
+              @savedFile="sendNotificationPush"
             />
           </div>
         </div>
@@ -789,22 +835,23 @@ export default {
       item[field] = value.value ? value.value : value;
       await this.completeDataNew(item);
       await this.getItem();
+      await this.sendNotificationPush({ name: 'DATOS' });
       this.$q.loading.hide();
     },
     async savedFileCasaCliente(name) {
       console.log('saved filed casa cliente');
-      this.sendNotificationPush(name);
+      this.sendNotificationPush({ name });
       if (!this.item.visit_start_date) {
         await this.saveDateNew('visit_start_date', moment(new Date()).format('YYYY-MM-DD HH:mm:ss'));
       }
     },
-    async sendNotificationPush(name) {
+    async sendNotificationPush({ name }) {
       await this.listUsersReviews();
       const players = this.users.map((user) => user.pushToken);
       const data = {
         app_id: `${process.env.APP_ID_ONE_SIGNAL}`,
-        headings: { en: 'Se ha cargado un archivo para la visita' },
-        contents: { en: `Haz click aquí y revisa el archivo cargado ${name}` },
+        headings: { en: `Se ha cargado ${name} para una visita` },
+        contents: { en: 'Haz click aquí y revisa' },
         include_player_ids: players,
         url: `${process.env.URL_FRONT}/review-visit/${this.id}`,
       };
@@ -828,22 +875,38 @@ export default {
     text-align: center;
     padding: 0px;
   }
-  ._markup-table {
+  .markup-table {
     display: block;
-    max-width: 640px;
+    max-width: 250px;
+    min-width: 250px;
     margin: auto;
-    border: solid 1px black;
   }
   .z-index-btn {
     z-index: 20;
   }
-  .q-stepper--vertical .q-stepper__step-inner {
-    display: flex !important;
+  .q-stepper__step-inner {
+    padding: 0 24px 32px 33px !important;
   }
-  .q-stepper__step-inner > div > div {
+  .wrap-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+  }
+  .div-container {
     border: solid 1px rgb(145, 140, 140);
     margin: 10px;
-    padding: 15px;
+    padding: 5px;
     border-radius: 10px;
+    width: 300px;
+  }
+  .block-container {
+    overflow: auto;
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -30px;
+  }
+  [role="tabpanel"] > div {
+    padding: 12px;
   }
 </style>
