@@ -252,7 +252,7 @@
                 modelName: 'news',
                 modelId: id
               }"
-              @savedFile="savedFileCasaCliente({ name: 'FOTO_CASA_CLIENTE' })"
+              @savedFile="savedFileCasaCliente"
             />
           </div>
           <div class="div-container">
@@ -838,9 +838,9 @@ export default {
       await this.sendNotificationPush({ name: 'DATOS' });
       this.$q.loading.hide();
     },
-    async savedFileCasaCliente(name) {
+    async savedFileCasaCliente(data) {
       console.log('saved filed casa cliente');
-      this.sendNotificationPush({ name });
+      this.sendNotificationPush(data);
       if (!this.item.visit_start_date) {
         await this.saveDateNew('visit_start_date', moment(new Date()).format('YYYY-MM-DD HH:mm:ss'));
       }
