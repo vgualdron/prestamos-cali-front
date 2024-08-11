@@ -34,7 +34,7 @@
         </tr>
         <tr class="tr-table">
           <td class="td-table">
-            <p class="text-subtitle1 text-weight-bold text-center">Estado:</p>
+            <p class="text-subtitle1 text-weight-bold text-center">Estado de la visita:</p>
             <q-badge :color="item.status === 'aprobado' ? 'green' : 'blue'">
               {{ item.status }}
             </q-badge>
