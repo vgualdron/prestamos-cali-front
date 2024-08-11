@@ -29,6 +29,18 @@
                 </tr>
                 <tr class="tr-table">
                   <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Dirección de casa:</p>
+                    {{ item.address_house }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Dirección de trabajo:</p>
+                    {{ item.address_work }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
                     <p class="text-subtitle1 text-weight-bold text-center">Ocupación:</p>
                     {{ item.occupation }}
                   </td>
