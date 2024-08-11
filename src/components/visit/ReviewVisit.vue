@@ -592,6 +592,8 @@ export default {
       this.$q.loading.hide();
     },
     async sendNotificationPush({ name, value }) {
+      console.log('sendNotificationPush: ', name);
+      console.log('sendNotificationPush: ', value);
       await this.getItem();
       const players = [this.item.userVisitToken];
       const data = {
