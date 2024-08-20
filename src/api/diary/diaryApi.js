@@ -9,6 +9,14 @@ export default {
     url: `${process.env.URL_API}/api/diary/list-day-by-day/${data.date}/${data.userId}/${data.moment}`,
     method: 'GET',
   }),
+  listVisitsReview: (data) => http({
+    url: `${process.env.URL_API}/api/diary/list-visits-review/${data.date}`,
+    method: 'GET',
+  }),
+  getStatusCases: (data) => http({
+    url: `${process.env.URL_API}/api/diary/get-status-cases/${data.id}`,
+    method: 'GET',
+  }),
   get: (id) => http({
     url: `${process.env.URL_API}/api/diary/get/${id}`,
     method: 'GET',

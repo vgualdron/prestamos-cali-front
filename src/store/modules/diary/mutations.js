@@ -16,4 +16,7 @@ export default {
   [types.mutations.SET_RESPONSE_MESSAGES](state, payload) {
     state.responseMessages = payload;
   },
+  [types.mutations.SET_STATUS_CASES](state, payload) {
+    state.statusCases = payload;
+  },
 };

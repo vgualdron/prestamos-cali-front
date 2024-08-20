@@ -1,5 +1,12 @@
 <template>
   <div class="q-pa-md">
+    <q-btn
+      round
+      icon="refresh"
+      class="q-ml-sm q-mb-md fixed z-index-btn btn-reload"
+      color="primary"
+      @click="reloadInfo">
+    </q-btn>
     <q-card v-if="id" class="q-mt-lg">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">DATOS DE CLIENTE</div>
@@ -560,6 +567,12 @@ export default {
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
+    reloadInfo() {
+      showLoading('consultando ...', 'Por favor, espere', true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
+    },
     formatDateToDay(date) {
       moment.locale('es');
       return moment(date).format('dddd');
@@ -646,5 +659,9 @@ export default {
     padding: 5px;
     border-radius: 10px;
     width: 300px;
+  }
+  .btn-reload {
+    margin-top: -10px;
+    margin-left: 83%;
   }
 </style>

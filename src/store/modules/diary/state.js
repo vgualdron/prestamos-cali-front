@@ -5,5 +5,6 @@ export default function () {
     diary: {},
     responseMessages: [],
     status: false,
+    statusCases: [],
   };
 }

@@ -143,7 +143,8 @@
                   },
                   {
                     label: 'trabajo',
-                    value: 'trabajo'
+                    value: 'trabajo',
+                    disable: !props.row.address_work
                   },
                 ]"
                 color="primary"
@@ -555,7 +556,7 @@ export default {
       return !row.observation;
     },
     disabledBtnAddVisit(row) {
-      return !row.address_house || !row.address_work || !row.site_visit;
+      return !row.address_house || !row.site_visit;
     },
     async listNewsMounted() {
       await this.listNews(this.tab === 'one' ? ['creado'] : ['pendiente']);

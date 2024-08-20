@@ -29,10 +29,6 @@ export default (/* { store, ssrContext } */) => {
   });
 
   Router.beforeEach(async (to, from, next) => {
-    console.log(to.path);
-    console.log(from);
-    console.log(next);
-
     if (to.path === '/') {
       next();
       return;
@@ -43,7 +39,6 @@ export default (/* { store, ssrContext } */) => {
       next();
       return;
     } catch (error) {
-      console.log(error.response);
       if (error.response.status === 401) {
         Notify.create({
           message: 'No hay una sesión activa, vuelva a iniciar sesión por favor!',

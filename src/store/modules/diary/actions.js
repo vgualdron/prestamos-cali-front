@@ -40,6 +40,47 @@ export default {
       }
     }
   },
+  async [types.actions.LIST_VISITS_REVIEW]({ commit }, payload) {
+    try {
+      const response = await diaryApi.listVisitsReview(payload);
+      commit(types.mutations.SET_STATUS, true);
+      commit(types.mutations.SET_DIARIES, response.data.data);
+    } catch (error) {
+      console.log(error);
+      commit(types.mutations.SET_STATUS, false);
+      if (error.message !== 'Network Error') {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
+      } else {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, [
+          {
+            text: 'Error de red',
+            detail: 'Intente conectarse a otra red de internet',
+          },
+        ]);
+      }
+    }
+  },
+  async [types.actions.GET_STATUS_CASES]({ commit }, payload) {
+    try {
+      console.log(payload);
+      const response = await diaryApi.getStatusCases(payload);
+      commit(types.mutations.SET_STATUS, true);
+      commit(types.mutations.SET_STATUS_CASES, response.data.data);
+    } catch (error) {
+      console.log(error);
+      commit(types.mutations.SET_STATUS, false);
+      if (error.message !== 'Network Error') {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
+      } else {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, [
+          {
+            text: 'Error de red',
+            detail: 'Intente conectarse a otra red de internet',
+          },
+        ]);
+      }
+    }
+  },
   async [types.actions.GET_DIARY]({ commit }, id) {
     try {
       const response = await diaryApi.get(id);

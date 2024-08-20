@@ -3,18 +3,18 @@
     <q-btn
       round
       icon="refresh"
-      class="q-ml-xl q-mb-md fixed z-index-btn"
+      class="q-ml-xl q-mb-md fixed z-index-btn btn-reload"
       color="primary"
       @click="reloadStatusFiles">
     </q-btn>
     <q-btn
       round
       icon="west"
-      class="q-mr-xs q-mb-md fixed z-index-btn"
+      class="q-mr-xs q-mb-md fixed z-index-btn btn-back"
       color="primary"
       @click="$router.go(-1)">
     </q-btn>
-    <TableInfoVisit class="q-mt-xl" :item="item"/>
+    <state-cases v-if="id" :item="item" :id="id" />
     <q-stepper
       v-if="id > 0"
       v-model="step"
@@ -37,7 +37,7 @@
             v-if="step == 0"
             @click="$refs.stepper.next()"
             color="primary"
-            label="Iniciar"
+            label="Entrar"
             class=""/>
           <q-btn
             v-if="step > 1"
@@ -725,7 +725,7 @@
             v-if="step == 0"
             @click="$refs.stepper.next()"
             color="primary"
-            label="Iniciar"
+            label="Entrar"
             class=""/>
           <q-btn
             v-if="step > 1"
@@ -744,7 +744,7 @@ import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import CameraPhoto from 'components/common/CameraPhoto.vue';
 import CameraVideo from 'components/common/CameraVideo.vue';
-import TableInfoVisit from 'components/visit/TableInfoVisit.vue';
+import StateCases from 'components/visit/StateCases.vue';
 import { showNotifications } from '../../helpers/showNotifications';
 import newTypes from '../../store/modules/new/types';
 import notificationTypes from '../../store/modules/notification/types';
@@ -861,7 +861,7 @@ export default {
   components: {
     CameraPhoto,
     CameraVideo,
-    TableInfoVisit,
+    StateCases,
   },
 };
 </script>
@@ -905,6 +905,14 @@ export default {
     display: flex;
     flex-wrap: wrap;
     margin-left: -30px;
+  }
+  .btn-reload {
+    margin-top: -10px;
+    margin-left: 83%;
+  }
+  .btn-back {
+    margin-left: -10px;
+    margin-top: -10px;
   }
   [role="tabpanel"] > div {
     padding: 12px;
