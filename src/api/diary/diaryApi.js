@@ -17,6 +17,11 @@ export default {
     url: `${process.env.URL_API}/api/diary/get-status-cases/${data.id}`,
     method: 'GET',
   }),
+  approveVisit: (data) => http({
+    url: `${process.env.URL_API}/api/diary/approve-visit`,
+    method: 'POST',
+    data,
+  }),
   get: (id) => http({
     url: `${process.env.URL_API}/api/diary/get/${id}`,
     method: 'GET',

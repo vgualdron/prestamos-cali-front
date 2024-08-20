@@ -7,7 +7,7 @@
       color="primary"
       @click="reloadInfo">
     </q-btn>
-    <state-cases v-if="id" :item="item" :id="id" />
+    <state-cases v-if="id && showStateCases" :item="item" :id="id" type="review"/>
     <q-card v-if="id" class="q-mt-lg">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">DATOS DE CLIENTE</div>
@@ -526,6 +526,7 @@ export default {
     return {
       step: 0,
       stepTmp: 0,
+      showStateCases: true,
     };
   },
   props: {
@@ -586,11 +587,10 @@ export default {
     },
     reloadStatusFiles() {
       showLoading('consultando archivo ...', 'Por favor, espere', true);
-      this.stepTmp = this.step;
-      this.step = 0;
+      this.showStateCases = false;
       setTimeout(() => {
+        this.showStateCases = true;
         this.$q.loading.hide();
-        this.step = this.stepTmp;
       }, 3000);
     },
     async getItem() {
@@ -606,8 +606,6 @@ export default {
       this.$q.loading.hide();
     },
     async sendNotificationPush({ name, value }) {
-      console.log('sendNotificationPush: ', name);
-      console.log('sendNotificationPush: ', value);
       await this.getItem();
       const players = [this.item.userVisitToken];
       const data = {
@@ -618,6 +616,7 @@ export default {
         url: `${process.env.URL_FRONT}/visit/${this.id}`,
       };
       await this.sendNotification(data);
+      this.reloadStatusFiles();
     },
   },
   components: {

@@ -11,18 +11,27 @@
           <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" class="q-mr-sm" style="width:50px;height:50px">
           <div>
             <b>{{ prop.node.label }}</b>
-            <br>
+            <br>Estado:
             <q-badge :color="item.status === 'aprobado' ? 'green' : 'blue'">
-              Estado: {{ item.status }}
+              {{ item.status }}
             </q-badge>
-            <br>
+            <br>Fecha inicio:
             <q-badge color="black">
-              Fecha inicio: {{ formatDate(item.visit_start_date) }}
+              {{ formatDate(item.visit_start_date) }}
+            </q-badge>
+            <br>Pasos Completados:
+            <q-badge :color="prop.node.completed > 2 ? 'green' : 'red'">
+              {{ prop.node.completed }}
             </q-badge>
             <br>
-            <q-badge :color="prop.node.completed > 2 ? 'green' : 'red'">
-              PASOS COMPLETOS: {{ prop.node.completed }}
-            </q-badge>
+            <q-btn
+              v-if="type === 'review' && approvable && item.status != 'aprobado'"
+              label="APROBAR VISITA"
+              class="q-mt-xs text-center"
+              color="primary"
+              outline
+              @click="approve">
+            </q-btn>
           </div>
         </div>
       </template>
@@ -57,6 +66,8 @@
 import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import diaryTypes from '../../store/modules/diary/types';
+import { showNotifications } from '../../helpers/showNotifications';
+import { showLoading } from '../../helpers/showLoading';
 
 export default {
   data() {
@@ -66,6 +77,7 @@ export default {
   props: [
     'item',
     'id',
+    'type',
   ],
   computed: {
     ...mapState(diaryTypes.PATH, [
@@ -115,63 +127,42 @@ export default {
       data.children = arrayA;
       return [data];
     },
-    customize() {
-      return [
-        {
-          label: 'Detalle de la visita',
-          header: 'root',
-          children: [
-            {
-              label: 'Good food',
-              icon: 'restaurant_menu',
-              header: 'generic',
-              children: [
-                {
-                  label: 'Quality ingredients',
-                  header: 'generic',
-                  body: 'story',
-                  story: 'Lorem ipsum dolor sit amet.',
-                },
-                {
-                  label: 'Good recipe',
-                  body: 'story',
-                  story: 'A Congressman works with his equally conniving wife to exact revenge on the people who betrayed him.',
-                },
-              ],
-            },
-            {
-              label: 'Good service',
-              header: 'generic',
-              body: 'toggle',
-              caption: 'Why are we as consumers so captivated by stories of great customer service? Perhaps it is because...',
-              children: [
-                { label: 'Prompt attention' },
-                { label: 'Professional waiter' },
-              ],
-            },
-            {
-              label: 'Pleasant surroundings',
-              children: [
-                { label: 'Happy atmosphere' },
-                { label: 'Good table presentation', header: 'generic' },
-                { label: 'Pleasing decor' },
-              ],
-            },
-          ],
-        },
-      ];
+    approvable() {
+      const data = [...this.formatData];
+      if (data && data.length > 0) {
+        const array = data[0].children;
+        if (array && array.length > 0) {
+          if ((array[0].check && array[1].check) && (array[2].check || array[3].check || array[4].check || array[5].check)) {
+            return true;
+          }
+        }
+      }
+      return false;
     },
   },
   async mounted() {
-    console.log(this.item);
-    await this.getStatusCases({ id: this.id });
+    await this.getStatus();
   },
   methods: {
     ...mapActions(diaryTypes.PATH, {
       getStatusCases: diaryTypes.actions.GET_STATUS_CASES,
+      approveVisit: diaryTypes.actions.APPROVE_VISIT,
     }),
+    showNotification(messages, status, align, timeout) {
+      showNotifications(messages, status, align, timeout);
+    },
     formatDate(date) {
       return moment(date).format('DD/MM/YYYY hh:mm A');
+    },
+    async getStatus() {
+      await this.getStatusCases({ id: this.id });
+    },
+    async approve() {
+      showLoading('Aprobando ...', 'Por favor, espere', true);
+      await this.approveVisit(this.item);
+      this.showNotifications(this.responseMessages, this.status, 'top-right', 5000);
+      await this.getStatus();
+      this.$q.loading.hide();
     },
   },
 };

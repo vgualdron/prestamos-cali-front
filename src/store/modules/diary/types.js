@@ -5,6 +5,7 @@ export default {
     LIST_DIARIES_DAY_BY_DAY: '@actions/listDiariesDayByDay',
     LIST_VISITS_REVIEW: '@actions/listVisitsReview',
     GET_STATUS_CASES: '@actions/getStatusCases',
+    APPROVE_VISIT: '@actions/approveVisit',
     GET_DIARY: '@actions/getDiary',
     SAVE_DIARY: '@actions/saveDiary',
     UPDATE_DIARY: '@actions/updateDiary',
