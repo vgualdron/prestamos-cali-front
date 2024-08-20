@@ -908,7 +908,7 @@ export default {
   }
   .btn-reload {
     margin-top: -10px;
-    margin-left: 83%;
+    margin-left: 80%;
   }
   .btn-back {
     margin-left: -10px;

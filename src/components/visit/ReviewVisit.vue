@@ -7,6 +7,7 @@
       color="primary"
       @click="reloadInfo">
     </q-btn>
+    <state-cases v-if="id" :item="item" :id="id" />
     <q-card v-if="id" class="q-mt-lg">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">DATOS DE CLIENTE</div>
@@ -513,7 +514,7 @@ import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import CameraPhoto from 'components/common/CameraPhoto.vue';
 import CameraVideo from 'components/common/CameraVideo.vue';
-// import TableInfoVisit from 'components/visit/TableInfoVisit.vue';
+import StateCases from 'components/visit/StateCases.vue';
 import { showNotifications } from '../../helpers/showNotifications';
 import newTypes from '../../store/modules/new/types';
 import notificationTypes from '../../store/modules/notification/types';
@@ -622,7 +623,7 @@ export default {
   components: {
     CameraPhoto,
     CameraVideo,
-    // TableInfoVisit,
+    StateCases,
   },
 };
 </script>
@@ -662,6 +663,6 @@ export default {
   }
   .btn-reload {
     margin-top: -10px;
-    margin-left: 83%;
+    margin-left: 80%;
   }
 </style>

@@ -10,7 +10,7 @@
         <div class="row items-center">
           <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" class="q-mr-sm" style="width:50px;height:50px">
           <div>
-            {{ prop.node.label }}
+            <b>{{ prop.node.label }}</b>
             <br>
             <q-badge :color="item.status === 'aprobado' ? 'green' : 'blue'">
               Estado: {{ item.status }}
@@ -18,6 +18,10 @@
             <br>
             <q-badge color="black">
               Fecha inicio: {{ formatDate(item.visit_start_date) }}
+            </q-badge>
+            <br>
+            <q-badge :color="prop.node.completed > 3 ? 'green' : 'red'">
+              PASOS COMPLETOS: {{ prop.node.completed }}
             </q-badge>
           </div>
         </div>
@@ -71,8 +75,9 @@ export default {
     ]),
     formatData() {
       const data = {
-        label: 'Detalle de la visita',
+        label: 'DETALLE DE LA VISITA',
         header: 'root',
+        completed: 0,
         children: [],
       };
       const arrayA = [];
@@ -89,7 +94,7 @@ export default {
             completed += 1;
           }
           arrayB.push({
-            label: j.replaceAl('_', ' '),
+            label: j.replaceAll('_', ' '),
             header: 'generic',
             check: this.statusCases[i][j],
           });
@@ -102,6 +107,9 @@ export default {
           completed,
           total,
         });
+        if (check) {
+          data.completed += 1;
+        }
       });
 
       data.children = arrayA;
