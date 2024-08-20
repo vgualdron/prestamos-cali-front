@@ -14,7 +14,7 @@
       color="primary"
       @click="$router.go(-1)">
     </q-btn>
-    <state-cases v-if="id" :item="item" :id="id" />
+    <state-cases v-if="id && showStateCases" :item="item" :id="id" />
     <q-stepper
       v-if="id > 0"
       v-model="step"
@@ -756,6 +756,7 @@ export default {
     return {
       step: 0,
       stepTmp: 0,
+      showStateCases: true,
     };
   },
   props: {
@@ -818,9 +819,11 @@ export default {
     },
     reloadStatusFiles() {
       showLoading('consultando archivo ...', 'Por favor, espere', true);
+      this.showStateCases = false;
       this.stepTmp = this.step;
       this.step = 0;
       setTimeout(() => {
+        this.showStateCases = true;
         this.$q.loading.hide();
         this.step = this.stepTmp;
       }, 3000);
