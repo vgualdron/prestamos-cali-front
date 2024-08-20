@@ -218,7 +218,7 @@
             @updateStatus="sendNotificationPush"
           />
         </div>
-        <div class="div-container" v-if="validatedPermissions.voucher.status && item.status === 'aprobado'">
+        <div class="div-container" v-if="validatedPermissions.voucher.status && (item.status === 'aprobado' || item.status === 'consignado')">
           <p class="text-subtitle1 text-weight-bold text-center">AGREGAR FOTO VOUCHER</p>
           <camera-photo
             :config="{

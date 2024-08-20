@@ -12,7 +12,7 @@
           <div>
             <b>{{ prop.node.label }}</b>
             <br>Estado:
-            <q-badge :color="item.status === 'aprobado' ? 'green' : 'blue'">
+            <q-badge :color="item.status === 'aprobado' || item.status != 'consignado' ? 'green' : 'blue'">
               {{ item.status }}
             </q-badge>
             <br>Fecha inicio:
@@ -25,7 +25,7 @@
             </q-badge>
             <br>
             <q-btn
-              v-if="type === 'review' && approvable && item.status != 'aprobado'"
+              v-if="type === 'review' && approvable && item.status != 'aprobado' && item.status != 'consignado'"
               label="APROBAR VISITA"
               class="q-mt-xs text-center"
               color="primary"
