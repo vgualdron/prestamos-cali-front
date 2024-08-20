@@ -16,7 +16,7 @@
     </q-btn>
     <state-cases v-if="id && showStateCases" :item="item" :id="id" />
     <q-stepper
-      v-if="id > 0"
+      v-if="id > 0 && item.status != 'aprobado'"
       v-model="step"
       color="primary"
       class="q-mt-md"
