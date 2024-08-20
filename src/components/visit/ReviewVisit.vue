@@ -612,8 +612,8 @@ export default {
       const players = [this.item.userVisitToken];
       const data = {
         app_id: `${process.env.APP_ID_ONE_SIGNAL}`,
-        headings: { en: `Se ha ${value} el archivo ${name} de una visita` },
-        contents: { en: 'Haz click aquí y revisa' },
+        contents: { es: `Se ha ${value} el archivo ${name} de una visita` },
+        headings: { es: 'Haz click aquí y revisa' },
         include_player_ids: players,
         url: `${process.env.URL_FRONT}/visit/${this.id}`,
       };
