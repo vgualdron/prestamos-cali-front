@@ -278,6 +278,7 @@ export default {
         type: 'image',
         file: this.file,
         extension: this.extension,
+        status: this.name === 'FOTO_VOUCHER' ? 'aprobado' : 'creado',
       });
       this.$q.loading.hide();
       if (this.responseMessages && this.status) {
