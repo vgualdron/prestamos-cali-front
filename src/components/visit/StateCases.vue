@@ -20,7 +20,7 @@
               Fecha inicio: {{ formatDate(item.visit_start_date) }}
             </q-badge>
             <br>
-            <q-badge :color="prop.node.completed > 3 ? 'green' : 'red'">
+            <q-badge :color="prop.node.completed > 2 ? 'green' : 'red'">
               PASOS COMPLETOS: {{ prop.node.completed }}
             </q-badge>
           </div>
