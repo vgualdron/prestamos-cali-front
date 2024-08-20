@@ -232,9 +232,7 @@ export default {
       }
     },
     showVisit(row) {
-      const route = this.$router.resolve({ name: 'Revisar Visita', params: { id: row.new_id } });
-      const url = route.href;
-      window.open(url, '_blank');
+      this.$router.push(`/review-visit/${row.new_id}`);
     },
   },
   components: {

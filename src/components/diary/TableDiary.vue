@@ -138,7 +138,6 @@ export default {
       this.$emit('addVisit', item);
     },
     goVisit(item) {
-      console.log(item);
       this.$router.push(`/visit/${item.new_id}`);
     },
   },

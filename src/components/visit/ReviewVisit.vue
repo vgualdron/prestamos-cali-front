@@ -2,6 +2,13 @@
   <div class="q-pa-md">
     <q-btn
       round
+      icon="west"
+      class="q-mr-xs q-mb-md fixed z-index-btn btn-back"
+      color="primary"
+      @click="$router.go(-1)">
+    </q-btn>
+    <q-btn
+      round
       icon="refresh"
       class="q-ml-sm q-mb-md fixed z-index-btn btn-reload"
       color="primary"
@@ -690,5 +697,9 @@ export default {
   .btn-reload {
     margin-top: -10px;
     margin-left: 80%;
+  }
+  .btn-back {
+    margin-left: -10px;
+    margin-top: -10px;
   }
 </style>
