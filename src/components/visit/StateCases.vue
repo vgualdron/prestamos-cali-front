@@ -89,7 +89,7 @@ export default {
             completed += 1;
           }
           arrayB.push({
-            label: j,
+            label: j.replace('_', ' '),
             header: 'generic',
             check: this.statusCases[i][j],
           });

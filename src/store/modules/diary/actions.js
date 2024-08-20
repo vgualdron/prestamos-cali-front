@@ -62,7 +62,6 @@ export default {
   },
   async [types.actions.GET_STATUS_CASES]({ commit }, payload) {
     try {
-      console.log(payload);
       const response = await diaryApi.getStatusCases(payload);
       commit(types.mutations.SET_STATUS, true);
       commit(types.mutations.SET_STATUS_CASES, response.data.data);
