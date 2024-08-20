@@ -211,6 +211,18 @@
             @updateStatus="sendNotificationPush"
           />
         </div>
+        <div class="div-container" v-if="validatedPermissions.voucher.status && item.status === 'aprobado'">
+          <p class="text-subtitle1 text-weight-bold text-center">AGREGAR FOTO VOUCHER</p>
+          <camera-photo
+            :config="{
+              name: 'FOTO_VOUCHER',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            @updateStatus="sendNotificationPush"
+          />
+        </div>
       </q-card-section>
     </q-card>
     <br><hr>
@@ -515,11 +527,12 @@ import { mapState, mapActions } from 'vuex';
 import CameraPhoto from 'components/common/CameraPhoto.vue';
 import CameraVideo from 'components/common/CameraVideo.vue';
 import StateCases from 'components/visit/StateCases.vue';
-import { showNotifications } from '../../helpers/showNotifications';
 import newTypes from '../../store/modules/new/types';
 import notificationTypes from '../../store/modules/notification/types';
 import userTypes from '../../store/modules/user/types';
+import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
+import { havePermission } from '../../helpers/havePermission';
 
 export default {
   data() {
@@ -544,10 +557,24 @@ export default {
       user: 'user',
       users: 'users',
     }),
+    validatedPermissions() {
+      const statusReview = havePermission('visit.review');
+      const statusVoucher = havePermission('visit.voucher');
+      return {
+        review: {
+          title: statusReview ? 'Revisar visita' : 'No tiene permisos para revisar visitas',
+          status: statusReview,
+        },
+        voucher: {
+          title: statusVoucher ? 'Agregar voucher' : 'No tiene permisos para agregar voucher',
+          status: statusVoucher,
+        },
+      };
+    },
   },
   async mounted() {
     await this.getItem();
-    if (this.item.status !== 'aprobado') {
+    if (this.item.diary_status !== 'finalizada') {
       await this.updateStatusNew({
         ...this.item,
         status: 'visitando',

@@ -16,7 +16,7 @@
     </q-btn>
     <state-cases v-if="id && showStateCases" :item="item" :id="id" />
     <q-stepper
-      v-if="id > 0 && item.status != 'aprobado'"
+      v-if="id > 0 && item.diary_status !== 'finalizada'"
       v-model="step"
       color="primary"
       class="q-mt-md"
@@ -777,7 +777,7 @@ export default {
   async mounted() {
     this.listUsersReviews();
     await this.getItem();
-    if (this.item.status !== 'aprobado') {
+    if (this.item.diary_status !== 'finalizada') {
       await this.updateStatusNew({
         ...this.item,
         status: 'visitando',

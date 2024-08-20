@@ -34,10 +34,21 @@
             <q-btn
               color="primary"
               field="edit"
-              icon="east"
-              size="xs"
-               @click="showVisit(props.row)"
-              round
+              label="Revisar"
+              size="sm"
+              :disabled="!validatedPermissions.review.status"
+              :title="validatedPermissions.review.title"
+              @click="showVisit(props.row)"
+            />
+            <q-btn
+              color="primary"
+              field="edit"
+              label="Voucher"
+              size="sm"
+              class="q-ml-sm"
+              :disabled="!validatedPermissions.voucher.status || props.row.new_status !== 'aprobado'"
+              :title="validatedPermissions.voucher.title"
+              @click="showVisit(props.row)"
             />
           </div>
         </q-td>
@@ -64,6 +75,24 @@ export default {
           align: 'left',
           label: 'Fecha',
           field: 'date',
+          sortable: true,
+          visible: true,
+          headerStyle: 'height: 50px',
+        },
+        {
+          name: 'new_status',
+          align: 'left',
+          label: 'Estado prestamo',
+          field: 'new_status',
+          sortable: true,
+          visible: true,
+          headerStyle: 'height: 50px',
+        },
+        {
+          name: 'status',
+          align: 'left',
+          label: 'Estado visita',
+          field: 'status',
           sortable: true,
           visible: true,
           headerStyle: 'height: 50px',
@@ -133,7 +162,7 @@ export default {
         },
         {
           name: 'actions',
-          label: 'Revisar',
+          label: 'Acciones',
           align: 'center',
           visible: false,
         },
@@ -156,21 +185,16 @@ export default {
       'diary',
     ]),
     validatedPermissions() {
-      const statusCreate = havePermission('visit.list');
-      const statusEdit = havePermission('visit.list');
-      const statusDelete = havePermission('visit.list');
+      const statusReview = havePermission('visit.review');
+      const statusVoucher = havePermission('visit.voucher');
       return {
-        create: {
-          title: statusCreate ? 'Registrar' : 'No tiene permisos para registrar',
-          status: statusCreate,
+        review: {
+          title: statusReview ? 'Revisar visita' : 'No tiene permisos para revisar visitas',
+          status: statusReview,
         },
-        edit: {
-          title: statusEdit ? 'Editar' : 'No tiene permisos para editar',
-          status: statusEdit,
-        },
-        delete: {
-          title: statusDelete ? 'Eliminar' : 'No tiene permisos para eliminar',
-          status: statusDelete,
+        voucher: {
+          title: statusVoucher ? 'Agregar voucher' : 'No tiene permisos para agregar voucher',
+          status: statusVoucher,
         },
       };
     },

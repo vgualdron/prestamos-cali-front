@@ -160,7 +160,7 @@ export default {
     async approve() {
       showLoading('Aprobando ...', 'Por favor, espere', true);
       await this.approveVisit(this.item);
-      this.showNotifications(this.responseMessages, this.status, 'top-right', 5000);
+      this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
       await this.getStatus();
       this.$q.loading.hide();
     },
