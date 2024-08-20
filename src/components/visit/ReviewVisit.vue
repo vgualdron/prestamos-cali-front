@@ -227,7 +227,7 @@
               modelName: 'news',
               modelId: id
             }"
-            @updateStatus="sendNotificationPush"
+            @updateStatus="saveDateNew('status', 'consignado')"
           />
         </div>
       </q-card-section>
