@@ -227,7 +227,7 @@
               modelName: 'news',
               modelId: id
             }"
-            @updateStatus="saveDateNew('status', 'consignado')"
+            @savedFile="saveDateNew('status', 'consignado')"
           />
         </div>
       </q-card-section>
