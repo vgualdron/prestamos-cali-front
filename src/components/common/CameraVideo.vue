@@ -266,6 +266,7 @@ export default {
         type: 'video',
         file: this.file,
         extension: this.extension,
+        status: 'creado',
       });
       this.$q.loading.hide();
       if (this.responseMessages && this.status) {
