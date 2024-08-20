@@ -38,6 +38,14 @@
               <span>
                 {{ e.new_occupation }}
               </span>
+              <br>
+              <q-badge :color="e.status === 'aprobado' ? 'green' : 'blue'">
+                {{ e.status }}
+              </q-badge>
+              <br>
+              <q-badge :color="e.new_status === 'aprobado' ? 'green' : 'blue'">
+                {{ e.new_status }}
+              </q-badge>
               <p>
                 <q-btn
                   v-if="type === 'visitor'"
