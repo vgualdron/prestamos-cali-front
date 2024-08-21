@@ -12,7 +12,7 @@
           <div>
             <b>{{ prop.node.label }}</b>
             <br>Estado:
-            <q-badge :color="item.status === 'aprobado' || item.status != 'consignado' ? 'green' : 'blue'">
+            <q-badge :color="item.status === 'aprobado' || item.status === 'consignado' ? 'green' : 'blue'">
               {{ item.status }}
             </q-badge>
             <br>Fecha inicio:

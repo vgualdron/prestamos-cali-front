@@ -11,6 +11,7 @@ import file, { name as fileName } from './file';
 import zip, { name as zipName } from './zip';
 import configuration, { name as configurationName } from './configuration';
 import notification, { name as notificationName } from './notification';
+import listing, { name as listingName } from './listing';
 
 export default {
   [homeName]: home,
@@ -26,4 +27,5 @@ export default {
   [zipName]: zip,
   [configurationName]: configuration,
   [notificationName]: notification,
+  [listingName]: listing,
 };

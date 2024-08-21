@@ -104,6 +104,13 @@ const routes = [
       { path: '', name: 'Parametros', component: () => import('pages/Configuration.vue') },
     ],
   },
+  {
+    path: '/listing',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Rutas', component: () => import('pages/Listing.vue') },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
