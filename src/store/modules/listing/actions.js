@@ -14,24 +14,58 @@ export default {
   async [types.actions.ADD_LISTING]({ commit }, payload) {
     try {
       const response = await listingApi.addListing(payload);
-      commit(types.mutations.SET_STATUS_ADD_LISTING, response.data);
+      commit(types.mutations.SET_STATUS, true);
+      commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
     } catch (error) {
-      console.error(error);
-      commit(types.mutations.SET_STATUS_ADD_LISTING, error.response.data);
+      commit(types.mutations.SET_STATUS, false);
+      if (error.message !== 'Network Error') {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
+      } else {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, [
+          {
+            text: 'Error de red',
+            detail: 'Intente conectarse a otra red de internet',
+          },
+        ]);
+      }
     }
   },
-  async [types.actions.UPDATE_LISTING](context, payload) {
+  async [types.actions.UPDATE_LISTING]({ commit }, payload) {
     try {
-      await listingApi.updateListing(payload);
+      const response = await listingApi.updateListing(payload);
+      commit(types.mutations.SET_STATUS, true);
+      commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
     } catch (error) {
-      console.error(error);
+      commit(types.mutations.SET_STATUS, false);
+      if (error.message !== 'Network Error') {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
+      } else {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, [
+          {
+            text: 'Error de red',
+            detail: 'Intente conectarse a otra red de internet',
+          },
+        ]);
+      }
     }
   },
-  async [types.actions.DELETE_LISTING](context, id) {
+  async [types.actions.DELETE_LISTING]({ commit }, id) {
     try {
-      await listingApi.deleteListing(id);
+      const response = await listingApi.deleteListing(id);
+      commit(types.mutations.SET_STATUS, true);
+      commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
     } catch (error) {
-      console.error(error);
+      commit(types.mutations.SET_STATUS, false);
+      if (error.message !== 'Network Error') {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
+      } else {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, [
+          {
+            text: 'Error de red',
+            detail: 'Intente conectarse a otra red de internet',
+          },
+        ]);
+      }
     }
   },
 };

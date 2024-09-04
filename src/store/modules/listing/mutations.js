@@ -4,7 +4,10 @@ export default {
   [types.mutations.SET_LISTINGS](state, payload) {
     state.listings = payload;
   },
-  [types.mutations.SET_STATUS_ADD_LISTING](state, payload) {
-    state.statusAddListing = payload;
+  [types.mutations.SET_STATUS](state, payload) {
+    state.status = payload;
+  },
+  [types.mutations.SET_RESPONSE_MESSAGES](state, payload) {
+    state.responseMessages = payload;
   },
 };

@@ -10,6 +10,7 @@ export default {
   },
   mutations: {
     SET_LISTINGS: '@mutations/setListings',
-    SET_STATUS_ADD_LISTING: '@mutations/setStatusAddListing',
+    SET_STATUS: '@mutations/setStatus',
+    SET_RESPONSE_MESSAGES: '@mutations/setResponseMessages',
   },
 };

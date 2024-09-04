@@ -55,12 +55,35 @@
               <q-input v-model="scope.value" dense autofocus />
             </q-popup-edit>
           </q-td>
+          <q-td key="collector" :props="props">
+            <q-icon size="xs" name="edit" />
+            {{ props.row.user_collector.name }}
+            <q-popup-edit :value="props.row.user_collector.name" v-slot="scope" buttons
+              @input="val => save('user_id_collector', val)">
+              <q-select
+                outlined
+                v-model="scope.value"
+                :options="optionsUsers"/>
+            </q-popup-edit>
+          </q-td>
           <q-td key="status" :props="props">
             <q-icon size="xs" name="edit" />
             {{ props.row.status }}
             <q-popup-edit :value="props.row.status" v-slot="scope" buttons
               @input="val => save('status', val)">
-              <q-input v-model="scope.value" dense autofocus />
+              <q-select
+                outlined
+                v-model="scope.value"
+                :options="[
+                  {
+                    label: 'activa',
+                    value: 'activa',
+                  },
+                  {
+                    label: 'inactiva',
+                    value: 'inactiva',
+                  },
+                ]"/>
             </q-popup-edit>
           </q-td>
         </q-tr>
@@ -73,6 +96,7 @@
 import { mapState, mapActions } from 'vuex';
 import FormListing from 'components/listing/FormListing.vue';
 import listingTypes from '../../store/modules/listing/types';
+import userTypes from '../../store/modules/user/types';
 
 export default {
   data() {
@@ -99,6 +123,15 @@ export default {
           sortable: true,
         },
         {
+          name: 'collector',
+          required: true,
+          label: 'Secretaria',
+          align: 'left',
+          field: (row) => row.user_collector.name,
+          format: (val) => `${val}`,
+          sortable: true,
+        },
+        {
           name: 'status',
           align: 'left',
           label: 'Estado',
@@ -117,12 +150,25 @@ export default {
   async mounted() {
     this.isLoadingTable = true;
     await this.fetchListings();
+    await this.listUsersByNameRole({
+      roleName: 'Secretaria',
+      status: 1,
+      city: 0,
+    });
     this.isLoadingTable = false;
   },
   computed: {
     ...mapState(listingTypes.PATH, [
       'listings',
     ]),
+    ...mapState(userTypes.PATH, {
+      users: 'users',
+      userStatus: 'status',
+      userResponseMessages: 'responseMessages',
+    }),
+    optionsUsers() {
+      return this.users.map(({ id, name }) => ({ label: name, value: id }));
+    },
     data() {
       return [...this.listings];
     },
@@ -133,9 +179,13 @@ export default {
       updateListing: listingTypes.actions.UPDATE_LISTING,
       deleteListing: listingTypes.actions.DELETE_LISTING,
     }),
+    ...mapActions(userTypes.PATH, {
+      listUsersByNameRole: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
+    }),
     async save(field, value) {
+      console.log(value);
       this.isLoadingTable = true;
-      this.itemSelected[field] = value;
+      this.itemSelected[field] = value.value ? value.value : value;
       await this.updateListing(this.itemSelected);
       await this.fetchListings();
       this.isLoadingTable = false;

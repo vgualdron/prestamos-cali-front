@@ -1,6 +1,7 @@
 export default function () {
   return {
     listings: [],
-    statusAddListing: {},
+    responseMessages: [],
+    status: false,
   };
 }
