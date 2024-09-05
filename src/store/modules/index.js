@@ -12,6 +12,7 @@ import zip, { name as zipName } from './zip';
 import configuration, { name as configurationName } from './configuration';
 import notification, { name as notificationName } from './notification';
 import listing, { name as listingName } from './listing';
+import lending, { name as lendingName } from './lending';
 
 export default {
   [homeName]: home,
@@ -28,4 +29,5 @@ export default {
   [configurationName]: configuration,
   [notificationName]: notification,
   [listingName]: listing,
+  [lendingName]: lending,
 };

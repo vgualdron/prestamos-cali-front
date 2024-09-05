@@ -111,6 +111,13 @@ const routes = [
       { path: '', name: 'Rutas', component: () => import('pages/Listing.vue') },
     ],
   },
+  {
+    path: '/lending',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Lista de prestamo', component: () => import('pages/Lending.vue') },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

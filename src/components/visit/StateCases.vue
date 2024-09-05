@@ -162,6 +162,7 @@ export default {
       await this.approveVisit(this.item);
       this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
       await this.getStatus();
+      window.location.reload();
       this.$q.loading.hide();
     },
   },

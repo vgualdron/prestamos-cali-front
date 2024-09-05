@@ -227,7 +227,7 @@
               modelName: 'news',
               modelId: id
             }"
-            @savedFile="saveDateNew('status', 'consignado')"
+            @savedFile="saveVoucher"
           />
         </div>
       </q-card-section>
@@ -537,6 +537,7 @@ import StateCases from 'components/visit/StateCases.vue';
 import newTypes from '../../store/modules/new/types';
 import notificationTypes from '../../store/modules/notification/types';
 import userTypes from '../../store/modules/user/types';
+import lendingTypes from '../../store/modules/lending/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { havePermission } from '../../helpers/havePermission';
@@ -563,6 +564,12 @@ export default {
     ...mapState(userTypes.PATH, {
       user: 'user',
       users: 'users',
+    }),
+    ...mapState(lendingTypes.PATH, {
+      lending: 'lending',
+      lendings: 'lendings',
+      lendingStatus: 'status',
+      lendingResponseMessages: 'responseMessages',
     }),
     validatedPermissions() {
       const statusReview = havePermission('visit.review');
@@ -600,6 +607,9 @@ export default {
     ...mapActions(userTypes.PATH, {
       getUser: userTypes.actions.GET_USER,
     }),
+    ...mapActions(lendingTypes.PATH, {
+      addLending: lendingTypes.actions.ADD_LENDING,
+    }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
@@ -630,6 +640,25 @@ export default {
     async getItem() {
       const { id } = this.$route.params;
       await this.getNew(id);
+    },
+    async saveVoucher() {
+      await this.saveDateNew('status', 'consignado');
+      await this.addLending({
+        nameDebtor: this.item.name,
+        address: this.item.address,
+        phone: this.item.phone,
+        firstDate: null,
+        endDate: null,
+        amount: this.item.quantity,
+        amountFees: 21,
+        percentage: 33,
+        period: 'diario',
+        order: null,
+        status: 'open',
+        listing_id: 1,
+        new_id: this.item.id,
+        type: 'normal',
+      });
     },
     async saveDateNew(field, value) {
       showLoading('Guardando ...', 'Por favor, espere', true);
