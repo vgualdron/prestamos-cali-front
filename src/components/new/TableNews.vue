@@ -239,10 +239,10 @@ export default {
           visible: true,
         },
         {
-          name: 'district',
+          name: 'districtName',
           align: 'left',
           label: 'Barrio',
-          field: 'district',
+          field: 'districtName',
           sortable: true,
           visible: true,
         },

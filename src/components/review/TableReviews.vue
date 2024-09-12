@@ -159,9 +159,9 @@
               <q-input v-model="scope.value" dense autofocus />
             </q-popup-edit>
           </q-td>
-          <q-td key="documentNumber" :props="props">
+          <!-- <q-td key="documentNumber" :props="props">
            {{ props.row.documentNumber }}
-          </q-td>
+          </q-td> -->
           <q-td key="name" :props="props">
             {{ props.row.name }}
           </q-td>
@@ -177,8 +177,18 @@
           <q-td key="sectorName" :props="props">
             {{ props.row.sectorName }}
           </q-td>
-          <q-td key="district" :props="props">
-            {{ props.row.district }}
+          <q-td key="districtGroup" :props="props">
+            <q-badge
+              :color="getColorBadge(props.row.districtGroup)"
+              :text-color="getColorText(props.row.districtGroup)">
+              {{ props.row.districtGroup }}
+            </q-badge>
+          </q-td>
+          <q-td key="districtOrder" :props="props">
+            {{ props.row.districtOrder }}
+          </q-td>
+          <q-td key="districtName" :props="props">
+            {{ props.row.districtName }}
           </q-td>
           <q-td key="occupation" :props="props">
             {{ props.row.occupation }}
@@ -269,7 +279,7 @@ export default {
           sortable: true,
           visible: true,
         },
-        {
+        /* {
           name: 'documentNumber',
           label: 'Documento',
           align: 'left',
@@ -277,7 +287,7 @@ export default {
           sortable: true,
           visible: true,
           headerStyle: 'height: 50px',
-        },
+        }, */
         {
           name: 'name',
           align: 'left',
@@ -321,10 +331,26 @@ export default {
           visible: true,
         },
         {
-          name: 'district',
+          name: 'districtGroup',
+          align: 'left',
+          label: 'Grupo',
+          field: 'districtGroup',
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'districtOrder',
+          align: 'left',
+          label: 'Orden',
+          field: 'districtOrder',
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'districtName',
           align: 'left',
           label: 'Barrio',
-          field: 'district',
+          field: 'districtName',
           sortable: true,
           visible: true,
         },
@@ -549,6 +575,32 @@ export default {
     ...mapActions(userTypes.PATH, {
       listUsersByRoleName: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
     }),
+    getColorBadge(i) {
+      const colors = [
+        'white',
+        'black',
+        'yellow',
+        'red',
+        'green',
+        'blue',
+        'purple',
+        'orange',
+      ];
+      return colors[i];
+    },
+    getColorText(i) {
+      const colors = [
+        'white',
+        'white',
+        'black',
+        'white',
+        'white',
+        'white',
+        'white',
+        'white',
+      ];
+      return colors[i];
+    },
     disabledBtnPending(row) {
       return !row.observation;
     },

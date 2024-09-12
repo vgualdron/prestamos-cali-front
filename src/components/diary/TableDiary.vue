@@ -33,7 +33,7 @@
               </span>
               <br>
               <div class="wrap-text">
-                {{ e.site_visit === 'trabajo' ? e.address_work : e.address_house }}
+                {{ e.site_visit === 'trabajo' ? e.address_work : e.address_house }} {{ e.new_districtName }}
               </div>
               <span>
                 {{ e.new_occupation }}

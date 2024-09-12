@@ -52,7 +52,7 @@ const routes = [
     path: '/review',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Revisión de datos', component: () => import('pages/Review.vue') },
+      { path: '', name: 'Agendar nuevos', component: () => import('pages/Review.vue') },
     ],
   },
   {
@@ -116,6 +116,13 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', name: 'Lista de prestamo', component: () => import('pages/Lending.vue') },
+    ],
+  },
+  {
+    path: '/district',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Lista de barrios', component: () => import('pages/District.vue') },
     ],
   },
   // Always leave this as last one,

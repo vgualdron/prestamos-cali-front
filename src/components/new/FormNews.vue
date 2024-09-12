@@ -55,16 +55,6 @@
               hide-bottom-space
               autocomplete="off"
             />
-            <q-input
-              outlined
-              v-model.trim="user.address"
-              label="Dirección *"
-              lazy-rules
-              :rules="rules.address"
-              :disable="disableInputs"
-              hide-bottom-space
-              autocomplete="off"
-            />
             <q-select
               v-model="user.city"
               class="q-mt-md"
@@ -107,6 +97,7 @@
               option-label="name"
               option-value="id"
               @filter="filterSectors"
+              @input="changeSector"
               lazy-rules
               :rules="rules.sector"
               hide-bottom-space
@@ -122,14 +113,43 @@
                 </q-item>
               </template>
             </q-select>
-            <q-input
+            <q-select
+              v-model="user.district"
+              class="q-mt-md"
+              use-input
               outlined
-              v-model.trim="user.district"
+              clearable
+              input-debounce="0"
               label="Barrio *"
+              :disable="disableInputs"
+              :options="optionsDistricts"
+              option-label="name"
+              option-value="id"
+              @filter="filterDistricts"
               lazy-rules
               :rules="rules.district"
+              hide-bottom-space
+              map-options
+              emit-value
+              autocomplete="off"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No hay coincidencias
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-input
+              outlined
+              v-model.trim="user.address"
+              label="Dirección *"
+              lazy-rules
+              :rules="rules.address"
               :disable="disableInputs"
               hide-bottom-space
+              autocomplete="off"
             />
             <q-input
               outlined
@@ -194,6 +214,7 @@ import newTypes from '../../store/modules/new/types';
 import userTypes from '../../store/modules/user/types';
 import zoneTypes from '../../store/modules/zone/types';
 import yardTypes from '../../store/modules/yard/types';
+import districtTypes from '../../store/modules/district/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { removeAccents } from '../../helpers/removeAccents';
@@ -206,6 +227,7 @@ export default {
       optionsYards: [],
       optionsUsers: [],
       optionsZones: [],
+      optionsDistricts: [],
       user: {
         id: null,
         documentNumber: null,
@@ -214,7 +236,7 @@ export default {
         phone: '',
         city: null,
         sector: null,
-        district: '',
+        district: null,
         occupation: '',
         userSend: null,
         observation: '',
@@ -227,7 +249,7 @@ export default {
         phone: '',
         city: null,
         sector: null,
-        district: '',
+        district: null,
         occupation: '',
         userSend: null,
         observation: '',
@@ -260,7 +282,6 @@ export default {
         ],
         district: [
           (val) => (!!val) || 'El campo es requerido',
-          (val) => (val.length >= 3) || 'El campo debe tener un mínimo de 3 caracteres',
         ],
         occupation: [
           (val) => (!!val) || 'El campo es requerido',
@@ -291,6 +312,9 @@ export default {
     zones(val) {
       this.optionsZones = [...val];
     },
+    districts(val) {
+      this.optionsDistricts = [...val.filter((district) => district.sector === this.user.sector)];
+    },
     users(val) {
       this.optionsUsers = [...val];
     },
@@ -314,6 +338,11 @@ export default {
       users: 'users',
       userStatus: 'status',
       userResponseMessages: 'responseMessages',
+    }),
+    ...mapState(districtTypes.PATH, {
+      districts: 'districts',
+      districtStatus: 'status',
+      districtResponseMessages: 'responseMessages',
     }),
     showDialog: {
       get() {
@@ -343,9 +372,21 @@ export default {
     ...mapActions(userTypes.PATH, {
       listUsers: userTypes.actions.LIST_USERS,
     }),
+    ...mapActions(districtTypes.PATH, {
+      listDistricts: districtTypes.actions.FETCH_DISTRICTS,
+    }),
     changeCity(cityValue) {
+      this.user.sector = null;
+      this.user.district = null;
       showLoading('Cargando sectores ...', 'Por favor, espere', true);
       this.listYardsByZone({ id: cityValue, displayAll: 1 });
+      this.$q.loading.hide();
+    },
+    async changeSector() {
+      this.user.district = null;
+      showLoading('Cargando barrios ...', 'Por favor, espere', true);
+      await this.listDistricts();
+      this.optionsDistricts = [...this.districts.filter((district) => district.sector === this.user.sector)];
       this.$q.loading.hide();
     },
     async initData() {
@@ -397,6 +438,13 @@ export default {
       update(() => {
         const needle = val ? removeAccents(val.trim().toLowerCase()) : '';
         this.optionsYards = this.yards.filter((option) => removeAccents(option.name).toLowerCase().indexOf(needle) > -1);
+      });
+    },
+    filterDistricts(val, update) {
+      update(() => {
+        const needle = val ? removeAccents(val.trim().toLowerCase()) : '';
+        this.optionsDistricts = this.districts.filter((option) => removeAccents(option.name).toLowerCase().indexOf(needle) > -1);
+        this.optionsDistricts = [...this.optionsDistricts.filter((district) => district.sector === this.user.sector)];
       });
     },
     filterUsers(val, update) {
