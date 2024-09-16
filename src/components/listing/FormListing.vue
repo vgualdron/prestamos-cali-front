@@ -90,9 +90,11 @@ export default {
     },
   },
   computed: {
-    ...mapState(listingTypes.PATH, [
-      'statusAddListing',
-    ]),
+    ...mapState(listingTypes.PATH, {
+      listings: 'listings',
+      listingStatus: 'status',
+      listingResponseMessages: 'responseMessages',
+    }),
     ...mapState(userTypes.PATH, {
       users: 'users',
       userStatus: 'status',
@@ -138,23 +140,10 @@ export default {
         user_id_collector: this.userIdCollector,
         user_id_leader: this.userIdCollector,
       });
-      if (this.statusAddListing.errors) {
-        this.$q.notify({
-          color: 'red-4',
-          textColor: 'white',
-          message: this.statusAddConfiguration.message,
-        });
-      } else {
-        this.$q.notify({
-          color: 'green-4',
-          textColor: 'white',
-          icon: 'cloud_done',
-          message: 'Ruta agregada con éxito',
-        });
-        this.showDialog = false;
-        await this.fetchListings();
-      }
-      this.isLoading = false;
+      this.showNotification(this.listingResponseMessages, this.listingStatus, 'top-right', 5000);
+      this.$q.loading.hide();
+      this.showDialog = false;
+      await this.fetchListings();
     },
   },
 };

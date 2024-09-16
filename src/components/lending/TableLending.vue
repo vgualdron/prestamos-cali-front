@@ -1,7 +1,14 @@
 <template>
   <div class="q-pa-md">
     <div class="row q-mt-md">
-      <div class="col-9 text-center">
+      <div class="col-6 text-center">
+        <q-select
+          outlined
+          dense
+          v-model="listingSelected"
+          :options="optionsListings"/>
+      </div>
+      <div class="col-6 text-center">
         <q-input
           debounce="400"
           color="primary"
@@ -22,74 +29,111 @@
       :grid="$q.screen.xs"
       :data="data"
       :columns="columns"
-      row-key="name"
-      :selected.sync="selected"
+      row-key="id"
       :loading="isLoadingTable"
       :filter="filter"
       :pagination.sync="pagination"
       separator="cell"
       class="q-mt-md"
+      :row-class="'bg-purple'"
       dense>
-      <!-- <template v-slot:body="props">
-        <q-tr :props="props" @click="clickRow(props.row)">
+      <template v-slot:body="props">
+        <q-tr :props="props" :class="rowClass(props.row)" @click="clickRow(props.row)">
           <q-td key="actions" :props="props">
-            <q-btn icon="delete" type="reset" color="primary" flat size="sm"
+            <q-btn icon="delete" type="reset" color="black" flat size="sm"
               class="col q-ml-sm" @click="openModal('delete', props.row)" />
           </q-td>
+          <q-td key="index" :props="props">
+            {{ props.row.index }}
+          </q-td>
           <q-td key="name" :props="props">
-            <q-icon size="xs" name="edit" />
-            {{ props.row.name }}
-            <q-popup-edit :value="props.row.name" v-slot="scope" buttons
-              @input="val => save('name', val)">
-              <q-input v-model="scope.value" dense autofocus />
-            </q-popup-edit>
+            {{ props.row.nameDebtor }}
           </q-td>
-          <q-td key="collector" :props="props">
-            <q-icon size="xs" name="edit" />
-            {{ props.row.user_collector.name }}
-            <q-popup-edit :value="props.row.user_collector.name" v-slot="scope" buttons
-              @input="val => save('user_id_collector', val)">
-              <q-select
-                outlined
-                v-model="scope.value"
-                :options="optionsUsers"/>
-            </q-popup-edit>
+          <q-td key="amount" :props="props">
+            {{ formatPrice(valueWithInterest(props.row)) }}
           </q-td>
-          <q-td key="status" :props="props">
-            <q-icon size="xs" name="edit" />
-            {{ props.row.status }}
-            <q-popup-edit :value="props.row.status" v-slot="scope" buttons
-              @input="val => save('status', val)">
-              <q-select
-                outlined
-                v-model="scope.value"
-                :options="[
-                  {
-                    label: 'activa',
-                    value: 'activa',
-                  },
-                  {
-                    label: 'inactiva',
-                    value: 'inactiva',
-                  },
-                ]"/>
-            </q-popup-edit>
+          <q-td key="fee" :props="props">
+            {{ formatPrice(feeWithInterest(props.row)) }}
+          </q-td>
+          <q-td key="period" :props="props">
+            {{ props.row.period }}
+          </q-td>
+          <q-td key="amountFees" :props="props">
+            {{ props.row.amountFees }}
+          </q-td>
+          <q-td key="day" :props="props">
+            {{ getDatePayment(props.row) }}
+          </q-td>
+          <q-td key="collection" :props="props">
+          </q-td>
+          <q-td key="daysPassed" :props="props">
+            {{ daysSinceGivenDate(props.row.firstDate) }}
+          </q-td>
+          <q-td key="firstDate" :props="props">
+            {{ formatDate(props.row.firstDate) }}
+          </q-td>
+          <q-td key="endDate" :props="props">
+            {{ formatDate(props.row.endDate) }}
+          </q-td>
+          <q-td key="endPaymentDate" :props="props">
+            {{ getLastPaymentDate(props.row) }}
+          </q-td>
+          <q-td key="amountFeesPaid" :props="props">
+            {{ getAmountfeesPaid(props.row) }}
+          </q-td>
+          <q-td key="balance" :props="props">
+            {{ formatPrice(getBalance(props.row)) }}
+          </q-td>
+          <q-td key="phone" :props="props">
+            <q-btn-dropdown
+              color="black"
+              icon="phone"
+              size="12px"
+              :auto-close="false"
+              outline
+              :label="props.row.phone"
+              @click="onDropdownMainClick(props.row.new_id)"
+            >
+              <q-list>
+                <q-item v-close-popup v-if="newItem.family_reference_name">
+                  <q-item-section>
+                    <q-item-label>Ref 1: {{ newItem.family_reference_name }}</q-item-label>
+                    <q-item-label caption>{{ newItem.family_reference_phone }} - {{ newItem.family_reference_relationship }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item v-close-popup v-if="newItem.family2_reference_name">
+                  <q-item-section>
+                    <q-item-label>Ref 2: {{ newItem.family2_reference_name }}</q-item-label>
+                    <q-item-label caption>{{ newItem.family2_reference_phone }} - {{ newItem.family2_reference_relationship }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item v-close-popup v-if="newItem.guarantor_name">
+                  <q-item-section>
+                    <q-item-label>Fiador: {{ newItem.guarantor_name }}</q-item-label>
+                    <q-item-label caption>{{ newItem.guarantor_phone }} - {{ newItem.guarantor_relationship }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
           </q-td>
         </q-tr>
-      </template> -->
+      </template>
     </q-table>
   </div>
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
+import moment from 'moment';
+import listingTypes from '../../store/modules/listing/types';
 import lendingTypes from '../../store/modules/lending/types';
 import userTypes from '../../store/modules/user/types';
+import newTypes from '../../store/modules/new/types';
+import { showLoading } from '../../helpers/showLoading';
 
 export default {
   data() {
     return {
       isLoadingTable: false,
-      selected: [],
       itemSelected: {},
       columns: [
         {
@@ -97,7 +141,15 @@ export default {
           required: true,
           label: 'Acciones',
           align: 'left',
-          style: 'width: 100px',
+          style: 'width: 80px',
+          headerStyle: 'height: 50px',
+        },
+        {
+          name: 'index',
+          required: true,
+          label: '#',
+          align: 'center',
+          style: 'width: 50px',
           headerStyle: 'height: 50px',
         },
         {
@@ -105,61 +157,178 @@ export default {
           required: true,
           label: 'Nombre deudor',
           align: 'left',
+          style: 'width: 250px',
           field: (row) => row.nameDebtor,
           format: (val) => `${val}`,
-          sortable: true,
+          sortable: false,
         },
         {
           name: 'amount',
           required: true,
-          label: 'Monto prestado',
+          label: 'Valor',
           align: 'left',
-          field: (row) => row.amount,
-          format: (val) => `${val}`,
-          sortable: true,
+          style: 'width: 100px',
+          field: (row) => row,
+          format: (val) => this.valueWithInterest(val),
+          sortable: false,
+        },
+        {
+          name: 'fee',
+          required: true,
+          label: 'Couta',
+          align: 'left',
+          style: 'width: 100px',
+          field: (row) => row,
+          format: (val) => this.feeWithInterest(val),
+          sortable: false,
         },
         {
           name: 'period',
           align: 'left',
           label: 'periodo',
           field: 'period',
-          sortable: true,
+          style: 'width: 80px',
+          sortable: false,
         },
         {
           name: 'amountFees',
           align: 'left',
           label: '# de cuotas',
           field: 'amountFees',
-          sortable: true,
+          style: 'width: 80px',
+          sortable: false,
+        },
+        {
+          name: 'day',
+          align: 'left',
+          label: 'Día',
+          field: 'day',
+          style: 'width: 80px',
+          sortable: false,
+        },
+        {
+          name: 'collection',
+          required: true,
+          label: 'Cobro',
+          align: 'left',
+          style: 'width: 100px',
+          sortable: false,
+        },
+        {
+          name: 'daysPassed',
+          required: true,
+          label: 'Dias pasados',
+          align: 'left',
+          style: 'width: 100px',
+          sortable: false,
+        },
+        {
+          name: 'firstDate',
+          required: true,
+          label: 'Fecha inicio',
+          align: 'left',
+          style: 'width: 60px',
+          field: (row) => row.firstDate,
+          format: (val) => this.formatDate(val),
+          sortable: false,
+        },
+        {
+          name: 'endDate',
+          required: true,
+          label: 'Fecha fin',
+          align: 'left',
+          style: 'width: 60px',
+          field: (row) => row.endDate,
+          format: (val) => this.formatDate(val),
+          sortable: false,
+        },
+        {
+          name: 'endPaymentDate',
+          required: true,
+          label: 'Último pago',
+          align: 'left',
+          style: 'width: 60px',
+          sortable: false,
+        },
+        {
+          name: 'amountFeesPaid',
+          required: true,
+          label: 'Cuotas dadas',
+          align: 'left',
+          style: 'width: 60px',
+          sortable: false,
+        },
+        {
+          name: 'balance',
+          required: true,
+          label: 'Saldo',
+          align: 'left',
+          style: 'width: 60px',
+          sortable: false,
+        },
+        {
+          name: 'phone',
+          required: true,
+          label: 'Teléfonos',
+          align: 'left',
+          style: 'width: 60px',
+          field: (row) => row.phone,
+          format: (val) => val,
+          sortable: false,
         },
       ],
       pagination: {
-        rowsPerPage: 30,
+        rowsPerPage: 0,
       },
       filter: '',
       isDiabledAdd: false,
       showModal: false,
+      listingSelected: null,
     };
+  },
+  watch: {
+    async listingSelected(val) {
+      showLoading('consultando ...', 'Por favor, espere', true);
+      await this.getLendings(val.value);
+      this.$q.loading.hide();
+    },
   },
   async mounted() {
     this.isLoadingTable = true;
-    await this.getLendings();
+    await this.fetchMineListings();
+    if (this.listings && this.listings.length > 0) {
+      this.listingSelected = { ...this.optionsListings[0] };
+    }
     this.isLoadingTable = false;
   },
   computed: {
     ...mapState(lendingTypes.PATH, [
       'lendings',
     ]),
+    ...mapState(listingTypes.PATH, [
+      'listings',
+    ]),
     ...mapState(userTypes.PATH, {
       users: 'users',
       userStatus: 'status',
       userResponseMessages: 'responseMessages',
     }),
+    ...mapState(newTypes.PATH, {
+      newItem: 'new',
+      newStatus: 'status',
+      newResponseMessages: 'responseMessages',
+    }),
     optionsUsers() {
       return this.users.map(({ id, name }) => ({ label: name, value: id }));
     },
+    optionsListings() {
+      return this.listings.map(({ id, name, user_collector }) => ({ label: `${name} - ${user_collector.name}`, value: id }));
+    },
     data() {
-      return [...this.lendings];
+      return this.lendings.map((row, index) => ({
+        ...row,
+        index: index + 1,
+      }));
     },
   },
   methods: {
@@ -168,12 +337,108 @@ export default {
       updateLending: lendingTypes.actions.UPDATE_LENDING,
       deleteLending: lendingTypes.actions.DELETE_LENDING,
     }),
+    ...mapActions(listingTypes.PATH, {
+      fetchMineListings: listingTypes.actions.FETCH_MINE_LISTINGS,
+    }),
     ...mapActions(userTypes.PATH, {
       listUsersByNameRole: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
     }),
-    async getLendings() {
+    ...mapActions(newTypes.PATH, {
+      getNew: newTypes.actions.GET_NEW,
+    }),
+    rowClass(row) {
+      let color = 'bg-white';
+      const days = this.daysSinceGivenDate(row.firstDate);
+      if (days > 21) {
+        color = 'bg-red';
+      } else if (days >= 15 && days <= 21) {
+        color = 'bg-blue';
+      } else if (days > 7 && days <= 14) {
+        color = 'bg-yellow';
+      }
+      return color;
+    },
+    formatDate(date) {
+      return moment(date).format('DD/MM/YYYY');
+    },
+    formatPrice(val) {
+      return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(val);
+    },
+    daysSinceGivenDate(givenDate) {
+      // Asegúrate de que la fecha dada esté en formato Date
+      givenDate = new Date(givenDate);
+      // Obtén la fecha actual
+      const today = new Date();
+      // Establece la hora de ambos objetos en medianoche para evitar problemas con la hora
+      today.setHours(0, 0, 0, 0);
+      givenDate.setHours(0, 0, 0, 0);
+      // Calcula la diferencia en milisegundos
+      const differenceInMillis = today - givenDate;
+      // Convierte la diferencia a días
+      const millisecondsInADay = 24 * 60 * 60 * 1000;
+      const daysPassed = Math.floor(differenceInMillis / millisecondsInADay);
+      return daysPassed;
+    },
+    getDatePayment(row) {
+      const format = 'DD/MM/YYYY';
+      const { period } = row;
+      let date = moment().format(format);
+      if (period === 'semanal') {
+        date = moment(row.firstDate).add(1, 'week').format(format);
+      }
+      /* if (period === 'semanal') {
+
+      } */
+      return date;
+    },
+    getLastPaymentDate(row) {
+      const format = 'DD/MM/YYYY';
+      const { payments } = row;
+      if (payments && payments.length > 0) {
+        const lastPayment = payments[payments.length - 1];
+        return moment(lastPayment.date).format(format);
+      }
+      return 'x';
+    },
+    valueWithInterest(row) {
+      const val = row.amount + (row.amount * (row.percentage / 100));
+      return (val);
+    },
+    feeWithInterest(row) {
+      const val = row.amount + (row.amount * (row.percentage / 100));
+      return (val / row.amountFees);
+    },
+    getAmountfeesPaid(row) {
+      const valueFee = this.feeWithInterest(row);
+      let totalPayments = 0;
+      let valueAmuntFeesPaid = 0;
+      if (row.payments && row.payments.length > 0) {
+        totalPayments = row.payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+        valueAmuntFeesPaid = (parseInt(totalPayments, 10) / parseInt(valueFee, 10));
+      }
+      return Math.floor(valueAmuntFeesPaid);
+    },
+    getBalance(row) {
+      const total = this.valueWithInterest(row);
+      let totalPayments = 0;
+      if (row.payments && row.payments.length > 0) {
+        totalPayments = row.payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+      }
+      return (total - totalPayments);
+    },
+    async onDropdownMainClick(id) {
+      showLoading('consultando ...', 'Por favor, espere', true);
+      await this.getNew(id);
+      this.$q.loading.hide();
+    },
+    async getLendings(idList) {
       await this.fetchLendings({
-        idList: 1,
+        idList,
       });
     },
     async save(field, value) {
@@ -189,7 +454,7 @@ export default {
     addRow() {
       this.showModal = true;
     },
-    openModal(action, row) {
+    /* openModal(action, row) {
       if (action === 'delete') {
         this.$q.dialog({
           title: 'Eliminar',
@@ -206,7 +471,7 @@ export default {
         }).onOk(async () => {
           this.isLoadingTable = true;
           await this.deleteListing(row.id);
-          await this.getLendings();
+          await this.getLendings(this.lendingSelected);
           this.isLoadingTable = false;
         }).onCancel(() => {
           // console.log('>>>> Cancel')
@@ -214,9 +479,17 @@ export default {
           // console.log('I am triggered on both OK and Cancel')
         });
       }
-    },
+    }, */
   },
   components: {
   },
 };
 </script>
+<style scoped>
+  .bg-light-red {
+    background-color: #f8d7da !important;
+  }
+  .bg-light-green {
+    background-color: #d4edda !important;
+  }
+</style>

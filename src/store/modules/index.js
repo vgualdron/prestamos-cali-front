@@ -14,6 +14,7 @@ import notification, { name as notificationName } from './notification';
 import listing, { name as listingName } from './listing';
 import lending, { name as lendingName } from './lending';
 import district, { name as districtName } from './district';
+import report, { name as reportName } from './report';
 
 export default {
   [homeName]: home,
@@ -32,4 +33,5 @@ export default {
   [listingName]: listing,
   [lendingName]: lending,
   [districtName]: district,
+  [reportName]: report,
 };

@@ -71,7 +71,11 @@
           </q-td>
           <q-td key="group" :props="props">
             <q-icon size="xs" name="edit" />
-            {{ props.row.group }}
+            <q-badge
+              :color="getColorBadge(props.row.group)"
+              :text-color="getColorText(props.row.group)">
+              {{ props.row.group }}
+            </q-badge>
             <q-popup-edit :value="props.row.group" v-slot="scope" buttons
               @input="val => save('group', val)">
               <q-input v-model="scope.value" dense autofocus type="number"/>
@@ -216,6 +220,32 @@ export default {
     ...mapActions(yardTypes.PATH, {
       listYards: yardTypes.actions.LIST_YARDS,
     }),
+    getColorBadge(i) {
+      const colors = [
+        'white',
+        'black',
+        'yellow',
+        'red',
+        'green',
+        'blue',
+        'purple',
+        'orange',
+      ];
+      return colors[i];
+    },
+    getColorText(i) {
+      const colors = [
+        'white',
+        'white',
+        'black',
+        'white',
+        'white',
+        'white',
+        'white',
+        'white',
+      ];
+      return colors[i];
+    },
     async save(field, value) {
       this.isLoadingTable = true;
       this.itemSelected[field] = value.value ? value.value : value;

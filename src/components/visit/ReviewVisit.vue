@@ -220,7 +220,7 @@
         </div>
         <div class="div-container" v-if="validatedPermissions.voucher.status && (item.status === 'aprobado' || item.status === 'consignado')">
           <p class="text-subtitle1 text-weight-bold text-center">AGREGAR FOTO VOUCHER</p>
-          <camera-photo
+          <upload-image
             :config="{
               name: 'FOTO_VOUCHER',
               storage: 'news',
@@ -533,6 +533,7 @@ import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import CameraPhoto from 'components/common/CameraPhoto.vue';
 import CameraVideo from 'components/common/CameraVideo.vue';
+import UploadImage from 'components/common/UploadImage.vue';
 import StateCases from 'components/visit/StateCases.vue';
 import newTypes from '../../store/modules/new/types';
 import notificationTypes from '../../store/modules/notification/types';
@@ -647,13 +648,9 @@ export default {
         nameDebtor: this.item.name,
         address: this.item.address,
         phone: this.item.phone,
-        firstDate: null,
-        endDate: null,
         amount: this.item.quantity,
-        amountFees: 21,
-        percentage: 33,
-        period: 'diario',
-        order: null,
+        percentage: 32,
+        period: this.item.period,
         status: 'open',
         listing_id: 1,
         new_id: this.item.id,
@@ -686,6 +683,7 @@ export default {
     CameraPhoto,
     CameraVideo,
     StateCases,
+    UploadImage,
   },
 };
 </script>

@@ -115,7 +115,7 @@ const routes = [
     path: '/lending',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Lista de prestamo', component: () => import('pages/Lending.vue') },
+      { path: '', name: 'Lista de prestamos', component: () => import('pages/Lending.vue') },
     ],
   },
   {
@@ -123,6 +123,13 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', name: 'Lista de barrios', component: () => import('pages/District.vue') },
+    ],
+  },
+  {
+    path: '/report-dinamic',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Reportes Dinamicos', component: () => import('pages/ReportDinamic.vue') },
     ],
   },
   // Always leave this as last one,

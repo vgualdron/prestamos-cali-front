@@ -183,6 +183,10 @@
                           v-model="scope.value"
                           :options="[
                             {
+                              label: '100.000',
+                              value: 100000,
+                            },
+                            {
                               label: '200.000',
                               value: 200000,
                             },
