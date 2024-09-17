@@ -1,13 +1,21 @@
 import types from './types';
-import fileApi from '../../../api/file/fileApi';
+import paymentApi from '../../../api/payment/paymentApi';
 
 export default {
-  async [types.actions.SAVE_FILE]({ commit }, payload) {
+  async [types.actions.FETCH_PAYMENTS]({ commit }, payload) {
     try {
-      const response = await fileApi.save(payload);
+      const response = await paymentApi.fetchPaymentsByLending(payload);
+      commit(types.mutations.SET_PAYMENTS, response.data.data);
+    } catch (error) {
+      console.error(error);
+      commit(types.mutations.SET_LENDINGS, error.response.data);
+    }
+  },
+  async [types.actions.ADD_PAYMENT]({ commit }, payload) {
+    try {
+      const response = await paymentApi.addPayment(payload);
       commit(types.mutations.SET_STATUS, true);
-      commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
-      commit(types.mutations.SET_FILE, response.data.data);
+      commit(types.mutations.SET_RESPONSE_MESSAGES, response.data);
     } catch (error) {
       commit(types.mutations.SET_STATUS, false);
       if (error.message !== 'Network Error') {
@@ -22,9 +30,9 @@ export default {
       }
     }
   },
-  async [types.actions.UPDATE_FILE]({ commit }, payload) {
+  async [types.actions.UPDATE_PAYMENT]({ commit }, payload) {
     try {
-      const response = await fileApi.update(payload);
+      const response = await paymentApi.updatePayment(payload);
       commit(types.mutations.SET_STATUS, true);
       commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
     } catch (error) {
@@ -41,13 +49,9 @@ export default {
       }
     }
   },
-  async [types.actions.GET_FILE](context, payload) {
-    const response = await fileApi.get(payload);
-    return response.data;
-  },
-  async [types.actions.DELETE_FILE]({ commit }, payload) {
+  async [types.actions.DELETE_PAYMENT]({ commit }, id) {
     try {
-      const response = await fileApi.delete(payload);
+      const response = await paymentApi.deletePayment(id);
       commit(types.mutations.SET_STATUS, true);
       commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
     } catch (error) {

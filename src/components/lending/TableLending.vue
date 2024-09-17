@@ -65,6 +65,18 @@
             {{ getDatePayment(props.row) }}
           </q-td>
           <q-td key="collection" :props="props">
+            <b v-if="hasPaymentToday(props.row)">
+              {{ formatPrice(getPaymentToday(props.row).amount) }}
+            </b>
+            <b v-else>
+              <q-btn
+                color="primary"
+                label="$"
+                size="sm"
+                @click="addPayment(props.row)"
+                :disable="isDiabledAdd"
+              />
+            </b>
           </q-td>
           <q-td key="daysPassed" :props="props">
             {{ daysSinceGivenDate(props.row.firstDate) }}
@@ -119,11 +131,19 @@
         </q-tr>
       </template>
     </q-table>
+    <modal-add-payment
+      v-if="showModal"
+      v-model="showModal"
+      :valuePayment="valuePayment"
+      :row="itemSelected"
+      :type="typeAction"
+      @updateTable="getLendings"/>
   </div>
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
 import moment from 'moment';
+import ModalAddPayment from 'components/payment/ModalAddPayment.vue';
 import listingTypes from '../../store/modules/listing/types';
 import lendingTypes from '../../store/modules/lending/types';
 import userTypes from '../../store/modules/user/types';
@@ -140,7 +160,7 @@ export default {
           name: 'actions',
           required: true,
           label: 'Acciones',
-          align: 'left',
+          align: 'center',
           style: 'width: 80px',
           headerStyle: 'height: 50px',
         },
@@ -156,7 +176,7 @@ export default {
           name: 'name',
           required: true,
           label: 'Nombre deudor',
-          align: 'left',
+          align: 'center',
           style: 'width: 250px',
           field: (row) => row.nameDebtor,
           format: (val) => `${val}`,
@@ -166,7 +186,7 @@ export default {
           name: 'amount',
           required: true,
           label: 'Valor',
-          align: 'left',
+          align: 'center',
           style: 'width: 100px',
           field: (row) => row,
           format: (val) => this.valueWithInterest(val),
@@ -176,7 +196,7 @@ export default {
           name: 'fee',
           required: true,
           label: 'Couta',
-          align: 'left',
+          align: 'center',
           style: 'width: 100px',
           field: (row) => row,
           format: (val) => this.feeWithInterest(val),
@@ -184,7 +204,7 @@ export default {
         },
         {
           name: 'period',
-          align: 'left',
+          align: 'center',
           label: 'periodo',
           field: 'period',
           style: 'width: 80px',
@@ -192,7 +212,7 @@ export default {
         },
         {
           name: 'amountFees',
-          align: 'left',
+          align: 'center',
           label: '# de cuotas',
           field: 'amountFees',
           style: 'width: 80px',
@@ -200,7 +220,7 @@ export default {
         },
         {
           name: 'day',
-          align: 'left',
+          align: 'center',
           label: 'Día',
           field: 'day',
           style: 'width: 80px',
@@ -210,7 +230,7 @@ export default {
           name: 'collection',
           required: true,
           label: 'Cobro',
-          align: 'left',
+          align: 'center',
           style: 'width: 100px',
           sortable: false,
         },
@@ -218,7 +238,7 @@ export default {
           name: 'daysPassed',
           required: true,
           label: 'Dias pasados',
-          align: 'left',
+          align: 'center',
           style: 'width: 100px',
           sortable: false,
         },
@@ -226,7 +246,7 @@ export default {
           name: 'firstDate',
           required: true,
           label: 'Fecha inicio',
-          align: 'left',
+          align: 'center',
           style: 'width: 60px',
           field: (row) => row.firstDate,
           format: (val) => this.formatDate(val),
@@ -236,7 +256,7 @@ export default {
           name: 'endDate',
           required: true,
           label: 'Fecha fin',
-          align: 'left',
+          align: 'center',
           style: 'width: 60px',
           field: (row) => row.endDate,
           format: (val) => this.formatDate(val),
@@ -246,7 +266,7 @@ export default {
           name: 'endPaymentDate',
           required: true,
           label: 'Último pago',
-          align: 'left',
+          align: 'center',
           style: 'width: 60px',
           sortable: false,
         },
@@ -254,7 +274,7 @@ export default {
           name: 'amountFeesPaid',
           required: true,
           label: 'Cuotas dadas',
-          align: 'left',
+          align: 'center',
           style: 'width: 60px',
           sortable: false,
         },
@@ -262,7 +282,7 @@ export default {
           name: 'balance',
           required: true,
           label: 'Saldo',
-          align: 'left',
+          align: 'center',
           style: 'width: 60px',
           sortable: false,
         },
@@ -270,7 +290,7 @@ export default {
           name: 'phone',
           required: true,
           label: 'Teléfonos',
-          align: 'left',
+          align: 'center',
           style: 'width: 60px',
           field: (row) => row.phone,
           format: (val) => val,
@@ -284,6 +304,8 @@ export default {
       isDiabledAdd: false,
       showModal: false,
       listingSelected: null,
+      valuePayment: 0,
+      typeAction: 'aimage',
     };
   },
   watch: {
@@ -386,15 +408,23 @@ export default {
     },
     getDatePayment(row) {
       const format = 'DD/MM/YYYY';
-      const { period } = row;
-      let date = moment().format(format);
-      if (period === 'semanal') {
-        date = moment(row.firstDate).add(1, 'week').format(format);
+      const { period, firstDate } = row;
+      let date = moment();
+      const current = moment();
+      if (period === 'diario') {
+        date = current;
+      } else if (period === 'semanal') {
+        date = moment(firstDate).add(1, 'week');
+        if (current.isAfter(moment(date))) {
+          date = moment(firstDate).add(2, 'week');
+          if (current.isAfter(moment(date))) {
+            date = moment(firstDate).add(3, 'week');
+          }
+        }
+      } else if (period === 'quincenal') {
+        date = moment(firstDate).add(2, 'week');
       }
-      /* if (period === 'semanal') {
-
-      } */
-      return date;
+      return date.format(format);
     },
     getLastPaymentDate(row) {
       const format = 'DD/MM/YYYY';
@@ -431,6 +461,32 @@ export default {
       }
       return (total - totalPayments);
     },
+    hasPaymentToday(row) {
+      let has = false;
+      const currentDate = moment().startOf('day');
+      if (row.payments && row.payments.length > 0) {
+        row.payments.forEach((payment) => {
+          const datePayment = moment(payment.date).startOf('day');
+          if (currentDate.isSame(datePayment, 'day')) {
+            has = true;
+          }
+        });
+      }
+      return has;
+    },
+    getPaymentToday(row) {
+      let pay = null;
+      const currentDate = moment().startOf('day');
+      if (row.payments && row.payments.length > 0) {
+        row.payments.forEach((payment) => {
+          const datePayment = moment(payment.date).startOf('day');
+          if (currentDate.isSame(datePayment, 'day')) {
+            pay = payment;
+          }
+        });
+      }
+      return pay;
+    },
     async onDropdownMainClick(id) {
       showLoading('consultando ...', 'Por favor, espere', true);
       await this.getNew(id);
@@ -442,7 +498,6 @@ export default {
       });
     },
     async save(field, value) {
-      console.log(value);
       this.isLoadingTable = true;
       this.itemSelected[field] = value.value ? value.value : value;
       await this.updateListing(this.itemSelected);
@@ -451,7 +506,9 @@ export default {
     clickRow(row) {
       this.itemSelected = { ...row };
     },
-    addRow() {
+    addPayment(row) {
+      console.log(row);
+      this.valuePayment = this.feeWithInterest(row);
       this.showModal = true;
     },
     /* openModal(action, row) {
@@ -482,6 +539,7 @@ export default {
     }, */
   },
   components: {
+    ModalAddPayment,
   },
 };
 </script>

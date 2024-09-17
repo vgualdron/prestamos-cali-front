@@ -13,6 +13,7 @@ import configuration, { name as configurationName } from './configuration';
 import notification, { name as notificationName } from './notification';
 import listing, { name as listingName } from './listing';
 import lending, { name as lendingName } from './lending';
+import payment, { name as paymentName } from './payment';
 import district, { name as districtName } from './district';
 import report, { name as reportName } from './report';
 
@@ -32,6 +33,7 @@ export default {
   [notificationName]: notification,
   [listingName]: listing,
   [lendingName]: lending,
+  [paymentName]: payment,
   [districtName]: district,
   [reportName]: report,
 };

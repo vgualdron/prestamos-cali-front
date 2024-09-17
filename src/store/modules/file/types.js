@@ -9,6 +9,7 @@ export default {
   getters: {
   },
   mutations: {
+    SET_FILE: '@mutations/setFile',
     SET_STATUS: '@mutations/setStatus',
     SET_RESPONSE_MESSAGES: '@mutations/setResponseMessages',
   },

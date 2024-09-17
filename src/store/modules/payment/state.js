@@ -1,6 +1,6 @@
 export default function () {
   return {
-    file: {},
+    payments: [],
     responseMessages: [],
     status: false,
   };

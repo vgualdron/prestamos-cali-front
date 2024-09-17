@@ -1,8 +1,8 @@
 import types from './types';
 
 export default {
-  [types.mutations.SET_FILE](state, payload) {
-    state.file = payload;
+  [types.mutations.SET_PAYMENTS](state, payload) {
+    state.payments = payload;
   },
   [types.mutations.SET_STATUS](state, payload) {
     state.status = payload;

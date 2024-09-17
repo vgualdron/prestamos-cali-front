@@ -652,7 +652,6 @@ export default {
         percentage: 32,
         period: this.item.period,
         status: 'open',
-        listing_id: 1,
         new_id: this.item.id,
         type: 'normal',
       });
