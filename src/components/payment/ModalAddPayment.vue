@@ -96,7 +96,7 @@ export default {
   },
   methods: {
     ...mapActions(paymentTypes.PATH, {
-      fetchPayments: paymentTypes.actions.FETCH_PAYMENTS,
+      fetchPaymentsByLending: paymentTypes.actions.FETCH_PAYMENTS_BY_LENDING,
       addPayment: paymentTypes.actions.ADD_PAYMENT,
       updatePayment: paymentTypes.actions.UPDATE_PAYMENT,
       deletePayment: paymentTypes.actions.DELETE_PAYMENT,

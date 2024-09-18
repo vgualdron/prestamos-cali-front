@@ -4,6 +4,15 @@ import paymentApi from '../../../api/payment/paymentApi';
 export default {
   async [types.actions.FETCH_PAYMENTS]({ commit }, payload) {
     try {
+      const response = await paymentApi.fetchPayments(payload);
+      commit(types.mutations.SET_PAYMENTS, response.data.data);
+    } catch (error) {
+      console.error(error);
+      commit(types.mutations.SET_LENDINGS, error.response.data);
+    }
+  },
+  async [types.actions.FETCH_PAYMENTS_BY_LENDING]({ commit }, payload) {
+    try {
       const response = await paymentApi.fetchPaymentsByLending(payload);
       commit(types.mutations.SET_PAYMENTS, response.data.data);
     } catch (error) {

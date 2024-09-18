@@ -132,6 +132,13 @@ const routes = [
       { path: '', name: 'Reportes Dinamicos', component: () => import('pages/ReportDinamic.vue') },
     ],
   },
+  {
+    path: '/payment',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Lista de pagos nequi', component: () => import('pages/Payment.vue') },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

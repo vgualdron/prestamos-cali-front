@@ -2,6 +2,7 @@ export default {
   PATH: '@module/payment',
   actions: {
     FETCH_PAYMENTS: '@actions/fetchPayments',
+    FETCH_PAYMENTS_BY_LENDING: '@actions/fetchPaymentsByLending',
     ADD_PAYMENT: '@actions/addPayment',
     UPDATE_PAYMENT: '@actions/updatePayment',
     DELETE_PAYMENT: '@actions/deletePayment',

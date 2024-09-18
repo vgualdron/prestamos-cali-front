@@ -5,6 +5,7 @@
         <img
           v-if="urlFile"
           :src="urlFile"
+          @click="showModalPreview = true;"
           width="250rem" />
         <p v-else class="text-subtitle1 text-center">No se ha cargado archivo</p>
         <q-banner
@@ -125,11 +126,18 @@
         </div>
       </q-card>
     </q-dialog>
+    <modal-preview-file
+      v-if="showModalPreview"
+      v-model="showModalPreview"
+      :url="urlFile"
+      :type="'image'"
+      :showBtnCancel="true"/>
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex';
+import ModalPreviewFile from 'components/common/ModalPreviewFile.vue';
 import fileTypes from '../../store/modules/file/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
@@ -150,6 +158,7 @@ export default {
       blob: null,
       showVideo: true,
       showModal: false,
+      showModalPreview: false,
     };
   },
   props: {
@@ -182,6 +191,9 @@ export default {
       }
       return '';
     },
+  },
+  components: {
+    ModalPreviewFile,
   },
   methods: {
     ...mapActions(fileTypes.PATH, {
@@ -333,6 +345,7 @@ export default {
     display: block;
     max-width: 640px;
     margin: auto;
+    cursor: pointer;
   }
   video {
     display: block;
