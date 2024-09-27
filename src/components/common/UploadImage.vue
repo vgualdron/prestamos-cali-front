@@ -57,7 +57,7 @@
       v-if="showModal"
       v-model="showModal"
       persistent>
-      <q-card style="max-width: 80vw;">
+      <q-card style="max-width: 95vw;">
         <q-card-section class="row items-center q-pb-none">
           <div class="text-h6">Subir foto</div>
           <q-space />

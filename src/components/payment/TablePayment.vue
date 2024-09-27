@@ -37,7 +37,6 @@
               icon="assignment"
               type="reset"
               color="primary"
-              flat
               size="sm"
               class="col q-ml-sm"
               title="Revisar voucher"
