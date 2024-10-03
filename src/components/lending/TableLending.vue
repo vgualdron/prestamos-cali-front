@@ -40,8 +40,34 @@
       <template v-slot:body="props">
         <q-tr :props="props" :class="rowClass(props.row)" @click="clickRow(props.row)">
           <q-td key="actions" :props="props">
-            <q-btn icon="delete" type="reset" color="black" flat size="sm"
-              class="col q-ml-sm" @click="openModal('delete', props.row)" />
+            <q-btn
+              icon="article"
+              type="reset"
+              color="black"
+              size="sm"
+              class="col"
+              @click="openModal('normal', props.row)"
+              title="Ver cartulina"
+              flat/>
+            <q-btn
+              icon="filter_2"
+              type="reset"
+              color="black"
+              size="sm"
+              class="col"
+              @click="openModal('doble', props.row)"
+              title="Cartulina doble interes"
+              :disabled="!props.row.has_double_interest"
+              flat/>
+            <q-btn
+              icon="history"
+              type="reset"
+              color="black"
+              size="sm"
+              class="col"
+              @click="openModal('history', props.row)"
+              title="Historial"
+              flat/>
           </q-td>
           <q-td key="index" :props="props">
             {{ props.row.index }}
@@ -52,28 +78,42 @@
           <q-td key="amount" :props="props">
             {{ formatPrice(valueWithInterest(props.row)) }}
           </q-td>
+          <q-td key="double" :props="props">
+            {{ props.row.has_double_interest ? formatPrice(valueWithDoubleInterest(props.row)) : 'x' }}
+          </q-td>
           <q-td key="fee" :props="props">
             {{ formatPrice(feeWithInterest(props.row)) }}
           </q-td>
           <q-td key="period" :props="props">
-            {{ props.row.period }}
+            {{ getPeriod(props.row) }}
           </q-td>
           <q-td key="amountFees" :props="props">
             {{ props.row.amountFees }}
           </q-td>
-          <q-td key="day" :props="props">
-            {{ getDatePayment(props.row) }}
-          </q-td>
-          <q-td key="collection" :props="props">
-            <b v-if="hasPaymentToday(props.row)">
-              {{ formatPrice(getPaymentToday(props.row).amount) }}
+          <q-td key="renovation" :props="props">
+            <b v-if="hasPaymentToday(props.row, 'renovacion')">
+              {{ formatPrice(getPaymentTodayRenovation(props.row).amount) }}
             </b>
             <b v-else>
               <q-btn
                 color="primary"
                 label="$"
                 size="sm"
-                @click="addPayment(props.row)"
+                @click="addPaymentRenovation(props.row)"
+                :disable="isDiabledAdd"
+              />
+            </b>
+          </q-td>
+          <q-td key="collection" :props="props">
+            <b v-if="hasPaymentToday(props.row, 'nequi')">
+              {{ formatPrice(getPaymentTodayNequi(props.row).amount) }}
+            </b>
+            <b v-else>
+              <q-btn
+                color="primary"
+                label="$"
+                size="sm"
+                @click="addPaymentNequi(props.row)"
                 :disable="isDiabledAdd"
               />
             </b>
@@ -130,13 +170,46 @@
           </q-td>
         </q-tr>
       </template>
+      <!-- Fila de totales en el bottom -->
+      <template v-slot:bottom-row>
+        <q-tr class="bg-blue-2 text-primary">
+          <q-td colspan="8"><strong>Total {{ totalUnitsNequi }} cobros</strong></q-td>
+          <q-td><strong>{{ formatPrice(totalRenovation) }}</strong></q-td>
+          <q-td><strong>{{ formatPrice(totalNequi) }}</strong></q-td>
+          <q-td colspan="7"><strong>{{ formatPrice(totalCollection) }}</strong></q-td>
+        </q-tr>
+      </template>
     </q-table>
     <modal-add-payment
-      v-if="showModal"
-      v-model="showModal"
+      v-if="showModalPaymentNequi"
+      v-model="showModalPaymentNequi"
       :valuePayment="valuePayment"
       :row="itemSelected"
-      :type="typeAction"
+      type="nequi"
+      @updateTable="getLendings"/>
+    <modal-add-payment
+      v-if="showModalPaymentRenovation"
+      v-model="showModalPaymentRenovation"
+      :valuePayment="valuePayment"
+      :row="itemSelected"
+      type="renovacion"
+      @updateTable="getLendings"/>
+    <modal-card-board
+      v-if="showModalCardBoard"
+      v-model="showModalCardBoard"
+      :showBtnDownload="true"
+      :showBtnApplyDoubleInterest="true"
+      title="Cartulina actual"
+      :lendings="[itemSelected]"
+      @updateTable="getLendings"/>
+    <modal-card-board
+      v-if="showModalCardBoardDouble"
+      v-model="showModalCardBoardDouble"
+      :showBtnDownload="true"
+      :showBtnApplyDoubleInterest="false"
+      :hasDoubleInterest="true"
+      title="Cartulina doble interés"
+      :lendings="[itemSelected]"
       @updateTable="getLendings"/>
   </div>
 </template>
@@ -144,6 +217,7 @@
 import { mapState, mapActions } from 'vuex';
 import moment from 'moment';
 import ModalAddPayment from 'components/payment/ModalAddPayment.vue';
+import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
 import listingTypes from '../../store/modules/listing/types';
 import lendingTypes from '../../store/modules/lending/types';
 import userTypes from '../../store/modules/user/types';
@@ -151,6 +225,10 @@ import newTypes from '../../store/modules/new/types';
 import { showLoading } from '../../helpers/showLoading';
 
 export default {
+  components: {
+    ModalAddPayment,
+    ModalCardBoard,
+  },
   data() {
     return {
       isLoadingTable: false,
@@ -193,6 +271,16 @@ export default {
           sortable: false,
         },
         {
+          name: 'double',
+          required: true,
+          label: 'Doble interés',
+          align: 'center',
+          style: 'width: 100px',
+          field: (row) => row,
+          format: (val) => this.valueWithDoubleInterest(val),
+          sortable: false,
+        },
+        {
           name: 'fee',
           required: true,
           label: 'Couta',
@@ -219,17 +307,17 @@ export default {
           sortable: false,
         },
         {
-          name: 'day',
+          name: 'renovation',
+          required: true,
+          label: 'Renovación',
           align: 'center',
-          label: 'Día',
-          field: 'day',
-          style: 'width: 80px',
+          style: 'width: 100px',
           sortable: false,
         },
         {
           name: 'collection',
           required: true,
-          label: 'Cobro',
+          label: 'Nequi',
           align: 'center',
           style: 'width: 100px',
           sortable: false,
@@ -302,10 +390,12 @@ export default {
       },
       filter: '',
       isDiabledAdd: false,
-      showModal: false,
+      showModalPaymentNequi: false,
+      showModalPaymentRenovation: false,
       listingSelected: null,
       valuePayment: 0,
-      typeAction: 'aimage',
+      showModalCardBoard: false,
+      showModalCardBoardDouble: false,
     };
   },
   watch: {
@@ -352,6 +442,39 @@ export default {
         index: index + 1,
       }));
     },
+    totalNequi() {
+      let total = 0;
+      this.lendings.forEach((lending) => {
+        const value = this.getPaymentTodayNequi(lending);
+        if (value) {
+          total += value.amount;
+        }
+      });
+      return total;
+    },
+    totalRenovation() {
+      let total = 0;
+      this.lendings.forEach((lending) => {
+        const value = this.getPaymentTodayRenovation(lending);
+        if (value) {
+          total += value.amount;
+        }
+      });
+      return total;
+    },
+    totalCollection() {
+      return parseInt(this.totalNequi, 10) + parseInt(this.totalRenovation, 10);
+    },
+    totalUnitsNequi() {
+      let total = 0;
+      this.lendings.forEach((lending) => {
+        const value = this.getPaymentTodayNequi(lending);
+        if (value) {
+          total += 1;
+        }
+      });
+      return total;
+    },
   },
   methods: {
     ...mapActions(lendingTypes.PATH, {
@@ -371,9 +494,9 @@ export default {
     rowClass(row) {
       let color = 'bg-white';
       const days = this.daysSinceGivenDate(row.firstDate);
-      if (days > 21) {
+      if (days > 22) {
         color = 'bg-red';
-      } else if (days >= 15 && days <= 21) {
+      } else if (days >= 15 && days <= 22) {
         color = 'bg-blue';
       } else if (days > 7 && days <= 14) {
         color = 'bg-yellow';
@@ -406,25 +529,13 @@ export default {
       const daysPassed = Math.floor(differenceInMillis / millisecondsInADay);
       return daysPassed;
     },
-    getDatePayment(row) {
-      const format = 'DD/MM/YYYY';
+    getPeriod(row) {
+      moment.locale('es');
+      const format = 'dddd';
       const { period, firstDate } = row;
-      let date = moment();
-      const current = moment();
-      if (period === 'diario') {
-        date = current;
-      } else if (period === 'semanal') {
-        date = moment(firstDate).add(1, 'week');
-        if (current.isAfter(moment(date))) {
-          date = moment(firstDate).add(2, 'week');
-          if (current.isAfter(moment(date))) {
-            date = moment(firstDate).add(3, 'week');
-          }
-        }
-      } else if (period === 'quincenal') {
-        date = moment(firstDate).add(2, 'week');
-      }
-      return date.format(format);
+      const date = moment(firstDate);
+      const text = `${period} ${period !== 'diario' ? date.format(format) : ''}`;
+      return text;
     },
     getLastPaymentDate(row) {
       const format = 'DD/MM/YYYY';
@@ -437,6 +548,10 @@ export default {
     },
     valueWithInterest(row) {
       const val = row.amount + (row.amount * (row.percentage / 100));
+      return (val);
+    },
+    valueWithDoubleInterest(row) {
+      const val = row.amount + (row.amount * ((row.percentage * 2) / 100));
       return (val);
     },
     feeWithInterest(row) {
@@ -454,33 +569,46 @@ export default {
       return Math.floor(valueAmuntFeesPaid);
     },
     getBalance(row) {
-      const total = this.valueWithInterest(row);
+      const total = row.has_double_interest ? this.valueWithDoubleInterest(row) : this.valueWithInterest(row);
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0) {
         totalPayments = row.payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
       return (total - totalPayments);
     },
-    hasPaymentToday(row) {
+    hasPaymentToday(row, type) {
       let has = false;
       const currentDate = moment().startOf('day');
       if (row.payments && row.payments.length > 0) {
         row.payments.forEach((payment) => {
           const datePayment = moment(payment.date).startOf('day');
-          if (currentDate.isSame(datePayment, 'day')) {
+          if (currentDate.isSame(datePayment, 'day') && payment.type === type) {
             has = true;
           }
         });
       }
       return has;
     },
-    getPaymentToday(row) {
+    getPaymentTodayNequi(row) {
       let pay = null;
       const currentDate = moment().startOf('day');
       if (row.payments && row.payments.length > 0) {
         row.payments.forEach((payment) => {
           const datePayment = moment(payment.date).startOf('day');
-          if (currentDate.isSame(datePayment, 'day')) {
+          if (currentDate.isSame(datePayment, 'day') && payment.type === 'nequi') {
+            pay = payment;
+          }
+        });
+      }
+      return pay;
+    },
+    getPaymentTodayRenovation(row) {
+      let pay = null;
+      const currentDate = moment().startOf('day');
+      if (row.payments && row.payments.length > 0) {
+        row.payments.forEach((payment) => {
+          const datePayment = moment(payment.date).startOf('day');
+          if (currentDate.isSame(datePayment, 'day') && payment.type === 'renovacion') {
             pay = payment;
           }
         });
@@ -506,40 +634,24 @@ export default {
     clickRow(row) {
       this.itemSelected = { ...row };
     },
-    addPayment(row) {
+    addPaymentNequi(row) {
       console.log(row);
       this.valuePayment = this.feeWithInterest(row);
-      this.showModal = true;
+      this.showModalPaymentNequi = true;
     },
-    /* openModal(action, row) {
-      if (action === 'delete') {
-        this.$q.dialog({
-          title: 'Eliminar',
-          message: 'Está seguro que desea eliminar la ruta?',
-          ok: {
-            push: true,
-          },
-          cancel: {
-            push: true,
-            color: 'negative',
-            text: 'adsa',
-          },
-          persistent: true,
-        }).onOk(async () => {
-          this.isLoadingTable = true;
-          await this.deleteListing(row.id);
-          await this.getLendings(this.lendingSelected);
-          this.isLoadingTable = false;
-        }).onCancel(() => {
-          // console.log('>>>> Cancel')
-        }).onDismiss(() => {
-          // console.log('I am triggered on both OK and Cancel')
-        });
+    addPaymentRenovation(row) {
+      console.log(row);
+      this.valuePayment = this.feeWithInterest(row);
+      this.showModalPaymentRenovation = true;
+    },
+    openModal(action, row) {
+      console.log(row);
+      if (action === 'normal') {
+        this.showModalCardBoard = true;
+      } else if (action === 'doble') {
+        this.showModalCardBoardDouble = true;
       }
-    }, */
-  },
-  components: {
-    ModalAddPayment,
+    },
   },
 };
 </script>

@@ -88,25 +88,19 @@
                     </td>
                   </tr>
                   <tr class="tr-table">
-                    <td class="td-table">
+                    <td class="td-table" @click="clickEditAddress(item, 'house')">
                       <p class="text-subtitle1 text-weight-bold text-center">Dirección casa:</p>
                       <q-icon size="xs" name="edit" />
                       {{ item.address_house }}
-                      <q-popup-edit :value="item.address_house" v-slot="scope" buttons
-                        @input="val => saveDateNew('address_house', val)">
-                        <q-input v-model="scope.value" dense autofocus />
-                      </q-popup-edit>
+                      <br><b v-if="item.districtHouseName">Barrio: </b> {{ item.districtHouseName }}
                     </td>
                   </tr>
                   <tr class="tr-table">
-                    <td class="td-table">
+                    <td class="td-table" @click="clickEditAddress(item, 'work')">
                       <p class="text-subtitle1 text-weight-bold text-center">Dirección trabajo:</p>
                       <q-icon size="xs" name="edit" />
                       {{ item.address_work }}
-                      <q-popup-edit :value="item.address_work" v-slot="scope" buttons
-                        @input="val => saveDateNew('address_work', val)">
-                        <q-input v-model="scope.value" dense autofocus />
-                      </q-popup-edit>
+                      <br><b v-if="item.districtWorkName">Barrio: </b> {{ item.districtWorkName }}
                     </td>
                   </tr>
                   <tr class="tr-table">
@@ -399,14 +393,11 @@
                   </td>
                 </tr>
                 <tr class="tr-table">
-                  <td class="td-table">
+                  <td class="td-table" @click="clickEditAddress(item, 'ref1')">
                     <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
                     <q-icon size="xs" name="edit" />
                     {{ item.family_reference_address }}
-                    <q-popup-edit :value="item.family_reference_address" v-slot="scope" buttons
-                      @input="val => saveDateNew('family_reference_address', val)">
-                      <q-input v-model="scope.value" dense autofocus />
-                    </q-popup-edit>
+                    <br><b v-if="item.family_reference_district_name">Barrio: </b> {{ item.family_reference_district_name }}
                   </td>
                 </tr>
                 <tr class="tr-table">
@@ -491,14 +482,11 @@
                     </td>
                   </tr>
                   <tr class="tr-table">
-                    <td class="td-table">
+                    <td class="td-table" @click="clickEditAddress(item, 'ref2')">
                       <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
                       <q-icon size="xs" name="edit" />
                       {{ item.family2_reference_address }}
-                      <q-popup-edit :value="item.family2_reference_address" v-slot="scope" buttons
-                        @input="val => saveDateNew('family2_reference_address', val)">
-                        <q-input v-model="scope.value" dense autofocus />
-                      </q-popup-edit>
+                      <br><b v-if="item.family2_reference_district_name">Barrio: </b> {{ item.family2_reference_district_name }}
                     </td>
                   </tr>
                   <tr class="tr-table">
@@ -583,14 +571,11 @@
                     </td>
                   </tr>
                   <tr class="tr-table">
-                    <td class="td-table">
+                    <td class="td-table" @click="clickEditAddress(item, 'guarantor')">
                       <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
                       <q-icon size="xs" name="edit" />
                       {{ item.guarantor_address }}
-                      <q-popup-edit :value="item.guarantor_address" v-slot="scope" buttons
-                        @input="val => saveDateNew('guarantor_address', val)">
-                        <q-input v-model="scope.value" dense autofocus />
-                      </q-popup-edit>
+                      <br><b v-if="item.guarantor_district_name">Barrio: </b> {{ item.guarantor_district_name }}
                     </td>
                   </tr>
                   <tr class="tr-table">
@@ -741,6 +726,13 @@
         </q-stepper-navigation>
       </template>
     </q-stepper>
+    <form-news
+      v-if="showModalFormNews"
+      v-model="showModalFormNews"
+      :type="typeActionFormNew"
+      :obj="objSelected"
+      @refreshList="getItem"
+    />
   </div>
 </template>
 <script>
@@ -748,6 +740,7 @@ import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import CameraPhoto from 'components/common/CameraPhoto.vue';
 import CameraVideo from 'components/common/CameraVideo.vue';
+import FormNews from 'components/review/FormNews.vue';
 import StateCases from 'components/visit/StateCases.vue';
 import { showNotifications } from '../../helpers/showNotifications';
 import newTypes from '../../store/modules/new/types';
@@ -756,11 +749,20 @@ import userTypes from '../../store/modules/user/types';
 import { showLoading } from '../../helpers/showLoading';
 
 export default {
+  components: {
+    CameraPhoto,
+    CameraVideo,
+    StateCases,
+    FormNews,
+  },
   data() {
     return {
       step: 0,
       stepTmp: 0,
       showStateCases: true,
+      showModalFormNews: false,
+      objSelected: {},
+      typeActionFormNew: 'house',
     };
   },
   props: {
@@ -802,6 +804,12 @@ export default {
     }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
+    },
+    clickEditAddress(row, type) {
+      console.log(row);
+      this.typeActionFormNew = type;
+      this.objSelected = { ...row };
+      this.showModalFormNews = true;
     },
     async listUsersReviews() {
       await this.listUsersByNameRole({
@@ -864,11 +872,6 @@ export default {
       };
       await this.sendNotification(data);
     },
-  },
-  components: {
-    CameraPhoto,
-    CameraVideo,
-    StateCases,
   },
 };
 </script>

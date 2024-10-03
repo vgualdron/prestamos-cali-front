@@ -45,6 +45,9 @@
           <q-td key="id" :props="props">
             {{ props.row.id }}
           </q-td>
+          <q-td key="reference" :props="props">
+            {{ props.row.reference }}
+          </q-td>
           <q-td key="date" :props="props">
             {{ formatDate(props.row.date) }}
           </q-td>
@@ -68,13 +71,11 @@
       v-model="showModal"
       :url="formatLink(itemSelected)"
       :type="itemSelected.typeFile"
-      :title="`Valor: ${formatPrice(itemSelected.amount)}`"
+      :title="`Valor: ${formatPrice(itemSelected.amount)} - Referencia: ${itemSelected.reference}`"
       :showBtnCancel="false"
       :showBtnAccept="true"
       labelBtnCancel="Rechazar"
-      labelBtnAccept="Aprobar"
-      :showInputValue="true"
-      labelInputValue="Referencia de pago:"
+      labelBtnAccept="Marcar como verificado"
       @clickBtnCancel="rejectPayment"
       @clickBtnAccept="approvePayment"
       />
@@ -108,6 +109,14 @@ export default {
           align: 'center',
           label: 'ID',
           field: 'date',
+          style: 'width: 100px',
+          sortable: true,
+        },
+        {
+          name: 'reference',
+          align: 'center',
+          label: 'Referencia',
+          field: 'reference',
           style: 'width: 100px',
           sortable: true,
         },
@@ -236,7 +245,7 @@ export default {
       return colors[i];
     },
     async getPayments() {
-      await this.fetchPayments('creado');
+      await this.fetchPayments('aprobado');
     },
     clickRow(row) {
       this.itemSelected = { ...row };
@@ -248,24 +257,21 @@ export default {
       this.itemSelected = row;
       this.showModal = true;
     },
-    approvePayment(value) {
+    approvePayment() {
       this.updateStatusPayment({
-        status: 'aprobado',
-        value,
+        status: 'verificado',
       });
     },
     rejectPayment() {
       this.updateStatusPayment({
         status: 'rechazado',
-        value: null,
       });
     },
-    async updateStatusPayment({ status, value }) {
+    async updateStatusPayment({ status }) {
       showLoading('Guardando ...', 'Por favor, espere', true);
       await this.updatePayment({
         ...this.itemSelected,
         status,
-        reference: value,
       });
       this.$q.loading.hide();
       this.showModal = false;

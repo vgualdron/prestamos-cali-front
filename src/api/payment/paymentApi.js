@@ -1,8 +1,8 @@
 import { http } from '../../helpers/http';
 
 export default {
-  fetchPayments: () => http({
-    url: `${process.env.URL_API}/api/payment`,
+  fetchPayments: (status) => http({
+    url: `${process.env.URL_API}/api/payment/list/${status}`,
     method: 'GET',
   }),
   fetchPaymentsByLending: (data) => http({

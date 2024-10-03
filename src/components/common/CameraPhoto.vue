@@ -131,7 +131,7 @@
       v-model="showModalPreview"
       :url="urlFile"
       :type="'image'"
-      :showBtnCancel="true"/>
+      :showBtnCancel="false"/>
   </div>
 </template>
 

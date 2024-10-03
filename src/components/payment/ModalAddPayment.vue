@@ -3,7 +3,7 @@
     <q-dialog v-model="showDialog" persistent>
       <q-card style="width: 700px; max-width: 80vw;">
         <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">Agregar Cobro</div>
+          <div class="text-h6">{{ title }}</div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
@@ -15,7 +15,7 @@
               lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']" />
             </div>
           </div>
-          <div class="row q-mt-md" v-if="amount > 0">
+          <div class="row q-mt-md" v-if="amount > 0 && this.type === 'nequi'">
             <div class="col-12 text-center">
               <p class="text-subtitle1 text-weight-bold text-center">AGREGAR FOTO DE SOPORTE DE PAGO</p>
               <upload-image
@@ -31,6 +31,16 @@
             </div>
           </div>
         </q-card-section>
+        <q-separator />
+        <div class="row text-center q-pa-md" v-if="type !=='nequi'">
+          <q-btn
+            label="Guardar"
+            color="primary"
+            class="col q-ml-sm"
+            :disabled="amount <= 0"
+            @click="saveAddPayment"
+          />
+        </div>
       </q-card>
     </q-dialog>
   </div>
@@ -58,6 +68,11 @@ export default {
     row: {
       type: Object,
       required: true,
+    },
+    type: {
+      type: String,
+      required: false,
+      default: 'nequi',
     },
     valuePayment: {
       required: true,
@@ -93,6 +108,9 @@ export default {
     columns() {
       return this.fields;
     },
+    title() {
+      return `Agregar cobro ${this.type === 'nequi' ? 'nequi' : 'para renovación'}`;
+    },
   },
   methods: {
     ...mapActions(paymentTypes.PATH, {
@@ -114,17 +132,18 @@ export default {
         amount: this.amount,
         date: moment().format('YYYY-MM-DD HH:mm:ss'),
         color: null,
-        file_id: this.file.id,
+        type: this.type,
+        file_id: this.type === 'nequi' ? this.file.id : null,
       });
       this.$q.loading.hide();
       if (this.paymentResponseMessages && this.paymentResponseMessages.data) {
-        this.idPayment = this.paymentResponseMessages.data.id;
-        console.log(this.idPayment);
-        console.log(this.paymentResponseMessages.data);
-        await this.updateFile({
-          ...this.file,
-          model_id: this.idPayment,
-        });
+        if (this.type === 'nequi') {
+          this.idPayment = this.paymentResponseMessages.data.id;
+          await this.updateFile({
+            ...this.file,
+            model_id: this.idPayment,
+          });
+        }
         this.$q.loading.hide();
         this.showDialog = false;
         this.$emit('updateTable', this.row.listing_id);

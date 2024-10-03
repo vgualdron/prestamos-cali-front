@@ -113,21 +113,15 @@
               round
             />
           </q-td>
-          <q-td key="address_house" :props="props">
-            <q-icon size="xs" name="edit" />
+          <q-td key="address_house" :props="props" @click="clickEditAddress(props.row, 'house')">
+            <q-icon size="xs" name="edit"/>
             {{ props.row.address_house }}
-            <q-popup-edit :value="props.row.address_house" v-slot="scope" buttons
-              @input="val => save('address_house', val)">
-              <q-input v-model="scope.value" dense autofocus />
-            </q-popup-edit>
+            <br><b v-if="props.row.districtHouseName">Barrio: </b> {{ props.row.districtHouseName }}
           </q-td>
-          <q-td key="address_work" :props="props">
+          <q-td key="address_work" :props="props" @click="clickEditAddress(props.row, 'work')">
             <q-icon size="xs" name="edit" />
             {{ props.row.address_work }}
-            <q-popup-edit :value="props.row.address_work" v-slot="scope" buttons
-              @input="val => save('address_work', val)">
-              <q-input v-model="scope.value" dense autofocus />
-            </q-popup-edit>
+            <br><b v-if="props.row.districtWorkName">Barrio: </b> {{ props.row.districtWorkName }}
           </q-td>
           <q-td key="site_visit" :props="props">
             <q-icon size="xs" name="edit" />
@@ -170,6 +164,7 @@
           </q-td>
           <q-td key="address" :props="props">
             {{ props.row.address }}
+            <br><b>Barrio: </b> {{ props.row.districtName }}
           </q-td>
           <q-td key="cityName" :props="props">
             {{ props.row.cityName }}
@@ -187,9 +182,9 @@
           <q-td key="districtOrder" :props="props">
             {{ props.row.districtOrder }}
           </q-td>
-          <q-td key="districtName" :props="props">
+          <!-- <q-td key="districtName" :props="props">
             {{ props.row.districtName }}
-          </q-td>
+          </q-td> -->
           <q-td key="occupation" :props="props">
             {{ props.row.occupation }}
           </q-td>
@@ -212,12 +207,20 @@
       :userId="userSelected"
       @addVisit="addVisit"
     />
+    <form-news
+      v-if="showModalFormNews"
+      v-model="showModalFormNews"
+      :type="typeActionFormNew"
+      :obj="objSelected"
+      @refreshList="listNewsMounted"
+    />
   </div>
 </template>
 <script>
 import Moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import ModalDiary from 'components/diary/ModalDiary.vue';
+import FormNews from 'components/review/FormNews.vue';
 import newTypes from '../../store/modules/new/types';
 import zoneTypes from '../../store/modules/zone/types';
 import yardTypes from '../../store/modules/yard/types';
@@ -231,6 +234,7 @@ import { formatDateWithTime } from '../../helpers/formatDate';
 export default {
   components: {
     ModalDiary,
+    FormNews,
   },
   data() {
     return {
@@ -346,14 +350,14 @@ export default {
           sortable: true,
           visible: true,
         },
-        {
+        /* {
           name: 'districtName',
           align: 'left',
           label: 'Barrio',
           field: 'districtName',
           sortable: true,
           visible: true,
-        },
+        }, */
         {
           name: 'occupation',
           align: 'left',
@@ -394,6 +398,9 @@ export default {
       data: [],
       itemSelected: {},
       citySelected: 0,
+      showModalFormNews: false,
+      objSelected: {},
+      typeActionFormNew: 'house',
     };
   },
   props: {
@@ -575,6 +582,12 @@ export default {
     ...mapActions(userTypes.PATH, {
       listUsersByRoleName: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
     }),
+    clickEditAddress(row, type) {
+      console.log(row);
+      this.typeActionFormNew = type;
+      this.objSelected = { ...row };
+      this.showModalFormNews = true;
+    },
     getColorBadge(i) {
       const colors = [
         'white',

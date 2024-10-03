@@ -3,7 +3,7 @@
     <q-dialog v-model="showDialog" persistent>
       <q-card style="width: 700px; max-width: 80vw;">
         <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">Previsualizador</div>
+          <div class="text-h6">{{ title }}</div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
@@ -20,6 +20,16 @@
           v-if="showBtnCancel || showBtnAccept"
           class="row items-center float-right">
           <div class="row text-center">
+            <q-input
+              v-if="showInputValue"
+              v-model.trim="inputValue"
+              :label="labelInputValue"
+              autocomplete="off"
+              :rules="[(val) => (!!val) || '']"
+              hide-bottom-space
+              outlined
+              lazy-rules
+            />
             <q-btn
               v-if="showBtnCancel"
               :label="labelBtnCancel"
@@ -34,6 +44,7 @@
               type="submit"
               color="primary"
               class="col q-ml-sm"
+              :disabled="showInputValue && !inputValue"
               @click="clickBtnAccept"/>
           </div>
         </q-card-section>
@@ -48,6 +59,7 @@ export default {
     return {
       isLoading: false,
       showModal: false,
+      inputValue: '',
     };
   },
   mounted() {
@@ -77,6 +89,10 @@ export default {
       type: String,
       require: true,
     },
+    title: {
+      type: String,
+      default: 'Previsualizdor',
+    },
     showBtnAccept: {
       type: Boolean,
       require: false,
@@ -86,6 +102,16 @@ export default {
       type: Boolean,
       require: false,
       default: false,
+    },
+    showInputValue: {
+      type: Boolean,
+      require: false,
+      default: false,
+    },
+    labelInputValue: {
+      type: String,
+      require: false,
+      default: 'Valor',
     },
     labelBtnAccept: {
       type: String,
@@ -100,10 +126,10 @@ export default {
   },
   methods: {
     clickBtnAccept() {
-      this.$emit('clickBtnAccept');
+      this.$emit('clickBtnAccept', this.inputValue);
     },
     clickBtnCancel() {
-      this.$emit('clickBtnCancel');
+      this.$emit('clickBtnCancel', null);
     },
   },
 };

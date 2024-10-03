@@ -133,10 +133,17 @@ const routes = [
     ],
   },
   {
-    path: '/payment',
+    path: '/payment-voucher',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Lista de pagos nequi', component: () => import('pages/Payment.vue') },
+      { path: '', name: 'Revisar vouchers de pagos', component: () => import('pages/Payment.vue') },
+    ],
+  },
+  {
+    path: '/payment-app',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Revisar pagos en app nequi', component: () => import('pages/PaymentApp.vue') },
     ],
   },
   // Always leave this as last one,
