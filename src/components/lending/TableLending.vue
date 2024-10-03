@@ -569,7 +569,7 @@ export default {
       return Math.floor(valueAmuntFeesPaid);
     },
     getBalance(row) {
-      const total = row.has_double_interest ? this.valueWithDoubleInterest(row) : this.valueWithInterest(row);
+      const total = row.has_double_interest ? this.valueWithInterest(row) : this.valueWithInterest(row);
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0) {
         totalPayments = row.payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
