@@ -1,85 +1,220 @@
 <template>
   <div class="q-pa-md">
     <q-dialog v-model="showDialog" persistent full-height>
-      <q-card style="width: 700px; max-width: 80vw;" id="div-container-lendings">
+      <q-card style="width: 700px; max-width: 80vw;">
         <q-card-section class="row items-center q-pb-none">
           <div class="text-h6">{{ title }}</div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
         <q-separator />
-        <q-card-section class="scroll">
-          <div class="row q-mt-xs">
+        <q-card-section class="scroll" id="div-container-lendings">
+          <div class="q-mt-xs">
             <div
-              class="col-12 text-center"
+              class="text-center"
               v-for="lending in lendings"
               :key="`div-table-lending-${lending.id}`">
-              <q-markup-table
-                class="markup-table"
-                separator="cell"
-                dense
-              >
-                <tbody>
-                  <tr class="tr-table">
-                    <td class="td-table">
-                      <div class="text-subtitle1 text-weight-bold text-center">Valor:</div>
-                    </td>
-                    <td class="td-table">
-                      {{ hasDoubleInterest ? formatPrice(valueWithDoubleInterest(lending)) : formatPrice(valueWithInterest(lending)) }}
-                    </td>
-                  </tr>
-                  <tr class="tr-table">
-                    <td class="td-table">
-                      <div class="text-subtitle1 text-weight-bold text-center">Saldo:</div>
-                    </td>
-                    <td class="td-table">
-                      {{ formatPrice(getBalance(lending)) }}
-                    </td>
-                  </tr>
-                </tbody>
-              </q-markup-table>
+              <div>
                 <q-markup-table
-                  class="markup-table q-mt-xs"
+                  class="markup-table"
                   separator="cell"
                   dense
                 >
                   <tbody>
-                    <tr
-                      v-for="(payment, j) in getDaysArray(lending)"
-                      :key="`tr-payment-${j}`"
-                      class="tr-table">
-                      <td class="td-table">
-                        {{ j + 1 }}
+                    <tr class="tr-table bg-pink-3">
+                      <td class="td-table text-bold" colspan="2">
+                        {{ getPeriod(lending) }}
+                      </td>
+                      <td class="td-table text-bold" colspan="2">
+                        RECLAMOS {{ getParamLocalStorage('NUMERO_DE_RECLAMOS').value }}
+                      </td>
+                    </tr>
+                    <tr class="tr-table">
+                      <td class="td-table bg-pink-3">
+                        FECHA INICIO
                       </td>
                       <td class="td-table">
+                        {{ formatDate(lending.firstDate) }}
+                      </td>
+                      <td class="td-table">
+                        FECHA TERMINO
+                      </td>
+                      <td class="td-table">
+                      </td>
+                    </tr>
+                    <tr class="tr-table">
+                      <td class="td-table bg-pink-3" colspan="1">
+                        NOMBRE
+                      </td>
+                      <td class="td-table text-red text-bold" colspan="3">
+                        {{ lending.nameDebtor.toUpperCase() }}
+                      </td>
+                    </tr>
+                    <tr class="tr-table">
+                      <td class="td-table bg-pink-3">
+                        VALOR
+                      </td>
+                      <td class="td-table">
+                        {{ hasDoubleInterest ? formatPrice(valueWithDoubleInterest(lending)) : formatPrice(valueWithInterest(lending)) }}
+                      </td>
+                      <td class="td-table">
+                        SALDO
+                      </td>
+                      <td class="td-table">
+                        {{ formatPrice(getBalance(lending)) }}
+                      </td>
+                    </tr>
+                    <tr class="tr-table">
+                      <td class="td-table bg-pink-3">
+                        CUOTA
+                      </td>
+                      <td class="td-table">
+                        {{ formatPrice(feeWithInterest(lending)) }}
+                      </td>
+                      <td class="td-table">
+                        PRESTADO
+                      </td>
+                      <td class="td-table text-red text-bold">
+                        {{ formatPrice(lending.amount) }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </q-markup-table>
+              </div>
+              <div class="row">
+                <q-markup-table
+                  class="markup-table col-6"
+                  separator="cell"
+                  dense
+                >
+                  <tbody>
+                    <tr class="tr-table">
+                      <td class="td-table bg-pink-3">
+                        #
+                      </td>
+                      <td class="td-table bg-pink-3">
+                        FECHA
+                      </td>
+                      <td class="td-table bg-pink-3">
+                        ABONO
+                      </td>
+                      <td class="td-table bg-pink-3">
+                        TIPO
+                      </td>
+                    </tr>
+                    <tr
+                      v-for="(payment) in getDaysArray(lending, 'one')"
+                      :key="`tr-payment-${payment.index}`"
+                      class="tr-table">
+                      <td class="td-table bg-pink-3">
+                        {{ payment.index }}
+                      </td>
+                      <td :class="payment.classes">
                         {{ formatDate(payment.date) }}
                       </td>
-                      <td class="td-table">
-                        <strong>{{ formatPrice(payment.amountNequi) }}</strong>
-                        <br>
-                        <strong v-if="payment.amountRenovation > 0">{{ formatPrice(payment.amountRenovation) }}</strong>
+                      <td :class="payment.classes">
+                        <strong v-if="payment.amountNequi > 0">
+                          {{ formatPrice(payment.amountNequi) }}
+                        </strong>
+                        <br v-if="payment.amountNequi > 0">
+                        <strong v-if="payment.amountRenovation > 0">
+                          {{ formatPrice(payment.amountRenovation) }}
+                        </strong>
                       </td>
-                      <td class="td-table">
+                      <td :class="payment.classes">
                         {{ payment.typeNequi }}
-                        <br>
+                        <br v-if="payment.amountNequi > 0">
                         {{ payment.typeRenovation }}
                       </td>
                     </tr>
                   </tbody>
                 </q-markup-table>
-                <div class="row text-center q-pa-md">
-                  <q-btn
-                    v-if="showBtnDownload"
-                    label="Descargar"
-                    color="green"
-                    @click="captureImage" />
-                  <q-btn
-                    v-if="showBtnApplyDoubleInterest && !lending.has_double_interest"
-                    class="q-ml-sm"
-                    label="Aplicar doble interés"
-                    color="primary"
-                    @click="applyDoubleInterest(lending)" />
-                </div>
+                <q-markup-table
+                  class="markup-table col-6"
+                  separator="cell"
+                  dense
+                >
+                  <tbody>
+                    <tr class="tr-table">
+                      <td class="td-table bg-pink-3">
+                        #
+                      </td>
+                      <td class="td-table bg-pink-3">
+                        FECHA
+                      </td>
+                      <td class="td-table bg-pink-3">
+                        ABONO
+                      </td>
+                      <td class="td-table bg-pink-3">
+                        TIPO
+                      </td>
+                    </tr>
+                    <tr
+                      v-for="(payment) in getDaysArray(lending, 'two')"
+                      :key="`tr-payment-${payment.index}`"
+                      class="tr-table">
+                      <td class="td-table bg-pink-3">
+                        {{ payment.index }}
+                      </td>
+                      <td :class="payment.classes">
+                        {{ formatDate(payment.date) }}
+                      </td>
+                      <td :class="payment.classes">
+                        <strong v-if="payment.amountNequi > 0">
+                          {{ formatPrice(payment.amountNequi) }}
+                        </strong>
+                        <br v-if="payment.amountNequi > 0">
+                        <strong v-if="payment.amountRenovation > 0">
+                          {{ formatPrice(payment.amountRenovation) }}
+                        </strong>
+                      </td>
+                      <td :class="payment.classes">
+                        {{ payment.typeNequi }}
+                        <br v-if="payment.amountNequi > 0">
+                        {{ payment.typeRenovation }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </q-markup-table>
+              </div>
+              <div class="q-mt-md">
+                <q-markup-table
+                  class="markup-table"
+                  separator="cell"
+                  dense
+                >
+                  <tbody>
+                    <tr class="tr-table text-red text-bold">
+                      <td class="td-table">
+                        {{ getParamLocalStorage('TEXTO_ATRASO_DIARIO_EN_CARTULINA').value }}
+                      </td>
+                    </tr>
+                    <tr class="tr-table text-red text-bold">
+                      <td class="td-table">
+                        {{ getParamLocalStorage('TEXTO_ATRASO_SEMANAL_EN_CARTULINA').value }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </q-markup-table>
+              </div>
+              <div class="row text-center q-py-md">
+                <q-btn
+                  v-if="showBtnDownload"
+                  icon="download"
+                  color="green"
+                  @click="captureImage" />
+                <q-btn
+                  v-if="showBtnApplyDoubleInterest && !lending.has_double_interest"
+                  class="q-ml-sm"
+                  label="Aplicar doble interés"
+                  color="primary"
+                  @click="applyDoubleInterest(lending)" />
+                <q-btn
+                  v-if="showBtnRenovate"
+                  class="q-ml-sm"
+                  label="Renovar"
+                  color="primary"/>
+              </div>
             </div>
           </div>
         </q-card-section>
@@ -127,6 +262,11 @@ export default {
       default: false,
     },
     showBtnApplyDoubleInterest: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    showBtnRenovate: {
       type: Boolean,
       required: false,
       default: false,
@@ -181,64 +321,132 @@ export default {
       updateLending: lendingTypes.actions.UPDATE_LENDING,
       deleteLending: lendingTypes.actions.DELETE_LENDING,
     }),
+    getPeriod(row) {
+      moment.locale('es');
+      const format = 'dddd';
+      const { period, firstDate } = row;
+      const date = moment(firstDate);
+      const text = `${period} ${period !== 'diario' ? date.format(format) : ''}`;
+      return text.toUpperCase();
+    },
+    getParamLocalStorage(reference) {
+      const configurations = localStorage.getItem('configurations');
+      if (configurations) {
+        const array = JSON.parse(configurations);
+        if (array) {
+          const obj = array.find((e) => e.reference === reference);
+          if (obj) {
+            return obj;
+          }
+        }
+      }
+      return {};
+    },
     captureImage() {
-      const element = document.getElementById('div-container-lendings');
+      const divsToExclude = document.querySelectorAll('#div-container-lendings button');
+      divsToExclude.forEach((div) => { div.style.display = 'none'; });
 
+      const element = document.getElementById('div-container-lendings');
       // Captura el elemento como imagen
       domtoimage.toPng(element).then((dataUrl) => {
         // Crear un enlace para descargar la imagen
         const link = document.createElement('a');
         link.href = dataUrl;
-        link.download = 'captura.png';
+        link.download = 'cartulina.png';
         link.click();
       }).catch((error) => {
         console.error('Error al generar la imagen:', error);
+      }).finally(() => {
+        // Restaura la visibilidad de los elementos
+        divsToExclude.forEach((div) => { div.style.display = ''; });
       });
     },
-    getDaysArray(lending) {
+    getDaysArray(lending, block) {
+      console.log(block);
+      let index = 1;
+      const startCount = block === 'one' ? 1 : 16;
+      const endCount = block === 'one' ? 16 : 30;
       const { firstDate, endDate, payments } = lending;
       const dates = [];
-      const currentDate = new Date(firstDate);
-      currentDate.setDate(currentDate.getDate() + 1);
+      const startDate = new Date(firstDate);
+      startDate.setDate(startDate.getDate() + 1);
 
       // Incrementa un día a la fecha actual hasta que sea igual a la fecha final
-      while (currentDate < new Date(endDate)) {
-        const date = new Date(currentDate);
+      while (startDate < new Date(endDate)) {
+        const date = new Date(startDate);
         const {
           amountNequi,
           amountRenovation,
           typeNequi,
           typeRenovation,
+          classes,
         } = this.getPaymentByDate(payments, date);
 
-        dates.push({
-          date,
-          amountNequi,
-          amountRenovation,
-          typeNequi,
-          typeRenovation,
-        });
-        currentDate.setDate(currentDate.getDate() + 1); // Incrementa un día
+        if (index >= startCount && index < endCount) {
+          dates.push({
+            date,
+            amountNequi,
+            amountRenovation,
+            typeNequi,
+            typeRenovation,
+            classes,
+            index,
+          });
+        }
+        startDate.setDate(startDate.getDate() + 1); // Incrementa un día
+        index += 1;
       }
-
+      if (block === 'two') {
+        const postPayments = this.getPaymentPostEndDate(payments, endDate);
+        if (postPayments) {
+          postPayments.forEach((payment) => {
+            console.log(payment);
+            dates.push({
+              date: payment.date,
+              amountNequi: payment.type === 'nequi' ? parseInt(payment.amount, 10) : 0,
+              amountRenovation: payment.type === 'renovacion' ? parseInt(payment.amount, 10) : 0,
+              typeNequi: payment.type === 'nequi' ? payment.type : '',
+              typeRenovation: payment.type === 'renovacion' ? payment.type : '',
+              classes: 'td-table bg-blue-4',
+              index,
+            });
+            index += 1;
+          });
+        }
+      }
       return dates;
     },
     getPaymentByDate(payments, date) {
       const pays = payments.filter((pay) => this.formatDate(pay.date) === this.formatDate(date));
       if (pays) {
+        let classes = 'td-table';
         const paymentNequi = pays.find((pay) => pay.type === 'nequi');
         const paymentRenovation = pays.find((pay) => pay.type === 'renovacion');
+        if (this.formatDate(date) < this.formatDate(new Date())) {
+          classes = 'td-table bg-red-5';
+        }
+        if ((paymentNequi && paymentNequi.amount > 0) || (paymentRenovation && paymentRenovation > 0)) {
+          classes = 'td-table bg-blue-4';
+        }
+        if (date.getDay() === 0) {
+          classes = 'td-table bg-yellow';
+        }
         return {
           amountNequi: paymentNequi ? paymentNequi.amount : 0,
           amountRenovation: paymentRenovation ? paymentRenovation.amount : 0,
           typeNequi: paymentNequi ? paymentNequi.type : '',
           typeRenovation: paymentRenovation ? paymentRenovation.type : '',
+          classes,
         };
       }
       return {
         amountNequi: 0,
         amountRenovation: 0,
+        classes: date.getDay() === 0 ? 'td-table bg-yellow' : 'td-table',
       };
+    },
+    getPaymentPostEndDate(payments, date) {
+      return payments.filter((pay) => this.formatDate(pay.date) > this.formatDate(date));
     },
     formatDate(date) {
       return moment(date).format('DD/MM/YYYY');
@@ -256,6 +464,7 @@ export default {
       await this.updateLending({
         ...row,
         has_double_interest: true,
+        doubleDate: moment().format('YYYY-MM-DD HH:mm:ss'),
       });
       this.$q.loading.hide();
       this.showDialog = false;
@@ -335,10 +544,11 @@ export default {
 };
 </script>
 <style scoped>
-  .bg-light-red {
-    background-color: #f8d7da !important;
+  .markup-table {
+    display: block;
+    border: solid 1px black;
   }
-  .bg-light-green {
-    background-color: #d4edda !important;
+  .markup-table td {
+    border: solid 1px black;
   }
 </style>

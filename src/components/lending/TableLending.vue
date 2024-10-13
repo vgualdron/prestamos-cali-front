@@ -40,40 +40,35 @@
       <template v-slot:body="props">
         <q-tr :props="props" :class="rowClass(props.row)" @click="clickRow(props.row)">
           <q-td key="actions" :props="props">
-            <q-btn
-              icon="article"
-              type="reset"
-              color="black"
-              size="sm"
-              class="col"
-              @click="openModal('normal', props.row)"
-              title="Ver cartulina"
-              flat/>
-            <q-btn
-              icon="filter_2"
-              type="reset"
-              color="black"
-              size="sm"
-              class="col"
-              @click="openModal('doble', props.row)"
-              title="Cartulina doble interes"
-              :disabled="!props.row.has_double_interest"
-              flat/>
-            <q-btn
-              icon="history"
-              type="reset"
-              color="black"
-              size="sm"
-              class="col"
-              @click="openModal('history', props.row)"
-              title="Historial"
-              flat/>
+            <q-btn-dropdown class="q-px-none" color="black" icon="folder" flat>
+              <q-list>
+                <q-item clickable v-close-popup @click="openModal('normal', props.row)">
+                  <q-item-section>
+                    <q-item-label>Ver cartulina</q-item-label>
+                  </q-item-section>
+                </q-item>
+
+                <q-item clickable v-close-popup @click="openModal('double', props.row)" :disabled="!props.row.has_double_interest">
+                  <q-item-section>
+                    <q-item-label>Cartulina doble interes</q-item-label>
+                  </q-item-section>
+                </q-item>
+
+                <q-item clickable v-close-popup @click="openModal('history', props.row)">
+                  <q-item-section>
+                    <q-item-label>Ver Historial</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
           </q-td>
           <q-td key="index" :props="props">
             {{ props.row.index }}
           </q-td>
           <q-td key="name" :props="props">
-            {{ props.row.nameDebtor }}
+            <p :title="props.row.nameDebtor" class="q-my-auto">
+              {{ formatText(props.row.nameDebtor, 20) }}
+            </p>
           </q-td>
           <q-td key="amount" :props="props">
             {{ formatPrice(valueWithInterest(props.row)) }}
@@ -91,7 +86,10 @@
             {{ props.row.amountFees }}
           </q-td>
           <q-td key="renovation" :props="props">
-            <b v-if="hasPaymentToday(props.row, 'renovacion')">
+            <b v-if="getBalance(props.row) > props.row.amount">
+              x
+            </b>
+            <b v-else-if="hasPaymentToday(props.row, 'renovacion')">
               {{ formatPrice(getPaymentTodayRenovation(props.row).amount) }}
             </b>
             <b v-else>
@@ -139,7 +137,6 @@
           <q-td key="phone" :props="props">
             <q-btn-dropdown
               color="black"
-              icon="phone"
               size="12px"
               :auto-close="false"
               outline
@@ -198,7 +195,8 @@
       v-if="showModalCardBoard"
       v-model="showModalCardBoard"
       :showBtnDownload="true"
-      :showBtnApplyDoubleInterest="true"
+      :showBtnApplyDoubleInterest="getBalance(itemSelected) >= itemSelected.amount"
+      :showBtnRenovate="getBalance(itemSelected) === 0"
       title="Cartulina actual"
       :lendings="[itemSelected]"
       @updateTable="getLendings"/>
@@ -301,7 +299,7 @@ export default {
         {
           name: 'amountFees',
           align: 'center',
-          label: '# de cuotas',
+          label: '# cuotas',
           field: 'amountFees',
           style: 'width: 80px',
           sortable: false,
@@ -325,9 +323,9 @@ export default {
         {
           name: 'daysPassed',
           required: true,
-          label: 'Dias pasados',
+          label: 'Dias',
           align: 'center',
-          style: 'width: 100px',
+          style: 'width: 50px',
           sortable: false,
         },
         {
@@ -361,7 +359,7 @@ export default {
         {
           name: 'amountFeesPaid',
           required: true,
-          label: 'Cuotas dadas',
+          label: '# C. dadas',
           align: 'center',
           style: 'width: 60px',
           sortable: false,
@@ -514,6 +512,13 @@ export default {
         maximumFractionDigits: 0,
       }).format(val);
     },
+    formatText(val, length) {
+      let response = val;
+      if (val.length > length) {
+        response = `${val.substring(0, length)} ...`;
+      }
+      return response;
+    },
     daysSinceGivenDate(givenDate) {
       // Asegúrate de que la fecha dada esté en formato Date
       givenDate = new Date(givenDate);
@@ -534,7 +539,7 @@ export default {
       const format = 'dddd';
       const { period, firstDate } = row;
       const date = moment(firstDate);
-      const text = `${period} ${period !== 'diario' ? date.format(format) : ''}`;
+      const text = `${period !== 'diario' ? date.format(format) : 'diario'}`;
       return text;
     },
     getLastPaymentDate(row) {
@@ -640,15 +645,14 @@ export default {
       this.showModalPaymentNequi = true;
     },
     addPaymentRenovation(row) {
-      console.log(row);
-      this.valuePayment = this.feeWithInterest(row);
+      this.valuePayment = this.getBalance(row);
       this.showModalPaymentRenovation = true;
     },
     openModal(action, row) {
       console.log(row);
       if (action === 'normal') {
         this.showModalCardBoard = true;
-      } else if (action === 'doble') {
+      } else if (action === 'double') {
         this.showModalCardBoardDouble = true;
       }
     },
@@ -656,10 +660,10 @@ export default {
 };
 </script>
 <style scoped>
-  .bg-light-red {
-    background-color: #f8d7da !important;
+  .q-table--dense .q-table th:first-child, .q-table--dense .q-table td:first-child {
+    padding-left: 4px;
   }
-  .bg-light-green {
-    background-color: #d4edda !important;
+  .q-table--dense .q-table th, .q-table--dense .q-table td {
+    padding: 4px 4px;
   }
 </style>

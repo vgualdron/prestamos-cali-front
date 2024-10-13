@@ -4,8 +4,11 @@ import { Notify } from 'quasar';
 
 import routes from './routes';
 import authApi from '../api/auth/authApi';
+import createStore from '../store'; // Importa la función que crea el store
 
 Vue.use(VueRouter);
+
+const store = createStore(); // Crea una instancia del store
 
 /*
  * If not building with SSR mode, you can
@@ -35,10 +38,17 @@ export default (/* { store, ssrContext } */) => {
     }
 
     try {
-      await authApi.session();
-      next();
+      await authApi.session().then(() => {
+        store.dispatch('@module/configuration/@actions/fetchConfigurations').then(() => {
+          next(); // Continuar navegación
+        }).catch((error) => {
+          console.error('Error ejecutando la acción en el módulo', error);
+          next(false); // Cancelar navegación si hay error
+        });
+      });
       return;
     } catch (error) {
+      console.error('catch en el router', error);
       if (error.response.status === 401) {
         Notify.create({
           message: 'No hay una sesión activa, vuelva a iniciar sesión por favor!',
