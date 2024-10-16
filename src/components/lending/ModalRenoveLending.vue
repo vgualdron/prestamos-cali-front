@@ -4,7 +4,7 @@
       <q-card style="width: 700px; max-width: 80vw;">
         <q-card-section class="row items-center q-pb-none">
           <div class="text-h6">
-            Ya existe un pago con esa referencia
+            Renovar préstamo
           </div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
@@ -13,19 +13,34 @@
         <q-card-section style="max-height: 80vh" class="scroll" v-if="row && row.id">
           <div class="row q-mt-md">
             <div class="col-12 text-center">
-              <b>Nombre nequi:</b> {{ row.nequi }}
+              <q-banner v-if="row.has_double_interest" dense class="bg-info text-white text-center q-mb-md">
+                El préstamo tiene aplicado el doble interés.
+              </q-banner>
             </div>
             <div class="col-12 text-center">
-              <b>Referencia:</b> {{ row.reference }}
-            </div>
-            <div class="col-12 text-center">
-              <b>Valor:</b> {{ formatPrice(row.amount)}}
-            </div>
-            <div class="col-12 text-center">
-              <b>Fecha de ingreso de pago:</b> {{ formatDate(row.date)}}
-            </div>
-            <div class="col-12 text-center">
-              <b>Fecha de transacción:</b> {{ formatDate(row.date_transaction)}}
+              <q-form class="q-gutter-md">
+                <q-input
+                  outlined
+                  v-model.trim="inputValue.date"
+                  label="Fecha *"
+                  lazy-rules
+                  type="date"
+                  :rules="[(val) => (!!val) || '']"
+                  hide-bottom-space
+                  autocomplete="off"
+                  readonly
+                />
+                <q-input
+                  outlined
+                  v-model.trim="inputValue.amount"
+                  label="Valor *"
+                  lazy-rules
+                  :rules="[(val) => (!!val) || '']"
+                  type="number"
+                  hide-bottom-space
+                  autocomplete="off"
+                />
+              </q-form>
             </div>
           </div>
           <div class="row text-center">
@@ -35,10 +50,11 @@
         <q-separator />
         <div class="row text-center q-pa-md">
           <q-btn
-            label="Cerrar"
+            label="Renovar"
             color="primary"
             class="col q-ml-sm"
-            @click="showDialog = false"
+            :disabled="!inputValue.date || inputValue.amount <= 0"
+            @click="renoveLending"
           />
         </div>
       </q-card>
@@ -47,11 +63,15 @@
 </template>
 <script>
 import moment from 'moment';
-import { showLoading } from '../../helpers/showLoading';
+// import { showLoading } from '../../helpers/showLoading';
 
 export default {
   data() {
     return {
+      inputValue: {
+        date: new Date().toISOString().split('T')[0],
+        amount: 0,
+      },
     };
   },
   props: {
@@ -65,8 +85,11 @@ export default {
     },
   },
   mounted() {
-    showLoading('consultando ...', 'Por favor, espere', true);
-    this.$q.loading.hide();
+    this.inputValue.amount = this.row.amount;
+    if (this.row.has_double_interest) {
+      const [date] = new Date(this.row.doubleDate).toISOString().split('T');
+      this.inputValue.date = date;
+    }
   },
   computed: {
     showDialog: {
@@ -95,6 +118,9 @@ export default {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       }).format(val);
+    },
+    renoveLending() {
+      this.$emit('renoveLending', this.row);
     },
   },
   components: {

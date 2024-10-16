@@ -209,11 +209,11 @@
                   label="Aplicar doble interés"
                   color="primary"
                   @click="applyDoubleInterest(lending)" />
-                <q-btn
+                <!-- <q-btn
                   v-if="showBtnRenovate"
                   class="q-ml-sm"
                   label="Renovar"
-                  color="primary"/>
+                  color="primary"/> -->
               </div>
             </div>
           </div>

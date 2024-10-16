@@ -47,7 +47,7 @@
                     <q-item-label>Ver cartulina</q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item v-if="getBalance(itemSelected) <= 0" clickable v-close-popup @click="openModal('double', props.row)">
+                <q-item v-if="getBalance(itemSelected) <= 0" clickable v-close-popup @click="openModal('renove', props.row)">
                   <q-item-section>
                     <q-item-label>Renovar préstamo</q-item-label>
                   </q-item-section>
@@ -94,18 +94,18 @@
             {{ props.row.amountFees }}
           </q-td>
           <q-td key="renovation" :props="props">
-            <b
-              v-if="getBalance(props.row) === 0"
-              title="Ya pagó todo el préstamo">
-              x
+            <b v-if="hasPaymentToday(props.row, 'renovacion')">
+              {{ formatPrice(getPaymentTodayRenovation(props.row).amount) }}
             </b>
             <b
               v-else-if="getBalance(props.row) > props.row.amount"
               title="No puede aplicar pago para renovación, si no ha pagado almenos los intereses.">
               x
             </b>
-            <b v-else-if="hasPaymentToday(props.row, 'renovacion')">
-              {{ formatPrice(getPaymentTodayRenovation(props.row).amount) }}
+            <b
+              v-else-if="getBalance(props.row) === 0"
+              title="Ya pagó todo el préstamo">
+              x
             </b>
             <b v-else>
               <q-btn
@@ -118,13 +118,8 @@
             </b>
           </q-td>
           <q-td key="collection" :props="props">
-            <b
-              v-if="getBalance(props.row) === 0"
-              title="Ya pagó todo el préstamo">
-              x
-            </b>
             <q-badge
-              v-else-if="hasPaymentToday(props.row, 'nequi')"
+              v-if="hasPaymentToday(props.row, 'nequi')"
               :color="getPaymentTodayNequi(props.row) ? getPaymentTodayNequi(props.row).classes : ''"
               :title="getPaymentTodayNequi(props.row) ? getPaymentTodayNequi(props.row).observation : ''">
               <b>{{ formatPrice(getPaymentTodayNequi(props.row).amount) }}</b>
@@ -136,6 +131,11 @@
                 @click="deletePayment(getPaymentTodayNequi(props.row))"
               />
             </q-badge>
+            <b
+              v-else-if="getBalance(props.row) === 0"
+              title="Ya pagó todo el préstamo">
+              x
+            </b>
             <b v-else>
               <q-btn
                 color="primary"
@@ -239,6 +239,12 @@
       title="Cartulina doble interés"
       :lendings="[itemSelected]"
       @updateTable="getLendings"/>
+    <modal-renove-lending
+      v-if="showModalRenove"
+      v-model="showModalRenove"
+      :row="itemSelected"
+      @renoveLending="renoveLending"
+    />
   </div>
 </template>
 <script>
@@ -246,6 +252,7 @@ import { mapState, mapActions } from 'vuex';
 import moment from 'moment';
 import ModalAddPayment from 'components/payment/ModalAddPayment.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
+import ModalRenoveLending from './ModalRenoveLending.vue';
 import listingTypes from '../../store/modules/listing/types';
 import lendingTypes from '../../store/modules/lending/types';
 import paymentTypes from '../../store/modules/payment/types';
@@ -257,6 +264,7 @@ export default {
   components: {
     ModalAddPayment,
     ModalCardBoard,
+    ModalRenoveLending,
   },
   data() {
     return {
@@ -483,7 +491,7 @@ export default {
       this.lendings.forEach((lending) => {
         const value = this.getPaymentTodayNequi(lending);
         if (value) {
-          total += value.amount;
+          total += parseInt(value.amount, 10);
         }
       });
       return total;
@@ -493,7 +501,7 @@ export default {
       this.lendings.forEach((lending) => {
         const value = this.getPaymentTodayRenovation(lending);
         if (value) {
-          total += value.amount;
+          total += parseInt(value.amount, 10);
         }
       });
       return total;
@@ -706,6 +714,7 @@ export default {
       } else if (action === 'double') {
         this.showModalCardBoardDouble = true;
       } else if (action === 'renove') {
+        console.log(row);
         this.showModalRenove = true;
       } else if (action === 'close') {
         this.$q.dialog({
@@ -758,6 +767,10 @@ export default {
       }).onDismiss(() => {
         // console.log('I am triggered on both OK and Cancel')
       });
+    },
+    renoveLending(row) {
+      console.log(row);
+      console.log(row.list.id);
     },
   },
 };

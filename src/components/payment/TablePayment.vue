@@ -258,8 +258,6 @@ export default {
       this.showModal = true;
     },
     async approvePayment(value) {
-      console.log(value);
-      console.log(this.itemSelected);
       await this.getPaymentByReference(value.reference);
       if (this.payment && this.payment.reference) {
         this.showModalExistReference = true;
@@ -271,7 +269,6 @@ export default {
       }
     },
     rejectPayment(value) {
-      console.log(value);
       this.updateStatusPayment({
         status: 'rechazado',
         value,
