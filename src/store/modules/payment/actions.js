@@ -8,7 +8,7 @@ export default {
       commit(types.mutations.SET_PAYMENTS, response.data.data);
     } catch (error) {
       console.error(error);
-      commit(types.mutations.SET_LENDINGS, error.response.data);
+      commit(types.mutations.SET_PAYMENTS, error.response.data);
     }
   },
   async [types.actions.FETCH_PAYMENTS_BY_LENDING]({ commit }, payload) {
@@ -17,7 +17,16 @@ export default {
       commit(types.mutations.SET_PAYMENTS, response.data.data);
     } catch (error) {
       console.error(error);
-      commit(types.mutations.SET_LENDINGS, error.response.data);
+      commit(types.mutations.SET_PAYMENTS, error.response.data);
+    }
+  },
+  async [types.actions.GET_PAYMENT_BY_REFERENCE]({ commit }, payload) {
+    try {
+      const response = await paymentApi.getPaymentByReference(payload);
+      commit(types.mutations.SET_PAYMENT, response.data.data);
+    } catch (error) {
+      console.error(error);
+      commit(types.mutations.SET_PAYMENT, error.response.data);
     }
   },
   async [types.actions.ADD_PAYMENT]({ commit }, payload) {

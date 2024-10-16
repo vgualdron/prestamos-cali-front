@@ -45,8 +45,14 @@
           <q-td key="id" :props="props">
             {{ props.row.id }}
           </q-td>
+          <q-td key="nequi" :props="props">
+            {{ props.row.nequi }}
+          </q-td>
           <q-td key="reference" :props="props">
             {{ props.row.reference }}
+          </q-td>
+          <q-td key="date_transaction" :props="props">
+            {{ formatDateDate(props.row.date_transaction) }}
           </q-td>
           <q-td key="date" :props="props">
             {{ formatDate(props.row.date) }}
@@ -113,10 +119,26 @@ export default {
           sortable: true,
         },
         {
+          name: 'nequi',
+          align: 'center',
+          label: 'Nequi',
+          field: 'nequi',
+          style: 'width: 100px',
+          sortable: true,
+        },
+        {
           name: 'reference',
           align: 'center',
           label: 'Referencia',
           field: 'reference',
+          style: 'width: 100px',
+          sortable: true,
+        },
+        {
+          name: 'date_transaction',
+          align: 'center',
+          label: 'Fecha transacción',
+          field: 'date_transaction',
           style: 'width: 100px',
           sortable: true,
         },
@@ -209,6 +231,9 @@ export default {
     },
     formatDate(date) {
       return moment(date).format('DD/MM/YYYY hh:mm A');
+    },
+    formatDateDate(date) {
+      return moment(date).format('DD/MM/YYYY');
     },
     formatPrice(val) {
       return new Intl.NumberFormat('es-CO', {

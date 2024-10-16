@@ -131,7 +131,7 @@ export default {
         lending_id: id,
         amount: this.amount,
         date: moment().format('YYYY-MM-DD HH:mm:ss'),
-        color: null,
+        observation: null,
         type: this.type,
         file_id: this.type === 'nequi' ? this.file.id : null,
       });

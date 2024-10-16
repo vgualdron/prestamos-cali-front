@@ -47,16 +47,24 @@
                     <q-item-label>Ver cartulina</q-item-label>
                   </q-item-section>
                 </q-item>
-
-                <q-item clickable v-close-popup @click="openModal('double', props.row)" :disabled="!props.row.has_double_interest">
+                <q-item v-if="getBalance(itemSelected) <= 0" clickable v-close-popup @click="openModal('double', props.row)">
+                  <q-item-section>
+                    <q-item-label>Renovar préstamo</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="props.row.has_double_interest" clickable v-close-popup @click="openModal('double', props.row)">
                   <q-item-section>
                     <q-item-label>Cartulina doble interes</q-item-label>
                   </q-item-section>
                 </q-item>
-
-                <q-item clickable v-close-popup @click="openModal('history', props.row)">
+                <!-- <q-item clickable v-close-popup @click="openModal('history', props.row)">
                   <q-item-section>
                     <q-item-label>Ver Historial</q-item-label>
+                  </q-item-section>
+                </q-item> -->
+                <q-item v-if="getBalance(itemSelected) <= 0" clickable v-close-popup @click="openModal('close', props.row)">
+                  <q-item-section>
+                    <q-item-label>Cerrar préstamo</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -86,7 +94,14 @@
             {{ props.row.amountFees }}
           </q-td>
           <q-td key="renovation" :props="props">
-            <b v-if="getBalance(props.row) > props.row.amount">
+            <b
+              v-if="getBalance(props.row) === 0"
+              title="Ya pagó todo el préstamo">
+              x
+            </b>
+            <b
+              v-else-if="getBalance(props.row) > props.row.amount"
+              title="No puede aplicar pago para renovación, si no ha pagado almenos los intereses.">
               x
             </b>
             <b v-else-if="hasPaymentToday(props.row, 'renovacion')">
@@ -103,9 +118,24 @@
             </b>
           </q-td>
           <q-td key="collection" :props="props">
-            <b v-if="hasPaymentToday(props.row, 'nequi')">
-              {{ formatPrice(getPaymentTodayNequi(props.row).amount) }}
+            <b
+              v-if="getBalance(props.row) === 0"
+              title="Ya pagó todo el préstamo">
+              x
             </b>
+            <q-badge
+              v-else-if="hasPaymentToday(props.row, 'nequi')"
+              :color="getPaymentTodayNequi(props.row) ? getPaymentTodayNequi(props.row).classes : ''"
+              :title="getPaymentTodayNequi(props.row) ? getPaymentTodayNequi(props.row).observation : ''">
+              <b>{{ formatPrice(getPaymentTodayNequi(props.row).amount) }}</b>
+              <q-icon
+                v-if="getPaymentTodayNequi(props.row) && getPaymentTodayNequi(props.row).classes !== 'green'"
+                name="close"
+                size="14px"
+                class="q-ml-xs pointer-cursor"
+                @click="deletePayment(getPaymentTodayNequi(props.row))"
+              />
+            </q-badge>
             <b v-else>
               <q-btn
                 color="primary"
@@ -195,7 +225,7 @@
       v-if="showModalCardBoard"
       v-model="showModalCardBoard"
       :showBtnDownload="true"
-      :showBtnApplyDoubleInterest="getBalance(itemSelected) >= itemSelected.amount"
+      :showBtnApplyDoubleInterest="getBalance(itemSelected) > itemSelected.amount"
       :showBtnRenovate="getBalance(itemSelected) === 0"
       title="Cartulina actual"
       :lendings="[itemSelected]"
@@ -218,6 +248,7 @@ import ModalAddPayment from 'components/payment/ModalAddPayment.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
 import listingTypes from '../../store/modules/listing/types';
 import lendingTypes from '../../store/modules/lending/types';
+import paymentTypes from '../../store/modules/payment/types';
 import userTypes from '../../store/modules/user/types';
 import newTypes from '../../store/modules/new/types';
 import { showLoading } from '../../helpers/showLoading';
@@ -394,10 +425,12 @@ export default {
       valuePayment: 0,
       showModalCardBoard: false,
       showModalCardBoardDouble: false,
+      showModalRenove: false,
     };
   },
   watch: {
     async listingSelected(val) {
+      console.log(val);
       showLoading('consultando ...', 'Por favor, espere', true);
       await this.getLendings(val.value);
       this.$q.loading.hide();
@@ -427,6 +460,11 @@ export default {
       newItem: 'new',
       newStatus: 'status',
       newResponseMessages: 'responseMessages',
+    }),
+    ...mapState(paymentTypes.PATH, {
+      paymentItem: 'payment',
+      paymentStatus: 'status',
+      paymentResponseMessages: 'responseMessages',
     }),
     optionsUsers() {
       return this.users.map(({ id, name }) => ({ label: name, value: id }));
@@ -488,6 +526,9 @@ export default {
     }),
     ...mapActions(newTypes.PATH, {
       getNew: newTypes.actions.GET_NEW,
+    }),
+    ...mapActions(paymentTypes.PATH, {
+      deletePaid: paymentTypes.actions.DELETE_PAYMENT,
     }),
     rowClass(row) {
       let color = 'bg-white';
@@ -601,7 +642,19 @@ export default {
         row.payments.forEach((payment) => {
           const datePayment = moment(payment.date).startOf('day');
           if (currentDate.isSame(datePayment, 'day') && payment.type === 'nequi') {
-            pay = payment;
+            pay = { ...payment };
+            let classes = '';
+            let observation = '';
+            if (pay.status === 'aprobado' || pay.status === 'verificado') {
+              classes = 'green';
+            } else if (pay.status === 'rechazado') {
+              classes = 'red';
+              observation = pay.observation;
+            } else {
+              classes = 'black';
+            }
+            pay.classes = classes;
+            pay.observation = observation;
           }
         });
       }
@@ -640,7 +693,6 @@ export default {
       this.itemSelected = { ...row };
     },
     addPaymentNequi(row) {
-      console.log(row);
       this.valuePayment = this.feeWithInterest(row);
       this.showModalPaymentNequi = true;
     },
@@ -648,13 +700,64 @@ export default {
       this.valuePayment = this.getBalance(row);
       this.showModalPaymentRenovation = true;
     },
-    openModal(action, row) {
-      console.log(row);
+    async openModal(action, row) {
       if (action === 'normal') {
         this.showModalCardBoard = true;
       } else if (action === 'double') {
         this.showModalCardBoardDouble = true;
+      } else if (action === 'renove') {
+        this.showModalRenove = true;
+      } else if (action === 'close') {
+        this.$q.dialog({
+          title: 'Cerrar préstamo',
+          message: 'Está seguro que desea cerrar el préstamo?',
+          ok: {
+            push: true,
+          },
+          cancel: {
+            push: true,
+            color: 'negative',
+            text: 'adsa',
+          },
+          persistent: true,
+        }).onOk(async () => {
+          showLoading('cerrando ...', 'Por favor, espere', true);
+          await this.updateLending({
+            ...row,
+            status: 'closed',
+          });
+          await this.getLendings(this.listingSelected.value);
+          this.$q.loading.hide();
+        }).onCancel(() => {
+          // console.log('>>>> Cancel')
+        }).onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
+        });
       }
+    },
+    deletePayment(row) {
+      this.$q.dialog({
+        title: 'Eliminar',
+        message: 'Está seguro que desea eliminar el pago?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        this.isLoadingTable = true;
+        await this.deletePaid(row.id);
+        await this.getLendings(this.listingSelected.value);
+        this.isLoadingTable = false;
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
     },
   },
 };
@@ -665,5 +768,8 @@ export default {
   }
   .q-table--dense .q-table th, .q-table--dense .q-table td {
     padding: 4px 4px;
+  }
+  .pointer-cursor {
+    cursor: pointer;
   }
 </style>

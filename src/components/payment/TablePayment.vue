@@ -63,13 +63,13 @@
         </q-tr>
       </template>
     </q-table>
-    <modal-preview-file
+    <modal-change-status-payment
       v-if="showModal"
       v-model="showModal"
       :url="formatLink(itemSelected)"
       :type="itemSelected.typeFile"
       :title="`Valor: ${formatPrice(itemSelected.amount)}`"
-      :showBtnCancel="false"
+      :showBtnCancel="true"
       :showBtnAccept="true"
       labelBtnCancel="Rechazar"
       labelBtnAccept="Aprobar"
@@ -78,12 +78,18 @@
       @clickBtnCancel="rejectPayment"
       @clickBtnAccept="approvePayment"
       />
+    <modal-exist-reference
+      v-if="showModalExistReference"
+      v-model="showModalExistReference"
+      :row="payment"
+    />
   </div>
 </template>
 <script>
 import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
-import ModalPreviewFile from 'components/common/ModalPreviewFile.vue';
+import ModalChangeStatusPayment from 'components/payment/ModalChangeStatusPayment.vue';
+import ModalExistReference from 'components/payment/ModalExistReference.vue';
 import paymentTypes from '../../store/modules/payment/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
@@ -166,6 +172,7 @@ export default {
       filter: '',
       isDiabledAdd: false,
       showModal: false,
+      showModalExistReference: false,
     };
   },
   async mounted() {
@@ -175,6 +182,7 @@ export default {
   },
   computed: {
     ...mapState(paymentTypes.PATH, {
+      payment: 'payment',
       payments: 'payments',
       paymentStatus: 'status',
       paymentResponseMessages: 'responseMessages',
@@ -185,6 +193,7 @@ export default {
   },
   methods: {
     ...mapActions(paymentTypes.PATH, {
+      getPaymentByReference: paymentTypes.actions.GET_PAYMENT_BY_REFERENCE,
       fetchPayments: paymentTypes.actions.FETCH_PAYMENTS,
       updatePayment: paymentTypes.actions.UPDATE_PAYMENT,
       deletePayment: paymentTypes.actions.DELETE_PAYMENT,
@@ -248,16 +257,24 @@ export default {
       this.itemSelected = row;
       this.showModal = true;
     },
-    approvePayment(value) {
-      this.updateStatusPayment({
-        status: 'aprobado',
-        value,
-      });
+    async approvePayment(value) {
+      console.log(value);
+      console.log(this.itemSelected);
+      await this.getPaymentByReference(value.reference);
+      if (this.payment && this.payment.reference) {
+        this.showModalExistReference = true;
+      } else {
+        await this.updateStatusPayment({
+          status: 'aprobado',
+          value,
+        });
+      }
     },
-    rejectPayment() {
+    rejectPayment(value) {
+      console.log(value);
       this.updateStatusPayment({
         status: 'rechazado',
-        value: null,
+        value,
       });
     },
     async updateStatusPayment({ status, value }) {
@@ -265,7 +282,10 @@ export default {
       await this.updatePayment({
         ...this.itemSelected,
         status,
-        reference: value,
+        reference: value.reference,
+        nequi: value.nameNequi,
+        date_transaction: value.dateTransaction,
+        observation: value.observation,
       });
       this.$q.loading.hide();
       this.showModal = false;
@@ -274,7 +294,8 @@ export default {
     },
   },
   components: {
-    ModalPreviewFile,
+    ModalChangeStatusPayment,
+    ModalExistReference,
   },
 };
 </script>

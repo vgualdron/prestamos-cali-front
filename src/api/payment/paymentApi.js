@@ -9,6 +9,10 @@ export default {
     url: `${process.env.URL_API}/api/payment/lending/${data.idLending}`,
     method: 'GET',
   }),
+  getPaymentByReference: (reference) => http({
+    url: `${process.env.URL_API}/api/payment/reference/${reference}`,
+    method: 'GET',
+  }),
   addPayment: (data) => http({
     url: `${process.env.URL_API}/api/payment`,
     method: 'POST',

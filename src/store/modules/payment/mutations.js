@@ -1,6 +1,9 @@
 import types from './types';
 
 export default {
+  [types.mutations.SET_PAYMENT](state, payload) {
+    state.payment = payload;
+  },
   [types.mutations.SET_PAYMENTS](state, payload) {
     state.payments = payload;
   },
