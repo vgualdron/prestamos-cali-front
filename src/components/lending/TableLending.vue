@@ -815,7 +815,7 @@ export default {
         id: row.id,
         date: row.date,
         amount: row.amount,
-        amountNew: row.amountNew,
+        amountNew: row.amountNew ? row.amountNew.value : 0,
         status: 'renovated',
       });
       await this.getLendings(this.listingSelected.value);

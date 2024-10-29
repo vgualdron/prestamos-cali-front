@@ -153,6 +153,13 @@ const routes = [
       { path: '', name: 'Agregar voucher a nuevos aprobados', component: () => import('pages/NewsApproved.vue') },
     ],
   },
+  {
+    path: '/expense',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Agregar voucher a Egresos', component: () => import('pages/Expense.vue') },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

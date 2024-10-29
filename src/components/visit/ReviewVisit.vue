@@ -220,14 +220,15 @@
         </div>
         <div class="div-container" v-if="validatedPermissions.voucher.status && (item.status === 'aprobado' || item.status === 'consignado')">
           <p class="text-subtitle1 text-weight-bold text-center">AGREGAR FOTO VOUCHER</p>
-          <upload-image
+          <camera-photo
             :config="{
               name: 'FOTO_VOUCHER',
               storage: 'news',
               modelName: 'news',
               modelId: id
             }"
-            @savedFile="saveVoucher"
+            type="read"
+            @updateStatus="saveVoucher"
           />
         </div>
       </q-card-section>
@@ -533,7 +534,6 @@ import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import CameraPhoto from 'components/common/CameraPhoto.vue';
 import CameraVideo from 'components/common/CameraVideo.vue';
-import UploadImage from 'components/common/UploadImage.vue';
 import StateCases from 'components/visit/StateCases.vue';
 import newTypes from '../../store/modules/new/types';
 import notificationTypes from '../../store/modules/notification/types';
@@ -642,7 +642,8 @@ export default {
       const { id } = this.$route.params;
       await this.getNew(id);
     },
-    async saveVoucher() {
+    async saveVoucher(data) {
+      console.log(data);
       await this.saveDateNew('status', 'consignado');
       await this.addLending({
         nameDebtor: this.item.name,
@@ -682,7 +683,6 @@ export default {
     CameraPhoto,
     CameraVideo,
     StateCases,
-    UploadImage,
   },
 };
 </script>
