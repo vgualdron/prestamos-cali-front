@@ -68,4 +68,32 @@ export default {
       }
     }
   },
+  async [types.actions.RENOVATE_LENDING]({ commit }, payload) {
+    try {
+      const response = await lendingApi.renovateLending(payload);
+      commit(types.mutations.SET_STATUS, true);
+      commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
+    } catch (error) {
+      commit(types.mutations.SET_STATUS, false);
+      if (error.message !== 'Network Error') {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
+      } else {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, [
+          {
+            text: 'Error de red',
+            detail: 'Intente conectarse a otra red de internet',
+          },
+        ]);
+      }
+    }
+  },
+  async [types.actions.FETCH_HISTORY]({ commit }, payload) {
+    try {
+      const response = await lendingApi.fetchHistoryByNewId(payload);
+      commit(types.mutations.SET_HISTORY, response.data.data);
+    } catch (error) {
+      console.error(error);
+      commit(types.mutations.SET_HISTORY, error.response.data);
+    }
+  },
 };

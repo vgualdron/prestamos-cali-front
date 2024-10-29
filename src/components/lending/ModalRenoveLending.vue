@@ -35,17 +35,45 @@
                   v-model.trim="inputValue.amount"
                   label="Valor *"
                   lazy-rules
-                  :rules="[(val) => (!!val) || '']"
+                  :rules="[val => val && val > 0 && val < row.amount || `El valor debe ser mayor a $100.000 y menor o igual a ${formatPrice(row.amount)}`]"
                   type="number"
                   hide-bottom-space
                   autocomplete="off"
+                  :disable="inputValue.isOlder"
+                  :max="row.amount"
                 />
+                <q-checkbox
+                  left-label
+                  v-model="inputValue.isOlder"
+                  text-h6
+                  color="green"
+                  label="Va a renovar por un monto adicional mayor?"
+                />
+                <q-select
+                  v-if="inputValue.isOlder"
+                  label="Valor adicional a solicitar *"
+                  outlined
+                  v-model.trim="inputValue.amountNew"
+                  :disable="!inputValue.isOlder"
+                  :options="[{
+                    label: '$100.000',
+                    value: 100000,
+                  },
+                  {
+                    label: '$200.000',
+                    value: 200000,
+                  },
+                  {
+                    label: '$300.000',
+                    value: 300000,
+                  }]"/>
               </q-form>
+              Total valor a renovar: {{ formatPrice(totalAmount) }}
             </div>
           </div>
-          <div class="row text-center">
+          <!-- <div class="row text-center">
             <img :src="formatLink(row)" class="inherit-width"/>
-          </div>
+          </div> -->
         </q-card-section>
         <q-separator />
         <div class="row text-center q-pa-md">
@@ -53,7 +81,7 @@
             label="Renovar"
             color="primary"
             class="col q-ml-sm"
-            :disabled="!inputValue.date || inputValue.amount <= 0"
+            :disabled="!inputValue.date || inputValue.amount <= 0 || inputValue.amount > row.amount"
             @click="renoveLending"
           />
         </div>
@@ -71,6 +99,8 @@ export default {
       inputValue: {
         date: new Date().toISOString().split('T')[0],
         amount: 0,
+        amountNew: 0,
+        isOlder: false,
       },
     };
   },
@@ -100,6 +130,13 @@ export default {
         this.$emit('input', val);
       },
     },
+    totalAmount() {
+      let newValue = 0;
+      if (this.inputValue.amountNew) {
+        newValue = this.inputValue.amountNew.value;
+      }
+      return parseInt(this.inputValue.amount, 10) + parseInt(newValue, 10);
+    },
   },
   methods: {
     formatLink(row) {
@@ -120,7 +157,12 @@ export default {
       }).format(val);
     },
     renoveLending() {
-      this.$emit('renoveLending', this.row);
+      const data = {
+        ...this.row,
+        ...this.inputValue,
+      };
+      this.$emit('renoveLending', data);
+      this.showDialog = false;
     },
   },
   components: {

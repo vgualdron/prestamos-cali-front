@@ -177,7 +177,7 @@
                   </tbody>
                 </q-markup-table>
               </div>
-              <div class="q-mt-md">
+              <div class="">
                 <q-markup-table
                   class="markup-table"
                   separator="cell"
@@ -199,22 +199,20 @@
               </div>
               <div class="row text-center q-py-md">
                 <q-btn
-                  v-if="showBtnDownload"
-                  icon="download"
-                  color="green"
-                  @click="captureImage" />
-                <q-btn
                   v-if="showBtnApplyDoubleInterest && !lending.has_double_interest"
                   class="q-ml-sm"
                   label="Aplicar doble interés"
                   color="primary"
                   @click="applyDoubleInterest(lending)" />
-                <!-- <q-btn
-                  v-if="showBtnRenovate"
-                  class="q-ml-sm"
-                  label="Renovar"
-                  color="primary"/> -->
               </div>
+              <div class="divider"></div>
+            </div>
+            <div class="row text-center">
+              <q-btn
+                v-if="showBtnDownload"
+                icon="download"
+                color="green"
+                @click="captureImage" />
             </div>
           </div>
         </q-card-section>
@@ -422,10 +420,12 @@ export default {
         let classes = 'td-table';
         const paymentNequi = pays.find((pay) => pay.type === 'nequi');
         const paymentRenovation = pays.find((pay) => pay.type === 'renovacion');
-        if (this.formatDate(date) < this.formatDate(new Date())) {
+        const dateDay = new Date(date);
+        const currentDate = new Date();
+        if (dateDay < currentDate) {
           classes = 'td-table bg-red-5';
         }
-        if ((paymentNequi && paymentNequi.amount > 0) || (paymentRenovation && paymentRenovation > 0)) {
+        if ((paymentNequi && paymentNequi.amount > 0) || (paymentRenovation && paymentRenovation.amount > 0)) {
           classes = 'td-table bg-blue-4';
         }
         if (date.getDay() === 0) {
@@ -446,7 +446,7 @@ export default {
       };
     },
     getPaymentPostEndDate(payments, date) {
-      return payments.filter((pay) => this.formatDate(pay.date) > this.formatDate(date));
+      return payments.filter((pay) => new Date(pay.date) > new Date(date));
     },
     formatDate(date) {
       return moment(date).format('DD/MM/YYYY');
@@ -550,5 +550,11 @@ export default {
   }
   .markup-table td {
     border: solid 1px black;
+  }
+  .divider {
+    width: 100%;
+    height: 3px;
+    background-color: white;
+    margin: 10px 0px;
   }
 </style>

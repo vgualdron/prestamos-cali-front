@@ -146,6 +146,13 @@ const routes = [
       { path: '', name: 'Revisar pagos en app nequi', component: () => import('pages/PaymentApp.vue') },
     ],
   },
+  {
+    path: '/expense-list-new',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Agregar voucher a nuevos aprobados', component: () => import('pages/NewsApproved.vue') },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

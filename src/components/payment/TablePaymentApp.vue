@@ -1,5 +1,13 @@
 <template>
-  <div class="q-pa-md">
+  <div class="q-px-md">
+    <q-btn
+      round
+      icon="refresh"
+      class="q-my-xs"
+      color="primary"
+      title="Click para refrescar la tabla"
+      @click="getPayments()">
+    </q-btn>
     <div class="row q-mt-md">
       <div class="col-12 text-center">
         <q-input
@@ -197,11 +205,13 @@ export default {
       filter: '',
       isDiabledAdd: false,
       showModal: false,
+      polling: null,
     };
   },
   async mounted() {
     this.isLoadingTable = true;
     await this.getPayments();
+    this.pollData();
     this.isLoadingTable = false;
   },
   computed: {
@@ -214,12 +224,20 @@ export default {
       return [...this.payments];
     },
   },
+  beforeDestroy() {
+    clearInterval(this.polling);
+  },
   methods: {
     ...mapActions(paymentTypes.PATH, {
       fetchPayments: paymentTypes.actions.FETCH_PAYMENTS,
       updatePayment: paymentTypes.actions.UPDATE_PAYMENT,
       deletePayment: paymentTypes.actions.DELETE_PAYMENT,
     }),
+    async pollData() {
+      this.polling = setInterval(async () => {
+        await this.getPayments();
+      }, 60000);
+    },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
@@ -270,7 +288,9 @@ export default {
       return colors[i];
     },
     async getPayments() {
+      showLoading('consultando ...', 'Por favor, espere', true);
       await this.fetchPayments('aprobado');
+      this.$q.loading.hide();
     },
     clickRow(row) {
       this.itemSelected = { ...row };

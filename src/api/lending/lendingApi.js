@@ -23,4 +23,13 @@ export default {
     url: `${process.env.URL_API}/api/lending/${id}`,
     method: 'DELETE',
   }),
+  renovateLending: (data) => http({
+    url: `${process.env.URL_API}/api/lending/renovate/${data.id}`,
+    method: 'POST',
+    data,
+  }),
+  fetchHistoryByNewId: (newId) => http({
+    url: `${process.env.URL_API}/api/lending/history/${newId}`,
+    method: 'GET',
+  }),
 };

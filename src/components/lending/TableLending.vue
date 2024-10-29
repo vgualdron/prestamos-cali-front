@@ -1,5 +1,13 @@
 <template>
-  <div class="q-pa-md">
+  <div class="q-px-md">
+    <q-btn
+      round
+      icon="refresh"
+      class=""
+      color="primary"
+      title="Click para refrescar la tabla"
+      @click="getLendings(listingSelected.value)">
+    </q-btn>
     <div class="row q-mt-md">
       <div class="col-6 text-center">
         <q-select
@@ -38,9 +46,9 @@
       :row-class="'bg-purple'"
       dense>
       <template v-slot:body="props">
-        <q-tr :props="props" :class="rowClass(props.row)" @click="clickRow(props.row)">
+        <q-tr :props="props" @click="clickRow(props.row)">
           <q-td key="actions" :props="props">
-            <q-btn-dropdown class="q-px-none" color="black" icon="folder" flat>
+            <q-btn-dropdown class="q-px-none" color="black" outline>
               <q-list>
                 <q-item clickable v-close-popup @click="openModal('normal', props.row)">
                   <q-item-section>
@@ -57,11 +65,11 @@
                     <q-item-label>Cartulina doble interes</q-item-label>
                   </q-item-section>
                 </q-item>
-                <!-- <q-item clickable v-close-popup @click="openModal('history', props.row)">
+                <q-item clickable v-close-popup @click="openModal('history', props.row)">
                   <q-item-section>
                     <q-item-label>Ver Historial</q-item-label>
                   </q-item-section>
-                </q-item> -->
+                </q-item>
                 <q-item v-if="getBalance(itemSelected) <= 0" clickable v-close-popup @click="openModal('close', props.row)">
                   <q-item-section>
                     <q-item-label>Cerrar préstamo</q-item-label>
@@ -100,12 +108,17 @@
             <b
               v-else-if="getBalance(props.row) > props.row.amount"
               title="No puede aplicar pago para renovación, si no ha pagado almenos los intereses.">
-              x
+              <q-icon name="block" color="red" />
+            </b>
+            <b
+              v-else-if="getPaymentTodayNequi(props.row) && getPaymentTodayNequi(props.row).classes !== 'green'"
+              title="No puede aplicar pago para renovación, hasta que no se apruebe el pago de nequi.">
+              <q-icon name="block" color="red" />
             </b>
             <b
               v-else-if="getBalance(props.row) === 0"
               title="Ya pagó todo el préstamo">
-              x
+              <q-icon name="block" color="red" />
             </b>
             <b v-else>
               <q-btn
@@ -134,7 +147,7 @@
             <b
               v-else-if="getBalance(props.row) === 0"
               title="Ya pagó todo el préstamo">
-              x
+              <q-icon name="block" color="red" />
             </b>
             <b v-else>
               <q-btn
@@ -149,7 +162,7 @@
           <q-td key="daysPassed" :props="props">
             {{ daysSinceGivenDate(props.row.firstDate) }}
           </q-td>
-          <q-td key="firstDate" :props="props">
+          <q-td key="firstDate" :class="rowClass(props.row)" :props="props">
             {{ formatDate(props.row.firstDate) }}
           </q-td>
           <q-td key="endDate" :props="props">
@@ -239,6 +252,14 @@
       title="Cartulina doble interés"
       :lendings="[itemSelected]"
       @updateTable="getLendings"/>
+    <modal-card-board
+      v-if="showModalHistory"
+      v-model="showModalHistory"
+      :showBtnDownload="true"
+      :showBtnApplyDoubleInterest="false"
+      :hasDoubleInterest="false"
+      title="Historial"
+      :lendings="history"/>
     <modal-renove-lending
       v-if="showModalRenove"
       v-model="showModalRenove"
@@ -434,14 +455,13 @@ export default {
       showModalCardBoard: false,
       showModalCardBoardDouble: false,
       showModalRenove: false,
+      showModalHistory: false,
+      polling: null,
     };
   },
   watch: {
     async listingSelected(val) {
-      console.log(val);
-      showLoading('consultando ...', 'Por favor, espere', true);
       await this.getLendings(val.value);
-      this.$q.loading.hide();
     },
   },
   async mounted() {
@@ -451,11 +471,15 @@ export default {
       this.listingSelected = { ...this.optionsListings[0] };
     }
     this.isLoadingTable = false;
+    this.pollData();
   },
   computed: {
-    ...mapState(lendingTypes.PATH, [
-      'lendings',
-    ]),
+    ...mapState(lendingTypes.PATH, {
+      lendings: 'lendings',
+      history: 'history',
+      lendingStatus: 'status',
+      lendingResponseMessages: 'responseMessages',
+    }),
     ...mapState(listingTypes.PATH, [
       'listings',
     ]),
@@ -520,11 +544,16 @@ export default {
       return total;
     },
   },
+  beforeDestroy() {
+    clearInterval(this.polling);
+  },
   methods: {
     ...mapActions(lendingTypes.PATH, {
       fetchLendings: lendingTypes.actions.FETCH_LENDINGS,
       updateLending: lendingTypes.actions.UPDATE_LENDING,
       deleteLending: lendingTypes.actions.DELETE_LENDING,
+      renovateLending: lendingTypes.actions.RENOVATE_LENDING,
+      fetchHistory: lendingTypes.actions.FETCH_HISTORY,
     }),
     ...mapActions(listingTypes.PATH, {
       fetchMineListings: listingTypes.actions.FETCH_MINE_LISTINGS,
@@ -538,14 +567,19 @@ export default {
     ...mapActions(paymentTypes.PATH, {
       deletePaid: paymentTypes.actions.DELETE_PAYMENT,
     }),
+    async pollData() {
+      this.polling = setInterval(async () => {
+        await this.getLendings(this.listingSelected.value);
+      }, 60000);
+    },
     rowClass(row) {
       let color = 'bg-white';
       const days = this.daysSinceGivenDate(row.firstDate);
-      if (days > 22) {
+      if (days > 25) {
         color = 'bg-red';
-      } else if (days >= 15 && days <= 22) {
+      } else if (days >= 19 && days <= 25) {
         color = 'bg-blue';
-      } else if (days > 7 && days <= 14) {
+      } else if (days > 12 && days <= 18) {
         color = 'bg-yellow';
       }
       return color;
@@ -687,9 +721,11 @@ export default {
       this.$q.loading.hide();
     },
     async getLendings(idList) {
+      showLoading('consultando ...', 'Por favor, espere', true);
       await this.fetchLendings({
         idList,
       });
+      this.$q.loading.hide();
     },
     async save(field, value) {
       this.isLoadingTable = true;
@@ -714,8 +750,12 @@ export default {
       } else if (action === 'double') {
         this.showModalCardBoardDouble = true;
       } else if (action === 'renove') {
-        console.log(row);
         this.showModalRenove = true;
+      } else if (action === 'history') {
+        showLoading('consultando ...', 'Por favor, espere', true);
+        await this.fetchHistory(row.new_id);
+        this.$q.loading.hide();
+        this.showModalHistory = true;
       } else if (action === 'close') {
         this.$q.dialog({
           title: 'Cerrar préstamo',
@@ -768,9 +808,18 @@ export default {
         // console.log('I am triggered on both OK and Cancel')
       });
     },
-    renoveLending(row) {
+    async renoveLending(row) {
       console.log(row);
-      console.log(row.list.id);
+      showLoading('Renovando ...', 'Por favor, espere', true);
+      await this.renovateLending({
+        id: row.id,
+        date: row.date,
+        amount: row.amount,
+        amountNew: row.amountNew,
+        status: 'renovated',
+      });
+      await this.getLendings(this.listingSelected.value);
+      this.$q.loading.hide();
     },
   },
 };
