@@ -27,7 +27,7 @@
         class=""
         color="primary"
         title="Click para refrescar la tabla"
-        @click="listNewsMounted">
+        @click="listMounted">
       </q-btn>
       </div>
     </div>
@@ -46,9 +46,9 @@
           <div>
             <upload-image
               :config="{
-                name: 'FOTO_VOUCHER',
-                storage: 'news',
-                modelName: 'news',
+                name: 'FOTO_EXPENSE',
+                storage: 'expenses',
+                modelName: 'expenses',
                 modelId: props.row.id
               }"
             />
@@ -61,7 +61,7 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import UploadImage from 'components/common/UploadImage.vue';
-import newTypes from '../../store/modules/new/types';
+import expenseTypes from '../../store/modules/expense/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { havePermission } from '../../helpers/havePermission';
@@ -76,8 +76,7 @@ export default {
       showModal: false,
       obj: {},
       type: 'C',
-      route: '/new',
-      name: 'Información de nuevos',
+      route: '/expense',
       columns: [
         {
           name: 'actions',
@@ -85,78 +84,27 @@ export default {
           align: 'center',
           visible: false,
         },
-        /* {
-          name: 'documentNumber',
-          label: 'Documento',
-          align: 'left',
-          field: 'documentNumber',
-          sortable: true,
-          visible: true,
-          headerStyle: 'height: 50px',
-        }, */
         {
-          name: 'name',
+          name: 'amount',
           align: 'left',
-          label: 'Nombre',
-          field: 'name',
-          style: 'max-width: 300px',
-          classes: 'ellipsis',
+          label: 'Valor',
+          field: 'amount',
           sortable: true,
           visible: true,
         },
         {
-          name: 'phone',
+          name: 'area_name',
           align: 'left',
-          label: 'Teléfono',
-          field: 'phone',
+          label: 'Grupo',
+          field: 'area_name',
           sortable: true,
           visible: true,
         },
         {
-          name: 'address',
+          name: 'item_name',
           align: 'left',
-          label: 'Dirección',
-          field: 'address',
-          sortable: true,
-          visible: true,
-        },
-        {
-          name: 'city',
-          align: 'left',
-          label: 'Cuidad',
-          field: 'cityName',
-          sortable: true,
-          visible: true,
-        },
-        {
-          name: 'sector',
-          align: 'left',
-          label: 'Sector',
-          field: 'sectorName',
-          sortable: true,
-          visible: true,
-        },
-        {
-          name: 'districtName',
-          align: 'left',
-          label: 'Barrio',
-          field: 'districtName',
-          sortable: true,
-          visible: true,
-        },
-        {
-          name: 'occupation',
-          align: 'left',
-          label: 'Ocupación',
-          field: 'occupation',
-          sortable: true,
-          visible: true,
-        },
-        {
-          name: 'userSendName',
-          align: 'left',
-          label: 'Enviado por',
-          field: 'userSendName',
+          label: 'Item',
+          field: 'item_name',
           sortable: true,
           visible: true,
         },
@@ -190,14 +138,14 @@ export default {
     this.pollData();
   },
   computed: {
-    ...mapState(newTypes.PATH, [
-      'news',
+    ...mapState(expenseTypes.PATH, [
+      'expenses',
       'responseMessages',
       'status',
-      'new',
+      'expense',
     ]),
     dataTable() {
-      const data = this.news.map((element) => ({
+      const data = this.expenses.map((element) => ({
         ...element,
         date: formatDateWithTime(element.date),
       }));
@@ -232,18 +180,18 @@ export default {
     clearInterval(this.polling);
   },
   methods: {
-    ...mapActions(newTypes.PATH, {
-      listNews: newTypes.actions.LIST_NEWS,
-      updateStatusNew: newTypes.actions.UPDATE_STATUS_NEW,
+    ...mapActions(expenseTypes.PATH, {
+      listExpenses: expenseTypes.actions.LIST_EXPENSES,
+      updateExpense: expenseTypes.actions.UPDATE_EXPENSE,
     }),
     async pollData() {
       this.polling = setInterval(async () => {
-        await this.listNewsMounted();
+        await this.listMounted();
       }, 60000);
     },
-    async listNewsMounted() {
+    async listMounted() {
       showLoading('Cargando ...', 'Por favor, espere', true);
-      await this.listNews(['aprobado']);
+      await this.listExpenses(['creado']);
       if (this.status === false) {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
         this.data = [];
@@ -261,7 +209,7 @@ export default {
 
       if (this.status === true) {
         this.user = { ...this.copyUser };
-        await this.listNewsMounted();
+        await this.listMounted();
       }
       this.$q.loading.hide();
       this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
@@ -271,7 +219,7 @@ export default {
     },
     validateLogin() {
       if (localStorage.getItem('tokenMC')) {
-        this.listNewsMounted();
+        this.listMounted();
       } else {
         this.$router.push('/');
       }
