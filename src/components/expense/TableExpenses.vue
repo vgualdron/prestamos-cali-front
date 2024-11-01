@@ -21,14 +21,21 @@
         class="col-2
         text-center"
       >
-      <q-btn
-        round
-        icon="refresh"
-        class=""
-        color="primary"
-        title="Click para refrescar la tabla"
-        @click="listMounted">
-      </q-btn>
+        <q-btn
+          round
+          icon="refresh"
+          class=""
+          color="primary"
+          title="Click para refrescar la tabla"
+          @click="listMounted">
+        </q-btn>
+        <q-btn
+          icon="add"
+          class="q-ml-sm"
+          color="primary"
+          title="Click para agregar un nuevo egreso"
+          @click="showModal = true">
+        </q-btn>
       </div>
     </div>
     <q-table
@@ -56,11 +63,16 @@
         </q-td>
       </template>
     </q-table>
+    <form-expense
+      v-if="showModal"
+      v-model="showModal"
+    />
   </div>
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
 import UploadImage from 'components/common/UploadImage.vue';
+import FormExpense from 'components/expense/FormExpense.vue';
 import expenseTypes from '../../store/modules/expense/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
@@ -70,6 +82,7 @@ import { formatDateWithTime } from '../../helpers/formatDate';
 export default {
   components: {
     UploadImage,
+    FormExpense,
   },
   data() {
     return {
@@ -89,6 +102,14 @@ export default {
           align: 'left',
           label: 'Valor',
           field: 'amount',
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'user_name',
+          align: 'left',
+          label: 'Persona',
+          field: 'user_name',
           sortable: true,
           visible: true,
         },
@@ -191,7 +212,7 @@ export default {
     },
     async listMounted() {
       showLoading('Cargando ...', 'Por favor, espere', true);
-      await this.listExpenses(['creado']);
+      await this.listExpenses(['creado', 'borrador']);
       if (this.status === false) {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
         this.data = [];

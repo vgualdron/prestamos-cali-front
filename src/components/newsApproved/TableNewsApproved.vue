@@ -55,12 +55,33 @@
           </div>
         </q-td>
       </template>
+      <template v-slot:body-cell-cv="props">
+        <q-td :props="props">
+          <q-btn
+            class=""
+            color="primary"
+            label="Ver"
+            title="Click para ver la hoja de vida"
+            @click="openCv(props.row)">
+        </q-btn>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-quantity="props">
+        <q-td :props="props">
+          {{ formatPrice(props.row.quantity) }}
+        </q-td>
+      </template>
     </q-table>
+    <cv
+      v-model="showModalCv"
+      v-if="showModalCv"
+      :id="newSelected.id" />
   </div>
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
 import UploadImage from 'components/common/UploadImage.vue';
+import Cv from 'components/new/Cv.vue';
 import newTypes from '../../store/modules/new/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
@@ -70,10 +91,10 @@ import { formatDateWithTime } from '../../helpers/formatDate';
 export default {
   components: {
     UploadImage,
+    Cv,
   },
   data() {
     return {
-      showModal: false,
       obj: {},
       type: 'C',
       route: '/new',
@@ -81,19 +102,18 @@ export default {
       columns: [
         {
           name: 'actions',
-          label: 'Acciones',
+          label: 'Cargar voucher',
           align: 'center',
           visible: false,
         },
-        /* {
-          name: 'documentNumber',
-          label: 'Documento',
-          align: 'left',
-          field: 'documentNumber',
+        {
+          name: 'cv',
+          align: 'center',
+          label: 'Hoja de vida',
+          field: 'cv',
           sortable: true,
           visible: true,
-          headerStyle: 'height: 50px',
-        }, */
+        },
         {
           name: 'name',
           align: 'left',
@@ -105,10 +125,10 @@ export default {
           visible: true,
         },
         {
-          name: 'phone',
+          name: 'quantity',
           align: 'left',
-          label: 'Teléfono',
-          field: 'phone',
+          label: 'Vaor',
+          field: 'quantity',
           sortable: true,
           visible: true,
         },
@@ -145,34 +165,10 @@ export default {
           visible: true,
         },
         {
-          name: 'occupation',
-          align: 'left',
-          label: 'Ocupación',
-          field: 'occupation',
-          sortable: true,
-          visible: true,
-        },
-        {
-          name: 'userSendName',
-          align: 'left',
-          label: 'Enviado por',
-          field: 'userSendName',
-          sortable: true,
-          visible: true,
-        },
-        {
           name: 'status',
           align: 'left',
           label: 'Estado',
           field: 'status',
-          sortable: true,
-          visible: true,
-        },
-        {
-          name: 'date',
-          align: 'left',
-          label: 'Fecha',
-          field: 'date',
           sortable: true,
           visible: true,
         },
@@ -183,6 +179,8 @@ export default {
       filter: '',
       data: [],
       polling: null,
+      showModalCv: false,
+      newSelected: null,
     };
   },
   async mounted() {
@@ -236,6 +234,19 @@ export default {
       listNews: newTypes.actions.LIST_NEWS,
       updateStatusNew: newTypes.actions.UPDATE_STATUS_NEW,
     }),
+    openCv(row) {
+      console.log(row);
+      this.newSelected = { ...row };
+      this.showModalCv = true;
+    },
+    formatPrice(val) {
+      return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(val);
+    },
     async pollData() {
       this.polling = setInterval(async () => {
         await this.listNewsMounted();

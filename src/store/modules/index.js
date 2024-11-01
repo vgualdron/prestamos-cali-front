@@ -17,6 +17,8 @@ import payment, { name as paymentName } from './payment';
 import district, { name as districtName } from './district';
 import report, { name as reportName } from './report';
 import expense, { name as expenseName } from './expense';
+import area, { name as areaName } from './area';
+import item, { name as itemName } from './item';
 
 export default {
   [homeName]: home,
@@ -38,4 +40,6 @@ export default {
   [districtName]: district,
   [reportName]: report,
   [expenseName]: expense,
+  [areaName]: area,
+  [itemName]: item,
 };

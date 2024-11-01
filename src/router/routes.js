@@ -157,7 +157,7 @@ const routes = [
     path: '/expense',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Agregar voucher a Egresos', component: () => import('pages/Expense.vue') },
+      { path: '', name: 'Gestionar Egresos', component: () => import('pages/Expense.vue') },
     ],
   },
   // Always leave this as last one,
