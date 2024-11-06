@@ -19,14 +19,9 @@
               <b>{{ formatHour(e.date) }}</b>
             </span>
             <template v-else-if="e.new_id">
-              <p>
-                <b>
+              <b>
                 {{ e.new_name }}
-                </b>
-              </p>
-              <span>
-                {{ e.new_phone }}
-              </span>
+              </b>
               <br>
               <span>
                 Lugar de visita: <b>{{ e.site_visit }}</b>

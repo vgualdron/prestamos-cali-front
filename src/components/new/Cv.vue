@@ -101,6 +101,12 @@
                           {{ item.period }}
                         </td>
                       </tr>
+                      <tr class="tr-table">
+                        <td class="td-table">
+                          <p class="text-subtitle1 text-weight-bold text-center">Referencia Extra:</p>
+                          {{ item.extra_reference }}
+                        </td>
+                      </tr>
                     </tbody>
                   </q-markup-table>
                 </div>
@@ -306,6 +312,30 @@
                   type="read"
                 />
               </div>
+              <div class="div-container">
+                <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FRONTAL REF FAMILIAR 1</p>
+                <camera-photo
+                  :config="{
+                    name: 'FOTO_CEDULA_FRONTAL_REFERENCIA_FAMILIAR_1',
+                    storage: 'news',
+                    modelName: 'news',
+                    modelId: id
+                  }"
+                  type="read"
+                />
+              </div>
+              <div class="div-container">
+                <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA POSTERIOR REF FAMILIAR 1</p>
+                <camera-photo
+                  :config="{
+                    name: 'FOTO_CEDULA_POSTERIOR_REFERENCIA_FAMILIAR_1',
+                    storage: 'news',
+                    modelName: 'news',
+                    modelId: id
+                  }"
+                  type="read"
+                />
+              </div>
             </q-card-section>
           </q-card>
           <q-card v-if="id" class="q-mt-lg">
@@ -368,6 +398,30 @@
                 <camera-video
                   :config="{
                     name: 'VIDEO_REFERENCIA_FAMILIAR_2',
+                    storage: 'news',
+                    modelName: 'news',
+                    modelId: id
+                  }"
+                  type="read"
+                />
+              </div>
+              <div class="div-container">
+                <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FRONTAL REF FAMILIAR 2</p>
+                <camera-photo
+                  :config="{
+                    name: 'FOTO_CEDULA_FRONTAL_REFERENCIA_FAMILIAR_2',
+                    storage: 'news',
+                    modelName: 'news',
+                    modelId: id
+                  }"
+                  type="read"
+                />
+              </div>
+              <div class="div-container">
+                <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA POSTERIOR REF FAMILIAR 2</p>
+                <camera-photo
+                  :config="{
+                    name: 'FOTO_CEDULA_POSTERIOR_REFERENCIA_FAMILIAR_2',
                     storage: 'news',
                     modelName: 'news',
                     modelId: id

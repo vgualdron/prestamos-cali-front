@@ -39,7 +39,7 @@
               :title="validatedPermissions.review.title"
               @click="showVisit(props.row)"
             />
-            <q-btn
+            <!-- <q-btn
               color="primary"
               field="edit"
               label="Voucher"
@@ -48,7 +48,7 @@
               :disabled="!validatedPermissions.voucher.status || props.row.new_status !== 'aprobado'"
               :title="validatedPermissions.voucher.title"
               @click="showVisit(props.row)"
-            />
+            /> -->
           </div>
         </q-td>
       </template>

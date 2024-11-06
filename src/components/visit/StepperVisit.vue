@@ -114,6 +114,19 @@
                       </q-popup-edit>
                     </td>
                   </tr>
+                </tbody>
+              </q-markup-table>
+            </div>
+          </div>
+          <div class="div-container">
+            <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
+            <div class="table-container">
+              <q-markup-table
+                class="markup-table q-mt-md"
+                separator="cell"
+                dense
+              >
+                <tbody>
                   <tr class="tr-table">
                     <td class="td-table">
                       <p class="text-subtitle1 text-weight-bold text-center">Tipo de vivienda:</p>
@@ -234,6 +247,17 @@
                           ]"
                           color="primary"
                         />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Referencia extra:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.extra_reference }}
+                      <q-popup-edit :value="item.extra_reference" v-slot="scope" buttons
+                        @input="val => saveDateNew('extra_reference', val)">
+                        <q-input v-model="scope.value" dense autofocus />
                       </q-popup-edit>
                     </td>
                   </tr>
@@ -450,6 +474,30 @@
             @savedFile="sendNotificationPush"
           />
         </div>
+        <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FRONTAL REF FAMILIAR 1 (opcional)</p>
+          <camera-photo
+            :config="{
+              name: 'FOTO_CEDULA_FRONTAL_REFERENCIA_FAMILIAR_1',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            @savedFile="sendNotificationPush"
+          />
+        </div>
+        <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA POSTERIOR REF FAMILIAR 1 (opcional)</p>
+          <camera-photo
+            :config="{
+              name: 'FOTO_CEDULA_POSTERIOR_REFERENCIA_FAMILIAR_1',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            @savedFile="sendNotificationPush"
+          />
+        </div>
       </div>
       </q-step>
 
@@ -516,17 +564,17 @@
             </div>
           </div>
           <div class="div-container">
-          <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA REF FAMILIAR 2</p>
-          <camera-photo
-            :config="{
-              name: 'FOTO_CASA_REFERENCIA_FAMILIAR_2',
-              storage: 'news',
-              modelName: 'news',
-              modelId: id
-            }"
-            @savedFile="sendNotificationPush"
-          />
-        </div>
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA REF FAMILIAR 2</p>
+            <camera-photo
+              :config="{
+                name: 'FOTO_CASA_REFERENCIA_FAMILIAR_2',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush"
+            />
+          </div>
           <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 2</p>
             <camera-video
@@ -539,6 +587,30 @@
               @savedFile="sendNotificationPush"
             />
           </div>
+          <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FRONTAL REF FAMILIAR 2 (opcional)</p>
+          <camera-photo
+            :config="{
+              name: 'FOTO_CEDULA_FRONTAL_REFERENCIA_FAMILIAR_2',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            @savedFile="sendNotificationPush"
+          />
+        </div>
+        <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA POSTERIOR REF FAMILIAR 2 (opcional)</p>
+          <camera-photo
+            :config="{
+              name: 'FOTO_CEDULA_POSTERIOR_REFERENCIA_FAMILIAR_2',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            @savedFile="sendNotificationPush"
+          />
+        </div>
         </div>
       </q-step>
 
@@ -806,7 +878,6 @@ export default {
       showNotifications(messages, status, align, timeout);
     },
     clickEditAddress(row, type) {
-      console.log(row);
       this.typeActionFormNew = type;
       this.objSelected = { ...row };
       this.showModalFormNews = true;

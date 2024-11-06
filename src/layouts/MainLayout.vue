@@ -98,6 +98,7 @@
           />
         </q-expansion-item>
       </q-list>
+      <map-current-position />
       <q-item-label header class="text-grey-8 text-center q-mt-md">
         {{ versionApp }}
       </q-item-label>
@@ -120,6 +121,7 @@
 import { mapState, mapActions } from 'vuex';
 import EssentialLink from 'components/common/EssentialLink.vue';
 import FormChangePassword from 'components/user/FormChangePassword.vue';
+import MapCurrentPosition from 'components/common/MapCurrentPosition.vue';
 import commonTypes from '../store/modules/common/types';
 import { showNotifications } from '../helpers/showNotifications';
 import { showLoading } from '../helpers/showLoading';
@@ -129,6 +131,7 @@ export default {
   components: {
     EssentialLink,
     FormChangePassword,
+    MapCurrentPosition,
   },
   data() {
     return {
@@ -142,6 +145,7 @@ export default {
   },
   async mounted() {
     await this.fillLinkData();
+    this.leftDrawerOpen = false;
   },
   computed: {
     ...mapState(commonTypes.PATH, [
@@ -204,6 +208,24 @@ export default {
     ...mapActions(commonTypes.PATH, {
       signout: commonTypes.actions.SIGN_OUT,
     }),
+    getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            this.location = {
+              lat: position.coords.latitude,
+              lon: position.coords.longitude,
+            };
+            this.error = null;
+          },
+          (err) => {
+            this.error = `No se pudo obtener la ubicación. Por favor, permite el acceso. ${err}`;
+          },
+        );
+      } else {
+        this.error = 'La geolocalización no es soportada en este navegador.';
+      }
+    },
     clickChangePassword() {
       this.showModalChangePassword = true;
     },

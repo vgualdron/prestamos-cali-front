@@ -33,55 +33,197 @@
                 <tr class="tr-table">
                   <td class="td-table">
                     <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
+                    <q-icon size="xs" name="edit" />
                     {{ item.name }}
+                    <q-popup-edit :value="item.name" v-slot="scope" buttons
+                      @input="val => saveDateNew('name', val)">
+                      <q-input v-model="scope.value" dense autofocus />
+                    </q-popup-edit>
                   </td>
                 </tr>
                 <tr class="tr-table">
                   <td class="td-table">
                     <p class="text-subtitle1 text-weight-bold text-center">Número de doc:</p>
+                    <q-icon size="xs" name="edit" />
                     {{ item.documentNumber }}
+                    <q-popup-edit :value="item.documentNumber" v-slot="scope" buttons
+                      @input="val => saveDateNew('document_number', val)">
+                      <q-input v-model="scope.value" dense autofocus />
+                    </q-popup-edit>
                   </td>
                 </tr>
                 <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Dirección de casa:</p>
+                  <td class="td-table" @click="clickEditAddress(item, 'house')">
+                    <p class="text-subtitle1 text-weight-bold text-center">Dirección casa:</p>
+                    <q-icon size="xs" name="edit" />
                     {{ item.address_house }}
+                    <br><b v-if="item.districtHouseName">Barrio: </b> {{ item.districtHouseName }}
                   </td>
                 </tr>
                 <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Dirección de trabajo:</p>
+                  <td class="td-table" @click="clickEditAddress(item, 'work')">
+                    <p class="text-subtitle1 text-weight-bold text-center">Dirección trabajo:</p>
+                    <q-icon size="xs" name="edit" />
                     {{ item.address_work }}
+                    <br><b v-if="item.districtWorkName">Barrio: </b> {{ item.districtWorkName }}
                   </td>
                 </tr>
                 <tr class="tr-table">
                   <td class="td-table">
                     <p class="text-subtitle1 text-weight-bold text-center">Ocupación:</p>
+                    <q-icon size="xs" name="edit" />
                     {{ item.occupation }}
+                    <q-popup-edit :value="item.occupation" v-slot="scope" buttons
+                      @input="val => saveDateNew('occupation', val)">
+                      <q-input v-model="scope.value" dense autofocus />
+                    </q-popup-edit>
                   </td>
                 </tr>
+              </tbody>
+            </q-markup-table>
+          </div>
+        </div>
+        <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">DATOS:</p>
+          <div class="table-container">
+            <q-markup-table
+              class="markup-table q-mt-md"
+              separator="cell"
+              dense
+            >
+              <tbody>
                 <tr class="tr-table">
                   <td class="td-table">
                     <p class="text-subtitle1 text-weight-bold text-center">Tipo de vivienda:</p>
+                    <q-icon size="xs" name="edit" />
                     {{ item.type_house }}
+                    <q-popup-edit :value="item.type_house" v-slot="scope" buttons
+                      @input="val => saveDateNew('type_house', val)">
+                      <q-option-group
+                        v-model="scope.value"
+                        :options="[
+                          {
+                            label: 'familiar',
+                            value: 'familiar'
+                          },
+                          {
+                            label: 'propia',
+                            value: 'propia'
+                          },
+                          {
+                            label: 'arrendada',
+                            value: 'arrendada'
+                          },
+                        ]"
+                        color="primary"
+                      />
+                    </q-popup-edit>
                   </td>
                 </tr>
                 <tr class="tr-table">
                   <td class="td-table">
                     <p class="text-subtitle1 text-weight-bold text-center">Tipo de trabajo:</p>
+                    <q-icon size="xs" name="edit" />
                     {{ item.type_work }}
+                    <q-popup-edit :value="item.type_work" v-slot="scope" buttons
+                      @input="val => saveDateNew('type_work', val)">
+                      <q-option-group
+                        v-model="scope.value"
+                        :options="[
+                          {
+                            label: 'empleado',
+                            value: 'empleado'
+                          },
+                          {
+                            label: 'propietario',
+                            value: 'propietario'
+                          },
+                        ]"
+                        color="primary"
+                      />
+                    </q-popup-edit>
                   </td>
                 </tr>
                 <tr class="tr-table">
                   <td class="td-table">
                     <p class="text-subtitle1 text-weight-bold text-center">Cantidad préstamo:</p>
+                    <q-icon size="xs" name="edit" />
                     {{ item.quantity }}
+                    <q-popup-edit :value="item.quantity" v-slot="scope" buttons
+                      @input="val => saveDateNew('quantity', val)">
+                      <q-option-group
+                        v-model="scope.value"
+                        :options="[
+                          {
+                            label: '100.000',
+                            value: 100000,
+                          },
+                          {
+                            label: '200.000',
+                            value: 200000,
+                          },
+                          {
+                            label: '300.000',
+                            value: 300000,
+                          },
+                          {
+                            label: '400.000',
+                            value: 400000,
+                            disable: item.type_work !== 'propietario',
+                          },
+                          {
+                            label: '500.000',
+                            value: 500000,
+                            disable: item.type_work !== 'propietario',
+                          },
+                          {
+                            label: '600.000',
+                            value: 600000,
+                            disable: item.type_work !== 'propietario',
+                          },
+                        ]"
+                        color="primary"
+                      />
+                    </q-popup-edit>
                   </td>
                 </tr>
                 <tr class="tr-table">
                   <td class="td-table">
                     <p class="text-subtitle1 text-weight-bold text-center">Período:</p>
+                    <q-icon size="xs" name="edit" />
                     {{ item.period }}
+                    <q-popup-edit :value="item.period" v-slot="scope" buttons
+                      @input="val => saveDateNew('period', val)">
+                      <q-option-group
+                        v-model="scope.value"
+                        :options="[
+                          {
+                            label: 'diario',
+                            value: 'diario'
+                          },
+                          {
+                            label: 'semanal',
+                            value: 'semanal'
+                          },
+                          {
+                            label: 'quincenal',
+                            value: 'quincenal'
+                          },
+                        ]"
+                        color="primary"
+                      />
+                    </q-popup-edit>
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Referencia extra:</p>
+                    <q-icon size="xs" name="edit" />
+                    {{ item.extra_reference }}
+                    <q-popup-edit :value="item.extra_reference" v-slot="scope" buttons
+                      @input="val => saveDateNew('extra_reference', val)">
+                      <q-input v-model="scope.value" dense autofocus />
+                    </q-popup-edit>
                   </td>
                 </tr>
               </tbody>
@@ -303,6 +445,32 @@
             @updateStatus="sendNotificationPush"
           />
         </div>
+        <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FRONTAL REF FAMILIAR 1</p>
+          <camera-photo
+            :config="{
+              name: 'FOTO_CEDULA_FRONTAL_REFERENCIA_FAMILIAR_1',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            type="read"
+            @updateStatus="sendNotificationPush"
+          />
+        </div>
+        <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA POSTERIOR REF FAMILIAR 1</p>
+          <camera-photo
+            :config="{
+              name: 'FOTO_CEDULA_POSTERIOR_REFERENCIA_FAMILIAR_1',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            type="read"
+            @updateStatus="sendNotificationPush"
+          />
+        </div>
       </q-card-section>
     </q-card>
     <br><hr>
@@ -367,6 +535,32 @@
           <camera-video
             :config="{
               name: 'VIDEO_REFERENCIA_FAMILIAR_2',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            type="read"
+            @updateStatus="sendNotificationPush"
+          />
+        </div>
+        <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FRONTAL REF FAMILIAR 2</p>
+          <camera-photo
+            :config="{
+              name: 'FOTO_CEDULA_FRONTAL_REFERENCIA_FAMILIAR_2',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            type="read"
+            @updateStatus="sendNotificationPush"
+          />
+        </div>
+        <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA POSTERIOR REF FAMILIAR 2</p>
+          <camera-photo
+            :config="{
+              name: 'FOTO_CEDULA_POSTERIOR_REFERENCIA_FAMILIAR_2',
               storage: 'news',
               modelName: 'news',
               modelId: id
@@ -527,6 +721,13 @@
         </div>
       </q-card-section>
     </q-card>
+    <form-news
+      v-if="showModalFormNews"
+      v-model="showModalFormNews"
+      :type="typeActionFormNew"
+      :obj="objSelected"
+      @refreshList="getItem"
+    />
   </div>
 </template>
 <script>
@@ -535,6 +736,7 @@ import { mapState, mapActions } from 'vuex';
 import CameraPhoto from 'components/common/CameraPhoto.vue';
 import CameraVideo from 'components/common/CameraVideo.vue';
 import StateCases from 'components/visit/StateCases.vue';
+import FormNews from 'components/review/FormNews.vue';
 import newTypes from '../../store/modules/new/types';
 import notificationTypes from '../../store/modules/notification/types';
 import userTypes from '../../store/modules/user/types';
@@ -549,6 +751,9 @@ export default {
       step: 0,
       stepTmp: 0,
       showStateCases: true,
+      typeActionFormNew: 'house',
+      showModalFormNews: false,
+      objSelected: {},
     };
   },
   props: {
@@ -613,6 +818,11 @@ export default {
     }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
+    },
+    clickEditAddress(row, type) {
+      this.typeActionFormNew = type;
+      this.objSelected = { ...row };
+      this.showModalFormNews = true;
     },
     reloadInfo() {
       showLoading('consultando ...', 'Por favor, espere', true);
@@ -683,6 +893,7 @@ export default {
     CameraPhoto,
     CameraVideo,
     StateCases,
+    FormNews,
   },
 };
 </script>

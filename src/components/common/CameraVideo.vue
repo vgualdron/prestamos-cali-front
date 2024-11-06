@@ -2,6 +2,14 @@
   <div class="q-pa-xs">
     <div class="row q-ma-xs">
       <div class="col-12 text-center">
+        <q-btn
+          v-if="urlFile"
+          round
+          icon="location_on"
+          class="q-mb-xs"
+          color="primary"
+          @click="openInGoogleMaps">
+        </q-btn>
         <video
           v-if="urlFile"
           :src="urlFile"
@@ -139,6 +147,9 @@ export default {
       video: null,
       blob: null,
       showModal: false,
+      location: null, // Para almacenar la ubicación actual
+      googleMapUrl: '', // La URL para el iframe de Google Maps
+      error: null,
     };
   },
   props: {
@@ -180,6 +191,37 @@ export default {
       updateFile: fileTypes.actions.UPDATE_FILE,
       getFile: fileTypes.actions.GET_FILE,
     }),
+    openInGoogleMaps() {
+      if (this.item) {
+        const { latitude, longitude } = this.item;
+        // Crear la URL para abrir en Google Maps
+        const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+        console.log(googleMapsUrl);
+        // Abrir la URL en una nueva pestaña o ventana del navegador
+        window.open(googleMapsUrl, '_blank');
+      } else {
+        this.error = 'Location not available. Please allow location access.';
+      }
+    },
+    async getLocation() {
+      try {
+        if (navigator.geolocation) {
+          // Usamos una promesa para envolver el método getCurrentPosition
+          const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+          });
+          // Almacenamos la latitud y longitud
+          this.location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+        } else {
+          this.error = 'Unable to retrieve location. Please allow access.';
+        }
+      } catch (err) {
+        this.error = 'Geolocation is not supported by this browser.';
+      }
+    },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
@@ -250,6 +292,7 @@ export default {
       this.chunks = [];
     },
     async send() {
+      await this.getLocation();
       showLoading('Guardando ...', 'Por favor, espere', true);
       const {
         name,
@@ -257,6 +300,11 @@ export default {
         modelId,
         modelName,
       } = this.config;
+
+      const {
+        latitude,
+        longitude,
+      } = this.location;
 
       await this.saveFile({
         name,
@@ -267,6 +315,8 @@ export default {
         file: this.file,
         extension: this.extension,
         status: 'creado',
+        latitude,
+        longitude,
       });
       this.$q.loading.hide();
       if (this.responseMessages && this.status) {
