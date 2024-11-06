@@ -1,22 +1,14 @@
 <template>
   <div>
-    <div v-if="location" id="google-map-container" style="height: 500px; width: 100%; margin-top: 20px;">
-      <!-- Insertar el iframe de Google Maps con la ubicación actual -->
-      <iframe
-        :src="googleMapUrl"
-        width="100%"
-        height="100%"
-        style="border:0;"
-        allowfullscreen=""
-        loading="lazy"
-      ></iframe>
-    </div>
-    <div v-if="error" class="q-banner bg-red text-white">{{ error }}</div>
-    <button class="q-ma-md" @click="openInGoogleMaps">Abrir en Google Maps</button>
+    <div id="map" :style="{ height: '400px', width: '100%' }"></div>
+    <button @click="openInGoogleMaps">Abrir en Google Maps</button>
   </div>
 </template>
 
 <script>
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
 export default {
   name: 'MapCurrentPosition',
   props: {
@@ -27,7 +19,6 @@ export default {
   data() {
     return {
       location: null, // Para almacenar la ubicación actual
-      googleMapUrl: '', // La URL para el iframe de Google Maps
       error: null, // Para manejar errores
     };
   },
@@ -41,8 +32,7 @@ export default {
               lat: position.coords.latitude,
               lon: position.coords.longitude,
             };
-            // Generamos la URL de Google Maps con la ubicación actual
-            this.googleMapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387190.27991287825!2d${this.location.lon}!3d${this.location.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z!5e0!3m2!1ses-419!2sco!4v1634617472104`;
+            this.initMap(this.location.lat, this.location.lon);
             this.error = null; // Limpiar cualquier error
           },
           (err) => {
@@ -52,6 +42,16 @@ export default {
       } else {
         this.error = 'Geolocation is not supported by this browser.';
       }
+    },
+    initMap(lat, lon) {
+      const map = L.map('map').setView([lat, lon], 13);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors',
+      }).addTo(map);
+
+      L.marker([lat, lon]).addTo(map).bindPopup('Ubicación Actual').openPopup();
     },
     openInGoogleMaps() {
       if (this.location) {
