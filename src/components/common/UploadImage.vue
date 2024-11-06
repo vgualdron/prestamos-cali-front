@@ -3,7 +3,7 @@
     <div class="row q-ma-xs">
       <div class="col-12 text-center">
         <q-btn
-          v-if="urlFile"
+          v-if="urlFile && type === 'read'"
           round
           icon="location_on"
           class="q-mb-xs"

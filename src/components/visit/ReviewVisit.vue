@@ -5,6 +5,7 @@
       icon="west"
       class="q-mr-xs q-mb-md fixed z-index-btn btn-back"
       color="primary"
+      title="Ir atrás"
       @click="$router.go(-1)">
     </q-btn>
     <q-btn
@@ -12,10 +13,11 @@
       icon="refresh"
       class="q-ml-sm q-mb-md fixed z-index-btn btn-reload"
       color="primary"
-      @click="reloadInfo">
+      title="Refrezcar información"
+      @click="reloadStatusFiles">
     </q-btn>
     <state-cases v-if="id && showStateCases" :item="item" :id="id" type="review"/>
-    <q-card v-if="id" class="q-mt-lg">
+    <q-card v-if="id && showStateCases" class="q-mt-lg">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">DATOS DE CLIENTE</div>
       </q-card-section>
@@ -360,8 +362,8 @@
             @updateStatus="sendNotificationPush"
           />
         </div>
-        <div class="div-container" v-if="validatedPermissions.voucher.status && (item.status === 'aprobado' || item.status === 'consignado')">
-          <p class="text-subtitle1 text-weight-bold text-center">AGREGAR FOTO VOUCHER</p>
+        <div class="div-container" v-if="(item.status === 'aprobado' || item.status === 'consignado')">
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO VOUCHER</p>
           <camera-photo
             :config="{
               name: 'FOTO_VOUCHER',
@@ -376,7 +378,7 @@
       </q-card-section>
     </q-card>
     <br><hr>
-    <q-card v-if="id" class="q-mt-lg">
+    <q-card v-if="id && showStateCases" class="q-mt-lg">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">DATOS DE REFERENCIA FAMILIAR 1</div>
       </q-card-section>
@@ -474,7 +476,7 @@
       </q-card-section>
     </q-card>
     <br><hr>
-    <q-card v-if="id" class="q-mt-lg">
+    <q-card v-if="id && showStateCases" class="q-mt-lg">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">DATOS DE REFERENCIA FAMILIAR 2</div>
       </q-card-section>
@@ -572,7 +574,7 @@
       </q-card-section>
     </q-card>
     <br><hr>
-    <q-card v-if="id" class="q-mt-lg">
+    <q-card v-if="id && showStateCases" class="q-mt-lg">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">DATOS DE FIADOR</div>
       </q-card-section>
@@ -846,7 +848,7 @@ export default {
       setTimeout(() => {
         this.showStateCases = true;
         this.$q.loading.hide();
-      }, 3000);
+      }, 1500);
     },
     async getItem() {
       const { id } = this.$route.params;
@@ -933,7 +935,7 @@ export default {
   }
   .btn-reload {
     margin-top: -10px;
-    margin-left: 80%;
+    margin-left: 50px;
   }
   .btn-back {
     margin-left: -10px;

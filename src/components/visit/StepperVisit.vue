@@ -5,6 +5,7 @@
       icon="refresh"
       class="q-ml-xl q-mb-md fixed z-index-btn btn-reload"
       color="primary"
+      title="Refrezcar información"
       @click="reloadStatusFiles">
     </q-btn>
     <q-btn
@@ -12,6 +13,7 @@
       icon="west"
       class="q-mr-xs q-mb-md fixed z-index-btn btn-back"
       color="primary"
+      title="Ir atrás"
       @click="$router.go(-1)">
     </q-btn>
     <state-cases v-if="id && showStateCases" :item="item" :id="id" />
@@ -905,11 +907,12 @@ export default {
       this.showStateCases = false;
       this.stepTmp = this.step;
       this.step = 0;
+      this.getItem();
       setTimeout(() => {
         this.showStateCases = true;
         this.$q.loading.hide();
         this.step = this.stepTmp;
-      }, 3000);
+      }, 2000);
     },
     async getItem() {
       const { id } = this.$route.params;
@@ -921,8 +924,12 @@ export default {
       item[field] = value.value ? value.value : value;
       await this.completeDataNew(item);
       await this.getItem();
+      this.showStateCases = false;
+      setTimeout(() => {
+        this.showStateCases = true;
+        this.$q.loading.hide();
+      }, 1000);
       await this.sendNotificationPush({ name: 'DATOS' });
-      this.$q.loading.hide();
     },
     async savedFileCasaCliente(data) {
       console.log('saved filed casa cliente');
@@ -989,7 +996,7 @@ export default {
   }
   .btn-reload {
     margin-top: -10px;
-    margin-left: 80%;
+    margin-left: 50px;
   }
   .btn-back {
     margin-left: -10px;

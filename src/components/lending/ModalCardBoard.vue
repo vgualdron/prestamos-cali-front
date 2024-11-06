@@ -360,7 +360,6 @@ export default {
       });
     },
     getDaysArray(lending, block) {
-      console.log(block);
       let index = 1;
       const startCount = block === 'one' ? 1 : 16;
       const endCount = block === 'one' ? 16 : 30;
@@ -415,7 +414,7 @@ export default {
       return dates;
     },
     getPaymentByDate(payments, date) {
-      const pays = payments.filter((pay) => this.formatDate(pay.date) === this.formatDate(date));
+      const pays = payments.filter((pay) => this.formatDate(pay.date) === this.formatDate(date) && pay.status === 'aprobado');
       if (pays) {
         let classes = 'td-table';
         const paymentNequi = pays.find((pay) => pay.type === 'nequi');
@@ -446,7 +445,7 @@ export default {
       };
     },
     getPaymentPostEndDate(payments, date) {
-      return payments.filter((pay) => new Date(pay.date) > new Date(date));
+      return payments.filter((pay) => new Date(pay.date) > new Date(date) && pay.status === 'aprobado');
     },
     formatDate(date) {
       return moment(date).format('DD/MM/YYYY');

@@ -48,7 +48,7 @@
       <template v-slot:body="props">
         <q-tr :props="props" @click="clickRow(props.row)">
           <q-td key="actions" :props="props">
-            <q-btn-dropdown class="q-px-none" color="black" outline>
+            <q-btn-dropdown v-if="props.row.status === 'open'" class="q-px-none" color="black" outline>
               <q-list>
                 <q-item clickable v-close-popup @click="openModal('normal', props.row)">
                   <q-item-section>
