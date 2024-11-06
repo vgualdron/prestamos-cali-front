@@ -1,7 +1,7 @@
-import { http } from '../../helpers/http';
+import { httpPush } from '../../helpers/httpPush';
 
 export default {
-  send: (data) => http({
+  send: (data) => httpPush({
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       Authorization: 'Basic MGM2OTI2NzYtM2ExMy00MGI4LWIwZWMtMjYxNzRkNDI0NGRj',
