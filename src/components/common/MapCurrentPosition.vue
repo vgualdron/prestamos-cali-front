@@ -1,13 +1,16 @@
 <template>
   <div>
     <div id="map" :style="{ height: '400px', width: '100%' }"></div>
-    <button @click="openInGoogleMaps">Abrir en Google Maps</button>
+    <button @click="send">Enviar Push</button>
+    <!-- <button @click="openInGoogleMaps">Abrir en Google Maps</button> -->
   </div>
 </template>
 
 <script>
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { mapActions } from 'vuex';
+import notificationTypes from '../../store/modules/notification/types';
 
 export default {
   name: 'MapCurrentPosition',
@@ -23,6 +26,9 @@ export default {
     };
   },
   methods: {
+    ...mapActions(notificationTypes.PATH, {
+      sendNotification: notificationTypes.actions.SEND_NOTIFICATION,
+    }),
     getLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -64,6 +70,16 @@ export default {
       } else {
         this.error = 'Location not available. Please allow location access.';
       }
+    },
+    async send() {
+      const data = {
+        app_id: `${process.env.APP_ID_ONE_SIGNAL}`,
+        headings: { en: 'Titulo' },
+        contents: { en: 'Contenido' },
+        include_player_ids: ['aeabce5d-08d0-4fcd-8f2a-863b1db96257'],
+        url: 'https://www.linkedin.com/feed/',
+      };
+      await this.sendNotification(data);
     },
   },
 };
