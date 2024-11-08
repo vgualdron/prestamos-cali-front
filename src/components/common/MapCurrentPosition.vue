@@ -1,8 +1,8 @@
 <template>
   <div>
     <div id="map" :style="{ height: '400px', width: '100%' }"></div>
-    <button @click="send">Enviar Push</button>
-    <!-- <button @click="openInGoogleMaps">Abrir en Google Maps</button> -->
+    <!-- <button @click="send">Enviar Push</button> -->
+    <button @click="openInGoogleMaps">Abrir en Google Maps</button>
   </div>
 </template>
 
