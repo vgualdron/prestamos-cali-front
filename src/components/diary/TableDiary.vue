@@ -19,40 +19,44 @@
               <b>{{ formatHour(e.date) }}</b>
             </span>
             <template v-else-if="e.new_id">
-              <b>
-                {{ e.new_name }}
-              </b>
-              <br>
-              <span>
-                Lugar de visita: <b>{{ e.site_visit }}</b>
-              </span>
-              <br>
-              <div class="wrap-text">
-                {{ e.site_visit === 'trabajo' ? e.address_work : e.address_house }}
-                {{ e.site_visit === 'trabajo' ? e.new_districtWorkName : e.new_districtHouseName }}
+              <div :class="e.status === 'visitando' ? 'bg-green-3 q-py-xs q-px-xs' : ''">
+                <b>
+                  {{ e.new_name }}
+                </b>
+                <br>
+                <span>
+                  Lugar de visita: <b>{{ e.site_visit }}</b>
+                </span>
+                <br>
+                <div class="wrap-text">
+                  {{ e.site_visit === 'trabajo' ? e.address_work : e.address_house }}
+                  {{ e.site_visit === 'trabajo' ? e.new_districtWorkName : e.new_districtHouseName }}
+                </div>
+                <span>
+                  {{ e.new_occupation }}
+                </span>
+                <br>
+                Estado visita:
+                <q-badge :color="e.status === 'aprobado' ? 'green' : 'blue'">
+                  {{ e.status }}
+                </q-badge>
+                <br>
+                Estado nuevo:
+                <q-badge :color="e.new_status === 'aprobado' ? 'green' : 'blue'">
+                  {{ e.new_status }}
+                </q-badge>
+                <p>
+                  <q-btn
+                    v-if="type === 'visitor'"
+                    label="visita"
+                    color="black"
+                    class="q-mt-sm"
+                    icon="arrow_forward"
+                    @click="goVisit(e)"
+                    outline
+                  />
+                </p>
               </div>
-              <span>
-                {{ e.new_occupation }}
-              </span>
-              <br>
-              <q-badge :color="e.status === 'aprobado' ? 'green' : 'blue'">
-                {{ e.status }}
-              </q-badge>
-              <br>
-              <q-badge :color="e.new_status === 'aprobado' ? 'green' : 'blue'">
-                {{ e.new_status }}
-              </q-badge>
-              <p>
-                <q-btn
-                  v-if="type === 'visitor'"
-                  label="visita"
-                  color="primary"
-                  class="q-mt-sm"
-                  icon="arrow_forward"
-                  @click="goVisit(e)"
-                  outline
-                />
-              </p>
             </template>
             <template v-else-if="e.id === tdSelected.id">
               <div class="td-selected">

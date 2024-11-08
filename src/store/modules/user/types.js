@@ -9,6 +9,7 @@ export default {
     DELETE_USER: '@actions/deleteUser',
     UPDATE_PROFILE: '@actions/updateProfile',
     UPDATE_PUSH_TOKEN: '@actions/updatePushToken',
+    UPDATE_LOCATION: '@actions/updateLocation',
   },
   getters: {
   },

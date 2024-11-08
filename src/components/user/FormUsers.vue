@@ -80,6 +80,32 @@
                 </q-item>
               </template>
             </q-select>
+            <q-select
+              v-model="user.area"
+              class="q-mt-md"
+              use-input
+              clearable
+              outlined
+              input-debounce="0"
+              label="Area *"
+              :rules="rules.area"
+              :disable="disableInputs || !user.editable"
+              :options="optionsAreas"
+              option-label="name"
+              option-value="id"
+              lazy-rules
+              hide-bottom-space
+              map-options
+              emit-value
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No hay coincidencias
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
             <q-checkbox
               v-if="modal.type==='E'"
               left-label
@@ -176,6 +202,7 @@ import { mapState, mapActions } from 'vuex';
 import userTypes from '../../store/modules/user/types';
 import yardTypes from '../../store/modules/yard/types';
 import roleTypes from '../../store/modules/role/types';
+import areaTypes from '../../store/modules/area/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { removeAccents } from '../../helpers/removeAccents';
@@ -195,6 +222,7 @@ export default {
         name: '',
         phone: '',
         yard: null,
+        area: null,
         active: false,
         password: '',
         confirmPassword: '',
@@ -202,6 +230,7 @@ export default {
         changeYard: false,
       },
       optionYards: [],
+      optionsAreas: [],
       rules: {
         documentNumber: [
           (val) => (!!val) || 'El número de documento es requerido',
@@ -220,6 +249,9 @@ export default {
         ],
         sector: [
           (val) => (!!val) || 'El sector es requerido',
+        ],
+        area: [
+          (val) => (!!val) || 'La area es requerida',
         ],
         password: [
           (val) => (!val || val.length >= 5) || 'La contraseña debe tener un mínimo de 5 caracteres',
@@ -240,6 +272,9 @@ export default {
     yards(val) {
       this.optionYards = [...val];
     },
+    areas(val) {
+      this.optionsAreas = [...val];
+    },
     isEditablePassword() {
       this.user.password = '';
       this.user.confirmPassword = '';
@@ -250,6 +285,9 @@ export default {
       'status',
       'responseMessages',
     ]),
+    ...mapState(areaTypes.PATH, {
+      areas: 'areas',
+    }),
     ...mapState(yardTypes.PATH, {
       yards: 'yards',
       yardStatus: 'status',
@@ -279,6 +317,9 @@ export default {
       updateUser: userTypes.actions.UPDATE_USER,
       deleteUser: userTypes.actions.DELETE_USER,
     }),
+    ...mapActions(areaTypes.PATH, {
+      listAreas: areaTypes.actions.LIST_AREAS,
+    }),
     ...mapActions(yardTypes.PATH, {
       listYards: yardTypes.actions.LIST_YARDS,
     }),
@@ -304,6 +345,7 @@ export default {
         this.user.name = '';
         this.user.phone = '';
         this.user.yard = null;
+        this.user.area = null;
         this.user.active = true;
         this.user.changeYard = false;
         this.user.password = '';
@@ -317,13 +359,14 @@ export default {
       }
     },
     async showModal(id, user, type) {
-      await Promise.all([this.listRoles(), this.listYards({ id: (id !== null ? user.yard : 0), displayAll: 0 })]);
+      await Promise.all([this.listRoles(), this.listAreas(), this.listYards({ id: (id !== null ? user.yard : 0), displayAll: 0 })]);
       if (this.roleStatus === true && this.yardStatus === true) {
         this.user.id = id !== null ? id : null;
         this.user.documentNumber = id !== null ? user.documentNumber : '';
         this.user.name = id !== null ? user.name : '';
         this.user.phone = id !== null ? user.phone : '';
         this.user.yard = id !== null ? user.yard : null;
+        this.user.area = id !== null ? user.area : null;
         this.user.active = id !== null ? (user.active === 1) : true;
         this.user.editable = id !== null ? (user.editable === 1) : true;
         this.user.changeYard = id !== null ? (user.changeYard === 1) : false;

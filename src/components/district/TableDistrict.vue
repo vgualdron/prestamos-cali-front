@@ -86,7 +86,7 @@
             {{ props.row.order }}
             <q-popup-edit :value="props.row.order" v-slot="scope" buttons
               @input="val => save('order', val)">
-              <q-input v-model="scope.value" dense autofocus type="number"/>
+              <q-input v-model="scope.value" dense autofocus/>
             </q-popup-edit>
           </q-td>
           <q-td key="status" :props="props">
@@ -162,14 +162,14 @@ export default {
         {
           name: 'group',
           align: 'left',
-          label: 'Grupo',
+          label: 'Zona',
           field: 'group',
           sortable: true,
         },
         {
           name: 'order',
           align: 'left',
-          label: 'Orden (Reinicia a 1 por cada grupo)',
+          label: 'Orden',
           field: 'order',
           sortable: true,
         },
@@ -182,7 +182,7 @@ export default {
         },
       ],
       pagination: {
-        rowsPerPage: 30,
+        rowsPerPage: 0,
       },
       filter: '',
       isDiabledAdd: false,
@@ -230,11 +230,39 @@ export default {
         'blue',
         'purple',
         'orange',
+        'black',
+        'yellow',
+        'red',
+        'green',
+        'blue',
+        'purple',
+        'orange',
+        'black',
+        'yellow',
+        'red',
+        'green',
+        'blue',
+        'purple',
+        'orange',
       ];
       return colors[i];
     },
     getColorText(i) {
       const colors = [
+        'white',
+        'white',
+        'black',
+        'white',
+        'white',
+        'white',
+        'white',
+        'white',
+        'white',
+        'black',
+        'white',
+        'white',
+        'white',
+        'white',
         'white',
         'white',
         'black',

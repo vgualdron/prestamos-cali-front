@@ -37,4 +37,9 @@ export default {
     method: 'PUT',
     data,
   }),
+  updateLocation: (data) => http({
+    url: `${process.env.URL_API}/api/user/update-location`,
+    method: 'PUT',
+    data,
+  }),
 };

@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="row q-mt-md">
-      <div class="col-9 text-center">
+      <div class="col-12 text-center">
         <q-input
           dense
           debounce="400"
@@ -16,18 +16,6 @@
             <q-icon name="search" />
           </template>
         </q-input>
-      </div>
-      <div
-        class="col-3
-        text-center"
-      >
-        <q-btn
-          color="primary"
-          label="Agregar"
-          @click="showForm(null, 'C')"
-          :disabled="!validatedPermissions.create.status"
-          :title="validatedPermissions.create.title"
-        />
       </div>
     </div>
     <q-table
@@ -46,38 +34,20 @@
             <q-btn
               color="primary"
               field="edit"
-              icon="edit"
+              icon="location_on"
               size="xs"
               round
-              :disabled="!validatedPermissions.edit.status"
-              :title="validatedPermissions.edit.title"
-              @click="showForm(props.row.id, 'E')"
-            />
-            <q-btn
-              class="q-ml-xs"
-              color="red"
-              field="delete"
-              icon="delete"
-              size="xs"
-              round
-              :disabled="!validatedPermissions.delete.status"
-              :title="validatedPermissions.delete.title"
-              @click="showForm(props.row.id, 'D')"
+              @click="openInGoogleMaps(props.row)"
             />
           </div>
         </q-td>
       </template>
     </q-table>
-    <form-users
-      ref="formUserReference"
-      :showNotificationsRef="showNotification"
-      :listUsersMountedRef="listUsersMounted"
-    />
   </div>
 </template>
 <script>
+import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
-import FormUsers from 'components/user/FormUsers.vue';
 import userTypes from '../../store/modules/user/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
@@ -85,22 +55,12 @@ import { havePermission } from '../../helpers/havePermission';
 
 export default {
   components: {
-    FormUsers,
   },
   data() {
     return {
-      route: '/user',
+      route: '/users-location',
       name: 'Usuarios',
       columns: [
-        {
-          name: 'documentNumber',
-          label: 'Documento',
-          align: 'left',
-          field: 'documentNumber',
-          sortable: true,
-          visible: true,
-          headerStyle: 'height: 50px',
-        },
         {
           name: 'name',
           align: 'left',
@@ -128,27 +88,11 @@ export default {
           visible: true,
         },
         {
-          name: 'yard',
-          align: 'left',
-          label: 'Sector',
-          field: 'yard',
-          sortable: true,
-          visible: true,
-        },
-        {
           name: 'zone',
           align: 'left',
           label: 'Ciudad',
           field: 'zone',
           sortable: true,
-          visible: true,
-        },
-        {
-          name: 'pushToken',
-          align: 'left',
-          label: 'Token Push',
-          field: 'pushToken',
-          sortable: false,
           visible: true,
         },
         {
@@ -158,6 +102,22 @@ export default {
           field: 'areaName',
           sortable: false,
           visible: true,
+        },
+        {
+          name: 'date_location',
+          align: 'left',
+          label: 'Fecha de ubicación',
+          field: 'date_location',
+          sortable: false,
+          visible: true,
+          format: (val) => new Date(val).toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          }),
         },
         {
           name: 'actions',
@@ -171,10 +131,12 @@ export default {
       },
       filter: '',
       data: [],
+      polling: null,
     };
   },
   async mounted() {
     this.validateLogin();
+    this.pollData();
   },
   computed: {
     ...mapState(userTypes.PATH, [
@@ -183,6 +145,9 @@ export default {
       'status',
       'user',
     ]),
+    formatDate(date) {
+      return moment(date).format('DD/MM/YYYY');
+    },
     validatedPermissions() {
       const statusCreate = havePermission('user.create');
       const statusEdit = havePermission('user.update');
@@ -203,13 +168,21 @@ export default {
       };
     },
   },
+  beforeDestroy() {
+    clearInterval(this.polling);
+  },
   methods: {
     ...mapActions(userTypes.PATH, {
       listUsers: userTypes.actions.LIST_USERS,
       getUser: userTypes.actions.GET_USER,
     }),
-    openInGoogleMaps(lat, lon) {
-      const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+    async pollData() {
+      this.polling = setInterval(async () => {
+        await this.listUsersMounted();
+      }, 60000);
+    },
+    openInGoogleMaps({ latitude, longitude }) {
+      const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
       window.open(googleMapsUrl, '_blank');
     },
     async listUsersMounted() {

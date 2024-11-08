@@ -37,9 +37,9 @@
             </q-select>
             <q-input outlined v-model="name" label="Nombre *" hint="Escriba el nombre"
               lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']" />
-            <q-input outlined v-model="group" label="Grupo *" hint="Escriba el grupo" type="number"
+            <q-input outlined v-model="group" label="Zona *" hint="Escriba la zona" type="number"
               lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']" />
-            <q-input outlined v-model="order" label="Orden *" hint="Escriba el orden" type="number"
+            <q-input outlined v-model="order" label="Orden *" hint="Escriba el orden"
               lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']" />
             <q-separator />
             <div class="row text-center">

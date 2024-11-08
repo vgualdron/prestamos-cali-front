@@ -160,6 +160,13 @@ const routes = [
       { path: '', name: 'Gestionar Egresos', component: () => import('pages/Expense.vue') },
     ],
   },
+  {
+    path: '/users-location',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Ubicación de usuarios', component: () => import('pages/UsersLocation.vue') },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
