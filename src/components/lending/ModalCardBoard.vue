@@ -382,7 +382,6 @@ export default {
         const postPayments = this.getPaymentPostEndDate(payments, endDate);
         if (postPayments) {
           postPayments.forEach((payment) => {
-            console.log(payment);
             dates.push({
               date: payment.date,
               amountNequi: payment.type === 'nequi' ? parseInt(payment.amount, 10) : 0,
@@ -398,7 +397,6 @@ export default {
         const beforePayments = this.getPaymentBeforeFirstDate(payments, created_at);
         if (beforePayments) {
           beforePayments.forEach((payment) => {
-            console.log(payment);
             dates.push({
               date: payment.date,
               amountNequi: payment.type === 'nequi' ? parseInt(payment.amount, 10) : 0,
@@ -454,7 +452,6 @@ export default {
       return payments.filter((pay) => new Date(pay.date) > new Date(date) && pay.status === 'aprobado');
     },
     getPaymentBeforeFirstDate(payments, date) {
-      console.log(payments);
       return payments.filter((pay) => new Date(pay.date) < new Date(date) && pay.status === 'aprobado');
     },
     formatDate(date) {
