@@ -350,10 +350,10 @@
           />
         </div>
         <div class="div-container">
-          <p class="text-subtitle1 text-weight-bold text-center">FOTO FACEBOOK</p>
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO RED SOCIAL</p>
           <camera-photo
             :config="{
-              name: 'FOTO_FACEBOOK',
+              name: 'FOTO_RED_SOCIAL',
               storage: 'news',
               modelName: 'news',
               modelId: id
@@ -866,7 +866,7 @@ export default {
         period: this.item.period,
         status: 'open',
         new_id: this.item.id,
-        type: 'normal',
+        type: 'N',
       });
     },
     async saveDateNew(field, value) {

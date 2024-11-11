@@ -376,10 +376,10 @@
             />
           </div>
           <div class="div-container">
-            <p class="text-subtitle1 text-weight-bold text-center">FOTO FACEBOOK</p>
-            <camera-photo
+            <p class="text-subtitle1 text-weight-bold text-center">FOTO RED SOCIAL</p>
+            <upload-image
               :config="{
-                name: 'FOTO_FACEBOOK',
+                name: 'FOTO_RED_SOCIAL',
                 storage: 'news',
                 modelName: 'news',
                 modelId: id
@@ -814,6 +814,7 @@ import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import CameraPhoto from 'components/common/CameraPhoto.vue';
 import CameraVideo from 'components/common/CameraVideo.vue';
+import UploadImage from 'components/common/UploadImage.vue';
 import FormNews from 'components/review/FormNews.vue';
 import StateCases from 'components/visit/StateCases.vue';
 import { showNotifications } from '../../helpers/showNotifications';
@@ -828,6 +829,7 @@ export default {
     CameraVideo,
     StateCases,
     FormNews,
+    UploadImage,
   },
   data() {
     return {

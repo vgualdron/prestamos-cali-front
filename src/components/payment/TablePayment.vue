@@ -59,6 +59,9 @@
           <q-td key="amount" :props="props">
             {{ formatPrice(props.row.amount) }}
           </q-td>
+          <q-td key="type" :props="props">
+            {{ props.row.type }}
+          </q-td>
           <q-td key="nameDebtor" :props="props">
             {{ props.row.nameDebtor }}
           </q-td>
@@ -75,7 +78,7 @@
       v-if="showModal"
       v-model="showModal"
       :url="formatLink(itemSelected)"
-      :type="itemSelected.typeFile"
+      :type="itemSelected.type"
       :title="`Valor: ${formatPrice(itemSelected.amount)}`"
       :showBtnCancel="true"
       :showBtnAccept="true"
@@ -140,6 +143,16 @@ export default {
           align: 'center',
           style: 'width: 100px',
           field: (row) => row.amount,
+          format: (val) => `${val}`,
+          sortable: true,
+        },
+        {
+          name: 'type',
+          required: true,
+          label: 'Tipo',
+          align: 'center',
+          style: 'width: 100px',
+          field: (row) => row.type,
           format: (val) => `${val}`,
           sortable: true,
         },

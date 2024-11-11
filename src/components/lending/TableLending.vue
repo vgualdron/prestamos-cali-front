@@ -13,6 +13,7 @@
         <q-select
           outlined
           dense
+          :readonly="!validatedPermissions.showAll.status"
           v-model="listingSelected"
           :options="optionsListings"/>
       </div>
@@ -55,14 +56,14 @@
                     <q-item-label>Ver cartulina</q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item v-if="getBalance(itemSelected) <= 0" clickable v-close-popup @click="openModal('renove', props.row)">
+                <q-item v-if="getBalance(itemSelected) <= 0 && allPaidsApproved(props.row)" clickable v-close-popup @click="openModal('renove', props.row)">
                   <q-item-section>
                     <q-item-label>Renovar préstamo</q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-item v-if="props.row.has_double_interest" clickable v-close-popup @click="openModal('double', props.row)">
                   <q-item-section>
-                    <q-item-label>Cartulina doble interes</q-item-label>
+                    <q-item-label>Ver cartulina doble interes</q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup @click="openModal('history', props.row)">
@@ -70,7 +71,7 @@
                     <q-item-label>Ver Historial</q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item v-if="getBalance(itemSelected) <= 0" clickable v-close-popup @click="openModal('close', props.row)">
+                <q-item v-if="getBalance(itemSelected) <= 0 && allPaidsApproved(props.row)" clickable v-close-popup @click="openModal('close', props.row)">
                   <q-item-section>
                     <q-item-label>Cerrar préstamo</q-item-label>
                   </q-item-section>
@@ -83,6 +84,11 @@
           </q-td>
           <q-td key="name" :props="props">
             <p :title="props.row.nameDebtor" class="q-my-auto">
+              <q-badge
+                v-if="isNew(props.row)"
+                :color="props.row.type === 'N' ? 'green' : 'orange'">
+                {{ props.row.type }}
+              </q-badge>
               {{ formatText(props.row.nameDebtor, 20) }}
             </p>
           </q-td>
@@ -111,7 +117,7 @@
               <q-icon name="block" color="red" />
             </b>
             <b
-              v-else-if="getPaymentTodayNequi(props.row) && getPaymentTodayNequi(props.row).classes !== 'green'"
+              v-else-if="!allPaidsApprovedToday(props.row)"
               title="No puede aplicar pago para renovación, hasta que no se apruebe el pago de nequi.">
               <q-icon name="block" color="red" />
             </b>
@@ -131,25 +137,28 @@
             </b>
           </q-td>
           <q-td key="collection" :props="props">
-            <q-badge
-              v-if="hasPaymentToday(props.row, 'nequi')"
-              :color="getPaymentTodayNequi(props.row) ? getPaymentTodayNequi(props.row).classes : ''"
-              :title="getPaymentTodayNequi(props.row) ? getPaymentTodayNequi(props.row).observation : ''">
-              <b>{{ formatPrice(getPaymentTodayNequi(props.row).amount) }}</b>
-              <q-icon
-                v-if="getPaymentTodayNequi(props.row) && getPaymentTodayNequi(props.row).classes !== 'green'"
-                name="close"
-                size="14px"
-                class="q-ml-xs pointer-cursor"
-                @click="deletePayment(getPaymentTodayNequi(props.row))"
-              />
-            </q-badge>
-            <b
-              v-else-if="getBalance(props.row) === 0"
+            <div v-if="hasPaymentToday(props.row, 'nequi')">
+              <div v-for="payment in getPaymentsTodayNequi(props.row)" :key="payment.id"
+                class="q-ma-xs">
+                <q-badge
+                  :color="payment.id ? payment.classes : ''"
+                  :title="payment.id ? payment.observation : ''">
+                  <b>{{ formatPrice(payment.amount) }}</b>
+                  <q-icon
+                    v-if="payment.id && payment.classes !== 'green'"
+                    name="close"
+                    size="14px"
+                    class="q-ml-xs pointer-cursor"
+                    @click="deletePayment(payment)"
+                  />
+                </q-badge>
+              </div>
+            </div>
+            <b v-if="getBalance(props.row) === 0"
               title="Ya pagó todo el préstamo">
               <q-icon name="block" color="red" />
             </b>
-            <b v-else>
+            <b v-else-if="!hasPaymentToday(props.row, 'renovacion') && formatDate(props.row.created_at) !== formatDate(new Date())">
               <q-btn
                 color="primary"
                 label="$"
@@ -179,6 +188,7 @@
           </q-td>
           <q-td key="phone" :props="props">
             <q-btn-dropdown
+              v-if="hasPhones(props.row)"
               color="black"
               size="12px"
               :auto-close="false"
@@ -207,6 +217,9 @@
                 </q-item>
               </q-list>
             </q-btn-dropdown>
+            <div v-else>
+              {{ props.row.phone }}
+            </div>
           </q-td>
         </q-tr>
       </template>
@@ -280,6 +293,7 @@ import paymentTypes from '../../store/modules/payment/types';
 import userTypes from '../../store/modules/user/types';
 import newTypes from '../../store/modules/new/types';
 import { showLoading } from '../../helpers/showLoading';
+import { havePermission } from '../../helpers/havePermission';
 
 export default {
   components: {
@@ -498,6 +512,15 @@ export default {
       paymentStatus: 'status',
       paymentResponseMessages: 'responseMessages',
     }),
+    validatedPermissions() {
+      const showAll = havePermission('list.allLendings');
+      return {
+        showAll: {
+          title: showAll ? 'Ver todas las vistas' : 'No tiene permisos para ver todas las vistas',
+          status: showAll,
+        },
+      };
+    },
     optionsUsers() {
       return this.users.map(({ id, name }) => ({ label: name, value: id }));
     },
@@ -513,9 +536,10 @@ export default {
     totalNequi() {
       let total = 0;
       this.lendings.forEach((lending) => {
-        const value = this.getPaymentTodayNequi(lending);
-        if (value) {
-          total += parseInt(value.amount, 10);
+        const payments = this.getPaymentsTodayNequi(lending);
+        if (payments) {
+          const totalPayment = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+          total += parseInt(totalPayment, 10);
         }
       });
       return total;
@@ -536,8 +560,8 @@ export default {
     totalUnitsNequi() {
       let total = 0;
       this.lendings.forEach((lending) => {
-        const value = this.getPaymentTodayNequi(lending);
-        if (value) {
+        const payments = this.getPaymentsTodayNequi(lending);
+        if (payments && payments.length > 0) {
           total += 1;
         }
       });
@@ -567,6 +591,16 @@ export default {
     ...mapActions(paymentTypes.PATH, {
       deletePaid: paymentTypes.actions.DELETE_PAYMENT,
     }),
+    isNew(row) {
+      const date = new Date(row.created_at);
+      const now = new Date();
+      const maxLimit = new Date();
+      maxLimit.setDate(date.getDate() + 3);
+      return now <= maxLimit;
+    },
+    hasPhones(row) {
+      return row.family_reference_phone || row.family2_reference_phone || row.guarantor_phone;
+    },
     async pollData() {
       this.polling = setInterval(async () => {
         await this.getLendings(this.listingSelected.value);
@@ -660,7 +694,8 @@ export default {
       const total = row.has_double_interest ? this.valueWithInterest(row) : this.valueWithInterest(row);
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0) {
-        totalPayments = row.payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+        const payments = row.payments.filter((payment) => payment.status === 'aprobado' && payment.type !== 'adelanto');
+        totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
       return (total - totalPayments);
     },
@@ -677,14 +712,23 @@ export default {
       }
       return has;
     },
-    getPaymentTodayNequi(row) {
-      let pay = null;
+    allPaidsApprovedToday(row) {
+      const payments = this.getPaymentsTodayNequi(row);
+      const approved = payments.filter((payment) => payment.status === 'aprobado');
+      return approved.length === payments.length;
+    },
+    allPaidsApproved(row) {
+      const approved = row.payments.filter((payment) => payment.status === 'aprobado');
+      return approved.length === row.payments.length;
+    },
+    getPaymentsTodayNequi(row) {
+      const pays = [];
       const currentDate = moment().startOf('day');
       if (row.payments && row.payments.length > 0) {
         row.payments.forEach((payment) => {
           const datePayment = moment(payment.date).startOf('day');
           if (currentDate.isSame(datePayment, 'day') && payment.type === 'nequi') {
-            pay = { ...payment };
+            const pay = { ...payment };
             let classes = '';
             let observation = '';
             if (pay.status === 'aprobado' || pay.status === 'verificado') {
@@ -697,10 +741,11 @@ export default {
             }
             pay.classes = classes;
             pay.observation = observation;
+            pays.push(pay);
           }
         });
       }
-      return pay;
+      return pays;
     },
     getPaymentTodayRenovation(row) {
       let pay = null;
@@ -809,7 +854,6 @@ export default {
       });
     },
     async renoveLending(row) {
-      console.log(row);
       showLoading('Renovando ...', 'Por favor, espere', true);
       await this.renovateLending({
         id: row.id,

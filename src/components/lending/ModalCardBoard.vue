@@ -293,26 +293,6 @@ export default {
     whatsappLink() {
       return `https://wa.me/?text=${encodeURIComponent(this.imageData)}`;
     },
-    totalNequi() {
-      let total = 0;
-      this.lendings.forEach((lending) => {
-        const value = this.getPaymentToday(lending);
-        if (value) {
-          total += value.amount;
-        }
-      });
-      return total;
-    },
-    totalUnitsNequi() {
-      let total = 0;
-      this.lendings.forEach((lending) => {
-        const value = this.getPaymentToday(lending);
-        if (value) {
-          total += 1;
-        }
-      });
-      return total;
-    },
   },
   methods: {
     ...mapActions(lendingTypes.PATH, {
@@ -363,7 +343,12 @@ export default {
       let index = 1;
       const startCount = block === 'one' ? 1 : 16;
       const endCount = block === 'one' ? 16 : 30;
-      const { firstDate, endDate, payments } = lending;
+      const {
+        firstDate,
+        endDate,
+        payments,
+        created_at,
+      } = lending;
       const dates = [];
       const startDate = new Date(firstDate);
       startDate.setDate(startDate.getDate() + 1);
@@ -410,6 +395,22 @@ export default {
             index += 1;
           });
         }
+        const beforePayments = this.getPaymentBeforeFirstDate(payments, created_at);
+        if (beforePayments) {
+          beforePayments.forEach((payment) => {
+            console.log(payment);
+            dates.push({
+              date: payment.date,
+              amountNequi: payment.type === 'nequi' ? parseInt(payment.amount, 10) : 0,
+              amountRenovation: payment.type === 'renovacion' ? parseInt(payment.amount, 10) : 0,
+              typeNequi: payment.type === 'nequi' ? payment.type : '',
+              typeRenovation: payment.type === 'renovacion' ? payment.type : '',
+              classes: 'td-table bg-blue-4',
+              index,
+            });
+            index += 1;
+          });
+        }
       }
       return dates;
     },
@@ -417,10 +418,15 @@ export default {
       const pays = payments.filter((pay) => this.formatDate(pay.date) === this.formatDate(date) && pay.status === 'aprobado');
       if (pays) {
         let classes = 'td-table';
+        let totalAmountNequi = 0;
+        const paymentsNequi = pays.filter((pay) => pay.type === 'nequi' && pay.status === 'aprobado');
         const paymentNequi = pays.find((pay) => pay.type === 'nequi');
         const paymentRenovation = pays.find((pay) => pay.type === 'renovacion');
         const dateDay = new Date(date);
         const currentDate = new Date();
+        if (paymentsNequi && paymentsNequi.length > 0) {
+          totalAmountNequi = paymentsNequi.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+        }
         if (dateDay < currentDate) {
           classes = 'td-table bg-red-5';
         }
@@ -431,7 +437,7 @@ export default {
           classes = 'td-table bg-yellow';
         }
         return {
-          amountNequi: paymentNequi ? paymentNequi.amount : 0,
+          amountNequi: paymentNequi ? totalAmountNequi : 0,
           amountRenovation: paymentRenovation ? paymentRenovation.amount : 0,
           typeNequi: paymentNequi ? paymentNequi.type : '',
           typeRenovation: paymentRenovation ? paymentRenovation.type : '',
@@ -446,6 +452,10 @@ export default {
     },
     getPaymentPostEndDate(payments, date) {
       return payments.filter((pay) => new Date(pay.date) > new Date(date) && pay.status === 'aprobado');
+    },
+    getPaymentBeforeFirstDate(payments, date) {
+      console.log(payments);
+      return payments.filter((pay) => new Date(pay.date) < new Date(date) && pay.status === 'aprobado');
     },
     formatDate(date) {
       return moment(date).format('DD/MM/YYYY');
@@ -481,63 +491,14 @@ export default {
       const val = row.amount + (row.amount * (row.percentage / 100));
       return (val / row.amountFees);
     },
-    getAmountfeesPaid(row) {
-      const valueFee = this.feeWithInterest(row);
-      let totalPayments = 0;
-      let valueAmuntFeesPaid = 0;
-      if (row.payments && row.payments.length > 0) {
-        totalPayments = row.payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
-        valueAmuntFeesPaid = (parseInt(totalPayments, 10) / parseInt(valueFee, 10));
-      }
-      return Math.floor(valueAmuntFeesPaid);
-    },
     getBalance(row) {
       const total = this.hasDoubleInterest ? this.valueWithDoubleInterest(row) : this.valueWithInterest(row);
-
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0) {
-        totalPayments = row.payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+        const payments = row.payments.filter((payment) => payment.status === 'aprobado' && payment.type !== 'adelanto');
+        totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
       return (total - totalPayments);
-    },
-    hasPaymentToday(row) {
-      let has = false;
-      const currentDate = moment().startOf('day');
-      if (row.payments && row.payments.length > 0) {
-        row.payments.forEach((payment) => {
-          const datePayment = moment(payment.date).startOf('day');
-          if (currentDate.isSame(datePayment, 'day')) {
-            has = true;
-          }
-        });
-      }
-      return has;
-    },
-    getPaymentToday(row) {
-      let pay = null;
-      const currentDate = moment().startOf('day');
-      if (row.payments && row.payments.length > 0) {
-        row.payments.forEach((payment) => {
-          const datePayment = moment(payment.date).startOf('day');
-          if (currentDate.isSame(datePayment, 'day')) {
-            pay = payment;
-          }
-        });
-      }
-      return pay;
-    },
-    async save(field, value) {
-      this.isLoadingTable = true;
-      this.itemSelected[field] = value.value ? value.value : value;
-      await this.updateListing(this.itemSelected);
-      this.isLoadingTable = false;
-    },
-    clickRow(row) {
-      this.itemSelected = { ...row };
-    },
-    addPayment(row) {
-      this.valuePayment = this.feeWithInterest(row);
-      this.showModal = true;
     },
   },
 };
