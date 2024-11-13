@@ -210,8 +210,8 @@
             <div class="row text-center">
               <q-btn
                 v-if="showBtnDownload"
-                icon="download"
-                color="green"
+                icon="content_copy"
+                color="primary"
                 @click="captureImage" />
             </div>
           </div>
@@ -224,6 +224,7 @@
 import { mapActions } from 'vuex';
 import moment from 'moment';
 import domtoimage from 'dom-to-image';
+import { Notify } from 'quasar';
 import lendingTypes from '../../store/modules/lending/types';
 import { showLoading } from '../../helpers/showLoading';
 
@@ -325,15 +326,40 @@ export default {
       divsToExclude.forEach((div) => { div.style.display = 'none'; });
 
       const element = document.getElementById('div-container-lendings');
-      // Captura el elemento como imagen
-      domtoimage.toPng(element).then((dataUrl) => {
-        // Crear un enlace para descargar la imagen
-        const link = document.createElement('a');
-        link.href = dataUrl;
-        link.download = 'cartulina.png';
-        link.click();
+
+      domtoimage.toBlob(element).then((blob) => {
+        // Crea un ClipboardItem a partir del blob
+        const item = new ClipboardItem({ 'image/png': blob });
+
+        // Copia el item al portapapeles
+        navigator.clipboard.write([item]).then(() => {
+          Notify.create({
+            message: 'Imagen copiada en el portapapeles',
+            icon: 'content_copy',
+            color: 'green',
+            timeout: 5000,
+            textColor: 'white',
+            classes: 'glossy',
+          });
+        }).catch((err) => {
+          Notify.create({
+            message: `Error al copiar la imagen al portapapeles: ${err}`,
+            icon: 'content_copy',
+            color: 'red',
+            timeout: 5000,
+            textColor: 'white',
+            classes: 'glossy',
+          });
+        });
       }).catch((error) => {
-        console.error('Error al generar la imagen:', error);
+        Notify.create({
+          message: `Error al generar la imagen: ${error}`,
+          icon: 'content_copy',
+          color: 'red',
+          timeout: 5000,
+          textColor: 'white',
+          classes: 'glossy',
+        });
       }).finally(() => {
         // Restaura la visibilidad de los elementos
         divsToExclude.forEach((div) => { div.style.display = ''; });

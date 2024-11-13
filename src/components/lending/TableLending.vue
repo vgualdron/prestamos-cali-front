@@ -480,7 +480,7 @@ export default {
   },
   async mounted() {
     this.isLoadingTable = true;
-    await this.fetchMineListings();
+    await this.getListings();
     if (this.listings && this.listings.length > 0) {
       this.listingSelected = { ...this.optionsListings[0] };
     }
@@ -580,6 +580,7 @@ export default {
       fetchHistory: lendingTypes.actions.FETCH_HISTORY,
     }),
     ...mapActions(listingTypes.PATH, {
+      fetchListings: listingTypes.actions.FETCH_LISTINGS,
       fetchMineListings: listingTypes.actions.FETCH_MINE_LISTINGS,
     }),
     ...mapActions(userTypes.PATH, {
@@ -591,6 +592,13 @@ export default {
     ...mapActions(paymentTypes.PATH, {
       deletePaid: paymentTypes.actions.DELETE_PAYMENT,
     }),
+    async getListings() {
+      if (this.validatedPermissions.showAll.status) {
+        await this.fetchListings();
+      } else {
+        await this.fetchMineListings();
+      }
+    },
     isNew(row) {
       const date = new Date(row.created_at);
       const now = new Date();
