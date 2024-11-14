@@ -11,7 +11,7 @@
         <q-card-section class="scroll" id="div-container-lendings">
           <div class="q-mt-xs">
             <div
-              class="text-center"
+              class="text-center div-relative"
               v-for="lending in lendings"
               :key="`div-table-lending-${lending.id}`">
               <div>
@@ -81,7 +81,7 @@
                   </tbody>
                 </q-markup-table>
               </div>
-              <div class="row">
+              <div class="row div-relative">
                 <q-markup-table
                   class="markup-table col-6"
                   separator="cell"
@@ -170,14 +170,15 @@
                   </tbody>
                 </q-markup-table>
                 <img
-                  v-for="(imagen, index) in imagenes"
+                  v-for="(image, index) in images"
                   :key="index"
-                  :src="imagen.src"
-                  :style="imagen.style"
-                  class="imagen-superpuesta"
+                  :src="image.src"
+                  :style="getImageStyle(image)"
+                  class="draggable-image"
+                  @mousedown="startDrag(index, $event)"
                 />
               </div>
-              <div class="">
+              <div class="div-relative">
                 <q-markup-table
                   class="markup-table"
                   separator="cell"
@@ -213,6 +214,7 @@
                 icon="content_copy"
                 color="primary"
                 @click="captureImage" />
+              <stikers v-model="images" class="q-ml-sm" />
             </div>
           </div>
         </q-card-section>
@@ -225,7 +227,7 @@ import { mapActions } from 'vuex';
 import moment from 'moment';
 import domtoimage from 'dom-to-image';
 import { Notify } from 'quasar';
-// import Stikers from './Stikers.vue';
+import Stikers from './Stikers.vue';
 import lendingTypes from '../../store/modules/lending/types';
 import { showLoading } from '../../helpers/showLoading';
 
@@ -240,17 +242,10 @@ export default {
       valuePayment: 0,
       typeAction: 'aimage',
       imageData: '',
-      imagenes: [
-        { src: 'https://micomercio.com.co/stikers/1.jpg' },
-        { src: 'https://micomercio.com.co/stikers/2.jpg' },
-        { src: 'https://micomercio.com.co/stikers/3.jpg' },
-        { src: 'https://micomercio.com.co/stikers/4.jpg' },
-        { src: 'https://micomercio.com.co/stikers/5.jpg' },
-        { src: 'https://micomercio.com.co/stikers/6.jpg' },
-        { src: 'https://micomercio.com.co/stikers/7.jpg' },
-        { src: 'https://micomercio.com.co/stikers/8.jpg' },
-        { src: 'https://micomercio.com.co/stikers/9.jpg' },
-      ],
+      images: [],
+      isDragging: false,
+      draggedImageIndex: null,
+      startMousePosition: { x: 0, y: 0 },
     };
   },
   props: {
@@ -289,7 +284,7 @@ export default {
     },
   },
   components: {
-    // Stikers,
+    Stikers,
   },
   watch: {
   },
@@ -333,6 +328,37 @@ export default {
         }
       }
       return {};
+    },
+    getImageStyle(image) {
+      return {
+        position: 'absolute',
+        top: `${image.top}px`,
+        left: `${image.left}px`,
+        cursor: 'move',
+        transition: this.isDragging ? 'none' : 'transform 0.2s',
+      };
+    },
+    startDrag(index, event) {
+      this.isDragging = true;
+      this.draggedImageIndex = index;
+      this.startMousePosition = { x: event.clientX, y: event.clientY };
+      document.addEventListener('mousemove', this.onDrag);
+      document.addEventListener('mouseup', this.stopDrag);
+    },
+    onDrag(event) {
+      if (this.isDragging && this.draggedImageIndex !== null) {
+        const deltaX = event.clientX - this.startMousePosition.x;
+        const deltaY = event.clientY - this.startMousePosition.y;
+        this.images[this.draggedImageIndex].top += deltaY;
+        this.images[this.draggedImageIndex].left += deltaX;
+        this.startMousePosition = { x: event.clientX, y: event.clientY };
+      }
+    },
+    stopDrag() {
+      this.isDragging = false;
+      this.draggedImageIndex = null;
+      document.removeEventListener('mousemove', this.onDrag);
+      document.removeEventListener('mouseup', this.stopDrag);
     },
     captureImage() {
       const divsToExclude = document.querySelectorAll('#div-container-lendings button');
@@ -583,5 +609,14 @@ export default {
     height: 3px;
     background-color: white;
     margin: 10px 0px;
+  }
+  .div-relative {
+    position: relative
+  }
+  .img-absolute {
+    position: absolute;
+  }
+  .draggable-image {
+    object-fit: cover;
   }
 </style>
