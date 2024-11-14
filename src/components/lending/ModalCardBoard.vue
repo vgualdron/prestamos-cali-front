@@ -21,60 +21,60 @@
                   dense
                 >
                   <tbody>
-                    <tr class="tr-table bg-pink-3">
-                      <td class="td-table text-bold" colspan="2">
+                    <tr class="bg-pink-3">
+                      <td class="text-bold" colspan="2">
                         {{ getPeriod(lending) }}
                       </td>
-                      <td class="td-table text-bold" colspan="2">
+                      <td class="text-bold" colspan="2">
                         RECLAMOS {{ getParamLocalStorage('NUMERO_DE_RECLAMOS').value }}
                       </td>
                     </tr>
-                    <tr class="tr-table">
-                      <td class="td-table bg-pink-3">
+                    <tr class="">
+                      <td class="bg-pink-3">
                         FECHA INICIO
                       </td>
-                      <td class="td-table">
+                      <td class="">
                         {{ formatDate(lending.firstDate) }}
                       </td>
-                      <td class="td-table">
+                      <td class="">
                         FECHA TERMINO
                       </td>
-                      <td class="td-table">
+                      <td class="">
                       </td>
                     </tr>
-                    <tr class="tr-table">
-                      <td class="td-table bg-pink-3" colspan="1">
+                    <tr class="">
+                      <td class="bg-pink-3" colspan="1">
                         NOMBRE
                       </td>
-                      <td class="td-table text-red text-bold" colspan="3">
+                      <td class="text-red text-bold" colspan="3">
                         {{ lending.nameDebtor.toUpperCase() }}
                       </td>
                     </tr>
-                    <tr class="tr-table">
-                      <td class="td-table bg-pink-3">
+                    <tr class="">
+                      <td class="bg-pink-3">
                         VALOR
                       </td>
-                      <td class="td-table">
+                      <td class="">
                         {{ hasDoubleInterest ? formatPrice(valueWithDoubleInterest(lending)) : formatPrice(valueWithInterest(lending)) }}
                       </td>
-                      <td class="td-table">
+                      <td class="">
                         SALDO
                       </td>
-                      <td class="td-table">
+                      <td class="">
                         {{ formatPrice(getBalance(lending)) }}
                       </td>
                     </tr>
-                    <tr class="tr-table">
-                      <td class="td-table bg-pink-3">
+                    <tr class="">
+                      <td class="bg-pink-3">
                         CUOTA
                       </td>
-                      <td class="td-table">
+                      <td class="">
                         {{ formatPrice(feeWithInterest(lending)) }}
                       </td>
-                      <td class="td-table">
+                      <td class="">
                         PRESTADO
                       </td>
-                      <td class="td-table text-red text-bold">
+                      <td class="text-red text-bold">
                         {{ formatPrice(lending.amount) }}
                       </td>
                     </tr>
@@ -88,25 +88,25 @@
                   dense
                 >
                   <tbody>
-                    <tr class="tr-table">
-                      <td class="td-table bg-pink-3">
+                    <tr class="">
+                      <td class="bg-pink-3">
                         #
                       </td>
-                      <td class="td-table bg-pink-3">
+                      <td class="bg-pink-3">
                         FECHA
                       </td>
-                      <td class="td-table bg-pink-3">
+                      <td class="bg-pink-3">
                         ABONO
                       </td>
-                      <td class="td-table bg-pink-3">
-                        TIPO
+                      <td class="bg-pink-3">
+                        SALDO
                       </td>
                     </tr>
                     <tr
-                      v-for="(payment) in getDaysArray(lending, 'one')"
+                      v-for="(payment) in filterDaysArray(getDaysArray(lending), 1, 15)"
                       :key="`tr-payment-${payment.index}`"
-                      class="tr-table">
-                      <td class="td-table bg-pink-3">
+                      class="">
+                      <td class="bg-pink-3">
                         {{ payment.index }}
                       </td>
                       <td :class="payment.classes">
@@ -114,17 +114,11 @@
                       </td>
                       <td :class="payment.classes">
                         <strong v-if="payment.amountNequi > 0">
-                          {{ formatPrice(payment.amountNequi) }}
-                        </strong>
-                        <br v-if="payment.amountNequi > 0">
-                        <strong v-if="payment.amountRenovation > 0">
-                          {{ formatPrice(payment.amountRenovation) }}
+                          {{ formatPrice(parseInt(payment.amountNequi, 10) + parseInt(payment.amountRenovation, 10)) }}
                         </strong>
                       </td>
                       <td :class="payment.classes">
-                        {{ payment.typeNequi }}
-                        <br v-if="payment.amountNequi > 0">
-                        {{ payment.typeRenovation }}
+                        {{ payment.balance > 0 ? formatPrice(payment.balance) : '' }}
                       </td>
                     </tr>
                   </tbody>
@@ -135,25 +129,25 @@
                   dense
                 >
                   <tbody>
-                    <tr class="tr-table">
-                      <td class="td-table bg-pink-3">
+                    <tr class="">
+                      <td class="bg-pink-3">
                         #
                       </td>
-                      <td class="td-table bg-pink-3">
+                      <td class="bg-pink-3">
                         FECHA
                       </td>
-                      <td class="td-table bg-pink-3">
+                      <td class="bg-pink-3">
                         ABONO
                       </td>
-                      <td class="td-table bg-pink-3">
-                        TIPO
+                      <td class="bg-pink-3">
+                        SALDO
                       </td>
                     </tr>
                     <tr
-                      v-for="(payment) in getDaysArray(lending, 'two')"
+                      v-for="(payment) in filterDaysArray(getDaysArray(lending), 16, 30)"
                       :key="`tr-payment-${payment.index}`"
-                      class="tr-table">
-                      <td class="td-table bg-pink-3">
+                      class="">
+                      <td class="bg-pink-3">
                         {{ payment.index }}
                       </td>
                       <td :class="payment.classes">
@@ -161,21 +155,27 @@
                       </td>
                       <td :class="payment.classes">
                         <strong v-if="payment.amountNequi > 0">
-                          {{ formatPrice(payment.amountNequi) }}
-                        </strong>
-                        <br v-if="payment.amountNequi > 0">
-                        <strong v-if="payment.amountRenovation > 0">
-                          {{ formatPrice(payment.amountRenovation) }}
+                          {{ formatPrice(parseInt(payment.amountNequi, 10) + parseInt(payment.amountRenovation, 10)) }}
                         </strong>
                       </td>
                       <td :class="payment.classes">
-                        {{ payment.typeNequi }}
-                        <br v-if="payment.amountNequi > 0">
-                        {{ payment.typeRenovation }}
+                        {{ payment.balance > 0 ? formatPrice(payment.balance) : '' }}
                       </td>
                     </tr>
+                    <!-- <tr class="">
+                      <td colspan="4">
+                        <stikers id="stikers"></stikers>
+                      </td>
+                    </tr> -->
                   </tbody>
                 </q-markup-table>
+                <img
+                  v-for="(imagen, index) in imagenes"
+                  :key="index"
+                  :src="imagen.src"
+                  :style="imagen.style"
+                  class="imagen-superpuesta"
+                />
               </div>
               <div class="">
                 <q-markup-table
@@ -184,13 +184,13 @@
                   dense
                 >
                   <tbody>
-                    <tr class="tr-table text-red text-bold">
-                      <td class="td-table">
+                    <tr class=" text-red text-bold">
+                      <td class="">
                         {{ getParamLocalStorage('TEXTO_ATRASO_DIARIO_EN_CARTULINA').value }}
                       </td>
                     </tr>
-                    <tr class="tr-table text-red text-bold">
-                      <td class="td-table">
+                    <tr class=" text-red text-bold">
+                      <td class="">
                         {{ getParamLocalStorage('TEXTO_ATRASO_SEMANAL_EN_CARTULINA').value }}
                       </td>
                     </tr>
@@ -225,6 +225,7 @@ import { mapActions } from 'vuex';
 import moment from 'moment';
 import domtoimage from 'dom-to-image';
 import { Notify } from 'quasar';
+// import Stikers from './Stikers.vue';
 import lendingTypes from '../../store/modules/lending/types';
 import { showLoading } from '../../helpers/showLoading';
 
@@ -239,6 +240,17 @@ export default {
       valuePayment: 0,
       typeAction: 'aimage',
       imageData: '',
+      imagenes: [
+        { src: 'https://micomercio.com.co/stikers/1.jpg' },
+        { src: 'https://micomercio.com.co/stikers/2.jpg' },
+        { src: 'https://micomercio.com.co/stikers/3.jpg' },
+        { src: 'https://micomercio.com.co/stikers/4.jpg' },
+        { src: 'https://micomercio.com.co/stikers/5.jpg' },
+        { src: 'https://micomercio.com.co/stikers/6.jpg' },
+        { src: 'https://micomercio.com.co/stikers/7.jpg' },
+        { src: 'https://micomercio.com.co/stikers/8.jpg' },
+        { src: 'https://micomercio.com.co/stikers/9.jpg' },
+      ],
     };
   },
   props: {
@@ -277,6 +289,7 @@ export default {
     },
   },
   components: {
+    // Stikers,
   },
   watch: {
   },
@@ -324,6 +337,8 @@ export default {
     captureImage() {
       const divsToExclude = document.querySelectorAll('#div-container-lendings button');
       divsToExclude.forEach((div) => { div.style.display = 'none'; });
+      const divStikers = document.querySelectorAll('#stikers');
+      divStikers.forEach((div) => { div.style.display = 'none'; });
 
       const element = document.getElementById('div-container-lendings');
 
@@ -350,6 +365,7 @@ export default {
             textColor: 'white',
             classes: 'glossy',
           });
+          console.log(err);
         });
       }).catch((error) => {
         Notify.create({
@@ -360,90 +376,19 @@ export default {
           textColor: 'white',
           classes: 'glossy',
         });
+        console.log(error);
       }).finally(() => {
         // Restaura la visibilidad de los elementos
         divsToExclude.forEach((div) => { div.style.display = ''; });
+        divStikers.forEach((div) => { div.style.display = ''; });
       });
     },
-    getDaysArray(lending, block) {
-      let index = 1;
-      const startCount = block === 'one' ? 1 : 16;
-      const endCount = block === 'one' ? 16 : 30;
-      const {
-        firstDate,
-        endDate,
-        payments,
-        created_at,
-      } = lending;
-      const dates = [];
-      const startDate = new Date(firstDate);
-      startDate.setDate(startDate.getDate() + 1);
-
-      // Incrementa un día a la fecha actual hasta que sea igual a la fecha final
-      while (startDate < new Date(endDate)) {
-        const date = new Date(startDate);
-        const {
-          amountNequi,
-          amountRenovation,
-          typeNequi,
-          typeRenovation,
-          classes,
-        } = this.getPaymentByDate(payments, date);
-
-        if (index >= startCount && index < endCount) {
-          dates.push({
-            date,
-            amountNequi,
-            amountRenovation,
-            typeNequi,
-            typeRenovation,
-            classes,
-            index,
-          });
-        }
-        startDate.setDate(startDate.getDate() + 1); // Incrementa un día
-        index += 1;
-      }
-      if (block === 'two') {
-        const postPayments = this.getPaymentPostEndDate(payments, endDate);
-        if (postPayments) {
-          postPayments.forEach((payment) => {
-            dates.push({
-              date: payment.date,
-              amountNequi: payment.type === 'nequi' ? parseInt(payment.amount, 10) : 0,
-              amountRenovation: payment.type === 'renovacion' ? parseInt(payment.amount, 10) : 0,
-              typeNequi: payment.type === 'nequi' ? payment.type : '',
-              typeRenovation: payment.type === 'renovacion' ? payment.type : '',
-              classes: 'td-table bg-blue-4',
-              index,
-            });
-            index += 1;
-          });
-        }
-        const beforePayments = this.getPaymentBeforeFirstDate(payments, created_at);
-        if (beforePayments) {
-          beforePayments.forEach((payment) => {
-            dates.push({
-              date: payment.date,
-              amountNequi: payment.type === 'nequi' ? parseInt(payment.amount, 10) : 0,
-              amountRenovation: payment.type === 'renovacion' ? parseInt(payment.amount, 10) : 0,
-              typeNequi: payment.type === 'nequi' ? payment.type : '',
-              typeRenovation: payment.type === 'renovacion' ? payment.type : '',
-              classes: 'td-table bg-blue-4',
-              index,
-            });
-            index += 1;
-          });
-        }
-      }
-      return dates;
-    },
     getPaymentByDate(payments, date) {
-      const pays = payments.filter((pay) => this.formatDate(pay.date) === this.formatDate(date) && pay.status === 'aprobado');
+      const pays = payments.filter((pay) => this.formatDate(pay.date) === this.formatDate(date) && (pay.status === 'aprobado' || pay.status === 'verificado'));
       if (pays) {
-        let classes = 'td-table';
+        let classes = '';
         let totalAmountNequi = 0;
-        const paymentsNequi = pays.filter((pay) => pay.type === 'nequi' && pay.status === 'aprobado');
+        const paymentsNequi = pays.filter((pay) => pay.type === 'nequi');
         const paymentNequi = pays.find((pay) => pay.type === 'nequi');
         const paymentRenovation = pays.find((pay) => pay.type === 'renovacion');
         const dateDay = new Date(date);
@@ -452,13 +397,13 @@ export default {
           totalAmountNequi = paymentsNequi.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
         }
         if (dateDay < currentDate) {
-          classes = 'td-table bg-red-5';
+          classes = 'bg-red-5';
         }
         if ((paymentNequi && paymentNequi.amount > 0) || (paymentRenovation && paymentRenovation.amount > 0)) {
-          classes = 'td-table bg-blue-4';
+          classes = 'bg-blue-4';
         }
         if (date.getDay() === 0) {
-          classes = 'td-table bg-yellow';
+          classes = 'bg-yellow';
         }
         return {
           amountNequi: paymentNequi ? totalAmountNequi : 0,
@@ -471,14 +416,14 @@ export default {
       return {
         amountNequi: 0,
         amountRenovation: 0,
-        classes: date.getDay() === 0 ? 'td-table bg-yellow' : 'td-table',
+        classes: date.getDay() === 0 ? 'bg-yellow' : '',
       };
     },
     getPaymentPostEndDate(payments, date) {
-      return payments.filter((pay) => new Date(pay.date) > new Date(date) && pay.status === 'aprobado');
+      return payments.filter((pay) => new Date(pay.date) > new Date(date) && (pay.status === 'aprobado' || pay.status === 'verificado'));
     },
     getPaymentBeforeFirstDate(payments, date) {
-      return payments.filter((pay) => new Date(pay.date) < new Date(date) && pay.status === 'aprobado');
+      return payments.filter((pay) => new Date(pay.date) < new Date(date) && (pay.status === 'aprobado' || pay.status === 'verificado'));
     },
     formatDate(date) {
       return moment(date).format('DD/MM/YYYY');
@@ -518,10 +463,109 @@ export default {
       const total = this.hasDoubleInterest ? this.valueWithDoubleInterest(row) : this.valueWithInterest(row);
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0) {
-        const payments = row.payments.filter((payment) => payment.status === 'aprobado' && payment.type !== 'adelanto');
+        const payments = row.payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
       return (total - totalPayments);
+    },
+    getAmountfeesPaid(row) {
+      const valueFee = this.feeWithInterest(row);
+      let totalPayments = 0;
+      let valueAmuntFeesPaid = 0;
+      if (row.payments && row.payments.length > 0) {
+        const payments = row.payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
+        totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+        valueAmuntFeesPaid = (parseInt(totalPayments, 10) / parseInt(valueFee, 10));
+      }
+      return Math.floor(valueAmuntFeesPaid);
+    },
+    filterDaysArray(array, min, max) {
+      return array.filter((item) => item.index >= min && item.index <= max);
+    },
+    getDaysArray(row) {
+      const feesPaid = this.getAmountfeesPaid(row);
+      let value = this.hasDoubleInterest ? this.valueWithDoubleInterest(row) : this.valueWithInterest(row);
+      let index = 1;
+      let indexFeesPaid = 1;
+      const startCount = 1;
+      const endCount = 30;
+      const {
+        firstDate,
+        endDate,
+        payments,
+        created_at,
+      } = row;
+      const dates = [];
+      const startDate = new Date(firstDate);
+      startDate.setDate(startDate.getDate() + 1);
+
+      // Incrementa un día a la fecha actual hasta que sea igual a la fecha final
+      while (startDate < new Date(endDate)) {
+        const date = new Date(startDate);
+        const {
+          amountNequi,
+          amountRenovation,
+          typeNequi,
+          typeRenovation,
+          classes,
+        } = this.getPaymentByDate(payments, date);
+
+        if (index >= startCount && index < endCount) {
+          let c = classes;
+          value -= (parseInt(amountNequi, 10) + parseInt(amountRenovation, 10));
+          if (indexFeesPaid <= feesPaid && classes !== 'bg-yellow') {
+            c = 'bg-blue-4';
+            indexFeesPaid += 1;
+          }
+          dates.push({
+            date,
+            amountNequi,
+            amountRenovation,
+            typeNequi,
+            typeRenovation,
+            classes: c,
+            index,
+            balance: value,
+          });
+        }
+        startDate.setDate(startDate.getDate() + 1); // Incrementa un día
+        index += 1;
+      }
+      const postPayments = this.getPaymentPostEndDate(payments, endDate);
+      if (postPayments) {
+        postPayments.forEach((payment) => {
+          value -= parseInt(payment.amount, 10);
+          dates.push({
+            date: payment.date,
+            amountNequi: payment.type === 'nequi' ? parseInt(payment.amount, 10) : 0,
+            amountRenovation: payment.type === 'renovacion' ? parseInt(payment.amount, 10) : 0,
+            typeNequi: payment.type === 'nequi' ? payment.type : '',
+            typeRenovation: payment.type === 'renovacion' ? payment.type : '',
+            classes: 'bg-blue-4',
+            index,
+            balance: value,
+          });
+          index += 1;
+        });
+      }
+      const beforePayments = this.getPaymentBeforeFirstDate(payments, created_at);
+      if (beforePayments) {
+        beforePayments.forEach((payment) => {
+          value -= parseInt(payment.amount, 10);
+          dates.push({
+            date: payment.date,
+            amountNequi: payment.type === 'nequi' ? parseInt(payment.amount, 10) : 0,
+            amountRenovation: payment.type === 'renovacion' ? parseInt(payment.amount, 10) : 0,
+            typeNequi: payment.type === 'nequi' ? payment.type : '',
+            typeRenovation: payment.type === 'renovacion' ? payment.type : '',
+            classes: 'bg-blue-4',
+            index,
+            balance: value,
+          });
+          index += 1;
+        });
+      }
+      return dates;
     },
   },
 };

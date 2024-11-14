@@ -145,6 +145,12 @@
                   :title="payment.id ? payment.observation : ''">
                   <b>{{ formatPrice(payment.amount) }}</b>
                   <q-icon
+                    v-if="payment.id && payment.observation"
+                    name="comment"
+                    size="14px"
+                    class="q-ml-xs pointer-cursor"
+                  />
+                  <q-icon
                     v-if="payment.id && payment.classes !== 'green'"
                     name="close"
                     size="14px"
@@ -537,8 +543,9 @@ export default {
       let total = 0;
       this.lendings.forEach((lending) => {
         const payments = this.getPaymentsTodayNequi(lending);
-        if (payments) {
-          const totalPayment = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+        const approved = payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
+        if (approved && approved.length > 0) {
+          const totalPayment = approved.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
           total += parseInt(totalPayment, 10);
         }
       });
@@ -561,7 +568,8 @@ export default {
       let total = 0;
       this.lendings.forEach((lending) => {
         const payments = this.getPaymentsTodayNequi(lending);
-        if (payments && payments.length > 0) {
+        const approved = payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
+        if (approved && approved.length > 0) {
           total += 1;
         }
       });
@@ -693,7 +701,8 @@ export default {
       let totalPayments = 0;
       let valueAmuntFeesPaid = 0;
       if (row.payments && row.payments.length > 0) {
-        totalPayments = row.payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+        const payments = row.payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
+        totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
         valueAmuntFeesPaid = (parseInt(totalPayments, 10) / parseInt(valueFee, 10));
       }
       return Math.floor(valueAmuntFeesPaid);
@@ -702,7 +711,7 @@ export default {
       const total = row.has_double_interest ? this.valueWithInterest(row) : this.valueWithInterest(row);
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0) {
-        const payments = row.payments.filter((payment) => payment.status === 'aprobado' && payment.type !== 'adelanto');
+        const payments = row.payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
       return (total - totalPayments);
@@ -722,11 +731,11 @@ export default {
     },
     allPaidsApprovedToday(row) {
       const payments = this.getPaymentsTodayNequi(row);
-      const approved = payments.filter((payment) => payment.status === 'aprobado');
+      const approved = payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
       return approved.length === payments.length;
     },
     allPaidsApproved(row) {
-      const approved = row.payments.filter((payment) => payment.status === 'aprobado');
+      const approved = row.payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
       return approved.length === row.payments.length;
     },
     getPaymentsTodayNequi(row) {
@@ -741,6 +750,7 @@ export default {
             let observation = '';
             if (pay.status === 'aprobado' || pay.status === 'verificado') {
               classes = 'green';
+              observation = pay.observation;
             } else if (pay.status === 'rechazado') {
               classes = 'red';
               observation = pay.observation;

@@ -21,16 +21,6 @@
                 lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']" />
             </div>
           </div>
-          <div v-if="type ==='nequi'" class="row q-mt-md">
-            <div class="col-12 text-center">
-              <q-input
-                outlined
-                v-model="amountAdvancement"
-                label="Valor de adelanto proximo prestamo *"
-                hint="Escriba el valor del adelanto" type="number"
-                step="1000" />
-            </div>
-          </div>
           <div class="row q-mt-md" v-if="amount > 0 && this.type === 'nequi'">
             <div class="col-12 text-center">
               <p class="text-subtitle1 text-weight-bold text-center">AGREGAR FOTO DE SOPORTE DE PAGO</p>
@@ -73,7 +63,6 @@ export default {
   data() {
     return {
       amount: 0,
-      amountAdvancement: 0,
       idPayment: 0,
     };
   },
@@ -144,17 +133,6 @@ export default {
     async saveAddPayment() {
       const { id } = this.row;
       showLoading('Guardando ...', 'Por favor, espere', true);
-      if (this.amountAdvancement > 0) {
-        this.addPayment({
-          lending_id: id,
-          amount: this.amountAdvancement,
-          date: moment().format('YYYY-MM-DD HH:mm:ss'),
-          observation: null,
-          type: 'adelanto',
-          status: this.type === 'nequi' ? 'creado' : 'aprobado',
-          file_id: this.type === 'nequi' ? this.file.id : null,
-        });
-      }
       await this.addPayment({
         lending_id: id,
         amount: this.amount,
