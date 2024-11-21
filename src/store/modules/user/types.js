@@ -3,6 +3,7 @@ export default {
   actions: {
     LIST_USERS: '@actions/listUsers',
     LIST_USERS_BY_NAME_ROLE: '@actions/listUsersByNameRole',
+    LIST_USERS_BY_AREA: '@actions/listUsersByArea',
     GET_USER: '@actions/getUser',
     SAVE_USER: '@actions/saveUser',
     UPDATE_USER: '@actions/updateUser',

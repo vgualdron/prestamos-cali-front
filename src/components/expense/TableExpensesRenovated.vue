@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="row q-mt-md">
-      <div class="col-10 text-center">
+      <div class="col-11 text-center">
         <q-input
           debounce="400"
           color="primary"
@@ -18,7 +18,7 @@
         </q-input>
       </div>
       <div
-        class="col-2
+        class="col-1
         text-center"
       >
         <q-btn
@@ -28,13 +28,6 @@
           color="primary"
           title="Click para refrescar la tabla"
           @click="listMounted">
-        </q-btn>
-        <q-btn
-          icon="add"
-          class="q-ml-sm"
-          color="primary"
-          title="Click para agregar un nuevo egreso"
-          @click="showModal = true">
         </q-btn>
       </div>
     </div>
@@ -63,16 +56,11 @@
         </q-td>
       </template>
     </q-table>
-    <form-expense
-      v-if="showModal"
-      v-model="showModal"
-    />
   </div>
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
 import UploadImage from 'components/common/UploadImage.vue';
-import FormExpense from 'components/expense/FormExpense.vue';
 import expenseTypes from '../../store/modules/expense/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
@@ -82,7 +70,6 @@ import { formatDateWithTime } from '../../helpers/formatDate';
 export default {
   components: {
     UploadImage,
-    FormExpense,
   },
   data() {
     return {
@@ -203,7 +190,7 @@ export default {
   },
   methods: {
     ...mapActions(expenseTypes.PATH, {
-      listExpenses: expenseTypes.actions.LIST_EXPENSES,
+      listExpensesByItem: expenseTypes.actions.LIST_EXPENSES_BY_ITEM,
       updateExpense: expenseTypes.actions.UPDATE_EXPENSE,
     }),
     formatPrice(val) {
@@ -221,10 +208,7 @@ export default {
     },
     async listMounted() {
       showLoading('Cargando ...', 'Por favor, espere', true);
-      await this.listExpenses({
-        status: ['creado', 'borrador'],
-        items: [1],
-      });
+      await this.listExpensesByItem(1);
       if (this.status === false) {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
         this.data = [];

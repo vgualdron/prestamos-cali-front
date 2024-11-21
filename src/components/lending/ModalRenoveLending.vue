@@ -4,7 +4,7 @@
       <q-card style="width: 700px; max-width: 80vw;">
         <q-card-section class="row items-center q-pb-none">
           <div class="text-h6">
-            Renovar préstamo
+            Renovar préstamo a {{ row.nameDebtor }}
           </div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
@@ -21,7 +21,7 @@
               <q-form class="q-gutter-md">
                 <q-input
                   outlined
-                  v-model.trim="inputValue.date"
+                  v-model.trim="date"
                   label="Fecha *"
                   lazy-rules
                   type="date"
@@ -32,57 +32,112 @@
                 />
                 <q-input
                   outlined
-                  v-model.trim="inputValue.amount"
-                  label="Valor *"
+                  :value="formatPrice(amount)"
+                  label-color="blue"
+                  bg-color="white"
+                  label="Prestamo actual *"
                   lazy-rules
-                  :rules="[val => val && val > 0 && val < row.amount || `El valor debe ser mayor a $100.000 y menor o igual a ${formatPrice(row.amount)}`]"
-                  type="number"
+                  :rules="[(val) => (!!val) || '']"
                   hide-bottom-space
                   autocomplete="off"
-                  :disable="inputValue.isOlder"
-                  :max="row.amount"
+                  readonly
                 />
-                <q-checkbox
-                  left-label
-                  v-model="inputValue.isOlder"
-                  text-h6
-                  color="green"
-                  label="Va a renovar por un monto adicional mayor?"
-                />
-                <q-select
-                  v-if="inputValue.isOlder"
-                  label="Valor adicional a solicitar *"
+                <q-input
                   outlined
-                  v-model.trim="inputValue.amountNew"
-                  :disable="!inputValue.isOlder"
-                  :options="[{
-                    label: '$100.000',
-                    value: 100000,
-                  },
-                  {
-                    label: '$200.000',
-                    value: 200000,
-                  },
-                  {
-                    label: '$300.000',
-                    value: 300000,
-                  }]"/>
+                  :value="formatPrice(getBalance(row))"
+                  label-color="blue"
+                  bg-color="white"
+                  label="Saldo actual*"
+                  lazy-rules
+                  hide-bottom-space
+                  autocomplete="off"
+                  readonly
+                />
+                <div class="row">
+                  <q-option-group
+                    class="col-10"
+                    label="Desea subir, bajar o mantener el mismo valor de credito?"
+                    v-model="action"
+                    :options="optionsActions"
+                    color="primary"
+                    inline
+                  />
+                  <q-btn
+                    v-if="!question"
+                    color="primary"
+                    icon="no_encryption"
+                    class="col-2"
+                    title="Solicitar permiso para aumentar el valor del prestamo"
+                    @click="saveQuestionLending(row)"
+                  />
+                  <q-btn
+                    v-else-if="question.status === 'pendiente'"
+                    color="primary"
+                    class="col-2"
+                    icon="refresh"
+                    title="Actualizar el estado de la solicitud de permiso para aumentar el valor del prestamo"
+                    @click="getStatusQuestionLending(row)"
+                  />
+                  <q-icon
+                    v-else-if="question.status === 'rechazado'"
+                    name="block"
+                    color="red"
+                    class="q-mt-sm cursor-pointer"
+                    :title="question.value"/>
+                  <q-icon
+                    v-else-if="question.status === 'aprobado'"
+                    name="check"
+                    color="green"
+                    class="q-mt-sm cursor-pointer"
+                    :title="question.value ? formatPrice(question.value) : ''"/>
+                </div>
+                <q-select
+                  :readonly="action === 'equal'"
+                  label="Valor a solicitar *"
+                  outlined
+                  v-model.trim="amountNew"
+                  :options="optionsValues"/>
+                <q-input
+                  outlined
+                  :value="formatPrice(repayment)"
+                  label="Devolución *"
+                  label-color="green"
+                  bg-color="white"
+                  lazy-rules
+                  hide-bottom-space
+                  autocomplete="off"
+                  readonly
+                />
               </q-form>
-              Total valor a renovar: {{ formatPrice(totalAmount) }}
+              <div class="q-mt-sm">
+                Valor nuevo a pagar:
+                {{ formatPrice(valueWithInterest({ amount: amountNew ? amountNew.value : 0, percentage: row.percentage })) }}
+              </div>
             </div>
           </div>
-          <!-- <div class="row text-center">
-            <img :src="formatLink(row)" class="inherit-width"/>
-          </div> -->
         </q-card-section>
         <q-separator />
         <div class="row text-center q-pa-md">
           <q-btn
+            label="Transferir"
+            color="primary"
+            class="col q-ml-sm"
+            :disabled="!date || amount <= 0 || amount > row.amount"
+            @click="renoveLending('transfer')"
+          />
+          <q-btn
+            label="Adelantar"
+            color="primary"
+            class="col q-ml-sm"
+            :disabled="!date || amount <= 0 || amount > row.amount"
+            @click="renoveLending('repayment')"
+          />
+          <q-btn
             label="Renovar"
             color="primary"
             class="col q-ml-sm"
-            :disabled="!inputValue.date || inputValue.amount <= 0 || inputValue.amount > row.amount"
-            @click="renoveLending"
+            :disabled="repayment > 0"
+            @click="renoveLending('renove')"
           />
         </div>
       </q-card>
@@ -90,18 +145,56 @@
   </div>
 </template>
 <script>
+import { mapState, mapActions } from 'vuex';
 import moment from 'moment';
-// import { showLoading } from '../../helpers/showLoading';
+import { showLoading } from '../../helpers/showLoading';
+import questionTypes from '../../store/modules/question/types';
 
 export default {
   data() {
     return {
-      inputValue: {
-        date: new Date().toISOString().split('T')[0],
-        amount: 0,
-        amountNew: 0,
-        isOlder: false,
+      date: new Date().toISOString().split('T')[0],
+      amount: 0,
+      amountNew: null,
+      action: 'equal',
+      optionsValues: [],
+      optionsActions: [{
+        label: 'Mantener credito',
+        value: 'equal',
       },
+      {
+        label: 'Bajar credito',
+        value: 'down',
+      },
+      {
+        label: 'Subir credito',
+        value: 'up',
+        disable: true,
+      }],
+      optionsValuesTmp: [{
+        label: '$100.000',
+        value: 100000,
+      },
+      {
+        label: '$200.000',
+        value: 200000,
+      },
+      {
+        label: '$300.000',
+        value: 300000,
+      },
+      {
+        label: '$400.000',
+        value: 400000,
+      },
+      {
+        label: '$500.000',
+        value: 500000,
+      },
+      {
+        label: '$600.000',
+        value: 600000,
+      }],
     };
   },
   props: {
@@ -114,14 +207,40 @@ export default {
       required: true,
     },
   },
-  mounted() {
-    this.inputValue.amount = this.row.amount;
+  async mounted() {
+    this.optionsValues = [...this.optionsValuesTmp];
+    this.amount = this.row.amount;
+    this.amountNew = this.optionsValues.find((option) => option.value === this.row.amount);
     if (this.row.has_double_interest) {
       const [date] = new Date(this.row.doubleDate).toISOString().split('T');
-      this.inputValue.date = date;
+      this.date = date;
     }
+    await this.getStatusQuestionLending(this.row);
+  },
+  watch: {
+    action(value) {
+      console.log(value);
+      const options = [...this.optionsValuesTmp];
+      if (value === 'down') {
+        this.optionsValues = options.filter((option) => option.value <= this.amount && option.value >= this.getBalance(this.row));
+      } else if (value === 'up') {
+        let max = 1000000;
+        if (this.question && this.question.status === 'aprobado' && this.question.value > 0) {
+          max = parseInt(this.question.value, 10);
+        }
+        this.optionsValues = options.filter((option) => option.value >= this.amount && option.value <= max);
+      } else {
+        this.optionsValues = options.filter((option) => option.value === this.amount);
+      }
+      [this.amountNew] = this.optionsValues;
+    },
   },
   computed: {
+    ...mapState(questionTypes.PATH, {
+      question: 'question',
+      questionStatus: 'status',
+      questionResponseMessages: 'responseMessages',
+    }),
     showDialog: {
       get() {
         return this.value;
@@ -132,13 +251,51 @@ export default {
     },
     totalAmount() {
       let newValue = 0;
-      if (this.inputValue.amountNew) {
-        newValue = this.inputValue.amountNew.value;
+      if (this.amountNew) {
+        newValue = this.amountNew.value;
       }
-      return parseInt(this.inputValue.amount, 10) + parseInt(newValue, 10);
+      return parseInt(this.amountNew, 10) + parseInt(newValue, 10);
+    },
+    repayment() {
+      let total = 0;
+      if (this.amountNew) {
+        total = parseInt(this.amountNew.value, 10) - parseInt(this.getBalance(this.row), 10);
+      }
+      return total;
     },
   },
   methods: {
+    ...mapActions(questionTypes.PATH, {
+      saveQuestion: questionTypes.actions.SAVE_QUESTION,
+      getStatusQuestion: questionTypes.actions.GET_STATUS_QUESTION,
+    }),
+    async saveQuestionLending(row) {
+      showLoading('Solicitando ...', 'Por favor, espere', true);
+      const data = {
+        model_id: row.id,
+        model_name: 'lendings',
+        area_id: 1, // nequi
+        type: 'renovacion',
+        status: 'pendiente',
+      };
+      await this.saveQuestion(data);
+      await this.getStatusQuestionLending(row);
+      this.$q.loading.hide();
+    },
+    async getStatusQuestionLending(row) {
+      showLoading('Consultando ...', 'Por favor, espere', true);
+      const data = {
+        model_id: row.id,
+        model_name: 'lendings',
+        area_id: 1, // nequi
+        type: 'renovacion',
+      };
+      await this.getStatusQuestion(data);
+      if (this.question && this.question.status === 'aprobado') {
+        this.optionsActions[2].disable = false;
+      }
+      this.$q.loading.hide();
+    },
     formatLink(row) {
       if (row.file) {
         return `${process.env.URL_FILES}${row.file.url}`;
@@ -156,12 +313,36 @@ export default {
         maximumFractionDigits: 0,
       }).format(val);
     },
-    renoveLending() {
-      const data = {
-        ...this.row,
-        ...this.inputValue,
-      };
-      this.$emit('renoveLending', data);
+    valueWithInterest(row) {
+      const val = row.amount + (row.amount * (row.percentage / 100));
+      return (val);
+    },
+    valueWithDoubleInterest(row) {
+      const val = row.amount + (row.amount * ((row.percentage * 2) / 100));
+      return (val);
+    },
+    getBalance(row) {
+      const total = row.hasDoubleInterest ? this.valueWithDoubleInterest(row) : this.valueWithInterest(row);
+      let totalPayments = 0;
+      if (row.payments && row.payments.length > 0) {
+        const payments = row.payments.filter((payment) => payment.type === 'nequi' && (payment.status === 'aprobado' || payment.status === 'verificado'));
+        totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+      }
+      return (total - totalPayments);
+    },
+    renoveLending(action) {
+      const {
+        id,
+      } = this.row;
+
+      this.$emit('renoveLending', {
+        id,
+        date: this.date,
+        amount: this.amountNew.value,
+        repayment: this.repayment,
+        action,
+        status: 'renovated',
+      });
       this.showDialog = false;
     },
   },

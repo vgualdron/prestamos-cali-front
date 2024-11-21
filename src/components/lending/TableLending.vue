@@ -49,31 +49,62 @@
       <template v-slot:body="props">
         <q-tr :props="props" @click="clickRow(props.row)">
           <q-td key="actions" :props="props">
-            <q-btn-dropdown v-if="props.row.status === 'open'" class="q-px-none" color="black" outline>
+            <q-btn-dropdown
+              v-if="props.row.status === 'open'"
+              class="q-px-none"
+              :color="getBalance(props.row) <= 0 && allPaidsApproved(props.row) ? 'orange' : 'black'"
+              outline>
               <q-list>
-                <q-item clickable v-close-popup @click="openModal('normal', props.row)">
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="openModal('normal', props.row)">
                   <q-item-section>
                     <q-item-label>Ver cartulina</q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item v-if="getBalance(itemSelected) <= 0 && allPaidsApproved(props.row)" clickable v-close-popup @click="openModal('renove', props.row)">
+                <q-item
+                  v-if="getBalance(props.row) <= 0 && allPaidsApproved(props.row)"
+                  clickable
+                  v-close-popup
+                  @click="openModal('renove', props.row)">
                   <q-item-section>
                     <q-item-label>Renovar préstamo</q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item v-if="props.row.has_double_interest" clickable v-close-popup @click="openModal('double', props.row)">
+                <q-item
+                  v-if="props.row.has_double_interest"
+                  clickable
+                  v-close-popup
+                  @click="openModal('double', props.row)">
                   <q-item-section>
                     <q-item-label>Ver cartulina doble interes</q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item clickable v-close-popup @click="openModal('history', props.row)">
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="openModal('history', props.row)">
                   <q-item-section>
                     <q-item-label>Ver Historial</q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item v-if="isCloseable(props.row)" clickable v-close-popup @click="openModal('close', props.row)">
+                <q-item
+                  v-if="isCloseable(props.row)"
+                  clickable
+                  v-close-popup
+                  @click="openModal('close', props.row)">
                   <q-item-section>
                     <q-item-label>Cerrar préstamo</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  v-if="props.row.file_url"
+                  clickable
+                  v-close-popup
+                  @click="openModal('preview', props.row)">
+                  <q-item-section>
+                    <q-item-label>Ver voucher de renovación</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -108,9 +139,18 @@
             {{ props.row.amountFees }}
           </q-td>
           <q-td key="renovation" :props="props">
-            <b v-if="hasPaymentToday(props.row, 'renovacion')">
-              {{ formatPrice(getPaymentTodayRenovation(props.row).amount) }}
-            </b>
+            <template v-if="hasPaymentToday(props.row, 'renovacion')">
+              <q-badge
+                v-if="props.row.status === 'renovated'"
+                color="green">
+                <b>
+                  {{ formatPrice(getPaymentTodayRenovation(props.row).amount) }}
+                </b>
+              </q-badge>
+              <b v-else>
+                {{ formatPrice(getPaymentTodayRenovation(props.row).amount) }}
+              </b>
+            </template>
             <b
               v-else-if="getBalance(props.row) > props.row.amount"
               title="No puede aplicar pago para renovación, si no ha pagado almenos los intereses.">
@@ -285,6 +325,13 @@
       :row="itemSelected"
       @renoveLending="renoveLending"
     />
+    <modal-preview-file
+      v-if="showModalPreview"
+      v-model="showModalPreview"
+      :url="formatUrl(itemSelected.file_url)"
+      :type="'image'"
+      :showBtnCancel="false"
+      :showBtnCopy="false"/>
   </div>
 </template>
 <script>
@@ -292,6 +339,7 @@ import { mapState, mapActions } from 'vuex';
 import moment from 'moment';
 import ModalAddPayment from 'components/payment/ModalAddPayment.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
+import ModalPreviewFile from 'components/common/ModalPreviewFile.vue';
 import ModalRenoveLending from './ModalRenoveLending.vue';
 import listingTypes from '../../store/modules/listing/types';
 import lendingTypes from '../../store/modules/lending/types';
@@ -306,6 +354,7 @@ export default {
     ModalAddPayment,
     ModalCardBoard,
     ModalRenoveLending,
+    ModalPreviewFile,
   },
   data() {
     return {
@@ -477,6 +526,7 @@ export default {
       showModalRenove: false,
       showModalHistory: false,
       polling: null,
+      showModalPreview: false,
     };
   },
   watch: {
@@ -600,6 +650,9 @@ export default {
     ...mapActions(paymentTypes.PATH, {
       deletePaid: paymentTypes.actions.DELETE_PAYMENT,
     }),
+    formatUrl(url) {
+      return `${process.env.URL_FILES}${url}`;
+    },
     async getListings() {
       if (this.validatedPermissions.showAll.status) {
         await this.fetchListings();
@@ -614,8 +667,6 @@ export default {
         const payments = row.payments.filter((payment) => payment.type === 'nequi' && (payment.status === 'aprobado' || payment.status === 'verificado'));
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
-      console.log(total);
-      console.log(totalPayments);
       return (total === totalPayments);
     },
     isNew(row) {
@@ -700,8 +751,13 @@ export default {
       return (val);
     },
     valueWithDoubleInterest(row) {
-      const val = row.amount + (row.amount * ((row.percentage * 2) / 100));
-      return (val);
+      const total = row.amount + (row.amount * ((row.percentage * 2) / 100));
+      let totalPayments = 0;
+      if (row.payments && row.payments.length > 0) {
+        const payments = row.payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
+        totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+      }
+      return (total - totalPayments);
     },
     feeWithInterest(row) {
       const val = row.amount + (row.amount * (row.percentage / 100));
@@ -825,6 +881,8 @@ export default {
         this.showModalCardBoardDouble = true;
       } else if (action === 'renove') {
         this.showModalRenove = true;
+      } else if (action === 'preview') {
+        this.showModalPreview = true;
       } else if (action === 'history') {
         showLoading('consultando ...', 'Por favor, espere', true);
         await this.fetchHistory(row.new_id);
@@ -884,13 +942,7 @@ export default {
     },
     async renoveLending(row) {
       showLoading('Renovando ...', 'Por favor, espere', true);
-      await this.renovateLending({
-        id: row.id,
-        date: row.date,
-        amount: row.amount,
-        amountNew: row.amountNew ? row.amountNew.value : 0,
-        status: 'renovated',
-      });
+      await this.renovateLending({ ...row });
       await this.getLendings(this.listingSelected.value);
       this.$q.loading.hide();
     },

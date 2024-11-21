@@ -9,6 +9,10 @@ export default {
     url: `${process.env.URL_API}/api/user/list-by-role-name/${data.status}/${data.roleName}/${data.city}`,
     method: 'GET',
   }),
+  listByArea: (data) => http({
+    url: `${process.env.URL_API}/api/user/list-by-area/${data.area}`,
+    method: 'GET',
+  }),
   get: (id) => http({
     url: `${process.env.URL_API}/api/user/get/${id}`,
     method: 'GET',

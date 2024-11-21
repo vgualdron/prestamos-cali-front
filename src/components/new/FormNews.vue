@@ -26,15 +26,6 @@
             @submit="onSubmit"
             class="q-gutter-md"
           >
-            <!-- <q-input
-              v-model.trim="user.documentNumber"
-              label="Número de Documento"
-              outlined
-              lazy-rules
-              :disable="disableInputs"
-              type="number"
-              hide-bottom-space
-            /> -->
             <q-input
               outlined
               v-model.trim="user.name"
@@ -85,6 +76,7 @@
               </template>
             </q-select>
             <q-select
+              v-if="type !== 'V'"
               v-model="user.sector"
               class="q-mt-md"
               use-input
@@ -114,6 +106,7 @@
               </template>
             </q-select>
             <q-select
+              v-if="type !== 'V'"
               v-model="user.district"
               class="q-mt-md"
               use-input
@@ -142,6 +135,7 @@
               </template>
             </q-select>
             <q-input
+              v-if="type !== 'V'"
               outlined
               v-model.trim="user.address"
               label="Dirección *"
@@ -152,6 +146,7 @@
               autocomplete="off"
             />
             <q-input
+              v-if="type !== 'V'"
               outlined
               v-model.trim="user.occupation"
               label="Ocupación *"
@@ -161,6 +156,7 @@
               hide-bottom-space
             />
             <q-select
+              v-if="type !== 'V'"
               v-model="user.userSend"
               class="q-mt-md"
               use-input
@@ -187,7 +183,7 @@
               </template>
             </q-select>
             <q-separator />
-            <div class="row text-center">
+            <div v-if="type !== 'V'" class="row text-center">
               <q-btn label="cancelar"
                 type="reset"
                 color="primary"
@@ -203,6 +199,27 @@
               />
             </div>
           </q-form>
+          <q-btn
+            v-if="question.status === 'aprobado' && type === 'V'"
+            label="Autorizado, haz click para guardar y continuar con el proceso"
+            color="green"
+            class="col q-ml-sm q-mt-sm"
+            @click="onSubmitQuestion('save')"
+          />
+          <q-btn
+            v-if="question.status === 'pendiente' && type === 'V'"
+            label="Pendiente de autorización, haz click para cerrar el cuadro"
+            color="orange"
+            class="col q-ml-sm q-mt-sm"
+            @click="onSubmitQuestion('close')"
+          />
+          <q-btn
+            v-if="question.status === 'rechazado' && type === 'V'"
+            label="No fué autorizado, haz click para eliminar el registro"
+            color="red"
+            class="col q-ml-sm q-mt-sm"
+            @click="onSubmitQuestion('delete')"
+          />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -215,6 +232,7 @@ import userTypes from '../../store/modules/user/types';
 import zoneTypes from '../../store/modules/zone/types';
 import yardTypes from '../../store/modules/yard/types';
 import districtTypes from '../../store/modules/district/types';
+import questionTypes from '../../store/modules/question/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { removeAccents } from '../../helpers/removeAccents';
@@ -344,6 +362,11 @@ export default {
       districtStatus: 'status',
       districtResponseMessages: 'responseMessages',
     }),
+    ...mapState(questionTypes.PATH, {
+      question: 'question',
+      questionStatus: 'status',
+      questionResponseMessages: 'responseMessages',
+    }),
     showDialog: {
       get() {
         return this.value;
@@ -353,7 +376,7 @@ export default {
       },
     },
     disableInputs() {
-      return this.type === 'D';
+      return this.type === 'D' || this.type === 'V';
     },
   },
   methods: {
@@ -370,11 +393,25 @@ export default {
       listYardsByZone: yardTypes.actions.LIST_YARDS_BY_ZONE,
     }),
     ...mapActions(userTypes.PATH, {
-      listUsers: userTypes.actions.LIST_USERS,
+      listUsersByRoleName: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
     }),
     ...mapActions(districtTypes.PATH, {
       listDistricts: districtTypes.actions.FETCH_DISTRICTS,
     }),
+    ...mapActions(questionTypes.PATH, {
+      getStatusQuestion: questionTypes.actions.GET_STATUS_QUESTION,
+    }),
+    async getStatusQuestionNew(row) {
+      if (this.type === 'V') {
+        const data = {
+          model_id: row.id,
+          model_name: 'news',
+          area_id: 3, // nuevos
+          type: 'nuevo',
+        };
+        await this.getStatusQuestion(data);
+      }
+    },
     changeCity(cityValue) {
       this.user.sector = null;
       this.user.district = null;
@@ -392,11 +429,15 @@ export default {
     async initData() {
       await Promise.all([
         this.listZones(),
-        this.listUsers({ displayAll: 0 }),
+        this.getStatusQuestionNew(this.obj),
+        await this.listUsersByRoleName({ roleName: 'Secretaria', status: 1, city: 0 }),
       ]);
       if (this.zoneStatus === true && this.userStatus === true) {
         this.title = this.type === 'C' ? 'Agregar' : (this.type === 'E' ? 'Editar' : 'Eliminar');
         this.user = this.type === 'C' ? { ...this.copyUser } : { ...this.obj };
+        if (this.type === 'V') {
+          this.title = 'Ver estado de aprobación';
+        }
         this.$q.loading.hide();
       } else {
         this.$q.loading.hide();
@@ -421,7 +462,27 @@ export default {
       }
       if (this.status === true) {
         this.user = { ...this.copyUser };
-        this.listNews(['borrador', 'creado']);
+        this.listNews(['borrador', 'creado', 'pendiente']);
+        this.showDialog = false;
+      }
+
+      this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
+      this.$q.loading.hide();
+    },
+    async onSubmitQuestion(action) {
+      if (action === 'close') {
+        this.showDialog = false;
+      } else if (action === 'save') {
+        showLoading('Actualizando ...', 'Por favor, espere', true);
+        this.user.status = 'creado';
+        await this.updateNew(this.user);
+      } else if (action === 'delete') {
+        showLoading('Eliminando ...', 'Por favor, espere', true);
+        await this.deleteNew(this.user.id);
+      }
+      if (this.status === true) {
+        this.user = { ...this.copyUser };
+        this.listNews(['borrador', 'creado', 'pendiente']);
         this.showDialog = false;
       }
 

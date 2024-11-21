@@ -85,7 +85,6 @@
           :icon="icon"
           :label="label"
         >
-
           <EssentialLink
             v-for="({ name, route }) in options"
             :key="name"
@@ -98,13 +97,13 @@
           />
         </q-expansion-item>
       </q-list>
-      <map-current-position />
       <q-item-label header class="text-grey-8 text-center q-mt-md">
         {{ versionApp }}
       </q-item-label>
       <q-item-label header class="text-grey-8 text-center q-mt-md">
         {{ tokenPush }}
       </q-item-label>
+      <map-current-position />
     </q-drawer>
 
     <q-page-container>

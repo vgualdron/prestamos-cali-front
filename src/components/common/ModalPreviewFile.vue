@@ -17,7 +17,7 @@
         </q-card-section>
         <q-separator />
         <q-card-section
-          v-if="showBtnCancel || showBtnAccept"
+          v-if="showBtnCancel || showBtnAccept || showBtnCopy"
           class="row items-center float-right">
           <div class="row text-center">
             <q-input
@@ -46,6 +46,11 @@
               class="col q-ml-sm"
               :disabled="showInputValue && !inputValue"
               @click="clickBtnAccept"/>
+            <q-btn
+              v-if="showBtnCopy"
+              icon="content_copy"
+              color="primary"
+              @click="copyImageToClipboard(url)" />
           </div>
         </q-card-section>
       </q-card>
@@ -91,7 +96,7 @@ export default {
     },
     title: {
       type: String,
-      default: 'Previsualizdor',
+      default: 'Previsualizador',
     },
     showBtnAccept: {
       type: Boolean,
@@ -99,6 +104,11 @@ export default {
       default: false,
     },
     showBtnCancel: {
+      type: Boolean,
+      require: false,
+      default: false,
+    },
+    showBtnCopy: {
       type: Boolean,
       require: false,
       default: false,
@@ -125,6 +135,48 @@ export default {
     },
   },
   methods: {
+    async copyImageToClipboard(imageUrl) {
+      try {
+        const img = new Image();
+        img.crossOrigin = 'anonymous'; // Asegura el acceso a imágenes externas
+        img.src = imageUrl;
+
+        img.onload = async () => {
+          // Crear un canvas y dibujar la imagen
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+
+          // Convertir el canvas a Blob
+          canvas.toBlob(async (blob) => {
+            const clipboardItem = new ClipboardItem({ 'image/png': blob });
+            await navigator.clipboard.write([clipboardItem]);
+
+            this.$q.notify({
+              type: 'positive',
+              message: '¡Imagen copiada al portapapeles!',
+            });
+          });
+        };
+
+        img.onerror = () => {
+          this.$q.notify({
+            type: 'negative',
+            message: 'Error al cargar la imagen.',
+          });
+        };
+      } catch (error) {
+        console.error('Error copiando la imagen:', error);
+
+        this.$q.notify({
+          type: 'negative',
+          message: 'No se pudo copiar la imagen al portapapeles.',
+        });
+      }
+    },
     clickBtnAccept() {
       this.$emit('clickBtnAccept', this.inputValue);
     },

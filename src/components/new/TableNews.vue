@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="row q-mt-md">
-      <div class="col-9 text-center">
+      <div class="col-10 text-center">
         <q-input
           debounce="400"
           color="primary"
@@ -18,9 +18,17 @@
         </q-input>
       </div>
       <div
-        class="col-3
+        class="col-2
         text-center"
       >
+        <q-btn
+          round
+          icon="refresh"
+          class="q-mr-md"
+          color="primary"
+          title="Click para refrescar la tabla"
+          @click="listNewsMounted">
+        </q-btn>
         <q-btn
           color="primary"
           label="Agregar"
@@ -78,7 +86,24 @@
               @click="changeStatus(props.row, 'CS')"
               round
             />
+            <q-btn
+              v-if="props.row.status === 'pendiente'"
+              class="q-ml-xs"
+              color="primary"
+              field="changeStatus"
+              icon="search"
+              size="xs"
+              @click="showForm(props.row, 'V')"
+              round
+            />
           </div>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-status="props">
+        <q-td :props="props">
+          <q-badge :color="props.row.status === 'pendiente' ? 'orange' : 'blue'">
+            {{  props.row.status }}
+          </q-badge>
         </q-td>
       </template>
     </q-table>
@@ -268,7 +293,7 @@ export default {
     }),
     async listNewsMounted() {
       showLoading('Cargando ...', 'Por favor, espere', true);
-      await this.listNews(['borrador', 'creado']);
+      await this.listNews(['borrador', 'creado', 'pendiente']);
       if (this.status === false) {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
         this.data = [];

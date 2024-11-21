@@ -21,7 +21,7 @@
                   dense
                 >
                   <tbody>
-                    <tr class="bg-pink-3">
+                    <tr class="bg-green-3">
                       <td class="text-bold" colspan="2">
                         {{ getPeriod(lending) }}
                       </td>
@@ -30,11 +30,11 @@
                       </td>
                     </tr>
                     <tr class="">
-                      <td class="bg-pink-3">
+                      <td class="bg-green-3">
                         FECHA INICIO
                       </td>
                       <td class="">
-                        {{ formatDate(lending.firstDate) }}
+                        {{ hasDoubleInterest ? formatDate(lending.doubleDate) : formatDate(lending.firstDate) }}
                       </td>
                       <td class="">
                         FECHA TERMINO
@@ -43,7 +43,7 @@
                       </td>
                     </tr>
                     <tr class="">
-                      <td class="bg-pink-3" colspan="1">
+                      <td class="bg-green-3" colspan="1">
                         NOMBRE
                       </td>
                       <td class="text-red text-bold" colspan="3">
@@ -51,7 +51,7 @@
                       </td>
                     </tr>
                     <tr class="">
-                      <td class="bg-pink-3">
+                      <td class="bg-green-3">
                         VALOR
                       </td>
                       <td class="">
@@ -65,7 +65,7 @@
                       </td>
                     </tr>
                     <tr class="">
-                      <td class="bg-pink-3">
+                      <td class="bg-green-3">
                         CUOTA
                       </td>
                       <td class="">
@@ -89,16 +89,16 @@
                 >
                   <tbody>
                     <tr class="">
-                      <td class="bg-pink-3">
+                      <td class="bg-green-3">
                         #
                       </td>
-                      <td class="bg-pink-3">
+                      <td class="bg-green-3">
                         FECHA
                       </td>
-                      <td class="bg-pink-3">
+                      <td class="bg-green-3">
                         ABONO
                       </td>
-                      <td class="bg-pink-3">
+                      <td class="bg-green-3">
                         SALDO
                       </td>
                     </tr>
@@ -106,14 +106,14 @@
                       v-for="(payment) in filterDaysArray(getDaysArray(lending), 1, 15)"
                       :key="`tr-payment-${payment.index}`"
                       class="">
-                      <td class="bg-pink-3">
+                      <td class="bg-green-3">
                         {{ payment.index }}
                       </td>
                       <td :class="payment.classes">
                         {{ formatDate(payment.date) }}
                       </td>
                       <td :class="payment.classes">
-                        <strong v-if="payment.amountNequi > 0">
+                        <strong v-if="payment.amountNequi > 0 || payment.amountRenovation > 0">
                           {{ formatPrice(parseInt(payment.amountNequi, 10) + parseInt(payment.amountRenovation, 10)) }}
                         </strong>
                       </td>
@@ -130,16 +130,16 @@
                 >
                   <tbody>
                     <tr class="">
-                      <td class="bg-pink-3">
+                      <td class="bg-green-3">
                         #
                       </td>
-                      <td class="bg-pink-3">
+                      <td class="bg-green-3">
                         FECHA
                       </td>
-                      <td class="bg-pink-3">
+                      <td class="bg-green-3">
                         ABONO
                       </td>
-                      <td class="bg-pink-3">
+                      <td class="bg-green-3">
                         SALDO
                       </td>
                     </tr>
@@ -147,26 +147,21 @@
                       v-for="(payment) in filterDaysArray(getDaysArray(lending), 16, 30)"
                       :key="`tr-payment-${payment.index}`"
                       class="">
-                      <td class="bg-pink-3">
+                      <td class="bg-green-3">
                         {{ payment.index }}
                       </td>
                       <td :class="payment.classes">
                         {{ formatDate(payment.date) }}
                       </td>
                       <td :class="payment.classes">
-                        <strong v-if="payment.amountNequi > 0">
+                        <strong v-if="payment.amountNequi > 0 || payment.amountRenovation > 0">
                           {{ formatPrice(parseInt(payment.amountNequi, 10) + parseInt(payment.amountRenovation, 10)) }}
                         </strong>
                       </td>
                       <td :class="payment.classes">
-                        {{ payment.balance > 0 ? formatPrice(payment.balance) : '' }}
+                        {{ formatPrice(payment.balance) }}
                       </td>
                     </tr>
-                    <!-- <tr class="">
-                      <td colspan="4">
-                        <stikers id="stikers"></stikers>
-                      </td>
-                    </tr> -->
                   </tbody>
                 </q-markup-table>
                 <img
@@ -200,7 +195,7 @@
               </div>
               <div class="row text-center q-py-md">
                 <q-btn
-                  v-if="showBtnApplyDoubleInterest && !lending.has_double_interest"
+                  v-if="isDoubleInterest(lending)"
                   class="q-ml-sm"
                   label="Aplicar doble interés"
                   color="primary"
@@ -308,6 +303,24 @@ export default {
       updateLending: lendingTypes.actions.UPDATE_LENDING,
       deleteLending: lendingTypes.actions.DELETE_LENDING,
     }),
+    isDoubleInterest(row) {
+      return this.showBtnApplyDoubleInterest && !row.has_double_interest && this.daysSinceGivenDate(row.firstDate) > 13 && row.amount >= this.getBalance(row);
+    },
+    daysSinceGivenDate(givenDate) {
+      // Asegúrate de que la fecha dada esté en formato Date
+      givenDate = new Date(givenDate);
+      // Obtén la fecha actual
+      const today = new Date();
+      // Establece la hora de ambos objetos en medianoche para evitar problemas con la hora
+      today.setHours(0, 0, 0, 0);
+      givenDate.setHours(0, 0, 0, 0);
+      // Calcula la diferencia en milisegundos
+      const differenceInMillis = today - givenDate;
+      // Convierte la diferencia a días
+      const millisecondsInADay = 24 * 60 * 60 * 1000;
+      const daysPassed = Math.floor(differenceInMillis / millisecondsInADay);
+      return daysPassed;
+    },
     getPeriod(row) {
       moment.locale('es');
       const format = 'dddd';
@@ -423,10 +436,10 @@ export default {
           totalAmountNequi = paymentsNequi.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
         }
         if (dateDay < currentDate) {
-          classes = 'bg-red-5';
+          classes = 'bg-red-3';
         }
         if ((paymentNequi && paymentNequi.amount > 0) || (paymentRenovation && paymentRenovation.amount > 0)) {
-          classes = 'bg-blue-4';
+          classes = 'bg-orange-4';
         }
         if (date.getDay() === 0) {
           classes = 'bg-yellow';
@@ -449,7 +462,7 @@ export default {
       return payments.filter((pay) => new Date(pay.date) > new Date(date) && (pay.status === 'aprobado' || pay.status === 'verificado'));
     },
     getPaymentBeforeFirstDate(payments, date) {
-      return payments.filter((pay) => new Date(pay.date) < new Date(date) && (pay.status === 'aprobado' || pay.status === 'verificado'));
+      return payments.filter((pay) => (new Date(pay.date) <= new Date(date) || this.formatDate(pay.date) === this.formatDate(date)) && (pay.status === 'aprobado' || pay.status === 'verificado'));
     },
     formatDate(date) {
       return moment(date).format('DD/MM/YYYY');
@@ -478,8 +491,13 @@ export default {
       return (val);
     },
     valueWithDoubleInterest(row) {
-      const val = row.amount + (row.amount * ((row.percentage * 2) / 100));
-      return (val);
+      const total = row.amount + (row.amount * ((row.percentage * 2) / 100));
+      let totalPayments = 0;
+      if (row.payments && row.payments.length > 0) {
+        const payments = row.payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
+        totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+      }
+      return (total - totalPayments);
     },
     feeWithInterest(row) {
       const val = row.amount + (row.amount * (row.percentage / 100));
@@ -488,7 +506,7 @@ export default {
     getBalance(row) {
       const total = this.hasDoubleInterest ? this.valueWithDoubleInterest(row) : this.valueWithInterest(row);
       let totalPayments = 0;
-      if (row.payments && row.payments.length > 0) {
+      if (row.payments && row.payments.length > 0 && !this.hasDoubleInterest) {
         const payments = row.payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
@@ -519,14 +537,41 @@ export default {
         firstDate,
         endDate,
         payments,
-        created_at,
+        doubleDate,
       } = row;
       const dates = [];
-      const startDate = new Date(firstDate);
+      let dateInit = firstDate;
+      if (this.hasDoubleInterest) {
+        dateInit = doubleDate;
+      }
+      const startDate = new Date(dateInit);
       startDate.setDate(startDate.getDate() + 1);
+      let finishDate = new Date(endDate);
+      if (this.hasDoubleInterest) {
+        finishDate = new Date(dateInit);
+        finishDate.setDate(finishDate.getDate() + 21);
+      }
+
+      const beforePayments = this.getPaymentBeforeFirstDate(payments, firstDate);
+      if (beforePayments) {
+        beforePayments.forEach((payment) => {
+          value -= parseInt(payment.amount, 10);
+          dates.push({
+            date: payment.date,
+            amountNequi: payment.type === 'nequi' ? parseInt(payment.amount, 10) : 0,
+            amountRenovation: payment.type === 'renovacion' ? parseInt(payment.amount, 10) : 0,
+            typeNequi: payment.type === 'nequi' ? payment.type : '',
+            typeRenovation: payment.type === 'renovacion' ? payment.type : '',
+            classes: 'bg-blue-4',
+            index,
+            balance: value,
+          });
+          // index += 1;
+        });
+      }
 
       // Incrementa un día a la fecha actual hasta que sea igual a la fecha final
-      while (startDate < new Date(endDate)) {
+      while (startDate < finishDate) {
         const date = new Date(startDate);
         const {
           amountNequi,
@@ -539,7 +584,7 @@ export default {
         if (index >= startCount && index < endCount) {
           let c = classes;
           value -= (parseInt(amountNequi, 10) + parseInt(amountRenovation, 10));
-          if (indexFeesPaid <= feesPaid && classes !== 'bg-yellow') {
+          if (indexFeesPaid <= feesPaid && classes !== 'bg-yellow' && !this.hasDoubleInterest) {
             c = 'bg-blue-4';
             indexFeesPaid += 1;
           }
@@ -567,24 +612,7 @@ export default {
             amountRenovation: payment.type === 'renovacion' ? parseInt(payment.amount, 10) : 0,
             typeNequi: payment.type === 'nequi' ? payment.type : '',
             typeRenovation: payment.type === 'renovacion' ? payment.type : '',
-            classes: 'bg-blue-4',
-            index,
-            balance: value,
-          });
-          index += 1;
-        });
-      }
-      const beforePayments = this.getPaymentBeforeFirstDate(payments, created_at);
-      if (beforePayments) {
-        beforePayments.forEach((payment) => {
-          value -= parseInt(payment.amount, 10);
-          dates.push({
-            date: payment.date,
-            amountNequi: payment.type === 'nequi' ? parseInt(payment.amount, 10) : 0,
-            amountRenovation: payment.type === 'renovacion' ? parseInt(payment.amount, 10) : 0,
-            typeNequi: payment.type === 'nequi' ? payment.type : '',
-            typeRenovation: payment.type === 'renovacion' ? payment.type : '',
-            classes: 'bg-blue-4',
+            classes: 'bg-orange-4',
             index,
             balance: value,
           });

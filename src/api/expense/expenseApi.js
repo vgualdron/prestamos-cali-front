@@ -1,8 +1,12 @@
 import { http } from '../../helpers/http';
 
 export default {
-  list: (status) => http({
-    url: `${process.env.URL_API}/api/expense/list/${status}`,
+  list: ({ status, items }) => http({
+    url: `${process.env.URL_API}/api/expense/${status}/exclude-items/${items}`,
+    method: 'GET',
+  }),
+  listByItem: (item) => http({
+    url: `${process.env.URL_API}/api/expense/item/${item}`,
     method: 'GET',
   }),
   get: (id) => http({

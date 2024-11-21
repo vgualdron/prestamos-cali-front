@@ -1,12 +1,12 @@
 import types from './types';
-import expenseApi from '../../../api/expense/expenseApi';
+import questionApi from '../../../api/question/questionApi';
 
 export default {
-  async [types.actions.LIST_EXPENSES]({ commit }, payload) {
+  async [types.actions.LIST_QUESTIONS]({ commit }, payload) {
     try {
-      const response = await expenseApi.list(payload);
+      const response = await questionApi.list(payload);
       commit(types.mutations.SET_STATUS, true);
-      commit(types.mutations.SET_EXPENSES, response.data.data);
+      commit(types.mutations.SET_QUESTIONS, response.data.data);
     } catch (error) {
       commit(types.mutations.SET_STATUS, false);
       if (error.message !== 'Network Error') {
@@ -21,11 +21,11 @@ export default {
       }
     }
   },
-  async [types.actions.LIST_EXPENSES_BY_ITEM]({ commit }, item) {
+  async [types.actions.GET_QUESTION]({ commit }, id) {
     try {
-      const response = await expenseApi.listByItem(item);
+      const response = await questionApi.get(id);
       commit(types.mutations.SET_STATUS, true);
-      commit(types.mutations.SET_EXPENSES, response.data.data);
+      commit(types.mutations.SET_QUESTION, response.data.data);
     } catch (error) {
       commit(types.mutations.SET_STATUS, false);
       if (error.message !== 'Network Error') {
@@ -40,11 +40,11 @@ export default {
       }
     }
   },
-  async [types.actions.GET_EXPENSE]({ commit }, id) {
+  async [types.actions.GET_STATUS_QUESTION]({ commit }, payload) {
     try {
-      const response = await expenseApi.get(id);
+      const response = await questionApi.getStatus(payload);
       commit(types.mutations.SET_STATUS, true);
-      commit(types.mutations.SET_EXPENSE, response.data.data);
+      commit(types.mutations.SET_QUESTION, response.data.data);
     } catch (error) {
       commit(types.mutations.SET_STATUS, false);
       if (error.message !== 'Network Error') {
@@ -59,28 +59,9 @@ export default {
       }
     }
   },
-  async [types.actions.SAVE_EXPENSE]({ commit }, payload) {
+  async [types.actions.SAVE_QUESTION]({ commit }, payload) {
     try {
-      const response = await expenseApi.save(payload);
-      commit(types.mutations.SET_STATUS, true);
-      commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
-    } catch (error) {
-      commit(types.mutations.SET_STATUS, false);
-      if (error.message !== 'Network Error') {
-        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
-      } else {
-        commit(types.mutations.SET_RESPONSE_MESSAGES, [
-          {
-            text: 'Error de red',
-            detail: 'Intente conectarse a otra red de internet',
-          },
-        ]);
-      }
-    }
-  },
-  async [types.actions.UPDATE_EXPENSE]({ commit }, payload) {
-    try {
-      const response = await expenseApi.update(payload);
+      const response = await questionApi.save(payload);
       commit(types.mutations.SET_STATUS, true);
       commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
     } catch (error) {
@@ -97,9 +78,28 @@ export default {
       }
     }
   },
-  async [types.actions.DELETE_EXPENSE]({ commit }, payload) {
+  async [types.actions.UPDATE_QUESTION]({ commit }, payload) {
     try {
-      const response = await expenseApi.delete(payload);
+      const response = await questionApi.update(payload);
+      commit(types.mutations.SET_STATUS, true);
+      commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
+    } catch (error) {
+      commit(types.mutations.SET_STATUS, false);
+      if (error.message !== 'Network Error') {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
+      } else {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, [
+          {
+            text: 'Error de red',
+            detail: 'Intente conectarse a otra red de internet',
+          },
+        ]);
+      }
+    }
+  },
+  async [types.actions.DELETE_QUESTION]({ commit }, payload) {
+    try {
+      const response = await questionApi.delete(payload);
       commit(types.mutations.SET_STATUS, true);
       commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
     } catch (error) {

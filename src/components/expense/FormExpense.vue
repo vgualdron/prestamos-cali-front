@@ -202,7 +202,7 @@ export default {
       addExpense: expenseTypes.actions.SAVE_EXPENSE,
     }),
     ...mapActions(userTypes.PATH, {
-      listUsersByNameRole: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
+      listUsersByArea: userTypes.actions.LIST_USERS_BY_AREA,
     }),
     ...mapActions(areaTypes.PATH, {
       listAreas: areaTypes.actions.LIST_AREAS,
@@ -216,15 +216,13 @@ export default {
     async changeArea(value) {
       showLoading('Cargando ...', 'Por favor, espere', true);
       await this.listItems(value);
+      await this.listUsersByArea({
+        area: value,
+      });
       this.$q.loading.hide();
     },
     async changeItem(value) {
       showLoading('Cargando ...', 'Por favor, espere', true);
-      await this.listUsersByNameRole({
-        roleName: 'Secretaria',
-        status: 1,
-        city: 0,
-      });
       console.log(value);
       this.$q.loading.hide();
     },

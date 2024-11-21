@@ -19,6 +19,7 @@ import report, { name as reportName } from './report';
 import expense, { name as expenseName } from './expense';
 import area, { name as areaName } from './area';
 import item, { name as itemName } from './item';
+import question, { name as questionName } from './question';
 
 export default {
   [homeName]: home,
@@ -42,4 +43,5 @@ export default {
   [expenseName]: expense,
   [areaName]: area,
   [itemName]: item,
+  [questionName]: question,
 };
