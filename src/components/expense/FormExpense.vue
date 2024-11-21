@@ -97,6 +97,7 @@
               v-model="amount"
               label="Valor *"
               lazy-rules
+              step="10000"
               :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
               type="number"/>
             <q-input
@@ -198,7 +199,7 @@ export default {
   },
   methods: {
     ...mapActions(expenseTypes.PATH, {
-      fetchExpenses: expenseTypes.actions.LIST_EXPENSES,
+      listExpenses: expenseTypes.actions.LIST_EXPENSES,
       addExpense: expenseTypes.actions.SAVE_EXPENSE,
     }),
     ...mapActions(userTypes.PATH, {
@@ -248,7 +249,10 @@ export default {
       this.showNotification(this.expenseResponseMessages, this.expenseStatus, 'top-right', 5000);
       this.$q.loading.hide();
       this.showDialog = false;
-      await this.fetchExpenses(['creado', 'borrador']);
+      await this.listExpenses({
+        status: ['creado', 'borrador'],
+        items: [1],
+      });
     },
   },
 };

@@ -23,4 +23,8 @@ export default {
     url: `${process.env.URL_API}/api/listing/${id}`,
     method: 'DELETE',
   }),
+  fetchDelivery: ({ idList, date }) => http({
+    url: `${process.env.URL_API}/api/listing/delivery/listing/${idList}/date/${date}`,
+    method: 'GET',
+  }),
 };

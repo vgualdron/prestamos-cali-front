@@ -11,6 +11,15 @@ export default {
       commit(types.mutations.SET_LISTINGS, error.response.data);
     }
   },
+  async [types.actions.FETCH_DELIVERY]({ commit }, payload) {
+    try {
+      const response = await listingApi.fetchDelivery(payload);
+      commit(types.mutations.SET_DELIVERY, response.data.data);
+    } catch (error) {
+      console.error(error);
+      commit(types.mutations.SET_DELIVERY, error.response.data);
+    }
+  },
   async [types.actions.FETCH_MINE_LISTINGS]({ commit }, payload) {
     try {
       const response = await listingApi.fetchMineListings(payload);

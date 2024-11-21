@@ -3,5 +3,6 @@ export default function () {
     listings: [],
     responseMessages: [],
     status: false,
+    delivery: {},
   };
 }

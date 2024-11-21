@@ -258,6 +258,7 @@ export default {
         occupation: '',
         userSend: null,
         observation: '',
+        status: 'borrador',
       },
       copyUser: {
         id: null,
@@ -271,6 +272,7 @@ export default {
         occupation: '',
         userSend: null,
         observation: '',
+        status: 'borrador',
       },
       rules: {
         documentNumber: [

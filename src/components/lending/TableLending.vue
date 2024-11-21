@@ -8,6 +8,13 @@
       title="Click para refrescar la tabla"
       @click="getLendings(listingSelected.value)">
     </q-btn>
+    <q-btn
+      icon="assignment_returned"
+      class="q-ml-md"
+      color="primary"
+      title="Click para revisar la entrega"
+      @click="showModalDelivery = true">
+    </q-btn>
     <div class="row q-mt-md">
       <div class="col-6 text-center">
         <q-select
@@ -325,6 +332,11 @@
       :row="itemSelected"
       @renoveLending="renoveLending"
     />
+    <modal-delivery
+      v-if="showModalDelivery"
+      v-model="showModalDelivery"
+      :list="listingSelected"
+    />
     <modal-preview-file
       v-if="showModalPreview"
       v-model="showModalPreview"
@@ -341,6 +353,7 @@ import ModalAddPayment from 'components/payment/ModalAddPayment.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
 import ModalPreviewFile from 'components/common/ModalPreviewFile.vue';
 import ModalRenoveLending from './ModalRenoveLending.vue';
+import ModalDelivery from './ModalDelivery.vue';
 import listingTypes from '../../store/modules/listing/types';
 import lendingTypes from '../../store/modules/lending/types';
 import paymentTypes from '../../store/modules/payment/types';
@@ -355,6 +368,7 @@ export default {
     ModalCardBoard,
     ModalRenoveLending,
     ModalPreviewFile,
+    ModalDelivery,
   },
   data() {
     return {
@@ -527,6 +541,7 @@ export default {
       showModalHistory: false,
       polling: null,
       showModalPreview: false,
+      showModalDelivery: false,
     };
   },
   watch: {
