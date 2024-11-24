@@ -75,7 +75,7 @@
     <cv
       v-model="showModalCv"
       v-if="showModalCv"
-      :id="newSelected.id" />
+      :row="newSelected" />
   </div>
 </template>
 <script>

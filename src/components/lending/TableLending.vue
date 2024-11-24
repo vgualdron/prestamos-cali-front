@@ -106,12 +106,21 @@
                   </q-item-section>
                 </q-item>
                 <q-item
-                  v-if="props.row.file_url"
+                  v-if="props.row.file_url_r"
                   clickable
                   v-close-popup
-                  @click="openModal('preview', props.row)">
+                  @click="openModal('previewR', props.row) && props.row.type === 'R'">
                   <q-item-section>
                     <q-item-label>Ver voucher de renovación</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  v-if="props.row.file_url_n && props.row.type === 'N'"
+                  clickable
+                  v-close-popup
+                  @click="openModal('previewN', props.row)">
+                  <q-item-section>
+                    <q-item-label>Ver voucher</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -338,9 +347,16 @@
       :list="listingSelected"
     />
     <modal-preview-file
-      v-if="showModalPreview"
-      v-model="showModalPreview"
-      :url="formatUrl(itemSelected.file_url)"
+      v-if="showModalPreviewR"
+      v-model="showModalPreviewR"
+      :url="formatUrl(itemSelected.file_url_r)"
+      :type="'image'"
+      :showBtnCancel="false"
+      :showBtnCopy="false"/>
+    <modal-preview-file
+      v-if="showModalPreviewN"
+      v-model="showModalPreviewN"
+      :url="formatUrl(itemSelected.file_url_n)"
       :type="'image'"
       :showBtnCancel="false"
       :showBtnCopy="false"/>
@@ -540,7 +556,8 @@ export default {
       showModalRenove: false,
       showModalHistory: false,
       polling: null,
-      showModalPreview: false,
+      showModalPreviewR: false,
+      showModalPreviewN: false,
       showModalDelivery: false,
     };
   },
@@ -896,8 +913,10 @@ export default {
         this.showModalCardBoardDouble = true;
       } else if (action === 'renove') {
         this.showModalRenove = true;
-      } else if (action === 'preview') {
-        this.showModalPreview = true;
+      } else if (action === 'previewR') {
+        this.showModalPreviewR = true;
+      } else if (action === 'previewN') {
+        this.showModalPreviewN = true;
       } else if (action === 'history') {
         showLoading('consultando ...', 'Por favor, espere', true);
         await this.fetchHistory(row.new_id);

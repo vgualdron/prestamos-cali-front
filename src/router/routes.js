@@ -164,7 +164,7 @@ const routes = [
     path: '/expense-renovated',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Agregar voucher a renovados', component: () => import('pages/ExpenseRenovated.vue') },
+      { path: '', name: 'Agregar voucher a renovaciones', component: () => import('pages/ExpenseRenovated.vue') },
     ],
   },
   {

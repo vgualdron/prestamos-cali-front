@@ -1,35 +1,10 @@
 <template>
   <div class="q-pa-md">
-    <q-dialog
-      v-model="showDialog"
-      persistent
-      full-width
-    >
-      <q-card>
-        <q-card-section class="row q-pb-none">
-          <div class="text-h6">HOJA DE VIDA</div>
-          <q-space />
-          <q-btn
-            icon="close"
-            flat
-            round
-            dense
-            v-close-popup
-          />
-        </q-card-section>
-        <q-separator />
-        <q-card-section class="row q-pb-none">
-          <app v-if="row.type_cv === 'app'" :id="row.id"/>
-          <pdf v-else :id="row.id"/>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
+    PDF
   </div>
 </template>
 <script>
-import App from './cv/App.vue';
-import Pdf from './cv/Pdf.vue';
-import { havePermission } from '../../helpers/havePermission';
+import { havePermission } from '../../../helpers/havePermission';
 
 export default {
   data() {
@@ -46,14 +21,6 @@ export default {
     },
   },
   computed: {
-    showDialog: {
-      get() {
-        return this.value;
-      },
-      set(val) {
-        this.$emit('input', val);
-      },
-    },
     validatedPermissions() {
       const statusReview = havePermission('visit.review');
       const statusVoucher = havePermission('visit.voucher');
@@ -69,24 +36,15 @@ export default {
       };
     },
   },
-  async created() {
-    // await this.getItem();
-
+  created() {
   },
   methods: {
   },
   components: {
-    App,
-    Pdf,
   },
 };
 </script>
 <style scoped>
-  p {
-    display: block;
-    max-width: 640px;
-    margin: auto;
-  }
   .table-container {
     text-align: center;
   }
