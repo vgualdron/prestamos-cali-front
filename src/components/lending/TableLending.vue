@@ -60,7 +60,7 @@
               v-if="props.row.status === 'open'"
               class="q-px-none"
               :color="getBalance(props.row) <= 0 && allPaidsApproved(props.row) ? 'orange' : 'black'"
-              outline>
+              :outline="getBalance(props.row) <= 0 && allPaidsApproved(props.row) ? false : true">
               <q-list>
                 <q-item
                   clickable

@@ -233,6 +233,89 @@
           </div>
         </div>
         <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">DATOS DE CUENTA:</p>
+          <div class="table-container">
+            <q-markup-table
+              class="markup-table q-mt-md"
+              separator="cell"
+              dense
+            >
+              <tbody>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Tipo de cuenta:</p>
+                    <q-icon size="xs" name="edit" />
+                    {{ item.account_type }}
+                    <q-popup-edit :value="item.account_type" v-slot="scope" buttons
+                      @input="val => saveDateNew('account_type', val)">
+                      <q-option-group
+                        v-model="scope.value"
+                        :options="[
+                          {
+                            label: 'nequi',
+                            value: 'nequi'
+                          },
+                          {
+                            label: 'bancolombia',
+                            value: 'bancolombia'
+                          },
+                        ]"
+                        color="primary"
+                      />
+                    </q-popup-edit>
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Número de cuenta:</p>
+                    <q-icon size="xs" name="edit" />
+                    {{ item.account_number }}
+                    <q-popup-edit :value="item.account_number" v-slot="scope" buttons
+                      @input="val => saveDateNew('account_number', val)">
+                      <q-input v-model="scope.value" dense autofocus />
+                    </q-popup-edit>
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Tipo de cuenta de tercero:</p>
+                    <q-icon size="xs" name="edit" />
+                    {{ item.account_type_third }}
+                    <q-popup-edit :value="item.account_type_third" v-slot="scope" buttons
+                      @input="val => saveDateNew('account_type_third', val)">
+                      <q-option-group
+                        v-model="scope.value"
+                        :options="[
+                          {
+                            label: 'nequi',
+                            value: 'nequi'
+                          },
+                          {
+                            label: 'bancolombia',
+                            value: 'bancolombia'
+                          },
+                        ]"
+                        color="primary"
+                      />
+                    </q-popup-edit>
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Número de cuenta:</p>
+                    <q-icon size="xs" name="edit" />
+                    {{ item.account_number_third }}
+                    <q-popup-edit :value="item.account_number_third" v-slot="scope" buttons
+                      @input="val => saveDateNew('account_number_third', val)">
+                      <q-input v-model="scope.value" dense autofocus />
+                    </q-popup-edit>
+                  </td>
+                </tr>
+              </tbody>
+            </q-markup-table>
+          </div>
+        </div>
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA CLIENTE</p>
           <camera-photo
             :config="{
@@ -350,10 +433,23 @@
           />
         </div>
         <div class="div-container">
-          <p class="text-subtitle1 text-weight-bold text-center">FOTO RED SOCIAL</p>
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO RED SOCIAL (opcional)</p>
           <camera-photo
             :config="{
               name: 'FOTO_RED_SOCIAL',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            type="read"
+            @updateStatus="sendNotificationPush"
+          />
+        </div>
+        <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">VIDEO AUTORIZA CUENTA TERCERO (opcional)</p>
+          <camera-video
+            :config="{
+              name: 'VIDEO_AUTORIZA_CUENTA_TERCERO',
               storage: 'news',
               modelName: 'news',
               modelId: id
@@ -842,10 +938,11 @@ export default {
     formatHour(date) {
       return moment(date).format('hh:mm A');
     },
-    reloadStatusFiles() {
+    async reloadStatusFiles() {
       showLoading('consultando archivo ...', 'Por favor, espere', true);
       this.showStateCases = false;
-      setTimeout(() => {
+      setTimeout(async () => {
+        await this.getItem();
         this.showStateCases = true;
         this.$q.loading.hide();
       }, 1500);
@@ -854,8 +951,7 @@ export default {
       const { id } = this.$route.params;
       await this.getNew(id);
     },
-    async saveVoucher(data) {
-      console.log(data);
+    async saveVoucher() {
       await this.saveDateNew('status', 'consignado');
       await this.addLending({
         nameDebtor: this.item.name,
@@ -867,6 +963,8 @@ export default {
         status: 'open',
         new_id: this.item.id,
         type: 'N',
+        user_send: this.item.userSend,
+        city: this.item.city,
       });
     },
     async saveDateNew(field, value) {

@@ -55,41 +55,86 @@
                 />
                 <div class="row">
                   <q-option-group
-                    class="col-10"
+                    class="col-9"
                     label="Desea subir, bajar o mantener el mismo valor de credito?"
                     v-model="action"
                     :options="optionsActions"
                     color="primary"
                     inline
                   />
-                  <q-btn
-                    v-if="!question"
-                    color="primary"
-                    icon="no_encryption"
-                    class="col-2"
-                    title="Solicitar permiso para aumentar el valor del prestamo"
-                    @click="saveQuestionLending(row)"
-                  />
-                  <q-btn
-                    v-else-if="question.status === 'pendiente'"
-                    color="primary"
-                    class="col-2"
-                    icon="refresh"
-                    title="Actualizar el estado de la solicitud de permiso para aumentar el valor del prestamo"
-                    @click="getStatusQuestionLending(row)"
-                  />
-                  <q-icon
-                    v-else-if="question.status === 'rechazado'"
-                    name="block"
-                    color="red"
-                    class="q-mt-sm cursor-pointer"
-                    :title="question.value"/>
-                  <q-icon
-                    v-else-if="question.status === 'aprobado'"
-                    name="check"
-                    color="green"
-                    class="q-mt-sm cursor-pointer"
-                    :title="question.value ? formatPrice(question.value) : ''"/>
+                  <div v-if="!question" class="col-3 is-flex">
+                    <q-btn
+                      color="primary"
+                      icon="no_encryption"
+                      title="Solicitar permiso para aumentar el valor del prestamo"
+                      @click="saveQuestionLending(row)"
+                    />
+                    <q-icon size="xs" name="edit" class="q-ml-sm" />
+                    <b>{{ formatPrice(amountGet) }}</b>
+                    <q-popup-edit :value="amountGet" v-slot="scope" buttons
+                      @input="val => amountGet = val">
+                      <q-option-group
+                        v-model="scope.value"
+                        :options="[
+                          {
+                            label: '$100.000',
+                            value: 100000,
+                            disable: 100000 <= amount
+                          },
+                          {
+                            label: '$200.000',
+                            value: 200000,
+                            disable: 200000 <= amount
+                          },
+                          {
+                            label: '$300.000',
+                            value: 300000,
+                            disable: 300000 <= amount
+                          },
+                          {
+                            label: '$400.000',
+                            value: 400000,
+                            disable: 400000 <= amount
+                          },
+                          {
+                            label: '$500.000',
+                            value: 500000,
+                            disable: 500000 <= amount
+                          },
+                          {
+                            label: '$600.000',
+                            value: 600000,
+                            disable: 600000 <= amount
+                          },
+                        ]"
+                        color="primary"
+                      />
+                    </q-popup-edit>
+                  </div>
+                  <div v-else-if="question.status === 'pendiente'" class="col-3 is-flex">
+                    <q-btn
+                      color="primary"
+                      class="col-2"
+                      icon="refresh"
+                      title="Actualizar el estado de la solicitud de permiso para aumentar el valor del prestamo"
+                      @click="getStatusQuestionLending(row)"
+                    />
+                    <b class="q-ml-sm">{{ formatPrice(question.observation) }}</b>
+                  </div>
+                  <template v-else-if="question.status === 'rechazado'">
+                    <q-badge
+                      color="red"
+                      class="">
+                      {{ question.status }}
+                    </q-badge>
+                  </template>
+                  <template v-else-if="question.status === 'aprobado'">
+                    <q-badge
+                      color="green"
+                      class="">
+                      {{ formatPrice(question.value) }}
+                    </q-badge>
+                  </template>
                 </div>
                 <q-select
                   :readonly="action === 'equal'"
@@ -122,14 +167,14 @@
             label="Transferir"
             color="primary"
             class="col q-ml-sm"
-            :disabled="!date || amount <= 0 || amount > row.amount"
+            :disabled="!date || amount <= 0 || amount > row.amount || repayment === 0"
             @click="renoveLending('transfer')"
           />
           <q-btn
             label="Adelantar"
             color="primary"
             class="col q-ml-sm"
-            :disabled="!date || amount <= 0 || amount > row.amount"
+            :disabled="!date || amount <= 0 || amount > row.amount || action === 'up' || repayment === 0"
             @click="renoveLending('repayment')"
           />
           <q-btn
@@ -156,6 +201,7 @@ export default {
       date: new Date().toISOString().split('T')[0],
       amount: 0,
       amountNew: null,
+      amountGet: 600000,
       action: 'equal',
       optionsValues: [],
       optionsActions: [{
@@ -277,6 +323,7 @@ export default {
         area_id: 1, // nequi
         type: 'renovacion',
         status: 'pendiente',
+        observation: this.amountGet,
       };
       await this.saveQuestion(data);
       await this.getStatusQuestionLending(row);

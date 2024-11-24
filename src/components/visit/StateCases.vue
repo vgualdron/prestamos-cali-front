@@ -11,6 +11,10 @@
           <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" class="q-mr-sm" style="width:50px;height:50px">
           <div>
             <b>{{ prop.node.label }}</b>
+            <br>Nombre:
+            <b>
+              {{ item.name }}
+            </b>
             <br>Estado:
             <q-badge :color="item.status === 'aprobado' || item.status === 'consignado' ? 'green' : 'blue'">
               {{ item.status }}

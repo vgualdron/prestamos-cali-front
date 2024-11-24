@@ -112,6 +112,43 @@
                 </div>
               </div>
               <div class="div-container">
+                <p class="text-subtitle1 text-weight-bold text-center">DATOS DE CUENTA:</p>
+                <div class="table-container">
+                  <q-markup-table
+                    class="markup-table q-mt-md"
+                    separator="cell"
+                    dense
+                  >
+                    <tbody>
+                      <tr class="tr-table">
+                        <td class="td-table">
+                          <p class="text-subtitle1 text-weight-bold text-center">Tipo de cuenta:</p>
+                          {{ item.account_type }}
+                        </td>
+                      </tr>
+                      <tr class="tr-table">
+                        <td class="td-table">
+                          <p class="text-subtitle1 text-weight-bold text-center">Número de cuenta:</p>
+                          {{ item.account_number }}
+                        </td>
+                      </tr>
+                      <tr class="tr-table">
+                        <td class="td-table">
+                          <p class="text-subtitle1 text-weight-bold text-center">Tipo de cuenta de tercero:</p>
+                          {{ item.account_type_third }}
+                        </td>
+                      </tr>
+                      <tr class="tr-table">
+                        <td class="td-table">
+                          <p class="text-subtitle1 text-weight-bold text-center">Número de cuenta:</p>
+                          {{ item.account_number_third }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </q-markup-table>
+                </div>
+              </div>
+              <div class="div-container">
                 <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA CLIENTE</p>
                 <camera-photo
                   :config="{
@@ -231,8 +268,20 @@
                   type="read"
                 />
               </div>
+              <div class="div-container">
+                <p class="text-subtitle1 text-weight-bold text-center">VIDEO AUTORIZA CUENTA TERCERO</p>
+                <camera-video
+                  :config="{
+                    name: 'VIDEO_AUTORIZA_CUENTA_TERCERO',
+                    storage: 'news',
+                    modelName: 'news',
+                    modelId: id
+                  }"
+                  type="read"
+                />
+              </div>
               <div class="div-container" v-if="validatedPermissions.voucher.status && (item.status === 'aprobado' || item.status === 'consignado')">
-                <p class="text-subtitle1 text-weight-bold text-center">AGREGAR FOTO VOUCHER</p>
+                <p class="text-subtitle1 text-weight-bold text-center">FOTO VOUCHER</p>
                 <camera-photo
                   :config="{
                     name: 'FOTO_VOUCHER',

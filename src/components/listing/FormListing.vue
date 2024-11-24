@@ -13,6 +13,35 @@
             <q-input outlined v-model="name" label="Nombre *" hint="Escriba el nombre"
               lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']" />
             <q-select
+              v-model="cityId"
+              class="q-mt-md"
+              use-input
+              outlined
+              clearable
+              input-debounce="0"
+              label="Ciudad *"
+              :disable="disableInputs"
+              :options="optionsZones"
+              option-label="name"
+              option-value="id"
+              @filter="filterCities"
+              @input="changeCity"
+              lazy-rules
+              :rules="rules.city"
+              hide-bottom-space
+              map-options
+              emit-value
+              autocomplete="off"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No hay coincidencias
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-select
               v-model="userIdCollector"
               class="q-mt-md"
               use-input
@@ -56,6 +85,7 @@
 import { mapState, mapActions } from 'vuex';
 import listingTypes from '../../store/modules/listing/types';
 import userTypes from '../../store/modules/user/types';
+import zoneTypes from '../../store/modules/zone/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { removeAccents } from '../../helpers/removeAccents';
@@ -69,15 +99,21 @@ export default {
       reference: '',
       dato: '',
       userIdCollector: null,
+      cityId: null,
       optionsUsers: [],
+      optionsZones: [],
       rules: {
         user: [
+          (val) => (!!val) || 'El campo es requerido',
+        ],
+        city: [
           (val) => (!!val) || 'El campo es requerido',
         ],
       },
     };
   },
   async mounted() {
+    this.listZones();
     await this.listUsersByNameRole({
       roleName: 'Secretaria',
       status: 1,
@@ -87,6 +123,9 @@ export default {
   watch: {
     users(val) {
       this.optionsUsers = [...val];
+    },
+    zones(val) {
+      this.optionsZones = [...val];
     },
   },
   computed: {
@@ -99,6 +138,11 @@ export default {
       users: 'users',
       userStatus: 'status',
       userResponseMessages: 'responseMessages',
+    }),
+    ...mapState(zoneTypes.PATH, {
+      zones: 'zones',
+      zoneStatus: 'status',
+      zoneResponseMessages: 'responseMessages',
     }),
     showDialog: {
       get() {
@@ -123,6 +167,9 @@ export default {
     ...mapActions(userTypes.PATH, {
       listUsersByNameRole: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
     }),
+    ...mapActions(zoneTypes.PATH, {
+      listZones: zoneTypes.actions.LIST_ZONES,
+    }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
@@ -132,6 +179,12 @@ export default {
         this.optionsUsers = this.users.filter((option) => removeAccents(option.name).toLowerCase().indexOf(needle) > -1);
       });
     },
+    filterCities(val, update) {
+      update(() => {
+        const needle = val ? removeAccents(val.trim().toLowerCase()) : '';
+        this.optionsZones = this.zones.filter((option) => removeAccents(option.name).toLowerCase().indexOf(needle) > -1);
+      });
+    },
     async onSubmit() {
       showLoading('Guardando ...', 'Por favor, espere', true);
       await this.addListing({
@@ -139,6 +192,7 @@ export default {
         status: 'activa',
         user_id_collector: this.userIdCollector,
         user_id_leader: this.userIdCollector,
+        city_id: this.cityId,
       });
       this.showNotification(this.listingResponseMessages, this.listingStatus, 'top-right', 5000);
       this.$q.loading.hide();
