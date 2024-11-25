@@ -335,7 +335,7 @@
       :hasDoubleInterest="false"
       title="Historial"
       :lendings="history"/>
-    <modal-renove-lending
+    <modal-renove
       v-if="showModalRenove"
       v-model="showModalRenove"
       :row="itemSelected"
@@ -360,6 +360,11 @@
       :type="'image'"
       :showBtnCancel="false"
       :showBtnCopy="false"/>
+    <modal-closed
+      v-if="showModalClosed"
+      v-model="showModalClosed"
+      :row="itemSelected"
+      @closedLending="closedLending"/>
   </div>
 </template>
 <script>
@@ -368,8 +373,9 @@ import moment from 'moment';
 import ModalAddPayment from 'components/payment/ModalAddPayment.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
 import ModalPreviewFile from 'components/common/ModalPreviewFile.vue';
-import ModalRenoveLending from './ModalRenoveLending.vue';
+import ModalRenove from './ModalRenove.vue';
 import ModalDelivery from './ModalDelivery.vue';
+import ModalClosed from './ModalClosed.vue';
 import listingTypes from '../../store/modules/listing/types';
 import lendingTypes from '../../store/modules/lending/types';
 import paymentTypes from '../../store/modules/payment/types';
@@ -382,9 +388,10 @@ export default {
   components: {
     ModalAddPayment,
     ModalCardBoard,
-    ModalRenoveLending,
+    ModalRenove,
     ModalPreviewFile,
     ModalDelivery,
+    ModalClosed,
   },
   data() {
     return {
@@ -559,6 +566,7 @@ export default {
       showModalPreviewR: false,
       showModalPreviewN: false,
       showModalDelivery: false,
+      showModalClosed: false,
     };
   },
   watch: {
@@ -664,7 +672,6 @@ export default {
   methods: {
     ...mapActions(lendingTypes.PATH, {
       fetchLendings: lendingTypes.actions.FETCH_LENDINGS,
-      updateLending: lendingTypes.actions.UPDATE_LENDING,
       deleteLending: lendingTypes.actions.DELETE_LENDING,
       renovateLending: lendingTypes.actions.RENOVATE_LENDING,
       fetchHistory: lendingTypes.actions.FETCH_HISTORY,
@@ -923,31 +930,7 @@ export default {
         this.$q.loading.hide();
         this.showModalHistory = true;
       } else if (action === 'close') {
-        this.$q.dialog({
-          title: 'Cerrar préstamo',
-          message: 'Está seguro que desea cerrar el préstamo?',
-          ok: {
-            push: true,
-          },
-          cancel: {
-            push: true,
-            color: 'negative',
-            text: 'adsa',
-          },
-          persistent: true,
-        }).onOk(async () => {
-          showLoading('cerrando ...', 'Por favor, espere', true);
-          await this.updateLending({
-            ...row,
-            status: 'closed',
-          });
-          await this.getLendings(this.listingSelected.value);
-          this.$q.loading.hide();
-        }).onCancel(() => {
-          // console.log('>>>> Cancel')
-        }).onDismiss(() => {
-          // console.log('I am triggered on both OK and Cancel')
-        });
+        this.showModalClosed = true;
       }
     },
     deletePayment(row) {
@@ -979,6 +962,9 @@ export default {
       await this.renovateLending({ ...row });
       await this.getLendings(this.listingSelected.value);
       this.$q.loading.hide();
+    },
+    async closedLending() {
+      await this.getLendings(this.listingSelected.value);
     },
   },
 };

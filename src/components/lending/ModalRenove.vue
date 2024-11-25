@@ -65,7 +65,7 @@
                   <div v-if="!question" class="col-3 is-flex">
                     <q-btn
                       color="primary"
-                      icon="no_encryption"
+                      icon="call_made"
                       title="Solicitar permiso para aumentar el valor del prestamo"
                       @click="saveQuestionLending(row)"
                     />
