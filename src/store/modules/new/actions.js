@@ -40,6 +40,25 @@ export default {
       }
     }
   },
+  async [types.actions.GET_NEW_BY_PHONE]({ commit }, phone) {
+    try {
+      const response = await newApi.getByPhone(phone);
+      commit(types.mutations.SET_STATUS, true);
+      commit(types.mutations.SET_NEW, response.data.data);
+    } catch (error) {
+      commit(types.mutations.SET_STATUS, false);
+      if (error.message !== 'Network Error') {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
+      } else {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, [
+          {
+            text: 'Error de red',
+            detail: 'Intente conectarse a otra red de internet',
+          },
+        ]);
+      }
+    }
+  },
   async [types.actions.SAVE_NEW]({ commit }, payload) {
     try {
       const response = await newApi.save(payload);

@@ -5,6 +5,10 @@ export default {
     url: `${process.env.URL_API}/api/lending`,
     method: 'GET',
   }),
+  getLending: (id) => http({
+    url: `${process.env.URL_API}/api/lending/${id}`,
+    method: 'GET',
+  }),
   fetchLendingsByList: (data) => http({
     url: `${process.env.URL_API}/api/lending/list/${data.idList}/payments/current-date`,
     method: 'GET',

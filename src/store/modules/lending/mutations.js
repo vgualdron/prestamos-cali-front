@@ -4,6 +4,9 @@ export default {
   [types.mutations.SET_LENDINGS](state, payload) {
     state.lendings = payload;
   },
+  [types.mutations.SET_LENDING](state, payload) {
+    state.lending = payload;
+  },
   [types.mutations.SET_STATUS](state, payload) {
     state.status = payload;
   },

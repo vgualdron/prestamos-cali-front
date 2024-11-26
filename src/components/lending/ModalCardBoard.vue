@@ -104,7 +104,7 @@
                     </tr>
                     <tr
                       v-for="(payment) in filterDaysArray(getDaysArray(lending), 1, 15)"
-                      :key="`tr-payment-${payment.index}`"
+                      :key="`tr-payment-${payment.date}-${lending.id}`"
                       class="">
                       <td class="bg-green-3">
                         {{ payment.index }}
@@ -209,7 +209,7 @@
                 icon="content_copy"
                 color="primary"
                 @click="captureImage" />
-              <stikers v-model="images" class="q-ml-sm" />
+              <stikers v-if="showStikers" v-model="images" class="q-ml-sm" />
             </div>
           </div>
         </q-card-section>
@@ -276,6 +276,11 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    showStikers: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
   components: {

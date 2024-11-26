@@ -5,6 +5,7 @@ export default {
     UPDATE_SECTOR_SELECTED_REVIEW: '@actions/updateSectorSelectedReview',
     LIST_NEWS: '@actions/listNews',
     GET_NEW: '@actions/getNew',
+    GET_NEW_BY_PHONE: '@actions/getNewByPhone',
     SAVE_NEW: '@actions/saveNew',
     UPDATE_NEW: '@actions/updateNew',
     COMPLETE_DATA_NEW: '@actions/completeDataNew',

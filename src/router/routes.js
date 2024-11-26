@@ -174,6 +174,13 @@ const routes = [
       { path: '', name: 'Ubicación de usuarios', component: () => import('pages/UsersLocation.vue') },
     ],
   },
+  {
+    path: '/list-questions-nequi',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Solicitudes al grupo nequi', component: () => import('pages/QuestionNequi.vue') },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

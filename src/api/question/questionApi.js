@@ -2,7 +2,7 @@ import { http } from '../../helpers/http';
 
 export default {
   list: (data) => http({
-    url: `${process.env.URL_API}/api/question`,
+    url: `${process.env.URL_API}/api/question/${data.status}/${data.type}`,
     method: 'GET',
     data,
   }),

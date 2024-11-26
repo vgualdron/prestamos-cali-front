@@ -6,7 +6,7 @@
       </div>
 
       <div class="text-h2" style="opacity:.4">
-        Oops. Nothing here...
+        Uups. No existe la pagiana...
       </div>
 
       <q-btn
@@ -15,7 +15,7 @@
         text-color="blue"
         unelevated
         to="/home"
-        label="Go Home"
+        label="Ir a Inicio"
         no-caps
       />
     </div>

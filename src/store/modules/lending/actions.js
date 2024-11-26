@@ -11,6 +11,15 @@ export default {
       commit(types.mutations.SET_LENDINGS, error.response.data);
     }
   },
+  async [types.actions.GET_LENDING]({ commit }, payload) {
+    try {
+      const response = await lendingApi.getLending(payload);
+      commit(types.mutations.SET_LENDING, response.data.data);
+    } catch (error) {
+      console.error(error);
+      commit(types.mutations.SET_LENDING, error.response.data);
+    }
+  },
   async [types.actions.ADD_LENDING]({ commit }, payload) {
     try {
       const response = await lendingApi.addLending(payload);

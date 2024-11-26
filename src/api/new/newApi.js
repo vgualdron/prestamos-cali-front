@@ -33,4 +33,8 @@ export default {
     url: `${process.env.URL_API}/api/new/delete/${id}`,
     method: 'DELETE',
   }),
+  getByPhone: (phone) => http({
+    url: `${process.env.URL_API}/api/new/get-by-phone/${phone}`,
+    method: 'GET',
+  }),
 };
