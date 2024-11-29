@@ -234,6 +234,7 @@ export default {
     ...mapActions(newTypes.PATH, {
       getNew: newTypes.actions.GET_NEW,
       getNewByPhone: newTypes.actions.GET_NEW_BY_PHONE,
+      completeDataNew: newTypes.actions.COMPLETE_DATA_NEW,
     }),
     async pollData() {
       this.polling = setInterval(async () => {
@@ -255,8 +256,17 @@ export default {
       }).format(val);
     },
     async responseAnswer(data) {
-      showLoading('Guardadndo ...', 'Por favor, espere', true);
+      showLoading('Guardando ...', 'Por favor, espere', true);
       await this.updateQuestion(data);
+
+      if (data.type === 'cuenta' && data.status !== 'rechazado') {
+        const obj = JSON.parse(data.json);
+        await this.completeDataNew({
+          id: data.model_id,
+          ...obj,
+        });
+      }
+
       this.showNotification(this.questionResponseMessages, this.questionStatus, 'top-right', 5000);
       this.showModal = false;
       this.getItems();
@@ -264,13 +274,14 @@ export default {
     },
     async getItems() {
       showLoading('consultando ...', 'Por favor, espere', true);
-      await this.fetchQuestions({ status: 'pendiente', type: 'nuevo,renovacion' });
+      await this.fetchQuestions({ status: 'pendiente', type: 'nuevo,renovacion,cuenta' });
       this.$q.loading.hide();
     },
     clickRow(row) {
       this.itemSelected = { ...row };
     },
     async openModalCv(row) {
+      console.log(row);
       showLoading('consultando ...', 'Por favor, espere', true);
       if (row.type === 'nuevo') {
         await this.getNew(row.model_id);
@@ -279,6 +290,9 @@ export default {
       } else if (row.type === 'renovacion') {
         await this.getLending(row.model_id);
         await this.getNew(this.lending.new_id);
+        this.newSelected = { ...this.new };
+      } else if (row.type === 'cuenta') {
+        await this.getNew(row.model_id);
         this.newSelected = { ...this.new };
       }
       this.$q.loading.hide();

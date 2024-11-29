@@ -157,6 +157,7 @@
             />
             <q-select
               v-if="type !== 'V'"
+              v-show="showUserSend"
               v-model="user.userSend"
               class="q-mt-md"
               use-input
@@ -321,6 +322,14 @@ export default {
     type: {
       type: String,
     },
+    userSend: {
+      require: false,
+    },
+    showUserSend: {
+      type: Boolean,
+      default: true,
+      require: false,
+    },
   },
   async mounted() {
     await this.initData();
@@ -439,6 +448,10 @@ export default {
         this.user = this.type === 'C' ? { ...this.copyUser } : { ...this.obj };
         if (this.type === 'V') {
           this.title = 'Ver estado de aprobación';
+        }
+        if (this.userSend) {
+          this.user.userSend = this.userSend;
+          this.user.status = 'creado';
         }
         this.$q.loading.hide();
       } else {

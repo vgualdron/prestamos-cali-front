@@ -162,6 +162,14 @@
                         {{ formatPrice(payment.balance) }}
                       </td>
                     </tr>
+                    <tr v-if="lending.period === 'semanal'">
+                      <td colspan="4">
+                        <b>LAS FECHAS DE PAGO SON:</b>
+                        <div v-for="date in datesPaymentsWeek(lending.firstDate, lending.amountFees)" :key="date">
+                          {{ date }}
+                        </div>
+                      </td>
+                    </tr>
                   </tbody>
                 </q-markup-table>
                 <img
@@ -308,8 +316,20 @@ export default {
       updateLending: lendingTypes.actions.UPDATE_LENDING,
       deleteLending: lendingTypes.actions.DELETE_LENDING,
     }),
+    datesPaymentsWeek(startDate, n) {
+      const dates = [];
+      const currentDate = moment(startDate);
+      currentDate.add(7, 'days');
+
+      for (let i = 0; i < n; i += 1) {
+        dates.push(currentDate.format('DD-MM-YYYY')); // Formato deseado de fecha
+        currentDate.add(7, 'days');
+      }
+
+      return dates;
+    },
     isDoubleInterest(row) {
-      return this.showBtnApplyDoubleInterest && !row.has_double_interest && this.daysSinceGivenDate(row.firstDate) > 13 && row.amount >= this.getBalance(row);
+      return this.showBtnApplyDoubleInterest && !row.has_double_interest && this.daysSinceGivenDate(row.firstDate) > 13 && this.getBalance(row) > row.amount;
     },
     daysSinceGivenDate(givenDate) {
       // Asegúrate de que la fecha dada esté en formato Date
@@ -496,10 +516,11 @@ export default {
       return (val);
     },
     valueWithDoubleInterest(row) {
+      const dateDouble = new Date(row.doubleDate);
       const total = row.amount + (row.amount * ((row.percentage * 2) / 100));
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0) {
-        const payments = row.payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
+        const payments = row.payments.filter((payment) => ((payment.status === 'aprobado' || payment.status === 'verificado') && dateDouble < new Date(payment.date)));
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
       return (total - totalPayments);
@@ -513,6 +534,11 @@ export default {
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0 && !this.hasDoubleInterest) {
         const payments = row.payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
+        totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+      }
+      if (row.payments && row.payments.length > 0 && this.hasDoubleInterest) {
+        const dateDouble = new Date(row.doubleDate);
+        const payments = row.payments.filter((payment) => ((payment.status === 'aprobado' || payment.status === 'verificado') && dateDouble < new Date(payment.date)));
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
       return (total - totalPayments);
@@ -550,7 +576,8 @@ export default {
         dateInit = doubleDate;
       }
       const startDate = new Date(dateInit);
-      startDate.setDate(startDate.getDate() + 1);
+      const initDay = this.hasDoubleInterest ? 0 : 1;
+      startDate.setDate(startDate.getDate() + initDay);
       let finishDate = new Date(endDate);
       if (this.hasDoubleInterest) {
         finishDate = new Date(dateInit);

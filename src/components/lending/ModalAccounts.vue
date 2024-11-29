@@ -1,0 +1,261 @@
+<template>
+  <div class="q-pa-md">
+    <q-dialog v-model="showDialog" persistent>
+      <q-card style="width: 700px; max-width: 80vw;">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">
+            Cuentas autorizadas
+          </div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+        <q-separator />
+        <q-card-section style="max-height: 80vh" class="scroll">
+          <div class="row">
+            <div class="col-12 text-center">
+              <q-markup-table
+                class="markup-table q-mt-md"
+                separator="cell"
+                dense
+              >
+                <tbody>
+                  <tr :class="row.account_active === 'principal' ? 'bg-green-4' : ''">
+                    <td class="td-table" colspan="2">
+                      <b>Cuenta principal</b>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      Número
+                    </td>
+                    <td class="td-table">
+                      Tipo
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      {{ row.account_number }}
+                    </td>
+                    <td class="td-table">
+                      {{ row.account_type }}
+                    </td>
+                  </tr>
+                </tbody>
+              </q-markup-table>
+              <q-markup-table
+                v-if="row.account_type_third"
+                class="markup-table q-mt-lg"
+                separator="cell"
+                dense
+              >
+                <tbody>
+                  <tr :class="row.account_active === 'tercero' ? 'bg-green-4' : ''">
+                    <td class="td-table" colspan="2">
+                      <b>Cuenta de tercero</b>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      Número
+                    </td>
+                    <td class="td-table">
+                      Tipo
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      {{ row.account_number_third }}
+                    </td>
+                    <td class="td-table">
+                      {{ row.account_type_third }}
+                    </td>
+                  </tr>
+                </tbody>
+              </q-markup-table>
+              <q-markup-table
+                class="markup-table q-mt-lg"
+                separator="cell"
+                dense
+              >
+                <tbody>
+                  <tr class="bg-blue-4">
+                    <td class="td-table" colspan="2">
+                      <b>Solicitar agregar o cambiar cuenta de tercero</b>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      Número
+                    </td>
+                    <td class="td-table">
+                      Tipo
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <q-icon v-if="!question || (question && question.status !== 'pendiente')" size="xs" name="edit" />
+                      {{ accountNumber }}
+                      <q-popup-edit :value="accountNumber" v-slot="scope" buttons
+                        @input="val => accountNumber = val">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                    <td class="td-table">
+                      <q-icon v-if="!question || (question && question.status !== 'pendiente')" size="xs" name="edit" />
+                      {{ accountType }}
+                      <q-popup-edit :value="accountType" v-slot="scope" buttons
+                        @input="val => accountType = val">
+                        <q-option-group
+                          v-model="scope.value"
+                          :options="[
+                            {
+                              label: 'nequi',
+                              value: 'nequi'
+                            },
+                            {
+                              label: 'bancolombia',
+                              value: 'bancolombia',
+                            },
+                          ]"
+                          color="primary"
+                        />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      <div v-if="!question || (question && question.status !== 'pendiente')" class="col-3 is-flex">
+                        <q-btn
+                          label="Enviar solicitud"
+                          color="primary"
+                          class="col q-my-sm"
+                          :disabled="!accountNumber || !accountType"
+                          @click="saveQuestionAccount(row)"
+                        />
+                      </div>
+                      <div v-else-if="question.status === 'pendiente'" class="col-3 is-flex">
+                        <q-btn
+                          label="Consultar estado de la solicitud"
+                          color="primary"
+                          class="col-2"
+                          icon="refresh"
+                          title="Actualizar el estado de la solicitud de permiso para aumentar el valor del prestamo"
+                          @click="getStatusQuestionAccount(row)"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </q-markup-table>
+            </div>
+          </div>
+        </q-card-section>
+        <q-separator />
+      </q-card>
+    </q-dialog>
+  </div>
+</template>
+<script>
+import { mapState, mapActions } from 'vuex';
+import questionTypes from '../../store/modules/question/types';
+import { showNotifications } from '../../helpers/showNotifications';
+import { showLoading } from '../../helpers/showLoading';
+
+export default {
+  data() {
+    return {
+      accountNumber: '',
+      accountType: '',
+    };
+  },
+  props: {
+    value: {
+      type: Boolean,
+      default: false,
+    },
+    row: {
+      type: Object,
+      required: false,
+    },
+  },
+  async mounted() {
+    await this.getStatusQuestionAccount(this.row);
+  },
+  watch: {
+  },
+  computed: {
+    ...mapState(questionTypes.PATH, {
+      question: 'question',
+      questionStatus: 'status',
+      questionResponseMessages: 'responseMessages',
+    }),
+    showDialog: {
+      get() {
+        return this.value;
+      },
+      set(val) {
+        this.$emit('input', val);
+      },
+    },
+  },
+  methods: {
+    ...mapActions(questionTypes.PATH, {
+      saveQuestion: questionTypes.actions.SAVE_QUESTION,
+      getStatusQuestion: questionTypes.actions.GET_STATUS_QUESTION,
+    }),
+    showNotification(messages, status, align, timeout) {
+      showNotifications(messages, status, align, timeout);
+    },
+    async saveQuestionAccount(row) {
+      console.log(row);
+      showLoading('Solicitando ...', 'Por favor, espere', true);
+      const value = {
+        account_active: 'tercero',
+        account_type_third: this.accountType,
+        account_number_third: this.accountNumber,
+      };
+      const data = {
+        model_id: row.id,
+        model_name: 'news',
+        area_id: 1, // nequi
+        type: 'cuenta',
+        status: 'pendiente',
+        observation: `Agregar cuenta para el cliente ${row.name}, tipo: ${value.account_type_third} y numero: ${value.account_number_third}.`,
+        value: JSON.stringify(value),
+      };
+      await this.saveQuestion(data);
+      await this.getStatusQuestionAccount(row);
+      this.showNotification(this.questionResponseMessages, this.questionStatus, 'top-right', 5000);
+      this.showDialog = false;
+      this.$q.loading.hide();
+    },
+    async getStatusQuestionAccount(row) {
+      showLoading('Consultando ...', 'Por favor, espere', true);
+      const data = {
+        model_id: row.id,
+        model_name: 'news',
+        area_id: 1, // nequi
+        type: 'cuenta',
+      };
+      await this.getStatusQuestion(data);
+      if (this.question && this.question.status === 'pendiente') {
+        const value = JSON.parse(this.question.value);
+        this.accountNumber = value.account_number_third;
+        this.accountType = value.account_type_third;
+      }
+      this.$q.loading.hide();
+    },
+  },
+  components: {
+  },
+};
+</script>
+<style scoped>
+  .markup-table {
+    display: block;
+    border: solid 1px black;
+  }
+  .markup-table td {
+    border: solid 1px black;
+  }
+</style>

@@ -53,8 +53,19 @@
             ]"
             color="primary"
           />
+          <div v-else-if="row.type === 'cuenta'" class="div-container">
+            <p class="text-subtitle1 text-weight-bold text-center">VIDEO AUTORIZA CUENTA TERCERO</p>
+            <camera-video
+              :config="{
+                name: 'VIDEO_AUTORIZA_CUENTA_TERCERO',
+                storage: 'news',
+                modelName: 'news',
+                modelId: row.model_id
+              }"
+              type="read"
+            />
+          </div>
           <q-input
-            v-else
             outlined
             v-model.trim="amount"
             label="Observación"
@@ -85,6 +96,7 @@
 </template>
 <script>
 import moment from 'moment';
+import CameraVideo from 'components/common/CameraVideo.vue';
 import { showLoading } from '../../helpers/showLoading';
 
 export default {
@@ -133,6 +145,7 @@ export default {
     changeStatus(status) {
       const data = {
         ...this.row,
+        json: this.row.type === 'cuenta' ? this.row.value : null,
         value: this.amount,
         status,
       };
@@ -140,6 +153,7 @@ export default {
     },
   },
   components: {
+    CameraVideo,
   },
 };
 </script>

@@ -163,18 +163,45 @@
         </q-card-section>
         <q-separator />
         <div class="row text-center q-pa-md">
-          <q-btn
-            label="Transferir"
+          <q-btn-dropdown
             color="primary"
-            class="col q-ml-sm"
+            label="Transferir"
             :disabled="!date || amount <= 0 || amount > row.amount || repayment === 0"
-            @click="renoveLending('transfer')"
-          />
+          >
+            <div class="row no-wrap q-pa-md" v-if="newItem">
+              <div class="column">
+                <div class="text-h6 q-mb-sm">Seleccionar cuenta</div>
+                  <q-option-group
+                  v-model="accountSelected"
+                  :options="[
+                    {
+                      label: `${newItem.account_type}: ${newItem.account_number}`,
+                      value: 'principal'
+                    },
+                    {
+                      label: `${newItem.account_type_third}: ${newItem.account_number_third}`,
+                      value: 'tercero',
+                      disable: !newItem.account_type_third,
+                    },
+                  ]"
+                  color="primary"
+                />
+                <q-btn
+                  color="primary"
+                  label="TRANSFERIR"
+                  push
+                  size="sm"
+                  @click="saveAccountActive"
+                  :disabled="!accountSelected"
+                />
+              </div>
+            </div>
+          </q-btn-dropdown>
           <q-btn
             label="Adelantar"
             color="primary"
             class="col q-ml-sm"
-            :disabled="!date || amount <= 0 || amount > row.amount || action === 'up' || repayment === 0"
+            :disabled="!date || amount <= 0 || amount > row.amount || action === 'up' || repayment === 0 || repayment > 100000"
             @click="renoveLending('repayment')"
           />
           <q-btn
@@ -194,6 +221,7 @@ import { mapState, mapActions } from 'vuex';
 import moment from 'moment';
 import { showLoading } from '../../helpers/showLoading';
 import questionTypes from '../../store/modules/question/types';
+import newTypes from '../../store/modules/new/types';
 
 export default {
   data() {
@@ -241,6 +269,7 @@ export default {
         label: '$600.000',
         value: 600000,
       }],
+      accountSelected: null,
     };
   },
   props: {
@@ -262,6 +291,8 @@ export default {
       this.date = date;
     }
     await this.getStatusQuestionLending(this.row);
+    await this.getNew(this.row.new_id);
+    this.accountSelected = this.newItem.account_active;
   },
   watch: {
     action(value) {
@@ -286,6 +317,11 @@ export default {
       question: 'question',
       questionStatus: 'status',
       questionResponseMessages: 'responseMessages',
+    }),
+    ...mapState(newTypes.PATH, {
+      newItem: 'new',
+      newStatus: 'status',
+      newResponseMessages: 'responseMessages',
     }),
     showDialog: {
       get() {
@@ -315,6 +351,25 @@ export default {
       saveQuestion: questionTypes.actions.SAVE_QUESTION,
       getStatusQuestion: questionTypes.actions.GET_STATUS_QUESTION,
     }),
+    ...mapActions(newTypes.PATH, {
+      getNew: newTypes.actions.GET_NEW,
+      completeDataNew: newTypes.actions.COMPLETE_DATA_NEW,
+    }),
+    async saveAccountActive() {
+      showLoading('Guardando ...', 'Por favor, espere', true);
+      await this.completeDataNew({
+        id: this.row.new_id,
+        account_active: this.accountSelected,
+      });
+
+      if (!this.newStatus) {
+        this.showNotification(this.newResponseMessages, this.newStatus, 'top-right', 5000);
+      } else {
+        await this.renoveLending('transfer');
+        this.showModal = false;
+      }
+      this.$q.loading.hide();
+    },
     async saveQuestionLending(row) {
       showLoading('Solicitando ...', 'Por favor, espere', true);
       const data = {
@@ -382,15 +437,32 @@ export default {
         id,
       } = this.row;
 
-      this.$emit('renoveLending', {
-        id,
-        date: this.date,
-        amount: this.amountNew.value,
-        repayment: this.repayment,
-        action,
-        status: 'renovated',
+      this.$q.dialog({
+        title: 'Confirmar',
+        message: 'Está seguro?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        this.$emit('renoveLending', {
+          id,
+          date: this.date,
+          amount: this.amountNew.value,
+          repayment: this.repayment,
+          action,
+          status: 'renovated',
+        });
+        this.showDialog = false;
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
       });
-      this.showDialog = false;
     },
   },
   components: {

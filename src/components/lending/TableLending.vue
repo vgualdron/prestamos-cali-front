@@ -15,6 +15,13 @@
       title="Click para revisar la entrega"
       @click="showModalDelivery = true">
     </q-btn>
+    <q-btn
+      icon="add_location_alt"
+      class="q-ml-md"
+      color="primary"
+      title="Click para registrar una dirección"
+      @click="showModalAddNew = true">
+    </q-btn>
     <div class="row q-mt-md">
       <div class="col-6 text-center">
         <q-select
@@ -121,6 +128,22 @@
                   @click="openModal('previewN', props.row)">
                   <q-item-section>
                     <q-item-label>Ver voucher</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="fetchFileRedSocial(props.row)">
+                  <q-item-section>
+                    <q-item-label>Foto red social</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="fetchAccountsNew(props.row.new_id)">
+                  <q-item-section>
+                    <q-item-label>Cuentas autorizadas</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -230,6 +253,10 @@
               />
             </b>
           </q-td>
+          <q-td key="street" :props="props">
+          </q-td>
+          <q-td key="article" :props="props">
+          </q-td>
           <q-td key="daysPassed" :props="props">
             {{ daysSinceGivenDate(props.row.firstDate) }}
           </q-td>
@@ -256,7 +283,7 @@
               :auto-close="false"
               outline
               :label="props.row.phone"
-              @click="onDropdownMainClick(props.row.new_id)"
+              @click="fetchPhonesNew(props.row.new_id)"
             >
               <q-list>
                 <q-item v-close-popup v-if="newItem.family_reference_name">
@@ -360,11 +387,30 @@
       :type="'image'"
       :showBtnCancel="false"
       :showBtnCopy="false"/>
+    <modal-preview-file
+      v-if="showModalPreviewRedSocial"
+      v-model="showModalPreviewRedSocial"
+      :url="formatUrl(fileRedSocial)"
+      :type="'image'"
+      :showBtnCancel="false"
+      :showBtnCopy="false"/>
     <modal-closed
       v-if="showModalClosed"
       v-model="showModalClosed"
       :row="itemSelected"
       @closedLending="closedLending"/>
+    <modal-accounts
+      v-if="showModalAccounts"
+      v-model="showModalAccounts"
+      :row="newItem"/>
+    <form-news
+      v-if="showModalAddNew"
+      v-model="showModalAddNew"
+      type="C"
+      :obj="objNew"
+      :userSend="listingSelected.userId"
+      :showUserSend="false"
+    />
   </div>
 </template>
 <script>
@@ -373,16 +419,20 @@ import moment from 'moment';
 import ModalAddPayment from 'components/payment/ModalAddPayment.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
 import ModalPreviewFile from 'components/common/ModalPreviewFile.vue';
+import FormNews from 'components/new/FormNews.vue';
 import ModalRenove from './ModalRenove.vue';
 import ModalDelivery from './ModalDelivery.vue';
 import ModalClosed from './ModalClosed.vue';
+import ModalAccounts from './ModalAccounts.vue';
 import listingTypes from '../../store/modules/listing/types';
 import lendingTypes from '../../store/modules/lending/types';
 import paymentTypes from '../../store/modules/payment/types';
 import userTypes from '../../store/modules/user/types';
 import newTypes from '../../store/modules/new/types';
+import fileTypes from '../../store/modules/file/types';
 import { showLoading } from '../../helpers/showLoading';
 import { havePermission } from '../../helpers/havePermission';
+import { showNotifications } from '../../helpers/showNotifications';
 
 export default {
   components: {
@@ -392,6 +442,8 @@ export default {
     ModalPreviewFile,
     ModalDelivery,
     ModalClosed,
+    ModalAccounts,
+    FormNews,
   },
   data() {
     return {
@@ -481,7 +533,23 @@ export default {
         {
           name: 'collection',
           required: true,
-          label: 'Nequi',
+          label: 'Secre',
+          align: 'center',
+          style: 'width: 100px',
+          sortable: false,
+        },
+        {
+          name: 'street',
+          required: true,
+          label: 'Calle',
+          align: 'center',
+          style: 'width: 100px',
+          sortable: false,
+        },
+        {
+          name: 'article',
+          required: true,
+          label: 'Art',
           align: 'center',
           style: 'width: 100px',
           sortable: false,
@@ -567,6 +635,11 @@ export default {
       showModalPreviewN: false,
       showModalDelivery: false,
       showModalClosed: false,
+      showModalPreviewRedSocial: false,
+      fileRedSocial: '',
+      showModalAccounts: false,
+      showModalAddNew: false,
+      objNew: {},
     };
   },
   watch: {
@@ -621,7 +694,7 @@ export default {
       return this.users.map(({ id, name }) => ({ label: name, value: id }));
     },
     optionsListings() {
-      return this.listings.map(({ id, name, user_collector }) => ({ label: `${name} - ${user_collector.name}`, value: id }));
+      return this.listings.map(({ id, name, user_collector }) => ({ label: `${name} - ${user_collector.name}`, value: id, userId: user_collector.id }));
     },
     data() {
       return this.lendings.map((row, index) => ({
@@ -689,6 +762,32 @@ export default {
     ...mapActions(paymentTypes.PATH, {
       deletePaid: paymentTypes.actions.DELETE_PAYMENT,
     }),
+    ...mapActions(fileTypes.PATH, {
+      getFile: fileTypes.actions.GET_FILE,
+    }),
+    showNotification(messages, status, align, timeout) {
+      showNotifications(messages, status, align, timeout);
+    },
+    async fetchFileRedSocial(row) {
+      showLoading('consultando archivo ...', 'Por favor, espere', true);
+      const data = {
+        name: 'FOTO_RED_SOCIAL',
+        modelId: row.new_id,
+        modelName: 'news',
+      };
+
+      const response = await this.getFile(data);
+
+      this.$q.loading.hide();
+
+      if (response.data) {
+        const item = response.data;
+        this.fileRedSocial = item.url;
+        this.showModalPreviewRedSocial = true;
+      } else {
+        this.showNotification([{ text: 'No tiene foto de red social' }], false, 'top-right', 5000);
+      }
+    },
     formatUrl(url) {
       return `${process.env.URL_FILES}${url}`;
     },
@@ -790,10 +889,11 @@ export default {
       return (val);
     },
     valueWithDoubleInterest(row) {
+      const dateDouble = new Date(row.doubleDate);
       const total = row.amount + (row.amount * ((row.percentage * 2) / 100));
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0) {
-        const payments = row.payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
+        const payments = row.payments.filter((payment) => ((payment.status === 'aprobado' || payment.status === 'verificado') && dateDouble < new Date(payment.date)));
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
       return (total - totalPayments);
@@ -884,9 +984,15 @@ export default {
       }
       return pay;
     },
-    async onDropdownMainClick(id) {
+    async fetchPhonesNew(id) {
       showLoading('consultando ...', 'Por favor, espere', true);
       await this.getNew(id);
+      this.$q.loading.hide();
+    },
+    async fetchAccountsNew(id) {
+      showLoading('consultando ...', 'Por favor, espere', true);
+      await this.getNew(id);
+      this.showModalAccounts = true;
       this.$q.loading.hide();
     },
     async getLendings(idList) {

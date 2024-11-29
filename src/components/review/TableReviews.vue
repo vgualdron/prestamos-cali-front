@@ -50,7 +50,7 @@
         <!-- <div class="q-px-sm">
           <b>Cobrador seleccionado:</b>
         </div> -->
-        <b>Cobrador:</b>
+        <b>Prestador:</b>
         <q-radio
           v-for="user in optionsUsers"
           v-model="userSelected"
