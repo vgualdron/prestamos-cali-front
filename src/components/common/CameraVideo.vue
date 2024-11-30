@@ -35,7 +35,7 @@
           ref="camera"
           class="q-mt-sm"
           @click="initCamera" />
-        <template v-else-if="item && item.status === 'creado'">
+        <template v-else-if="item && item.status === 'creado' && showApprove">
           <div class="q-mt-md">
             <q-icon size="xs" name="edit" />
             {{ item.observation ? item.observation : 'Haz click para agregar una observación' }} <br>
@@ -159,6 +159,11 @@ export default {
     type: {
       type: String,
       default: '',
+    },
+    showApprove: {
+      type: Boolean,
+      default: true,
+      require: false,
     },
   },
   async mounted() {

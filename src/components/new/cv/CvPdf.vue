@@ -1,14 +1,19 @@
 <template>
-  <div class="q-pa-md">
-    PDF
-  </div>
+  <q-page>
+    <pdf
+      :src="pdfUrl"
+      style="width: 100%; height: 100vh;"
+    ></pdf>
+  </q-page>
 </template>
 <script>
+import pdf from 'vue-pdf';
 import { havePermission } from '../../../helpers/havePermission';
 
 export default {
   data() {
     return {
+      pdfUrl: 'https://micomercio.com.co/api-prestamos/storage/app/public/news/3/PDF-CV-3.pdf',
     };
   },
   props: {
@@ -41,6 +46,7 @@ export default {
   methods: {
   },
   components: {
+    pdf,
   },
 };
 </script>

@@ -477,7 +477,7 @@ export default {
       }
       if (this.status === true) {
         this.user = { ...this.copyUser };
-        this.listNews(['borrador', 'creado', 'pendiente']);
+        this.listNews(['borrador', 'creado', 'analizando']);
         this.showDialog = false;
       }
 
@@ -497,7 +497,7 @@ export default {
       }
       if (this.status === true) {
         this.user = { ...this.copyUser };
-        this.listNews(['borrador', 'creado', 'pendiente']);
+        this.listNews(['borrador', 'creado', 'analizando']);
         this.showDialog = false;
       }
 

@@ -69,47 +69,49 @@
                       title="Solicitar permiso para aumentar el valor del prestamo"
                       @click="saveQuestionLending(row)"
                     />
-                    <q-icon size="xs" name="edit" class="q-ml-sm" />
-                    <b>{{ formatPrice(amountGet) }}</b>
-                    <q-popup-edit :value="amountGet" v-slot="scope" buttons
-                      @input="val => amountGet = val">
-                      <q-option-group
-                        v-model="scope.value"
-                        :options="[
-                          {
-                            label: '$100.000',
-                            value: 100000,
-                            disable: 100000 <= amount
-                          },
-                          {
-                            label: '$200.000',
-                            value: 200000,
-                            disable: 200000 <= amount
-                          },
-                          {
-                            label: '$300.000',
-                            value: 300000,
-                            disable: 300000 <= amount
-                          },
-                          {
-                            label: '$400.000',
-                            value: 400000,
-                            disable: 400000 <= amount
-                          },
-                          {
-                            label: '$500.000',
-                            value: 500000,
-                            disable: 500000 <= amount
-                          },
-                          {
-                            label: '$600.000',
-                            value: 600000,
-                            disable: 600000 <= amount
-                          },
-                        ]"
-                        color="primary"
-                      />
-                    </q-popup-edit>
+                    <div class="q-display-inline">
+                      <q-icon size="xs" name="edit" class="q-ml-sm" />
+                      <b>{{ formatPrice(amountGet) }}</b>
+                      <q-popup-edit :value="amountGet" v-slot="scope" buttons
+                        @input="val => amountGet = val">
+                        <q-option-group
+                          v-model="scope.value"
+                          :options="[
+                            {
+                              label: '$100.000',
+                              value: 100000,
+                              disable: 100000 <= amount
+                            },
+                            {
+                              label: '$200.000',
+                              value: 200000,
+                              disable: 200000 <= amount
+                            },
+                            {
+                              label: '$300.000',
+                              value: 300000,
+                              disable: 300000 <= amount
+                            },
+                            {
+                              label: '$400.000',
+                              value: 400000,
+                              disable: 400000 <= amount
+                            },
+                            {
+                              label: '$500.000',
+                              value: 500000,
+                              disable: 500000 <= amount
+                            },
+                            {
+                              label: '$600.000',
+                              value: 600000,
+                              disable: 600000 <= amount
+                            },
+                          ]"
+                          color="primary"
+                        />
+                      </q-popup-edit>
+                    </div>
                   </div>
                   <div v-else-if="question.status === 'pendiente'" class="col-3 is-flex">
                     <q-btn
@@ -379,6 +381,7 @@ export default {
         type: 'renovacion',
         status: 'pendiente',
         observation: this.amountGet,
+        value: '',
       };
       await this.saveQuestion(data);
       await this.getStatusQuestionLending(row);
@@ -472,5 +475,8 @@ export default {
 <style scoped>
   .inherit-width {
     width: -webkit-fill-available;;
+  }
+  .q-display-inline {
+    display: inline;
   }
 </style>

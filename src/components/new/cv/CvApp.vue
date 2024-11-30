@@ -1,134 +1,246 @@
 <template>
   <div>
+    <div class="row text-center">
+      <q-btn
+        icon="content_copy"
+        color="primary"
+        @click="captureImage"
+        class="q-mb-md"/>
+    </div>
+    <q-markup-table
+      id="div-container-table-cv"
+      class="cv-table"
+      separator="cell"
+      dense
+    >
+      <tbody>
+        <tr class="bg-blue-3">
+          <td class="text-bold text-center" colspan="4">
+            ARCHIVO PERSONAL
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            RUTA
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ item.list_name.toUpperCase() }}
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            ZONA
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ item.sectorName }}
+          </td>
+        </tr>
+        <tr class="">
+          <td class="bg-blue-5 text-bold text-center" colspan="1">
+            CLIENTE
+          </td>
+          <td class="text-bold text-center" colspan="3">
+            {{ item.name.toUpperCase() }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            TELEFONO
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ item.phone }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            CONDICIÓN
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ item.period.toUpperCase() }}
+          </td>
+        </tr>
+        <tr class="">
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            PRESTAMO
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ formatPrice(item.quantity) }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            FECHA
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ formatDate(item.date) }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            PRESTÓ
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ item.lent_by_name.toUpperCase() }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            AUTORIZÓ
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ item.approved_by_name.toUpperCase() }}
+          </td>
+        </tr>
+        <tr class="">
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            DIRECCIÓN CASA
+          </td>
+          <td class="bg-yellow text-bold text-center" colspan="5">
+            {{ item.address_house }}, {{ item.districtHouseName }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            TIPO VIVIENDA
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ item.type_house.toUpperCase() }}
+          </td>
+        </tr>
+        <tr class="">
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            OCUPACIÓN
+          </td>
+          <td class="text-bold text-center" colspan="5">
+            {{ item.occupation }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+          </td>
+          <td class="text-bold text-center" colspan="1">
+          </td>
+        </tr>
+        <tr class="">
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            DIRECCIÓN TRABAJO
+          </td>
+          <td class="bg-yellow text-bold text-center" colspan="5">
+            {{ item.address_work }}, {{ item.districtWorkName }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+          </td>
+          <td class="text-bold text-center" colspan="1">
+          </td>
+        </tr>
+        <tr class="">
+          <td class="bg-blue-5 text-bold text-center" colspan="1">
+            FIADOR
+          </td>
+          <td class="text-bold text-center" colspan="3">
+            {{ item.guarantor_name }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            TELEFONO
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ item.guarantor_phone }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            OCUPACIÓN
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ item.guarantor_occupation }}
+          </td>
+        </tr>
+        <tr class="">
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            DIRECCIÓN
+          </td>
+          <td class="bg-yellow text-bold text-center" colspan="5">
+            {{ item.guarantor_address }}, {{ item.guarantor_district_name }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            PARENTESCO
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ item.guarantor_relationship }}
+          </td>
+        </tr>
+        <tr class="">
+          <td class="bg-blue-5 text-bold text-center" colspan="1">
+            REF FAMILIAR 1
+          </td>
+          <td class="text-bold text-center" colspan="5">
+            {{ item.family_reference_name }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            TELEFONO
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ item.family_reference_phone }}
+          </td>
+        </tr>
+        <tr class="">
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            DIRECCIÓN
+          </td>
+          <td class="bg-yellow text-bold text-center" colspan="5">
+            {{ item.family_reference_address }}, {{ item.family_reference_district_name }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            PARENTESCO
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ item.family_reference_relationship }}
+          </td>
+        </tr>
+        <tr class="">
+          <td class="bg-blue-5 text-bold text-center" colspan="1">
+            REF FAMILIAR 2
+          </td>
+          <td class="text-bold text-center" colspan="5">
+            {{ item.family2_reference_name }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            TELEFONO
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ item.family2_reference_phone }}
+          </td>
+        </tr>
+        <tr class="">
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            DIRECCIÓN
+          </td>
+          <td class="bg-yellow text-bold text-center" colspan="5">
+            {{ item.family2_reference_address }}, {{ item.family2_reference_district_name }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            PARENTESCO
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ item.family2_reference_relationship }}
+          </td>
+        </tr>
+        <tr class="">
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            CUENTA PRINCIPAL
+          </td>
+          <td class="text-bold text-center" colspan="2">
+            {{ item.account_type }}: {{ item.account_number }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            CUENTA TERCERO
+          </td>
+          <td class="text-bold text-center" colspan="2">
+            {{ item.account_type_third }}: {{ item.account_number_third }}
+          </td>
+          <td class="bg-blue-1 text-bold text-center" colspan="1">
+            CUENTA ACTIVA
+          </td>
+          <td class="text-bold text-center" colspan="1">
+            {{ item.account_active }}
+          </td>
+        </tr>
+        <tr class="">
+          <td class="bg-blue-5 text-bold text-center" colspan="1">
+            REF EXTRA
+          </td>
+          <td class="text-bold text-center text-red" colspan="7">
+            {{ item.extra_reference }}
+          </td>
+        </tr>
+      </tbody>
+    </q-markup-table>
     <q-card v-if="id" class="q-mt-lg">
       <q-card-section class="row q-pb-none">
-        <div class="text-h6">DATOS DE CLIENTE</div>
+        <div class="text-h6">ARCHIVOS DE CLIENTE</div>
       </q-card-section>
       <q-separator />
       <q-card-section class="scroll flex">
-        <div class="div-container">
-          <p class="text-subtitle1 text-weight-bold text-center">DATOS:</p>
-          <div class="table-container">
-            <q-markup-table
-              class="markup-table q-mt-md"
-              separator="cell"
-              dense
-            >
-              <tbody>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
-                    {{ item.name }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Número de doc:</p>
-                    {{ item.documentNumber }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Dirección de casa:</p>
-                    {{ item.address_house }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Dirección de trabajo:</p>
-                    {{ item.address_work }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Ocupación:</p>
-                    {{ item.occupation }}
-                  </td>
-                </tr>
-              </tbody>
-            </q-markup-table>
-          </div>
-        </div>
-        <div class="div-container">
-          <p class="text-subtitle1 text-weight-bold text-center">DATOS:</p>
-          <div class="table-container">
-            <q-markup-table
-              class="markup-table q-mt-md"
-              separator="cell"
-              dense
-            >
-              <tbody>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Tipo de vivienda:</p>
-                    {{ item.type_house }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Tipo de trabajo:</p>
-                    {{ item.type_work }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Cantidad préstamo:</p>
-                    {{ item.quantity }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Período:</p>
-                    {{ item.period }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Referencia Extra:</p>
-                    {{ item.extra_reference }}
-                  </td>
-                </tr>
-              </tbody>
-            </q-markup-table>
-          </div>
-        </div>
-        <div class="div-container">
-          <p class="text-subtitle1 text-weight-bold text-center">DATOS DE CUENTA:</p>
-          <div class="table-container">
-            <q-markup-table
-              class="markup-table q-mt-md"
-              separator="cell"
-              dense
-            >
-              <tbody>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Tipo de cuenta:</p>
-                    {{ item.account_type }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Número de cuenta:</p>
-                    {{ item.account_number }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Tipo de cuenta de tercero:</p>
-                    {{ item.account_type_third }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Número de cuenta:</p>
-                    {{ item.account_number_third }}
-                  </td>
-                </tr>
-              </tbody>
-            </q-markup-table>
-          </div>
-        </div>
         <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA CLIENTE</p>
           <camera-photo
@@ -258,6 +370,7 @@
               modelName: 'news',
               modelId: id
             }"
+            :showApprove="false"
             type="read"
           />
         </div>
@@ -277,47 +390,10 @@
     </q-card>
     <q-card v-if="id" class="q-mt-lg">
       <q-card-section class="row q-pb-none">
-        <div class="text-h6">DATOS DE REFERENCIA FAMILIAR 1</div>
+        <div class="text-h6">ARCHIVOS DE REFERENCIA FAMILIAR 1</div>
       </q-card-section>
       <q-separator />
       <q-card-section class="scroll flex">
-        <div class="div-container">
-          <p class="text-subtitle1 text-weight-bold text-center">DATOS:</p>
-          <div class="table-container">
-            <q-markup-table
-              class="markup-table q-mt-md"
-              separator="cell"
-              dense
-            >
-              <tbody>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
-                    {{ item.family_reference_name }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
-                    {{ item.family_reference_address }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
-                    {{ item.family_reference_phone }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Parentesco:</p>
-                    {{ item.family_reference_relationship }}
-                  </td>
-                </tr>
-              </tbody>
-            </q-markup-table>
-          </div>
-        </div>
         <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA REF FAMILIAR 1</p>
           <camera-photo
@@ -370,47 +446,10 @@
     </q-card>
     <q-card v-if="id" class="q-mt-lg">
       <q-card-section class="row q-pb-none">
-        <div class="text-h6">DATOS DE REFERENCIA FAMILIAR 2</div>
+        <div class="text-h6">ARCHIVOS DE REFERENCIA FAMILIAR 2</div>
       </q-card-section>
       <q-separator />
       <q-card-section class="scroll flex">
-        <div class="div-container">
-          <p class="text-subtitle1 text-weight-bold text-center">DATOS:</p>
-          <div class="table-container">
-            <q-markup-table
-              class="markup-table q-mt-md"
-              separator="cell"
-              dense
-            >
-              <tbody>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
-                    {{ item.family2_reference_name }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
-                    {{ item.family2_reference_address }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
-                    {{ item.family2_reference_phone }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Parentesco:</p>
-                    {{ item.family2_reference_relationship }}
-                  </td>
-                </tr>
-              </tbody>
-            </q-markup-table>
-          </div>
-        </div>
         <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA REF FAMILIAR 2</p>
           <camera-photo
@@ -463,47 +502,10 @@
     </q-card>
     <q-card v-if="id" class="q-mt-lg">
       <q-card-section class="row q-pb-none">
-        <div class="text-h6">DATOS DE FIADOR</div>
+        <div class="text-h6">ARCHIVOS DE FIADOR</div>
       </q-card-section>
       <q-separator />
       <q-card-section class="scroll flex">
-        <div class="div-container">
-          <p class="text-subtitle1 text-weight-bold text-center">DATOS:</p>
-          <div class="table-container">
-            <q-markup-table
-              class="markup-table q-mt-md"
-              separator="cell"
-              dense
-            >
-              <tbody>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
-                    {{ item.guarantor_name }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Dirección:</p>
-                    {{ item.guarantor_address }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
-                    {{ item.guarantor_phone }}
-                  </td>
-                </tr>
-                <tr class="tr-table">
-                  <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Parentesco:</p>
-                    {{ item.guarantor_relationship }}
-                  </td>
-                </tr>
-              </tbody>
-            </q-markup-table>
-          </div>
-        </div>
         <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">FOTO CASA FIADOR</p>
           <camera-photo
@@ -606,6 +608,8 @@
 </template>
 <script>
 import moment from 'moment';
+import domtoimage from 'dom-to-image';
+import { Notify } from 'quasar';
 import { mapState, mapActions } from 'vuex';
 import CameraPhoto from 'components/common/CameraPhoto.vue';
 import CameraVideo from 'components/common/CameraVideo.vue';
@@ -695,6 +699,46 @@ export default {
     formatHour(date) {
       return moment(date).format('hh:mm A');
     },
+    captureImage() {
+      const element = document.getElementById('div-container-table-cv');
+
+      domtoimage.toBlob(element).then((blob) => {
+        // Crea un ClipboardItem a partir del blob
+        const item = new ClipboardItem({ 'image/png': blob });
+
+        // Copia el item al portapapeles
+        navigator.clipboard.write([item]).then(() => {
+          Notify.create({
+            message: 'Imagen copiada en el portapapeles',
+            icon: 'content_copy',
+            color: 'green',
+            timeout: 5000,
+            textColor: 'white',
+            classes: 'glossy',
+          });
+        }).catch((err) => {
+          Notify.create({
+            message: `Error al copiar la imagen al portapapeles: ${err}`,
+            icon: 'content_copy',
+            color: 'red',
+            timeout: 5000,
+            textColor: 'white',
+            classes: 'glossy',
+          });
+          console.log(err);
+        });
+      }).catch((error) => {
+        Notify.create({
+          message: `Error al generar la imagen: ${error}`,
+          icon: 'content_copy',
+          color: 'red',
+          timeout: 5000,
+          textColor: 'white',
+          classes: 'glossy',
+        });
+        console.log(error);
+      });
+    },
     async getItem() {
       await this.getNew(this.id);
     },
@@ -720,6 +764,15 @@ export default {
     min-width: 250px;
     margin: auto;
   }
+
+  .cv-table {
+    display: block;
+    border: solid 1px black;
+  }
+  .cv-table td {
+    border: solid 1px black;
+  }
+
   .z-index-btn {
     z-index: 20;
   }

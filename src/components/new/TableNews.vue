@@ -87,7 +87,7 @@
               round
             />
             <q-btn
-              v-if="props.row.status === 'pendiente'"
+              v-if="props.row.status === 'analizando'"
               class="q-ml-xs"
               color="primary"
               field="changeStatus"
@@ -101,7 +101,7 @@
       </template>
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
-          <q-badge :color="props.row.status === 'pendiente' ? 'orange' : 'blue'">
+          <q-badge :color="props.row.status === 'analizando' ? 'orange' : 'blue'">
             {{  props.row.status }}
           </q-badge>
         </q-td>
@@ -293,7 +293,7 @@ export default {
     }),
     async listNewsMounted() {
       showLoading('Cargando ...', 'Por favor, espere', true);
-      await this.listNews(['borrador', 'creado', 'pendiente']);
+      await this.listNews(['borrador', 'creado', 'analizando']);
       if (this.status === false) {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
         this.data = [];

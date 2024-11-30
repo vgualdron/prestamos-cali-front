@@ -62,6 +62,7 @@
                 modelName: 'news',
                 modelId: row.model_id
               }"
+              :showApprove="false"
               type="read"
             />
           </div>

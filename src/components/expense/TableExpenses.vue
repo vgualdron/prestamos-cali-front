@@ -48,18 +48,27 @@
       class="q-mt-md"
       dense
     >
-      <template v-slot:body-cell-actions="props">
+      <template v-slot:body-cell-delete="props">
         <q-td :props="props">
-          <div>
-            <upload-image
-              :config="{
-                name: 'FOTO_EXPENSE',
-                storage: 'expenses',
-                modelName: 'expenses',
-                modelId: props.row.id
-              }"
-            />
-          </div>
+          <q-btn
+            icon="delete"
+            class="q-ml-sm"
+            color="primary"
+            title="Click para eliminar el egreso"
+            @click="remove(props.row)">
+          </q-btn>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-voucher="props">
+        <q-td :props="props">
+          <upload-image
+            :config="{
+              name: 'FOTO_EXPENSE',
+              storage: 'expenses',
+              modelName: 'expenses',
+              modelId: props.row.id
+            }"
+          />
         </q-td>
       </template>
     </q-table>
@@ -92,8 +101,14 @@ export default {
       route: '/expense',
       columns: [
         {
-          name: 'actions',
-          label: 'Acciones',
+          name: 'delete',
+          label: 'Borrar',
+          align: 'center',
+          visible: false,
+        },
+        {
+          name: 'voucher',
+          label: 'Voucher',
           align: 'center',
           visible: false,
         },
@@ -205,6 +220,7 @@ export default {
     ...mapActions(expenseTypes.PATH, {
       listExpenses: expenseTypes.actions.LIST_EXPENSES,
       updateExpense: expenseTypes.actions.UPDATE_EXPENSE,
+      deleteExpense: expenseTypes.actions.DELETE_EXPENSE,
     }),
     formatPrice(val) {
       return new Intl.NumberFormat('es-CO', {
@@ -246,6 +262,34 @@ export default {
       }
       this.$q.loading.hide();
       this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
+    },
+    async remove(row) {
+      this.$q.dialog({
+        title: 'Eliminar',
+        message: 'Está seguro que desea eliminar?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        showLoading('Eliminando ...', 'Por favor, espere', true);
+        await this.deleteExpense(row.id);
+
+        if (this.status === true) {
+          await this.listMounted();
+        }
+        this.$q.loading.hide();
+        this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
     },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);

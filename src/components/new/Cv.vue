@@ -19,16 +19,16 @@
         </q-card-section>
         <q-separator />
         <q-card-section class="row q-pb-none">
-          <app v-if="row.type_cv === 'app'" :id="row.id"/>
-          <pdf v-else :id="row.id"/>
+          <cv-app v-if="row.type_cv === 'app'" :id="row.id"/>
+          <cv-pdf v-else :id="row.id"/>
         </q-card-section>
       </q-card>
     </q-dialog>
   </div>
 </template>
 <script>
-import App from './cv/App.vue';
-import Pdf from './cv/Pdf.vue';
+import CvApp from './cv/CvApp.vue';
+import CvPdf from './cv/CvPdf.vue';
 import { havePermission } from '../../helpers/havePermission';
 
 export default {
@@ -71,13 +71,12 @@ export default {
   },
   async created() {
     // await this.getItem();
-
   },
   methods: {
   },
   components: {
-    App,
-    Pdf,
+    CvApp,
+    CvPdf,
   },
 };
 </script>

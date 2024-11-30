@@ -687,6 +687,18 @@
               <tbody>
                 <tr class="tr-table">
                   <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Numero doc:</p>
+                    {{ item.guarantor_document_number }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Ocupación:</p>
+                    {{ item.guarantor_occupation }}
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
                     <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
                     {{ item.guarantor_name }}
                   </td>

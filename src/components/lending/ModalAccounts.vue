@@ -125,6 +125,17 @@
                   <tr>
                     <td colspan="2">
                       <div v-if="!question || (question && question.status !== 'pendiente')" class="col-3 is-flex">
+                        <div class="div-container">
+                          <p class="text-subtitle1 text-weight-bold text-center">VIDEO AUTORIZA CUENTA TERCERO</p>
+                          <upload-video
+                            :config="{
+                              name: 'VIDEO_AUTORIZA_CUENTA_TERCERO',
+                              storage: 'news',
+                              modelName: 'news',
+                              modelId: row.id
+                            }"
+                          />
+                        </div>
                         <q-btn
                           label="Enviar solicitud"
                           color="primary"
@@ -157,6 +168,7 @@
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
+import UploadVideo from 'components/common/UploadVideo.vue';
 import questionTypes from '../../store/modules/question/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
@@ -247,6 +259,7 @@ export default {
     },
   },
   components: {
+    UploadVideo,
   },
 };
 </script>

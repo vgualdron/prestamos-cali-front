@@ -20,6 +20,7 @@ import expense, { name as expenseName } from './expense';
 import area, { name as areaName } from './area';
 import item, { name as itemName } from './item';
 import question, { name as questionName } from './question';
+import nequi, { name as nequiName } from './nequi';
 
 export default {
   [homeName]: home,
@@ -44,4 +45,5 @@ export default {
   [areaName]: area,
   [itemName]: item,
   [questionName]: question,
+  [nequiName]: nequi,
 };

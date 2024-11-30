@@ -730,6 +730,28 @@
                 <tbody>
                   <tr class="tr-table">
                     <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Número de doc:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.guarantor_document_number }}
+                      <q-popup-edit :value="item.guarantor_document_number" v-slot="scope" buttons
+                        @input="val => saveDateNew('guarantor_document_number', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Ocupación:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.guarantor_occupation }}
+                      <q-popup-edit :value="item.guarantor_occupation" v-slot="scope" buttons
+                        @input="val => saveDateNew('guarantor_occupation', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
                       <p class="text-subtitle1 text-weight-bold text-center">Nombre:</p>
                       <q-icon size="xs" name="edit" />
                       {{ item.guarantor_name }}

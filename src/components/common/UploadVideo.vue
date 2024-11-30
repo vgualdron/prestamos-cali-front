@@ -10,10 +10,12 @@
           color="primary"
           @click="openInGoogleMaps">
         </q-btn>
-        <img
+        <video
           v-if="urlFile"
           :src="urlFile"
-          width="250rem" />
+          width="250rem"
+          controls>
+        </video>
         <p v-else class="text-subtitle1 text-center">No se ha cargado archivo</p>
         <q-banner
           v-if="item && item.status == 'rechazado' && item.observation"
@@ -27,7 +29,7 @@
         </q-banner>
         <q-btn
           v-if="(!item && type !== 'read') || (item && item.status !== 'aprobado' && type !== 'read')"
-          label="Agregar foto"
+          label="Agregar video"
           color="primary"
           icon="add_a_photo"
           ref="camera"
@@ -67,7 +69,7 @@
       persistent>
       <q-card style="max-width: 95vw;">
         <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">Subir foto</div>
+          <div class="text-h6">Subir video</div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
@@ -75,7 +77,7 @@
         <q-card-section style="max-height: 60vh" class="scroll">
           <div class="row">
             <q-uploader
-              accept="image/*"
+              accept="video/*"
               ref="uploader"
               color="primary"
               text-color="white"
@@ -115,7 +117,7 @@ import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 
 export default {
-  name: 'UploadImage',
+  name: 'UploadVideo',
   data() {
     return {
       item: null,
@@ -253,10 +255,10 @@ export default {
         storage,
         modelName,
         modelId,
-        type: 'image',
+        type: 'video',
         file: this.file,
         extension: this.extension,
-        status: name === 'FOTO_VOUCHER' ? 'creado' : 'creado',
+        status: 'creado',
         latitude,
         longitude,
       });

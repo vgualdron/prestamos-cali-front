@@ -15,14 +15,33 @@
             </div>
             <div v-show="type === 'nequi'" class="col-4 text-center q-mt-md">
               <q-form class="q-gutter-md">
-                <q-input
+                <q-select
+                  v-model="inputValue.nameNequi"
+                  class="q-mt-md"
                   outlined
-                  v-model.trim="inputValue.nameNequi"
+                  clearable
+                  input-debounce="0"
                   label="Nombre de nequi *"
+                  :options="nequis"
+                  option-label="name"
+                  option-value="id"
                   lazy-rules
-                  :rules="[(val) => (!!val) || '']"
+                  :rules="[
+                    (val) => (!!val) || 'El campo es requerido',
+                  ]"
                   hide-bottom-space
-                />
+                  map-options
+                  emit-value
+                  autocomplete="off"
+                >
+                  <template v-slot:no-option>
+                    <q-item>
+                      <q-item-section class="text-grey">
+                        No hay coincidencias
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
                 <q-input
                   outlined
                   v-model.trim="inputValue.dateTransaction"
@@ -82,6 +101,9 @@
   </div>
 </template>
 <script>
+import { mapState, mapActions } from 'vuex';
+import nequiTypes from '../../store/modules/nequi/types';
+
 export default {
   data() {
     return {
@@ -95,11 +117,17 @@ export default {
       },
     };
   },
-  mounted() {
+  async mounted() {
+    await this.listNequis();
   },
   watch: {
   },
   computed: {
+    ...mapState(nequiTypes.PATH, [
+      'nequis',
+      'responseMessages',
+      'status',
+    ]),
     showDialog: {
       get() {
         return this.value;
@@ -153,6 +181,9 @@ export default {
     },
   },
   methods: {
+    ...mapActions(nequiTypes.PATH, {
+      listNequis: nequiTypes.actions.LIST_NEQUIS,
+    }),
     clickBtnAccept() {
       this.$emit('clickBtnAccept', this.inputValue);
     },

@@ -1,23 +1,5 @@
 <template>
   <div class="">
-    <!-- <div class="row q-mt-md">
-      <div class="col-12 text-center">
-        <q-input
-          outlined
-          debounce="400"
-          color="primary"
-          v-model="filter"
-          class="q-ml-xs"
-          placeholder="Buscar"
-          clearable
-          dense
-        >
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-      </div>
-    </div> -->
     <div class="row q-mt-md justify-center">
       <div class="col-8">
         <q-btn-toggle
@@ -47,9 +29,6 @@
     </div>
     <div class="row q-mt-md">
       <div class="col-12 text-center">
-        <!-- <div class="q-px-sm">
-          <b>Cobrador seleccionado:</b>
-        </div> -->
         <b>Prestador:</b>
         <q-radio
           v-for="user in optionsUsers"
@@ -484,6 +463,7 @@ export default {
       const statusEdit = havePermission('new.update');
       const statusDelete = havePermission('new.delete');
       const statuschangeStatus = havePermission('new.changeStatus');
+      const statusAllCities = havePermission('new.allCities');
       return {
         create: {
           title: statusCreate ? 'Registrar nuevos' : 'No tiene permisos para registrar nuevos',
@@ -509,10 +489,19 @@ export default {
           title: statuschangeStatus ? 'Rechazar' : 'No tiene permisos',
           status: statuschangeStatus,
         },
+        allCities: {
+          title: statusAllCities ? 'Todas las ciudades' : 'No tiene permisos',
+          status: statusAllCities,
+        },
       };
     },
     optionsZones() {
-      return this.zones.map(({ name, id }) => {
+      const isAll = this.validatedPermissions.allCities.status;
+      let cities = [...this.zones];
+      if (!isAll) {
+        cities = this.zones.filter((zone) => zone.id === this.citySelected);
+      }
+      return cities.map(({ name, id }) => {
         const items = this.news.filter(({ city }) => id === city);
         const label = `[ ${items.length} ] ${name}`;
         return {
