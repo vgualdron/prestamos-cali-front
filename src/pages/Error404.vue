@@ -6,7 +6,7 @@
       </div>
 
       <div class="text-h2" style="opacity:.4">
-        Uups. No existe la pagiana...
+        Uups. No existe la pagina...
       </div>
 
       <q-btn
