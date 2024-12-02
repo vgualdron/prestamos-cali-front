@@ -48,7 +48,14 @@
         </q-input>
       </div>
     </div>
+    <q-banner v-if="listing && listing.capture_delivery_file" dense class="bg-grey-3 q-mt-md">
+      <template v-slot:avatar>
+        <q-icon name="lock" color="primary" />
+      </template>
+      Ya se realizó la entrega del día
+    </q-banner>
     <q-table
+      v-else
       :grid="$q.screen.xs"
       :data="data"
       :columns="columns"
@@ -59,7 +66,8 @@
       separator="cell"
       class="q-mt-md"
       :row-class="'bg-purple'"
-      dense>
+      dense
+      id="div-container-list">
       <template v-slot:body="props">
         <q-tr :props="props" @click="clickRow(props.row)">
           <q-td key="actions" :props="props">
@@ -178,7 +186,7 @@
             {{ props.row.amountFees }}
           </q-td>
           <q-td key="renovation" :props="props">
-            <template v-if="hasPaymentToday(props.row, 'renovacion')">
+            <template v-if="hasPaymentToday(props.row, 'renovacion', 0)">
               <q-badge
                 v-if="props.row.status === 'renovated'"
                 color="green">
@@ -216,8 +224,8 @@
             </b>
           </q-td>
           <q-td key="collection" :props="props">
-            <div v-if="hasPaymentToday(props.row, 'nequi')">
-              <div v-for="payment in getPaymentsTodayNequi(props.row)" :key="payment.id"
+            <div v-if="hasPaymentToday(props.row, 'nequi', 0)">
+              <div v-for="payment in getPaymentsTodaySecre(props.row)" :key="payment.id"
                 class="q-ma-xs">
                 <q-badge
                   :color="payment.id ? payment.classes : ''"
@@ -243,7 +251,7 @@
               title="Ya pagó todo el préstamo">
               <q-icon name="block" color="red" />
             </b>
-            <b v-else-if="!hasPaymentToday(props.row, 'renovacion') && formatDate(props.row.created_at) !== formatDate(new Date())">
+            <b v-else-if="!hasPaymentToday(props.row, 'renovacion', 0) && formatDate(props.row.created_at) !== formatDate(new Date())">
               <q-btn
                 color="primary"
                 label="$"
@@ -254,8 +262,40 @@
             </b>
           </q-td>
           <q-td key="street" :props="props">
+            <div v-if="hasPaymentToday(props.row, 'nequi', 1)">
+              <div v-for="payment in getPaymentsTodayStreet(props.row)" :key="payment.id"
+                class="q-ma-xs">
+                <q-badge
+                  :color="payment.id ? payment.classes : ''"
+                  :title="payment.id ? payment.observation : ''">
+                  <b>{{ formatPrice(payment.amount) }}</b>
+                  <q-icon
+                    v-if="payment.id && payment.observation"
+                    name="comment"
+                    size="14px"
+                    class="q-ml-xs pointer-cursor"
+                  />
+                </q-badge>
+              </div>
+            </div>
           </q-td>
           <q-td key="article" :props="props">
+            <div v-if="hasPaymentToday(props.row, 'articulo', 1)">
+              <div v-for="payment in getPaymentsTodayArticle(props.row)" :key="payment.id"
+                class="q-ma-xs">
+                <q-badge
+                  :color="payment.id ? payment.classes : ''"
+                  :title="payment.id ? payment.observation : ''">
+                  <b>{{ formatPrice(payment.amount) }}</b>
+                  <q-icon
+                    v-if="payment.id && payment.observation"
+                    name="comment"
+                    size="14px"
+                    class="q-ml-xs pointer-cursor"
+                  />
+                </q-badge>
+              </div>
+            </div>
           </q-td>
           <q-td key="daysPassed" :props="props">
             {{ daysSinceGivenDate(props.row.firstDate) }}
@@ -315,9 +355,14 @@
       <!-- Fila de totales en el bottom -->
       <template v-slot:bottom-row>
         <q-tr class="bg-blue-2 text-primary">
-          <q-td colspan="8"><strong>Total {{ totalUnitsNequi }} cobros</strong></q-td>
+          <q-td colspan="2"></q-td>
+          <q-td><strong>Total {{ totalUnitsCollection }} cobros</strong></q-td>
+          <q-td><strong>{{ formatPrice(totalRenovated) }}</strong></q-td>
+          <q-td colspan="4"></q-td>
           <q-td><strong>{{ formatPrice(totalRenovation) }}</strong></q-td>
-          <q-td><strong>{{ formatPrice(totalNequi) }}</strong></q-td>
+          <q-td><strong>{{ formatPrice(totalSecre) }}</strong></q-td>
+          <q-td><strong>{{ formatPrice(totalStreet) }}</strong></q-td>
+          <q-td><strong>{{ formatPrice(totalArticle) }}</strong></q-td>
           <q-td colspan="7"><strong>{{ formatPrice(totalCollection) }}</strong></q-td>
         </q-tr>
       </template>
@@ -372,6 +417,7 @@
       v-if="showModalDelivery"
       v-model="showModalDelivery"
       :list="listingSelected"
+      :totalAmount="totalCollection"
     />
     <modal-preview-file
       v-if="showModalPreviewR"
@@ -415,6 +461,7 @@
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
+import domtoimage from 'dom-to-image';
 import moment from 'moment';
 import ModalAddPayment from 'components/payment/ModalAddPayment.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
@@ -489,7 +536,7 @@ export default {
         {
           name: 'double',
           required: true,
-          label: 'Doble interés',
+          label: 'Doble int',
           align: 'center',
           style: 'width: 100px',
           field: (row) => row,
@@ -640,6 +687,7 @@ export default {
       showModalAccounts: false,
       showModalAddNew: false,
       objNew: {},
+      location: null,
     };
   },
   watch: {
@@ -664,6 +712,7 @@ export default {
       lendingResponseMessages: 'responseMessages',
     }),
     ...mapState(listingTypes.PATH, [
+      'listing',
       'listings',
     ]),
     ...mapState(userTypes.PATH, {
@@ -694,7 +743,17 @@ export default {
       return this.users.map(({ id, name }) => ({ label: name, value: id }));
     },
     optionsListings() {
-      return this.listings.map(({ id, name, user_collector }) => ({ label: `${name} - ${user_collector.name}`, value: id, userId: user_collector.id }));
+      return this.listings.map(({
+        id,
+        name,
+        user_collector,
+        capture_delivery_file,
+      }) => ({
+        label: `${name} - ${user_collector.name}`,
+        value: id,
+        userId: user_collector.id,
+        lock: capture_delivery_file,
+      }));
     },
     data() {
       return this.lendings.map((row, index) => ({
@@ -702,10 +761,27 @@ export default {
         index: index + 1,
       }));
     },
-    totalNequi() {
+    totalRenovated() {
+      const lendings = this.getLendingsTodayRenovated();
+      const total = lendings.reduce((result, lending) => (parseInt(result, 10) + parseInt(lending.amount, 10)), 0);
+      return total;
+    },
+    totalSecre() {
       let total = 0;
       this.lendings.forEach((lending) => {
-        const payments = this.getPaymentsTodayNequi(lending);
+        const payments = this.getPaymentsTodaySecre(lending);
+        const approved = payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
+        if (approved && approved.length > 0) {
+          const totalPayment = approved.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+          total += parseInt(totalPayment, 10);
+        }
+      });
+      return total;
+    },
+    totalStreet() {
+      let total = 0;
+      this.lendings.forEach((lending) => {
+        const payments = this.getPaymentsTodayStreet(lending);
         const approved = payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
         if (approved && approved.length > 0) {
           const totalPayment = approved.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
@@ -724,13 +800,25 @@ export default {
       });
       return total;
     },
-    totalCollection() {
-      return parseInt(this.totalNequi, 10) + parseInt(this.totalRenovation, 10);
-    },
-    totalUnitsNequi() {
+    totalArticle() {
       let total = 0;
       this.lendings.forEach((lending) => {
-        const payments = this.getPaymentsTodayNequi(lending);
+        const payments = this.getPaymentsTodayArticle(lending);
+        const approved = payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
+        if (approved && approved.length > 0) {
+          const totalPayment = approved.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+          total += parseInt(totalPayment, 10);
+        }
+      });
+      return total;
+    },
+    totalCollection() {
+      return parseInt(this.totalSecre, 10) + parseInt(this.totalRenovation, 10) + parseInt(this.totalArticle, 10) + parseInt(this.totalStreet, 10);
+    },
+    totalUnitsCollection() {
+      let total = 0;
+      this.lendings.forEach((lending) => {
+        const payments = this.getPaymentsTodayCollection(lending);
         const approved = payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
         if (approved && approved.length > 0) {
           total += 1;
@@ -750,6 +838,7 @@ export default {
       fetchHistory: lendingTypes.actions.FETCH_HISTORY,
     }),
     ...mapActions(listingTypes.PATH, {
+      getListing: listingTypes.actions.GET_LISTING,
       fetchListings: listingTypes.actions.FETCH_LISTINGS,
       fetchMineListings: listingTypes.actions.FETCH_MINE_LISTINGS,
     }),
@@ -764,9 +853,68 @@ export default {
     }),
     ...mapActions(fileTypes.PATH, {
       getFile: fileTypes.actions.GET_FILE,
+      saveFile: fileTypes.actions.SAVE_FILE,
     }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
+    },
+    async getLocation() {
+      try {
+        if (navigator.geolocation) {
+          // Usamos una promesa para envolver el método getCurrentPosition
+          const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+          });
+          // Almacenamos la latitud y longitud
+          this.location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+        } else {
+          this.error = 'Unable to retrieve location. Please allow access.';
+        }
+      } catch (err) {
+        this.error = 'Geolocation is not supported by this browser.';
+      }
+    },
+    async captureImage() {
+      showLoading('Guardando ...', 'Por favor, espere', true);
+      const element = document.getElementById('div-container-delivery');
+      domtoimage.toPng(element).then(async (blob) => {
+        this.sendImage(blob.split(',')[1]);
+        this.$q.loading.hide();
+      }).catch((error) => {
+        console.log(error);
+      });
+    },
+    async sendImage(file) {
+      await this.getLocation();
+      const {
+        latitude,
+        longitude,
+      } = this.location;
+      showLoading('Guardando ...', 'Por favor, espere', true);
+
+      await this.saveFile({
+        name: 'CAPTURE_ROUTE',
+        storage: 'listings',
+        modelName: 'listings',
+        modelId: this.list.value,
+        type: 'image',
+        file,
+        extension: 'png',
+        status: 'aprobado',
+        latitude,
+        longitude,
+        maintain: true,
+      });
+      this.$q.loading.hide();
+      /* if (this.responseMessages && this.status) {
+        this.showModal = false;
+        this.$emit('savedFile', { name });
+        await this.fetchFile();
+      } */
+      // this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
     },
     async fetchFileRedSocial(row) {
       showLoading('consultando archivo ...', 'Por favor, espere', true);
@@ -810,7 +958,7 @@ export default {
     isNew(row) {
       const date = new Date(row.created_at);
       const now = new Date();
-      const maxLimit = new Date();
+      const maxLimit = new Date(date);
       maxLimit.setDate(date.getDate() + 3);
       return now <= maxLimit;
     },
@@ -922,13 +1070,13 @@ export default {
       }
       return (total - totalPayments);
     },
-    hasPaymentToday(row, type) {
+    hasPaymentToday(row, type, isStreet) {
       let has = false;
       const currentDate = moment().startOf('day');
       if (row.payments && row.payments.length > 0) {
         row.payments.forEach((payment) => {
           const datePayment = moment(payment.date).startOf('day');
-          if (currentDate.isSame(datePayment, 'day') && payment.type === type) {
+          if (currentDate.isSame(datePayment, 'day') && payment.type === type && payment.is_street === isStreet) {
             has = true;
           }
         });
@@ -936,7 +1084,7 @@ export default {
       return has;
     },
     allPaidsApprovedToday(row) {
-      const payments = this.getPaymentsTodayNequi(row);
+      const payments = this.getPaymentsTodayCollection(row);
       const approved = payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
       return approved.length === payments.length;
     },
@@ -944,13 +1092,105 @@ export default {
       const approved = row.payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
       return approved.length === row.payments.length;
     },
-    getPaymentsTodayNequi(row) {
+    getLendingsTodayRenovated() {
+      const lendings = [];
+      const currentDate = moment().startOf('day');
+      this.lendings.forEach((lending) => {
+        const dateLending = moment(lending.created_at).startOf('day');
+        if (currentDate.isSame(dateLending, 'day') && lending.type === 'R') {
+          lendings.push(lending);
+        }
+      });
+      return lendings;
+    },
+    getPaymentsTodayCollection(row) {
       const pays = [];
       const currentDate = moment().startOf('day');
       if (row.payments && row.payments.length > 0) {
         row.payments.forEach((payment) => {
           const datePayment = moment(payment.date).startOf('day');
-          if (currentDate.isSame(datePayment, 'day') && payment.type === 'nequi') {
+          if (currentDate.isSame(datePayment, 'day') && (payment.type === 'nequi' || payment.type === 'articulo')) {
+            const pay = { ...payment };
+            let classes = '';
+            let observation = '';
+            if (pay.status === 'aprobado' || pay.status === 'verificado') {
+              classes = 'green';
+              observation = pay.observation;
+            } else if (pay.status === 'rechazado') {
+              classes = 'red';
+              observation = pay.observation;
+            } else {
+              classes = 'black';
+            }
+            pay.classes = classes;
+            pay.observation = observation;
+            pays.push(pay);
+          }
+        });
+      }
+      return pays;
+    },
+    getPaymentsTodaySecre(row) {
+      const pays = [];
+      const currentDate = moment().startOf('day');
+      if (row.payments && row.payments.length > 0) {
+        row.payments.forEach((payment) => {
+          const datePayment = moment(payment.date).startOf('day');
+          if (currentDate.isSame(datePayment, 'day') && payment.type === 'nequi' && !payment.is_street) {
+            const pay = { ...payment };
+            let classes = '';
+            let observation = '';
+            if (pay.status === 'aprobado' || pay.status === 'verificado') {
+              classes = 'green';
+              observation = pay.observation;
+            } else if (pay.status === 'rechazado') {
+              classes = 'red';
+              observation = pay.observation;
+            } else {
+              classes = 'black';
+            }
+            pay.classes = classes;
+            pay.observation = observation;
+            pays.push(pay);
+          }
+        });
+      }
+      return pays;
+    },
+    getPaymentsTodayStreet(row) {
+      const pays = [];
+      const currentDate = moment().startOf('day');
+      if (row.payments && row.payments.length > 0) {
+        row.payments.forEach((payment) => {
+          const datePayment = moment(payment.date).startOf('day');
+          if (currentDate.isSame(datePayment, 'day') && payment.type === 'nequi' && payment.is_street) {
+            const pay = { ...payment };
+            let classes = '';
+            let observation = '';
+            if (pay.status === 'aprobado' || pay.status === 'verificado') {
+              classes = 'green';
+              observation = pay.observation;
+            } else if (pay.status === 'rechazado') {
+              classes = 'red';
+              observation = pay.observation;
+            } else {
+              classes = 'black';
+            }
+            pay.classes = classes;
+            pay.observation = observation;
+            pays.push(pay);
+          }
+        });
+      }
+      return pays;
+    },
+    getPaymentsTodayArticle(row) {
+      const pays = [];
+      const currentDate = moment().startOf('day');
+      if (row.payments && row.payments.length > 0) {
+        row.payments.forEach((payment) => {
+          const datePayment = moment(payment.date).startOf('day');
+          if (currentDate.isSame(datePayment, 'day') && payment.type === 'articulo') {
             const pay = { ...payment };
             let classes = '';
             let observation = '';
@@ -997,6 +1237,7 @@ export default {
     },
     async getLendings(idList) {
       showLoading('consultando ...', 'Por favor, espere', true);
+      await this.getListing(idList);
       await this.fetchLendings({
         idList,
       });

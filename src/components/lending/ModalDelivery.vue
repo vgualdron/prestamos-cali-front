@@ -10,24 +10,26 @@
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
         <q-separator />
-        <q-card-section style="max-height: 80vh" class="scroll">
+        <q-card-section style="max-height: 80vh" class="scroll" id="div-container-delivery">
           <div class="row q-mt-md">
             <div class="col-12 text-center">
               <q-markup-table
-                  class="markup-table"
-                  separator="cell"
-                  dense
+                class="markup-table"
+                separator="cell"
+                dense
+                v-if="delivery.date"
                 >
                   <tbody>
                     <tr class="bg-yellow-3">
                       <td class="text-bold" colspan="4">
+                        RUTA
                       </td>
                     </tr>
                     <tr class="">
                       <td class="" colspan="1">
                         CARTERA
                       </td>
-                      <td class="" colspan="3">
+                      <td class="text-bold" colspan="3">
                         {{ list.label }}
                       </td>
                     </tr>
@@ -41,22 +43,46 @@
                     </tr>
                     <tr class="">
                       <td class="" colspan="1">
-                        TRANSFERENCIA
+                        PAGOS TRANSFERENCIAS
                       </td>
                       <td class="text-bold" colspan="1">
-                        {{ delivery.itemTransfer.amount }}
+                        {{ delivery.itemPayment.total_count_nequi }}
                       </td>
                       <td class="text-bold" colspan="2">
-                        {{ formatPrice(delivery.itemTransfer.total) }}
+                        {{ formatPrice(delivery.itemPayment.total_amount_nequi) }}
                       </td>
                     </tr>
                     <tr class="">
                       <td class="" colspan="1">
-                        RENOVADAS
+                        PAGOS RENOVACIONES
                       </td>
                       <td class="text-bold" colspan="1">
+                        {{ delivery.itemPayment.total_count_renovation }}
                       </td>
                       <td class="text-bold" colspan="2">
+                        {{ formatPrice(delivery.itemPayment.total_amount_renovation) }}
+                      </td>
+                    </tr>
+                    <tr class="">
+                      <td class="" colspan="1">
+                        PAGOS ARTICULOS
+                      </td>
+                      <td class="text-bold" colspan="1">
+                        {{ delivery.itemPayment.total_count_article }}
+                      </td>
+                      <td class="text-bold" colspan="2">
+                        {{ formatPrice(delivery.itemPayment.total_amount_article) }}
+                      </td>
+                    </tr>
+                    <tr class="">
+                      <td class="" colspan="1">
+                        RENOVACIONES
+                      </td>
+                      <td class="text-bold" colspan="1">
+                        {{ delivery.itemRenove.total_count }}
+                      </td>
+                      <td class="text-bold" colspan="2">
+                        {{ formatPrice(delivery.itemRenove.total_amount) }}
                       </td>
                     </tr>
                     <tr class="">
@@ -64,24 +90,95 @@
                         NUEVOS
                       </td>
                       <td class="text-bold" colspan="1">
+                        {{ delivery.itemNovel.total_count }}
                       </td>
                       <td class="text-bold" colspan="2">
-                      </td>
-                    </tr>
-                    <tr class="">
-                      <td class="" colspan="1">
-                        GASTOS
-                      </td>
-                      <td class="text-bold" colspan="3">
+                        {{ formatPrice(delivery.itemNovel.total_amount) }}
                       </td>
                     </tr>
                     <tr class="">
                       <td class="" colspan="1">
                         SUBTOTAL
                       </td>
+                      <td class="" colspan="1">
+                      </td>
+                      <td class="text-bold" colspan="3">
+                        {{ formatPrice(this.subtotal) }}
+                      </td>
+                    </tr>
+                    <tr class="bg-yellow-3">
+                      <td class="text-bold" colspan="4">
+                        BANCO
+                      </td>
+                    </tr>
+                    <tr class="">
+                      <td class="" colspan="1">
+                        RENOVACIONES
+                      </td>
                       <td class="text-bold" colspan="1">
+                        {{ delivery.itemRenove.total_count }}
                       </td>
                       <td class="text-bold" colspan="2">
+                        {{ formatPrice(delivery.itemRenove.total_amount) }}
+                      </td>
+                    </tr>
+                    <tr class="">
+                      <td class="" colspan="1">
+                        NUEVOS
+                      </td>
+                      <td class="text-bold" colspan="1">
+                        {{ delivery.itemNovel.total_count }}
+                      </td>
+                      <td class="text-bold" colspan="2">
+                        {{ formatPrice(delivery.itemNovel.total_amount) }}
+                      </td>
+                    </tr>
+                    <tr class="">
+                      <td class="" colspan="1">
+                        SUBTOTAL
+                      </td>
+                      <td class="" colspan="1">
+                      </td>
+                      <td class="text-bold" colspan="3">
+                        {{ formatPrice(this.subtotalExpenses) }}
+                      </td>
+                    </tr>
+                    <tr :class="difference === 0 ? 'bg-green-3' : 'bg-red-3'">
+                      <td class="" colspan="1">
+                        TOTAL
+                      </td>
+                      <td class="text-bold" colspan="3">
+                        {{ formatPrice(this.total) }}
+                      </td>
+                    </tr>
+                    <tr class="">
+                      <td class="bg-yellow-3" colspan="1">
+                        SECRETARIA
+                      </td>
+                      <td class="text-bold" colspan="1">
+                        {{ formatPrice(delivery.itemPayment.total_amount_secre) }}
+                      </td>
+                      <td class="bg-yellow-3" colspan="1">
+                        CALLE
+                      </td>
+                      <td class="text-bold" colspan="1">
+                        {{ formatPrice(delivery.itemPayment.total_amount_street) }}
+                      </td>
+                    </tr>
+                    <tr class="">
+                      <td class="" colspan="1">
+                        DIFERENCIA
+                      </td>
+                      <td class="text-bold" colspan="3">
+                        {{ formatPrice(difference) }}
+                      </td>
+                    </tr>
+                    <tr class="">
+                      <td class="" colspan="1">
+                        CLIENTES
+                      </td>
+                      <td class="text-bold" colspan="3">
+                        {{ delivery.itemPayment.total_clients }}
                       </td>
                     </tr>
                   </tbody>
@@ -91,11 +188,10 @@
         </q-card-section>
         <q-separator />
         <div class="row text-center q-pa-md">
-          <!-- <q-btn
-            label="Transferir"
+          <q-btn
+            icon="content_copy"
             color="primary"
-            class="col q-ml-sm"
-          /> -->
+            @click="captureImage" />
         </div>
       </q-card>
     </q-dialog>
@@ -103,14 +199,17 @@
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
+import domtoimage from 'dom-to-image';
 import moment from 'moment';
-// import { showLoading } from '../../helpers/showLoading';
+import fileTypes from '../../store/modules/file/types';
 import listingTypes from '../../store/modules/listing/types';
+import { showLoading } from '../../helpers/showLoading';
 
 export default {
   data() {
     return {
-      date: new Date().toISOString().split('T')[0],
+      date: moment().format('YYYY-MM-DD'),
+      location: null,
     };
   },
   props: {
@@ -118,13 +217,12 @@ export default {
       type: Boolean,
       default: false,
     },
-    row: {
-      type: Object,
-      required: false,
-    },
     list: {
       type: Object,
       required: true,
+    },
+    totalAmount: {
+      require: true,
     },
   },
   async mounted() {
@@ -146,10 +244,32 @@ export default {
         this.$emit('input', val);
       },
     },
+    subtotal() {
+      const transfer = parseInt(this.delivery.itemPayment.total_amount_nequi, 10);
+      const renovation = parseInt(this.delivery.itemPayment.total_amount_renovation, 10);
+      const article = parseInt(this.delivery.itemPayment.total_amount_article, 10);
+      const renove = parseInt(this.delivery.itemRenove.total_amount, 10);
+      const novel = parseInt(this.delivery.itemNovel.total_amount, 10);
+      return transfer + renove + novel + renovation + article;
+    },
+    subtotalExpenses() {
+      const renove = parseInt(this.delivery.itemRenove.total_amount, 10);
+      const novel = parseInt(this.delivery.itemNovel.total_amount, 10);
+      return renove + novel;
+    },
+    total() {
+      return this.subtotal - this.subtotalExpenses;
+    },
+    difference() {
+      return parseInt(this.totalAmount, 10) - parseInt(this.total, 10);
+    },
   },
   methods: {
     ...mapActions(listingTypes.PATH, {
       fetchDelivery: listingTypes.actions.FETCH_DELIVERY,
+    }),
+    ...mapActions(fileTypes.PATH, {
+      saveFile: fileTypes.actions.SAVE_FILE,
     }),
     formatLink(row) {
       if (row.file) {
@@ -167,6 +287,78 @@ export default {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       }).format(val);
+    },
+    async getLocation() {
+      try {
+        if (navigator.geolocation) {
+          // Usamos una promesa para envolver el método getCurrentPosition
+          const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+          });
+          // Almacenamos la latitud y longitud
+          this.location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+        } else {
+          this.error = 'Unable to retrieve location. Please allow access.';
+        }
+      } catch (err) {
+        this.error = 'Geolocation is not supported by this browser.';
+      }
+    },
+    async captureImage() {
+      await this.captureImageDelivery();
+      await this.captureImageList();
+    },
+    async captureImageDelivery() {
+      showLoading('Guardando ...', 'Por favor, espere', true);
+      const element = document.getElementById('div-container-delivery');
+      domtoimage.toPng(element).then(async (blob) => {
+        this.sendImage(blob.split(',')[1], 'CAPTURE_DELIVERY');
+        this.$q.loading.hide();
+      }).catch((error) => {
+        console.log(error);
+      });
+    },
+    async captureImageList() {
+      showLoading('Guardando ...', 'Por favor, espere', true);
+      const element = document.getElementById('div-container-list');
+      domtoimage.toPng(element).then(async (blob) => {
+        this.sendImage(blob.split(',')[1], 'CAPTURE_ROUTE');
+        this.$q.loading.hide();
+      }).catch((error) => {
+        console.log(error);
+      });
+    },
+    async sendImage(file, name) {
+      await this.getLocation();
+      const {
+        latitude,
+        longitude,
+      } = this.location;
+      showLoading('Guardando ...', 'Por favor, espere', true);
+
+      await this.saveFile({
+        name,
+        storage: 'listings',
+        modelName: 'listings',
+        modelId: this.list.value,
+        type: 'image',
+        file,
+        extension: 'png',
+        status: 'aprobado',
+        latitude,
+        longitude,
+        maintain: true,
+      });
+      this.$q.loading.hide();
+      /* if (this.responseMessages && this.status) {
+        this.showModal = false;
+        this.$emit('savedFile', { name });
+        await this.fetchFile();
+      } */
+      // this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
     },
   },
   components: {

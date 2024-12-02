@@ -228,7 +228,7 @@ import newTypes from '../../store/modules/new/types';
 export default {
   data() {
     return {
-      date: new Date().toISOString().split('T')[0],
+      date: moment().format('YYYY-MM-DD'),
       amount: 0,
       amountNew: null,
       amountGet: 600000,

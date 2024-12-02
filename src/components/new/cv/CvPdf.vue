@@ -1,6 +1,5 @@
 <template>
   <div style="width: 100%; height: auto;">
-    {{ file }}
     <iframe
       :src="urlFile + '#toolbar=0'"
       style="width: 90vw; height: 100vh;"

@@ -9,7 +9,14 @@
       @click="getPayments()">
     </q-btn>
     <div class="row q-mt-md">
-      <div class="col-12 text-center">
+      <div class="col-6 text-center">
+        <q-select
+          outlined
+          dense
+          v-model="listingSelected"
+          :options="optionsListings"/>
+      </div>
+      <div class="col-6 text-center">
         <q-input
           debounce="400"
           color="primary"
@@ -53,8 +60,8 @@
           <q-td key="id" :props="props">
             {{ props.row.id }}
           </q-td>
-          <q-td key="nequi" :props="props">
-            {{ props.row.nequi }}
+          <q-td key="nequiName" :props="props">
+            {{ props.row.nequiName }}
           </q-td>
           <q-td key="reference" :props="props">
             {{ props.row.reference }}
@@ -100,6 +107,7 @@ import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import ModalPreviewFile from 'components/common/ModalPreviewFile.vue';
 import paymentTypes from '../../store/modules/payment/types';
+import listingTypes from '../../store/modules/listing/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 
@@ -127,10 +135,10 @@ export default {
           sortable: true,
         },
         {
-          name: 'nequi',
+          name: 'nequiName',
           align: 'center',
           label: 'Nequi',
-          field: 'nequi',
+          field: 'nequiName',
           style: 'width: 100px',
           sortable: true,
         },
@@ -200,16 +208,24 @@ export default {
         },
       ],
       pagination: {
-        rowsPerPage: 30,
+        rowsPerPage: 0,
+        sortBy: 'listName',
+        descending: false,
       },
       filter: '',
       isDiabledAdd: false,
       showModal: false,
       polling: null,
+      listingSelected: {
+        label: 'TODAS',
+        value: 0,
+      },
     };
   },
   async mounted() {
     this.isLoadingTable = true;
+    await this.fetchListings();
+    console.log(this.listingSelected);
     await this.getPayments();
     this.pollData();
     this.isLoadingTable = false;
@@ -220,8 +236,25 @@ export default {
       paymentStatus: 'status',
       paymentResponseMessages: 'responseMessages',
     }),
+    ...mapState(listingTypes.PATH, [
+      'listings',
+    ]),
+    optionsListings() {
+      const options = [{
+        label: 'TODAS',
+        value: 0,
+      }];
+      const array = this.listings.map(({ id, name }) => ({ label: name, value: id }));
+      options.push(...array);
+      return options;
+    },
     data() {
-      return [...this.payments];
+      const cond = this.listingSelected.value > 0;
+      let items = [...this.payments];
+      if (cond) {
+        items = this.payments.filter((pay) => pay.listId === this.listingSelected.value);
+      }
+      return items;
     },
   },
   beforeDestroy() {
@@ -232,6 +265,9 @@ export default {
       fetchPayments: paymentTypes.actions.FETCH_PAYMENTS,
       updatePayment: paymentTypes.actions.UPDATE_PAYMENT,
       deletePayment: paymentTypes.actions.DELETE_PAYMENT,
+    }),
+    ...mapActions(listingTypes.PATH, {
+      fetchListings: listingTypes.actions.FETCH_LISTINGS,
     }),
     async pollData() {
       this.polling = setInterval(async () => {

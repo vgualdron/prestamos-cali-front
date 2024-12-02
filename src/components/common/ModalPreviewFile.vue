@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <q-dialog v-model="showDialog" persistent>
+    <q-dialog v-model="showDialog" persistent full-height full-width>
       <q-card style="width: 700px; max-width: 80vw;">
         <q-card-section class="row items-center q-pb-none">
           <div class="text-h6">{{ title }}</div>

@@ -4,6 +4,9 @@ export default {
   [types.mutations.SET_LISTINGS](state, payload) {
     state.listings = payload;
   },
+  [types.mutations.SET_LISTING](state, payload) {
+    state.listing = payload;
+  },
   [types.mutations.SET_STATUS](state, payload) {
     state.status = payload;
   },

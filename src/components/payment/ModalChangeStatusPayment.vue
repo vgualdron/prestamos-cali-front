@@ -101,6 +101,7 @@
   </div>
 </template>
 <script>
+import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import nequiTypes from '../../store/modules/nequi/types';
 
@@ -111,7 +112,7 @@ export default {
       showModal: false,
       inputValue: {
         nameNequi: '',
-        dateTransaction: new Date().toISOString().split('T')[0],
+        dateTransaction: moment().format('YYYY-MM-DD'),
         reference: '',
         observation: '',
       },

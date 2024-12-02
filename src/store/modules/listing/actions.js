@@ -11,6 +11,24 @@ export default {
       commit(types.mutations.SET_LISTINGS, error.response.data);
     }
   },
+  async [types.actions.GET_LISTING]({ commit }, payload) {
+    try {
+      const response = await listingApi.getListing(payload);
+      commit(types.mutations.SET_LISTING, response.data.data);
+    } catch (error) {
+      console.error(error);
+      commit(types.mutations.SET_LISTING, error.response.data);
+    }
+  },
+  async [types.actions.FETCH_WITH_DELIVERIES]({ commit }, payload) {
+    try {
+      const response = await listingApi.fetchWithDeliveries(payload);
+      commit(types.mutations.SET_LISTINGS, response.data.data);
+    } catch (error) {
+      console.error(error);
+      commit(types.mutations.SET_LISTINGS, error.response.data);
+    }
+  },
   async [types.actions.FETCH_DELIVERY]({ commit }, payload) {
     try {
       const response = await listingApi.fetchDelivery(payload);

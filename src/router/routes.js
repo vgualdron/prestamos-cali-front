@@ -181,6 +181,13 @@ const routes = [
       { path: '', name: 'Solicitudes al grupo nequi', component: () => import('pages/QuestionNequi.vue') },
     ],
   },
+  {
+    path: '/report-deliveries',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Reporte de entregas por fecha', component: () => import('pages/ReportDeliveries.vue') },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
