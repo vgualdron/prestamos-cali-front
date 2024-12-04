@@ -594,7 +594,7 @@ export default {
             amountRenovation: payment.type === 'renovacion' ? parseInt(payment.amount, 10) : 0,
             typeNequi: payment.type === 'nequi' ? payment.type : '',
             typeRenovation: payment.type === 'renovacion' ? payment.type : '',
-            classes: 'bg-blue-4',
+            classes: 'bg-orange-4',
             index,
             balance: value,
           });

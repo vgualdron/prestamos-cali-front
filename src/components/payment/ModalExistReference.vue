@@ -11,6 +11,10 @@
         </q-card-section>
         <q-separator />
         <q-card-section style="max-height: 80vh" class="scroll" v-if="row && row.id">
+          <q-banner v-if="!row.nequi" inline-actions rounded class="bg-orange text-white">
+            ES UN PAGO CREADO ANTES DEL SISTEMA. PERO IGUAL NO ES VALIDO EL CODIGO DE REFERENCIA
+            YA QUE EXISTE UN PAGO CON ESA MISMA REFERENCIA.
+          </q-banner>
           <div class="row q-mt-md">
             <div class="col-12 text-center">
               <b>Nombre nequi:</b> {{ row.nequi }}

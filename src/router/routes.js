@@ -194,6 +194,27 @@ const routes = [
     path: '*',
     component: () => import('pages/Error404.vue'),
   },
+  {
+    path: '/upload-payments',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Cargar refs de payments', component: () => import('pages/UploadPayments.vue') },
+    ],
+  },
+  {
+    path: '/upload-payments',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Cargar refs de payments', component: () => import('pages/UploadPayments.vue') },
+    ],
+  },
+  {
+    path: '/upload-news',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', name: 'Cargar datos de nuevos', component: () => import('pages/UploadNews.vue') },
+    ],
+  },
 ];
 
 export default routes;

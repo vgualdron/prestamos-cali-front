@@ -418,6 +418,7 @@
       v-model="showModalDelivery"
       :list="listingSelected"
       :totalAmount="totalCollection"
+      @updateTable="getLendings"
     />
     <modal-preview-file
       v-if="showModalPreviewR"

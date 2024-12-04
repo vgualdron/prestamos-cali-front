@@ -187,9 +187,10 @@
           </div>
         </q-card-section>
         <q-separator />
-        <div class="row text-center q-pa-md">
+        <div v-if="hasPermission('list.closedDelivery')" class="row text-center q-pa-md">
           <q-btn
-            icon="content_copy"
+            label="Cerrar entrega"
+            icon="assignment_returned"
             color="primary"
             @click="captureImage" />
         </div>
@@ -204,6 +205,7 @@ import moment from 'moment';
 import fileTypes from '../../store/modules/file/types';
 import listingTypes from '../../store/modules/listing/types';
 import { showLoading } from '../../helpers/showLoading';
+import { havePermission } from '../../helpers/havePermission';
 
 export default {
   data() {
@@ -271,6 +273,9 @@ export default {
     ...mapActions(fileTypes.PATH, {
       saveFile: fileTypes.actions.SAVE_FILE,
     }),
+    hasPermission(value) {
+      return havePermission(value);
+    },
     formatLink(row) {
       if (row.file) {
         return `${process.env.URL_FILES}${row.file.url}`;
@@ -310,12 +315,14 @@ export default {
     async captureImage() {
       await this.captureImageDelivery();
       await this.captureImageList();
+      this.$emit('updateTable', this.list.value);
+      this.showDialog = false;
     },
     async captureImageDelivery() {
       showLoading('Guardando ...', 'Por favor, espere', true);
       const element = document.getElementById('div-container-delivery');
-      domtoimage.toPng(element).then(async (blob) => {
-        this.sendImage(blob.split(',')[1], 'CAPTURE_DELIVERY');
+      await domtoimage.toPng(element).then(async (blob) => {
+        await this.sendImage(blob.split(',')[1], 'CAPTURE_DELIVERY');
         this.$q.loading.hide();
       }).catch((error) => {
         console.log(error);
@@ -324,8 +331,8 @@ export default {
     async captureImageList() {
       showLoading('Guardando ...', 'Por favor, espere', true);
       const element = document.getElementById('div-container-list');
-      domtoimage.toPng(element).then(async (blob) => {
-        this.sendImage(blob.split(',')[1], 'CAPTURE_ROUTE');
+      await domtoimage.toPng(element).then(async (blob) => {
+        await this.sendImage(blob.split(',')[1], 'CAPTURE_ROUTE');
         this.$q.loading.hide();
       }).catch((error) => {
         console.log(error);
