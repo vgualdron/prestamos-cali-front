@@ -119,7 +119,7 @@ export default {
     };
   },
   async mounted() {
-    await this.listNequis();
+    await this.listNequis(this.idList);
   },
   watch: {
   },
@@ -149,6 +149,9 @@ export default {
     },
     type: {
       type: String,
+      require: true,
+    },
+    idList: {
       require: true,
     },
     title: {

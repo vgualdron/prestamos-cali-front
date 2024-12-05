@@ -66,6 +66,9 @@
                 :options="optionsUsers"/>
             </q-popup-edit>
           </q-td>
+          <q-td key="city_name" :props="props">
+            {{ props.row.city_name }}
+          </q-td>
           <q-td key="status" :props="props">
             <q-icon size="xs" name="edit" />
             {{ props.row.status }}
@@ -128,6 +131,15 @@ export default {
           label: 'Secretaria',
           align: 'left',
           field: (row) => row.user_collector.name,
+          format: (val) => `${val}`,
+          sortable: true,
+        },
+        {
+          name: 'city_name',
+          required: true,
+          label: 'Ciudad',
+          align: 'left',
+          field: (row) => row.city_name,
           format: (val) => `${val}`,
           sortable: true,
         },

@@ -79,6 +79,7 @@
       v-model="showModal"
       :url="formatLink(itemSelected)"
       :type="itemSelected.type"
+      :idList="itemSelected.listId"
       :title="`Valor: ${formatPrice(itemSelected.amount)}`"
       :showBtnCancel="true"
       :showBtnAccept="true"

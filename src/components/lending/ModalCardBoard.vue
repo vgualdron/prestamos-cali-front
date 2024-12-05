@@ -201,14 +201,14 @@
                   </tbody>
                 </q-markup-table>
               </div>
-              <div class="row text-center q-py-md">
+              <!-- <div class="row text-center q-py-md">
                 <q-btn
                   v-if="isDoubleInterest(lending)"
                   class="q-ml-sm"
                   label="Aplicar doble interés"
                   color="primary"
                   @click="applyDoubleInterest(lending)" />
-              </div>
+              </div> -->
               <div class="divider"></div>
             </div>
             <div class="row text-center">

@@ -202,13 +202,6 @@ const routes = [
     ],
   },
   {
-    path: '/upload-payments',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', name: 'Cargar refs de payments', component: () => import('pages/UploadPayments.vue') },
-    ],
-  },
-  {
     path: '/upload-news',
     component: () => import('layouts/MainLayout.vue'),
     children: [
