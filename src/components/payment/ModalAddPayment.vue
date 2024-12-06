@@ -137,7 +137,7 @@ export default {
         lending_id: id,
         amount: this.amount,
         date: moment().format('YYYY-MM-DD HH:mm:ss'),
-        observation: null,
+        observation: '',
         type: this.type,
         status: this.type === 'nequi' ? 'creado' : 'aprobado',
         file_id: this.type === 'nequi' ? this.file.id : null,

@@ -8,7 +8,7 @@
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
         <q-separator />
-        <q-card-section style="max-height: 60vh" class="scroll">
+        <q-card-section class="scroll">
           <div class="col-12 text-center">
             <img
               v-if="url"

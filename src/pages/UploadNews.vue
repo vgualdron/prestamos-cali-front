@@ -23,7 +23,7 @@
               rowsPerPage: 0,
             }"
           >
-            <template v-slot:body-cell-id="props">
+            <template v-slot:body-cell-city_id="props">
               <q-td :props="props">
                 <upload-pdf
                   :config="{
@@ -35,9 +35,37 @@
                 />
               </q-td>
             </template>
+            <template v-slot:body-cell-listing_id="props">
+              <q-td :props="props">
+                <q-btn
+                  icon="assignment_returned"
+                  class="q-ml-md"
+                  color="primary"
+                  title="Click para revisar la cartulina"
+                  @click="openModal(props.row)">
+                </q-btn>
+                <q-btn
+                  round
+                  icon="check"
+                  class="q-ml-md"
+                  color="green"
+                  title="Click para revisar la cartulina"
+                  @click="completeNew(props.row)">
+                </q-btn>
+              </q-td>
+            </template>
           </q-table>
         </q-card-section>
         <q-separator />
+        <modal-card-board
+          v-if="showModalHistory"
+          v-model="showModalHistory"
+          :showBtnApplyDoubleInterest="false"
+          :hasDoubleInterest="false"
+          :showStikers="false"
+          :showBtnDownload="false"
+          title="Historial"
+          :lendings="history"/>
       </q-card>
       <!-- MODAL DE CARGA DE NEW -->
       <q-dialog
@@ -94,7 +122,7 @@
                     hide-bottom-space
                     autocomplete="off"
                     :dense="dense"
-                    step="50000"
+                    step="1000"
                   />
                 </div>
                 <div class="col-1 q-pa-xs">
@@ -108,7 +136,7 @@
                     hide-bottom-space
                     autocomplete="off"
                     :dense="dense"
-                    step="50000"
+                    step="1000"
                   />
                 </div>
               </div>
@@ -218,14 +246,14 @@
                     hide-bottom-space
                     autocomplete="off"
                     :dense="dense"
-                    step="50000"
+                    step="1000"
                   />
                 </div>
                 <div class="col-1 q-pa-xs">
                   <q-input
                     outlined
                     v-model.trim="item.created_at"
-                    label="Fecha *"
+                    label="Fecha de registro *"
                     lazy-rules
                     :rules="[(val) => (!!val) || '']"
                     hide-bottom-space
@@ -971,20 +999,25 @@
 import axios from 'axios';
 import { mapState, mapActions } from 'vuex';
 import UploadPdf from 'components/common/UploadPdf.vue';
+import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
 import listingTypes from '../store/modules/listing/types';
 import zoneTypes from '../store/modules/zone/types';
 import userTypes from '../store/modules/user/types';
 import yardTypes from '../store/modules/yard/types';
 import districtTypes from '../store/modules/district/types';
+import lendingTypes from '../store/modules/lending/types';
+import newTypes from '../store/modules/new/types';
 import { showLoading } from '../helpers/showLoading';
 import { removeAccents } from '../helpers/removeAccents';
 
 export default {
   components: {
     UploadPdf,
+    ModalCardBoard,
   },
   data() {
     return {
+      showModalHistory: false,
       dense: true,
       loading: false,
       items: [],
@@ -1014,9 +1047,9 @@ export default {
         occupation: '',
         type_work: 'empleado',
         date_lending: '2024-12-01',
-        amount_lending: 0,
+        amount_lending: 300000,
         amount_payment: 20000,
-        status: 'consignado',
+        status: 'migracion',
         attempts: 1,
         type_cv: 'pdf',
         site_visit: 'casa',
@@ -1059,11 +1092,11 @@ export default {
     'item.city_id': function (newValue) {
       this.changeCity(newValue);
     },
-    'item.quantity': function (val) {
-      this.item.amount_lending = val;
+    'item.amount_lending': function (val) {
+      this.item.quantity = val;
     },
-    'item.created_at': function (val) {
-      this.item.date_lending = val;
+    'item.date_lending': function (val) {
+      this.item.created_at = val;
     },
     'item.phone': function (val) {
       this.item.account_number = val;
@@ -1092,6 +1125,10 @@ export default {
     ...mapState(districtTypes.PATH, {
       districts: 'districts',
     }),
+    ...mapState(lendingTypes.PATH, {
+      lendings: 'lendings',
+      history: 'history',
+    }),
   },
   async mounted() {
     showLoading('Cargando ...', 'Por favor, espere', true);
@@ -1101,9 +1138,9 @@ export default {
     await this.getNews();
     await this.listUsers({ displayAll: 1 });
     if (this.items.length) {
-      this.columns = Object.keys(this.items[0]).map((key) => ({
+      this.columns = Object.keys(this.user).map((key) => ({
         name: key,
-        label: key.charAt(0).toUpperCase() + key.slice(1), // Capitaliza los nombres
+        label: key.charAt(0).toUpperCase() + key.slice(1),
         align: 'center',
         field: key,
         sortable: true,
@@ -1127,6 +1164,27 @@ export default {
     ...mapActions(districtTypes.PATH, {
       listDistricts: districtTypes.actions.FETCH_DISTRICTS,
     }),
+    ...mapActions(lendingTypes.PATH, {
+      fetchHistory: lendingTypes.actions.FETCH_HISTORY,
+    }),
+    ...mapActions(newTypes.PATH, {
+      completeDataNew: newTypes.actions.COMPLETE_DATA_NEW,
+    }),
+    async completeNew(row) {
+      showLoading('completando ...', 'Por favor, espere', true);
+      await this.completeDataNew({
+        id: row.id,
+        status: 'consignado',
+      });
+      await this.getNews();
+      this.$q.loading.hide();
+    },
+    async openModal(row) {
+      showLoading('consultando ...', 'Por favor, espere', true);
+      await this.fetchHistory(row.id);
+      this.$q.loading.hide();
+      this.showModalHistory = true;
+    },
     hideModal() {
       this.clearItem();
     },
@@ -1195,7 +1253,7 @@ export default {
     async saveNew() {
       console.log(this.item);
       this.loading = true;
-      /* try {
+      try {
         const url = 'https://micomercio.com.co/api-prestamos/public/index.php/api/create-new';
         const response = await axios.post(url, this.item);
         console.log(response.data);
@@ -1214,7 +1272,7 @@ export default {
       } finally {
         this.loading = false;
         await this.getNews();
-      } */
+      }
     },
   },
 };

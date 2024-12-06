@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import { Notify } from 'quasar';
+import { Notify, Loading } from 'quasar';
 
 import routes from './routes';
 import authApi from '../api/auth/authApi';
@@ -32,6 +32,11 @@ export default (/* { store, ssrContext } */) => {
   });
 
   Router.beforeEach(async (to, from, next) => {
+    Loading.show({
+      message: 'Cargando...',
+      spinnerSize: 30,
+      delay: 100, // Evita parpadeos si la navegación es rápida
+    });
     if (to.path === '/') {
       next();
       return;
@@ -66,6 +71,10 @@ export default (/* { store, ssrContext } */) => {
         next();
       }
     }
+  });
+
+  Router.afterEach(() => {
+    Loading.hide();
   });
 
   return Router;

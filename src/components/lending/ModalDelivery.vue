@@ -10,7 +10,7 @@
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
         <q-separator />
-        <q-card-section style="max-height: 80vh" class="scroll" id="div-container-delivery">
+        <q-card-section class="scroll" id="div-container-delivery">
           <div class="row q-mt-md">
             <div class="col-12 text-center">
               <q-markup-table
@@ -54,13 +54,13 @@
                     </tr>
                     <tr class="">
                       <td class="" colspan="1">
-                        PAGOS RENOVACIONES
+                        ADELANTOS
                       </td>
                       <td class="text-bold" colspan="1">
-                        {{ delivery.itemPayment.total_count_renovation }}
+                        {{ delivery.itemPayment.total_count_repayment }}
                       </td>
                       <td class="text-bold" colspan="2">
-                        {{ formatPrice(delivery.itemPayment.total_amount_renovation) }}
+                        {{ formatPrice(delivery.itemPayment.total_amount_repayment) }}
                       </td>
                     </tr>
                     <tr class="">
@@ -96,9 +96,9 @@
                         {{ formatPrice(delivery.itemNovel.total_amount) }}
                       </td>
                     </tr>
-                    <tr class="">
+                    <tr class="bg-blue-2">
                       <td class="" colspan="1">
-                        SUBTOTAL
+                        <b>SUBTOTAL</b>
                       </td>
                       <td class="" colspan="1">
                       </td>
@@ -113,18 +113,29 @@
                     </tr>
                     <tr class="">
                       <td class="" colspan="1">
-                        RENOVACIONES
+                        ADELANTOS
                       </td>
                       <td class="text-bold" colspan="1">
-                        {{ delivery.itemRenove.total_count }}
+                        {{ delivery.itemPayment.total_count_repayment }}
                       </td>
                       <td class="text-bold" colspan="2">
-                        {{ formatPrice(delivery.itemRenove.total_amount) }}
+                        {{ formatPrice(delivery.itemPayment.total_amount_repayment) }}
                       </td>
                     </tr>
                     <tr class="">
                       <td class="" colspan="1">
-                        NUEVOS
+                        GASTO RENOVACIONES
+                      </td>
+                      <td class="text-bold" colspan="1">
+                        {{ delivery.itemExpense.total_count_renovation }}
+                      </td>
+                      <td class="text-bold" colspan="2">
+                        {{ formatPrice(delivery.itemExpense.total_amount_renovation) }}
+                      </td>
+                    </tr>
+                    <tr class="">
+                      <td class="" colspan="1">
+                        GASTO NUEVOS
                       </td>
                       <td class="text-bold" colspan="1">
                         {{ delivery.itemNovel.total_count }}
@@ -133,9 +144,9 @@
                         {{ formatPrice(delivery.itemNovel.total_amount) }}
                       </td>
                     </tr>
-                    <tr class="">
+                    <tr class="bg-blue-2">
                       <td class="" colspan="1">
-                        SUBTOTAL
+                        <b>SUBTOTAL</b>
                       </td>
                       <td class="" colspan="1">
                       </td>
@@ -145,7 +156,7 @@
                     </tr>
                     <tr :class="difference === 0 ? 'bg-green-3' : 'bg-red-3'">
                       <td class="" colspan="1">
-                        TOTAL
+                        <b>TOTAL</b>
                       </td>
                       <td class="text-bold" colspan="3">
                         {{ formatPrice(this.total) }}
@@ -165,7 +176,7 @@
                         {{ formatPrice(delivery.itemPayment.total_amount_street) }}
                       </td>
                     </tr>
-                    <tr class="">
+                    <tr :class="difference === 0 ? 'bg-green-3' : 'bg-red-3'">
                       <td class="" colspan="1">
                         DIFERENCIA
                       </td>
@@ -183,6 +194,11 @@
                     </tr>
                   </tbody>
                 </q-markup-table>
+                <q-banner
+                  v-if="difference > 0"
+                  class="bg-red text-white q-ma-md">
+                  No se puede hace entrega por que hay descuadre.
+                </q-banner>
             </div>
           </div>
         </q-card-section>
@@ -192,6 +208,7 @@
             label="Cerrar entrega"
             icon="assignment_returned"
             color="primary"
+            :disable="difference > 0"
             @click="captureImage" />
         </div>
       </q-card>
@@ -228,7 +245,9 @@ export default {
     },
   },
   async mounted() {
+    showLoading('Cargando ...', 'Por favor, espere', true);
     await this.fetchDelivery({ date: this.date, idList: this.list.value });
+    this.$q.loading.hide();
   },
   watch: {
   },
@@ -248,16 +267,17 @@ export default {
     },
     subtotal() {
       const transfer = parseInt(this.delivery.itemPayment.total_amount_nequi, 10);
-      const renovation = parseInt(this.delivery.itemPayment.total_amount_renovation, 10);
+      const repayment = parseInt(this.delivery.itemPayment.total_amount_repayment, 10);
       const article = parseInt(this.delivery.itemPayment.total_amount_article, 10);
       const renove = parseInt(this.delivery.itemRenove.total_amount, 10);
       const novel = parseInt(this.delivery.itemNovel.total_amount, 10);
-      return transfer + renove + novel + renovation + article;
+      return transfer + renove + novel + repayment + article;
     },
     subtotalExpenses() {
-      const renove = parseInt(this.delivery.itemRenove.total_amount, 10);
+      const repayment = parseInt(this.delivery.itemPayment.total_amount_repayment, 10);
+      const renove = parseInt(this.delivery.itemExpense.total_amount_renovation, 10);
       const novel = parseInt(this.delivery.itemNovel.total_amount, 10);
-      return renove + novel;
+      return renove + novel + repayment;
     },
     total() {
       return this.subtotal - this.subtotalExpenses;
@@ -331,11 +351,18 @@ export default {
     async captureImageList() {
       showLoading('Guardando ...', 'Por favor, espere', true);
       const element = document.getElementById('div-container-list');
+
+      const divsToExclude = document.querySelectorAll('#div-container-list > div.q-table__middle.scroll');
+      divsToExclude.forEach((div) => { div.style.overflow = 'visible'; });
+
       await domtoimage.toPng(element).then(async (blob) => {
         await this.sendImage(blob.split(',')[1], 'CAPTURE_ROUTE');
         this.$q.loading.hide();
       }).catch((error) => {
         console.log(error);
+      }).finally(() => {
+        // Restaura la visibilidad de los elementos
+        divsToExclude.forEach((div) => { div.style.overflow = 'auto'; });
       });
     },
     async sendImage(file, name) {

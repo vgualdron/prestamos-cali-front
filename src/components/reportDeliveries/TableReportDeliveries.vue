@@ -69,7 +69,7 @@
       v-model="showModalDelivery"
       :url="formatLinkDelivery(itemSelected)"
       :type="itemSelected.typeFile"
-      :title="`Valor`"
+      title="Entrega"
       :showBtnCancel="false"
       :showBtnAccept="false"
       />
@@ -78,7 +78,7 @@
       v-model="showModalRoute"
       :url="formatLinkRoute(itemSelected)"
       :type="itemSelected.typeFile"
-      :title="`Valor`"
+      title="Lista"
       :showBtnCancel="false"
       :showBtnAccept="false"
       />

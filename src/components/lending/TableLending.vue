@@ -54,319 +54,333 @@
       </template>
       Ya se realizó la entrega del día
     </q-banner>
-    <q-table
-      v-else
-      :grid="$q.screen.xs"
-      :data="data"
-      :columns="columns"
-      row-key="id"
-      :loading="isLoadingTable"
-      :filter="filter"
-      :pagination.sync="pagination"
-      separator="cell"
-      class="q-mt-md"
-      :row-class="'bg-purple'"
-      dense
-      id="div-container-list">
-      <template v-slot:body="props">
-        <q-tr :props="props" @click="clickRow(props.row)">
-          <q-td key="actions" :props="props">
-            <q-btn-dropdown
-              v-if="props.row.status === 'open'"
-              class="q-px-none"
-              :color="getBalance(props.row) <= 0 && allPaidsApproved(props.row) ? 'orange' : 'black'"
-              :outline="getBalance(props.row) <= 0 && allPaidsApproved(props.row) ? false : true">
-              <q-list>
-                <q-item
-                  clickable
-                  v-close-popup
-                  @click="openModal('normal', props.row)">
-                  <q-item-section>
-                    <q-item-label>Ver cartulina</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  v-if="getBalance(props.row) <= 0 && allPaidsApproved(props.row)"
-                  clickable
-                  v-close-popup
-                  @click="openModal('renove', props.row)">
-                  <q-item-section>
-                    <q-item-label>Renovar préstamo</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  v-if="props.row.has_double_interest"
-                  clickable
-                  v-close-popup
-                  @click="openModal('double', props.row)">
-                  <q-item-section>
-                    <q-item-label>Ver cartulina doble interes</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  clickable
-                  v-close-popup
-                  @click="openModal('history', props.row)">
-                  <q-item-section>
-                    <q-item-label>Ver Historial</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  v-if="isCloseable(props.row)"
-                  clickable
-                  v-close-popup
-                  @click="openModal('close', props.row)">
-                  <q-item-section>
-                    <q-item-label>Cerrar préstamo</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  v-if="props.row.file_url_r"
-                  clickable
-                  v-close-popup
-                  @click="openModal('previewR', props.row) && props.row.type === 'R'">
-                  <q-item-section>
-                    <q-item-label>Ver voucher de renovación</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  v-if="props.row.file_url_n && props.row.type === 'N'"
-                  clickable
-                  v-close-popup
-                  @click="openModal('previewN', props.row)">
-                  <q-item-section>
-                    <q-item-label>Ver voucher</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  clickable
-                  v-close-popup
-                  @click="fetchFileRedSocial(props.row)">
-                  <q-item-section>
-                    <q-item-label>Foto red social</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  clickable
-                  v-close-popup
-                  @click="fetchAccountsNew(props.row.new_id)">
-                  <q-item-section>
-                    <q-item-label>Cuentas autorizadas</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
-          </q-td>
-          <q-td key="index" :props="props">
-            {{ props.row.index }}
-          </q-td>
-          <q-td key="name" :props="props">
-            <p :title="props.row.nameDebtor" class="q-my-auto">
-              <q-badge
-                v-if="isNew(props.row)"
-                :color="props.row.type === 'N' ? 'green' : 'orange'">
-                {{ props.row.type }}
-              </q-badge>
-              {{ formatText(props.row.nameDebtor, 20) }}
-            </p>
-          </q-td>
-          <q-td key="amount" :props="props">
-            {{ formatPrice(valueWithInterest(props.row)) }}
-          </q-td>
-          <q-td key="double" :props="props">
-            {{ props.row.has_double_interest ? formatPrice(valueWithDoubleInterest(props.row)) : 'x' }}
-          </q-td>
-          <q-td key="fee" :props="props">
-            {{ formatPrice(feeWithInterest(props.row)) }}
-          </q-td>
-          <q-td key="period" :props="props">
-            {{ getPeriod(props.row) }}
-          </q-td>
-          <q-td key="amountFees" :props="props">
-            {{ props.row.amountFees }}
-          </q-td>
-          <q-td key="renovation" :props="props">
-            <template v-if="hasPaymentToday(props.row, 'renovacion', 0)">
-              <q-badge
-                v-if="props.row.status === 'renovated'"
-                color="green">
-                <b>
+    <div v-else class="table-container">
+      <q-table
+        :grid="$q.screen.xs"
+        :data="data"
+        :columns="columns"
+        row-key="id"
+        :loading="isLoadingTable"
+        :filter="filter"
+        :pagination.sync="pagination"
+        separator="cell"
+        class="q-mt-md"
+        :row-class="'bg-purple'"
+        dense
+        id="div-container-list">
+        <template v-slot:body="props">
+          <q-tr :props="props" @click="clickRow(props.row)">
+            <q-td key="actions" :props="props">
+              <q-btn-dropdown
+                v-if="props.row.status === 'open'"
+                class="q-px-none"
+                :color="getBalance(props.row) <= 0 && allPaidsApproved(props.row) ? 'orange' : 'black'"
+                :outline="getBalance(props.row) <= 0 && allPaidsApproved(props.row) ? false : true">
+                <q-list>
+                  <q-item
+                    clickable
+                    v-close-popup
+                    @click="openModal('normal', props.row)">
+                    <q-item-section>
+                      <q-item-label>Ver cartulina</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    v-if="getBalance(props.row) <= 0 && allPaidsApproved(props.row)"
+                    clickable
+                    v-close-popup
+                    @click="openModal('renove', props.row)">
+                    <q-item-section>
+                      <q-item-label>Renovar préstamo</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    v-if="props.row.has_double_interest"
+                    clickable
+                    v-close-popup
+                    @click="openModal('double', props.row)">
+                    <q-item-section>
+                      <q-item-label>Ver cartulina doble interes</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    clickable
+                    v-close-popup
+                    @click="openModal('history', props.row)">
+                    <q-item-section>
+                      <q-item-label>Ver Historial</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    v-if="isCloseable(props.row)"
+                    clickable
+                    v-close-popup
+                    @click="openModal('close', props.row)">
+                    <q-item-section>
+                      <q-item-label>Cerrar préstamo</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    v-if="props.row.file_url_r"
+                    clickable
+                    v-close-popup
+                    @click="openModal('previewR', props.row) && props.row.type === 'R'">
+                    <q-item-section>
+                      <q-item-label>Ver voucher de renovación</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    v-if="props.row.file_url_n && props.row.type === 'N'"
+                    clickable
+                    v-close-popup
+                    @click="openModal('previewN', props.row)">
+                    <q-item-section>
+                      <q-item-label>Ver voucher</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    clickable
+                    v-close-popup
+                    @click="fetchFileRedSocial(props.row)">
+                    <q-item-section>
+                      <q-item-label>Foto red social</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    clickable
+                    v-close-popup
+                    @click="fetchAccountsNew(props.row.new_id)">
+                    <q-item-section>
+                      <q-item-label>Cuentas autorizadas</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
+            </q-td>
+            <q-td key="index" :props="props">
+              {{ props.row.index }}
+            </q-td>
+            <q-td key="name" :props="props">
+              <p :title="props.row.nameDebtor" class="q-my-auto">
+                <q-badge
+                  v-if="isNew(props.row)"
+                  :color="props.row.type === 'N' ? 'green' : 'orange'">
+                  {{ props.row.type }}
+                </q-badge>
+                {{ formatText(props.row.nameDebtor, 20) }}
+              </p>
+            </q-td>
+            <q-td key="amount" :props="props">
+              {{ formatPrice(valueWithInterest(props.row)) }}
+            </q-td>
+            <q-td key="double" :props="props">
+              {{ props.row.has_double_interest ? formatPrice(valueWithDoubleInterest(props.row)) : 'x' }}
+            </q-td>
+            <q-td key="fee" :props="props">
+              {{ formatPrice(feeWithInterest(props.row)) }}
+            </q-td>
+            <q-td key="period" :props="props">
+              {{ getPeriod(props.row) }}
+            </q-td>
+            <q-td key="amountFees" :props="props">
+              {{ props.row.amountFees }}
+            </q-td>
+            <q-td key="renovation" :props="props">
+              <template v-if="hasPaymentToday(props.row, 'renovacion', 0)">
+                <q-badge
+                  v-if="props.row.status === 'renovated'"
+                  color="green">
+                  <b>
+                    {{ formatPrice(getPaymentTodayRenovation(props.row).amount) }}
+                  </b>
+                </q-badge>
+                <b v-else>
                   {{ formatPrice(getPaymentTodayRenovation(props.row).amount) }}
                 </b>
-              </q-badge>
-              <b v-else>
-                {{ formatPrice(getPaymentTodayRenovation(props.row).amount) }}
+              </template>
+              <b
+                v-else-if="getBalance(props.row) > props.row.amount"
+                title="No puede aplicar pago para renovación, si no ha pagado almenos los intereses.">
+                <q-icon name="block" color="red" />
               </b>
-            </template>
-            <b
-              v-else-if="getBalance(props.row) > props.row.amount"
-              title="No puede aplicar pago para renovación, si no ha pagado almenos los intereses.">
-              <q-icon name="block" color="red" />
-            </b>
-            <b
-              v-else-if="!allPaidsApprovedToday(props.row)"
-              title="No puede aplicar pago para renovación, hasta que no se apruebe el pago de nequi.">
-              <q-icon name="block" color="red" />
-            </b>
-            <b
-              v-else-if="getBalance(props.row) === 0"
-              title="Ya pagó todo el préstamo">
-              <q-icon name="block" color="red" />
-            </b>
-            <b v-else>
-              <q-btn
-                color="primary"
-                label="$"
-                size="sm"
-                @click="addPaymentRenovation(props.row)"
-                :disable="isDiabledAdd"
-              />
-            </b>
-          </q-td>
-          <q-td key="collection" :props="props">
-            <div v-if="hasPaymentToday(props.row, 'nequi', 0)">
-              <div v-for="payment in getPaymentsTodaySecre(props.row)" :key="payment.id"
-                class="q-ma-xs">
-                <q-badge
-                  :color="payment.id ? payment.classes : ''"
-                  :title="payment.id ? payment.observation : ''">
-                  <b>{{ formatPrice(payment.amount) }}</b>
-                  <q-icon
-                    v-if="payment.id && payment.observation"
-                    name="comment"
-                    size="14px"
-                    class="q-ml-xs pointer-cursor"
-                  />
-                  <q-icon
-                    v-if="payment.id && payment.classes !== 'green'"
-                    name="close"
-                    size="14px"
-                    class="q-ml-xs pointer-cursor"
-                    @click="deletePayment(payment)"
-                  />
-                </q-badge>
+              <b
+                v-else-if="!allPaidsApprovedToday(props.row)"
+                title="No puede aplicar pago para renovación, hasta que no se apruebe el pago de nequi.">
+                <q-icon name="block" color="red" />
+              </b>
+              <b
+                v-else-if="getBalance(props.row) === 0"
+                title="Ya pagó todo el préstamo">
+                <q-icon name="block" color="red" />
+              </b>
+              <b v-else>
+                <q-btn
+                  color="primary"
+                  label="$"
+                  size="sm"
+                  @click="addPaymentRenovation(props.row)"
+                  :disable="isDiabledAdd"
+                />
+              </b>
+            </q-td>
+            <q-td key="collection" :props="props">
+              <div v-if="hasPaymentToday(props.row, 'nequi', 0)">
+                <div v-for="payment in getPaymentsTodaySecre(props.row)" :key="payment.id"
+                  class="q-ma-xs">
+                  <q-badge
+                    :color="payment.id ? payment.classes : ''"
+                    :title="payment.id ? payment.observation : ''">
+                    <b>{{ formatPrice(payment.amount) }}</b>
+                    <q-icon
+                      v-if="payment.id && payment.observation"
+                      name="comment"
+                      size="14px"
+                      class="q-ml-xs pointer-cursor"
+                    />
+                    <q-icon
+                      v-if="payment.id && payment.classes !== 'green'"
+                      name="close"
+                      size="14px"
+                      class="q-ml-xs pointer-cursor"
+                      @click="deletePayment(payment)"
+                    />
+                  </q-badge>
+                </div>
               </div>
-            </div>
-            <b v-if="getBalance(props.row) === 0"
-              title="Ya pagó todo el préstamo">
-              <q-icon name="block" color="red" />
-            </b>
-            <b v-else-if="!hasPaymentToday(props.row, 'renovacion', 0) && formatDate(props.row.created_at) !== formatDate(new Date())">
-              <q-btn
-                color="primary"
-                label="$"
-                size="sm"
-                @click="addPaymentNequi(props.row)"
-                :disable="isDiabledAdd"
-              />
-            </b>
-          </q-td>
-          <q-td key="street" :props="props">
-            <div v-if="hasPaymentToday(props.row, 'nequi', 1)">
-              <div v-for="payment in getPaymentsTodayStreet(props.row)" :key="payment.id"
-                class="q-ma-xs">
-                <q-badge
-                  :color="payment.id ? payment.classes : ''"
-                  :title="payment.id ? payment.observation : ''">
-                  <b>{{ formatPrice(payment.amount) }}</b>
-                  <q-icon
-                    v-if="payment.id && payment.observation"
-                    name="comment"
-                    size="14px"
-                    class="q-ml-xs pointer-cursor"
-                  />
-                </q-badge>
+              <b v-if="getBalance(props.row) === 0"
+                title="Ya pagó todo el préstamo">
+                <q-icon name="block" color="red" />
+              </b>
+              <b v-else-if="!hasPaymentToday(props.row, 'renovacion', 0) && formatDate(props.row.created_at) !== formatDate(new Date())">
+                <q-btn
+                  color="primary"
+                  label="$"
+                  size="sm"
+                  @click="addPaymentNequi(props.row)"
+                  :disable="isDiabledAdd"
+                />
+              </b>
+            </q-td>
+            <q-td key="repayment" :props="props">
+              <div v-if="hasRepaymentToday(props.row)">
+                <div v-for="payment in getRepaymentsToday(props.row)" :key="payment.id"
+                  class="q-ma-xs">
+                  <q-badge
+                    :color="payment.id ? payment.classes : ''"
+                    :title="payment.id ? payment.observation : ''">
+                    <b>{{ formatPrice(payment.amount) }}</b>
+                  </q-badge>
+                </div>
               </div>
-            </div>
-          </q-td>
-          <q-td key="article" :props="props">
-            <div v-if="hasPaymentToday(props.row, 'articulo', 1)">
-              <div v-for="payment in getPaymentsTodayArticle(props.row)" :key="payment.id"
-                class="q-ma-xs">
-                <q-badge
-                  :color="payment.id ? payment.classes : ''"
-                  :title="payment.id ? payment.observation : ''">
-                  <b>{{ formatPrice(payment.amount) }}</b>
-                  <q-icon
-                    v-if="payment.id && payment.observation"
-                    name="comment"
-                    size="14px"
-                    class="q-ml-xs pointer-cursor"
-                  />
-                </q-badge>
+            </q-td>
+            <q-td key="street" :props="props">
+              <div v-if="hasPaymentToday(props.row, 'nequi', 1)">
+                <div v-for="payment in getPaymentsTodayStreet(props.row)" :key="payment.id"
+                  class="q-ma-xs">
+                  <q-badge
+                    :color="payment.id ? payment.classes : ''"
+                    :title="payment.id ? payment.observation : ''">
+                    <b>{{ formatPrice(payment.amount) }}</b>
+                    <q-icon
+                      v-if="payment.id && payment.observation"
+                      name="comment"
+                      size="14px"
+                      class="q-ml-xs pointer-cursor"
+                    />
+                  </q-badge>
+                </div>
               </div>
-            </div>
-          </q-td>
-          <q-td key="daysPassed" :props="props">
-            {{ daysSinceGivenDate(props.row.firstDate) }}
-          </q-td>
-          <q-td key="firstDate" :class="rowClass(props.row)" :props="props">
-            {{ formatDate(props.row.firstDate) }}
-          </q-td>
-          <q-td key="endDate" :props="props">
-            {{ formatDate(props.row.endDate) }}
-          </q-td>
-          <q-td key="endPaymentDate" :props="props">
-            {{ getLastPaymentDate(props.row) }}
-          </q-td>
-          <q-td key="amountFeesPaid" :props="props">
-            {{ getAmountfeesPaid(props.row) }}
-          </q-td>
-          <q-td key="balance" :props="props">
-            {{ formatPrice(getBalance(props.row)) }}
-          </q-td>
-          <q-td key="phone" :props="props">
-            <q-btn-dropdown
-              v-if="hasPhones(props.row)"
-              color="black"
-              size="12px"
-              :auto-close="false"
-              outline
-              :label="props.row.phone"
-              @click="fetchPhonesNew(props.row.new_id)"
-            >
-              <q-list>
-                <q-item v-close-popup v-if="newItem.family_reference_name">
-                  <q-item-section>
-                    <q-item-label>Ref 1: {{ newItem.family_reference_name }}</q-item-label>
-                    <q-item-label caption>{{ newItem.family_reference_phone }} - {{ newItem.family_reference_relationship }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item v-close-popup v-if="newItem.family2_reference_name">
-                  <q-item-section>
-                    <q-item-label>Ref 2: {{ newItem.family2_reference_name }}</q-item-label>
-                    <q-item-label caption>{{ newItem.family2_reference_phone }} - {{ newItem.family2_reference_relationship }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item v-close-popup v-if="newItem.guarantor_name">
-                  <q-item-section>
-                    <q-item-label>Fiador: {{ newItem.guarantor_name }}</q-item-label>
-                    <q-item-label caption>{{ newItem.guarantor_phone }} - {{ newItem.guarantor_relationship }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
-            <div v-else>
-              {{ props.row.phone }}
-            </div>
-          </q-td>
-        </q-tr>
-      </template>
-      <!-- Fila de totales en el bottom -->
-      <template v-slot:bottom-row>
-        <q-tr class="bg-blue-2 text-primary">
-          <q-td colspan="2"></q-td>
-          <q-td><strong>Total {{ totalUnitsCollection }} cobros</strong></q-td>
-          <q-td><strong>{{ formatPrice(totalRenovated) }}</strong></q-td>
-          <q-td colspan="4"></q-td>
-          <q-td><strong>{{ formatPrice(totalRenovation) }}</strong></q-td>
-          <q-td><strong>{{ formatPrice(totalSecre) }}</strong></q-td>
-          <q-td><strong>{{ formatPrice(totalStreet) }}</strong></q-td>
-          <q-td><strong>{{ formatPrice(totalArticle) }}</strong></q-td>
-          <q-td colspan="7"><strong>{{ formatPrice(totalCollection) }}</strong></q-td>
-        </q-tr>
-      </template>
-    </q-table>
+            </q-td>
+            <q-td key="article" :props="props">
+              <div v-if="hasPaymentToday(props.row, 'articulo', 1)">
+                <div v-for="payment in getPaymentsTodayArticle(props.row)" :key="payment.id"
+                  class="q-ma-xs">
+                  <q-badge
+                    :color="payment.id ? payment.classes : ''"
+                    :title="payment.id ? payment.observation : ''">
+                    <b>{{ formatPrice(payment.amount) }}</b>
+                    <q-icon
+                      v-if="payment.id && payment.observation"
+                      name="comment"
+                      size="14px"
+                      class="q-ml-xs pointer-cursor"
+                    />
+                  </q-badge>
+                </div>
+              </div>
+            </q-td>
+            <q-td key="daysPassed" :props="props">
+              {{ daysSinceGivenDate(props.row.firstDate) }}
+            </q-td>
+            <q-td key="firstDate" :class="rowClass(props.row)" :props="props">
+              {{ formatDate(props.row.firstDate) }}
+            </q-td>
+            <q-td key="endDate" :props="props">
+              {{ formatDate(props.row.endDate) }}
+            </q-td>
+            <q-td key="endPaymentDate" :props="props">
+              {{ getLastPaymentDate(props.row) }}
+            </q-td>
+            <q-td key="amountFeesPaid" :props="props">
+              {{ getAmountfeesPaid(props.row) }}
+            </q-td>
+            <q-td key="balance" :props="props">
+              {{ formatPrice(getBalance(props.row)) }}
+            </q-td>
+            <q-td key="phone" :props="props">
+              <q-btn-dropdown
+                v-if="hasPhones(props.row)"
+                color="black"
+                size="12px"
+                :auto-close="false"
+                outline
+                :label="props.row.phone"
+                @click="fetchPhonesNew(props.row.new_id)"
+              >
+                <q-list>
+                  <q-item v-close-popup v-if="newItem.family_reference_name">
+                    <q-item-section>
+                      <q-item-label>Ref 1: {{ newItem.family_reference_name }}</q-item-label>
+                      <q-item-label caption>{{ newItem.family_reference_phone }} - {{ newItem.family_reference_relationship }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item v-close-popup v-if="newItem.family2_reference_name">
+                    <q-item-section>
+                      <q-item-label>Ref 2: {{ newItem.family2_reference_name }}</q-item-label>
+                      <q-item-label caption>{{ newItem.family2_reference_phone }} - {{ newItem.family2_reference_relationship }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item v-close-popup v-if="newItem.guarantor_name">
+                    <q-item-section>
+                      <q-item-label>Fiador: {{ newItem.guarantor_name }}</q-item-label>
+                      <q-item-label caption>{{ newItem.guarantor_phone }} - {{ newItem.guarantor_relationship }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
+              <div v-else>
+                {{ props.row.phone }}
+              </div>
+            </q-td>
+          </q-tr>
+        </template>
+        <!-- Fila de totales en el bottom -->
+        <template v-slot:bottom-row>
+          <q-tr class="bg-blue-2 text-primary">
+            <q-td colspan="2"></q-td>
+            <q-td><strong>Total {{ totalUnitsCollection }} cobros</strong></q-td>
+            <q-td><strong>{{ formatPrice(totalRenovated) }}</strong></q-td>
+            <q-td colspan="4"></q-td>
+            <q-td><strong>{{ formatPrice(totalRenovation) }}</strong></q-td>
+            <q-td><strong>{{ formatPrice(totalSecre) }}</strong></q-td>
+            <q-td><strong>{{ formatPrice(totalRepayment) }}</strong></q-td>
+            <q-td><strong>{{ formatPrice(totalStreet) }}</strong></q-td>
+            <q-td><strong>{{ formatPrice(totalArticle) }}</strong></q-td>
+            <q-td colspan="8"><strong>{{ formatPrice(totalCollection) }}</strong></q-td>
+          </q-tr>
+        </template>
+      </q-table>
+    </div>
     <modal-add-payment
       v-if="showModalPaymentNequi"
       v-model="showModalPaymentNequi"
@@ -386,7 +400,6 @@
       v-model="showModalCardBoard"
       :showBtnDownload="true"
       :showBtnApplyDoubleInterest="getBalance(itemSelected) > itemSelected.amount"
-      :showBtnRenovate="getBalance(itemSelected) === 0"
       title="Cartulina actual"
       :lendings="[itemSelected]"
       @updateTable="getLendings"/>
@@ -587,6 +600,14 @@ export default {
           sortable: false,
         },
         {
+          name: 'repayment',
+          required: true,
+          label: 'Adel',
+          align: 'center',
+          style: 'width: 100px',
+          sortable: false,
+        },
+        {
           name: 'street',
           required: true,
           label: 'Calle',
@@ -779,6 +800,18 @@ export default {
       });
       return total;
     },
+    totalRepayment() {
+      let total = 0;
+      this.lendings.forEach((lending) => {
+        const payments = this.getRepaymentsToday(lending);
+        const approved = payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
+        if (approved && approved.length > 0) {
+          const totalPayment = approved.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+          total += parseInt(totalPayment, 10);
+        }
+      });
+      return total;
+    },
     totalStreet() {
       let total = 0;
       this.lendings.forEach((lending) => {
@@ -814,7 +847,7 @@ export default {
       return total;
     },
     totalCollection() {
-      return parseInt(this.totalSecre, 10) + parseInt(this.totalRenovation, 10) + parseInt(this.totalArticle, 10) + parseInt(this.totalStreet, 10);
+      return parseInt(this.totalSecre, 10) + parseInt(this.totalRenovation, 10) + parseInt(this.totalArticle, 10) + parseInt(this.totalStreet, 10) + parseInt(this.totalRepayment, 10);
     },
     totalUnitsCollection() {
       let total = 0;
@@ -1077,7 +1110,20 @@ export default {
       if (row.payments && row.payments.length > 0) {
         row.payments.forEach((payment) => {
           const datePayment = moment(payment.date).startOf('day');
-          if (currentDate.isSame(datePayment, 'day') && payment.type === type && payment.is_street === isStreet) {
+          if (currentDate.isSame(datePayment, 'day') && payment.type === type && payment.is_street === isStreet && payment.observation !== 'adelanto') {
+            has = true;
+          }
+        });
+      }
+      return has;
+    },
+    hasRepaymentToday(row) {
+      let has = false;
+      const currentDate = moment().startOf('day');
+      if (row.payments && row.payments.length > 0) {
+        row.payments.forEach((payment) => {
+          const datePayment = moment(payment.date).startOf('day');
+          if (currentDate.isSame(datePayment, 'day') && payment.observation === 'adelanto') {
             has = true;
           }
         });
@@ -1137,7 +1183,7 @@ export default {
       if (row.payments && row.payments.length > 0) {
         row.payments.forEach((payment) => {
           const datePayment = moment(payment.date).startOf('day');
-          if (currentDate.isSame(datePayment, 'day') && payment.type === 'nequi' && !payment.is_street) {
+          if (currentDate.isSame(datePayment, 'day') && payment.type === 'nequi' && !payment.is_street && payment.observation !== 'adelanto') {
             const pay = { ...payment };
             let classes = '';
             let observation = '';
@@ -1192,6 +1238,33 @@ export default {
         row.payments.forEach((payment) => {
           const datePayment = moment(payment.date).startOf('day');
           if (currentDate.isSame(datePayment, 'day') && payment.type === 'articulo') {
+            const pay = { ...payment };
+            let classes = '';
+            let observation = '';
+            if (pay.status === 'aprobado' || pay.status === 'verificado') {
+              classes = 'green';
+              observation = pay.observation;
+            } else if (pay.status === 'rechazado') {
+              classes = 'red';
+              observation = pay.observation;
+            } else {
+              classes = 'black';
+            }
+            pay.classes = classes;
+            pay.observation = observation;
+            pays.push(pay);
+          }
+        });
+      }
+      return pays;
+    },
+    getRepaymentsToday(row) {
+      const pays = [];
+      const currentDate = moment().startOf('day');
+      if (row.payments && row.payments.length > 0) {
+        row.payments.forEach((payment) => {
+          const datePayment = moment(payment.date).startOf('day');
+          if (currentDate.isSame(datePayment, 'day') && payment.observation === 'adelanto') {
             const pay = { ...payment };
             let classes = '';
             let observation = '';
@@ -1326,5 +1399,8 @@ export default {
   }
   .pointer-cursor {
     cursor: pointer;
+  }
+  #div-container-list > div.q-table__middle.scroll {
+    overflow: visible !important;
   }
 </style>

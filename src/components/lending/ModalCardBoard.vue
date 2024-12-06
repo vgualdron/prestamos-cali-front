@@ -275,11 +275,6 @@ export default {
       required: false,
       default: false,
     },
-    showBtnRenovate: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
     hasDoubleInterest: {
       type: Boolean,
       required: false,
