@@ -32,10 +32,11 @@ export default (/* { store, ssrContext } */) => {
   });
 
   Router.beforeEach(async (to, from, next) => {
+    console.log(Router);
     Loading.show({
       message: 'Cargando...',
       spinnerSize: 30,
-      delay: 100, // Evita parpadeos si la navegación es rápida
+      delay: 100,
     });
     if (to.path === '/') {
       next();
@@ -45,10 +46,22 @@ export default (/* { store, ssrContext } */) => {
     try {
       await authApi.session().then(() => {
         store.dispatch('@module/configuration/@actions/fetchConfigurations').then(() => {
-          next(); // Continuar navegación
+          const requiredPermissions = to.meta.permissions;
+          const userPermissions = store.state['@module/common'].permissions;
+          if (requiredPermissions && requiredPermissions.length > 0) {
+            const permissionNames = userPermissions.map((permission) => permission.name);
+            const hasPermission = requiredPermissions.every((permission) => permissionNames.includes(permission));
+            if (hasPermission) {
+              next();
+            } else {
+              next('/unauthorized');
+            }
+          } else {
+            next();
+          }
         }).catch((error) => {
           console.error('Error ejecutando la acción en el módulo', error);
-          next(false); // Cancelar navegación si hay error
+          next(false);
         });
       });
       return;
@@ -70,6 +83,8 @@ export default (/* { store, ssrContext } */) => {
       } else {
         next();
       }
+    } finally {
+      Loading.hide();
     }
   });
 

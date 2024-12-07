@@ -153,7 +153,7 @@ export default {
         {
           name: 'userName',
           align: 'left',
-          label: 'Prestador',
+          label: 'Asesor',
           field: 'userName',
           sortable: true,
           visible: true,
@@ -174,7 +174,7 @@ export default {
     };
   },
   async mounted() {
-    this.validateLogin();
+    await this.listMounted();
   },
   computed: {
     ...mapState(diaryTypes.PATH, [
@@ -222,13 +222,6 @@ export default {
     },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
-    },
-    validateLogin() {
-      if (localStorage.getItem('tokenMC')) {
-        this.listMounted();
-      } else {
-        this.$router.push('/');
-      }
     },
     showVisit(row) {
       this.$router.push(`/review-visit/${row.new_id}`);

@@ -174,7 +174,7 @@ export default {
     };
   },
   async mounted() {
-    this.validateLogin();
+    await this.listUsersMounted();
   },
   computed: {
     ...mapState(userTypes.PATH, [
@@ -244,13 +244,6 @@ export default {
     },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
-    },
-    validateLogin() {
-      if (localStorage.getItem('tokenMC')) {
-        this.listUsersMounted();
-      } else {
-        this.$router.push('/');
-      }
     },
   },
 };

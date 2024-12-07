@@ -95,7 +95,7 @@ export default {
   watch: {
     async citySelected() {
       showLoading('Cargando ...', 'Por favor, espere', true);
-      await this.listUsersByRoleName({ roleName: 'Prestador', status: 1, city: this.citySelected });
+      await this.listUsersByRoleName({ roleName: 'Asesor', status: 1, city: this.citySelected });
       if (this.optionsUsers && this.optionsUsers.length > 0) {
         const [userId] = this.optionsUsers;
         this.userSelected = userId.value;

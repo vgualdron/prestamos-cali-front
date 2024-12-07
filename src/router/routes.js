@@ -17,175 +17,300 @@ const routes = [
     path: '/zone',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Cuidades', component: () => import('pages/Zone.vue') },
+      {
+        path: '',
+        name: 'Cuidades',
+        component: () => import('pages/Zone.vue'),
+        meta: { permissions: ['zone.list'] },
+      },
     ],
   },
   {
     path: '/yard',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Sectores', component: () => import('pages/Yard.vue') },
+      {
+        path: '',
+        name: 'Sectores',
+        component: () => import('pages/Yard.vue'),
+        meta: { permissions: ['yard.list'] },
+      },
     ],
   },
   {
     path: '/role',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Roles', component: () => import('pages/Role.vue') },
+      {
+        path: '',
+        name: 'Roles',
+        component: () => import('pages/Role.vue'),
+        meta: { permissions: ['role.list'] },
+      },
     ],
   },
   {
     path: '/user',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Usuarios', component: () => import('pages/User.vue') },
+      {
+        path: '',
+        name: 'Usuarios',
+        component: () => import('pages/User.vue'),
+        meta: { permissions: ['user.list'] },
+      },
     ],
   },
   {
     path: '/new',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Recolección de datos', component: () => import('pages/New.vue') },
+      {
+        path: '',
+        name: 'Recolección de datos',
+        component: () => import('pages/New.vue'),
+        meta: { permissions: ['new.list'] },
+      },
     ],
   },
   {
     path: '/review',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Agendar nuevos', component: () => import('pages/Review.vue') },
+      {
+        path: '',
+        name: 'Agendar nuevos',
+        component: () => import('pages/Review.vue'),
+        meta: { permissions: ['review.list'] },
+      },
     ],
   },
   {
     path: '/my-diary',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Mi agenda', component: () => import('pages/MyDiary.vue') },
+      {
+        path: '',
+        name: 'Mi agenda',
+        component: () => import('pages/MyDiary.vue'),
+        meta: { permissions: ['diary.getMyDiary'] },
+      },
     ],
   },
   {
     path: '/users-diary',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Agenda de usuarios', component: () => import('pages/UsersDiary.vue') },
+      {
+        path: '',
+        name: 'Agenda de usuarios',
+        component: () => import('pages/UsersDiary.vue'),
+        meta: { permissions: ['diary.getUsersDiary'] },
+      },
     ],
   },
   {
     path: '/visit/:id',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Visita', component: () => import('pages/Visit.vue') },
+      {
+        path: '',
+        name: 'Visita',
+        component: () => import('pages/Visit.vue'),
+        meta: { permissions: ['visit.list'] },
+      },
     ],
   },
   {
     path: '/list-visit',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Listar Visitas', component: () => import('pages/ListVisit.vue') },
+      {
+        path: '',
+        name: 'Listar Visitas',
+        component: () => import('pages/ListVisit.vue'),
+        meta: { permissions: ['visit.list'] },
+      },
     ],
   },
   {
     path: '/review-visit/:id',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Revisar Visita', component: () => import('pages/ReviewVisit.vue') },
+      {
+        path: '',
+        name: 'Revisar Visita',
+        component: () => import('pages/ReviewVisit.vue'),
+        meta: { permissions: ['visit.review'] },
+      },
     ],
   },
   {
     path: '/zip',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Exportar comprimidos', component: () => import('pages/Zip.vue') },
+      {
+        path: '',
+        name: 'Exportar comprimidos',
+        component: () => import('pages/Zip.vue'),
+        meta: { permissions: ['zip.list'] },
+      },
     ],
   },
   {
     path: '/param',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Parametros', component: () => import('pages/Configuration.vue') },
+      {
+        path: '',
+        name: 'Parametros',
+        component: () => import('pages/Configuration.vue'),
+        meta: { permissions: ['parameter.list'] },
+      },
     ],
   },
   {
     path: '/listing',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Rutas', component: () => import('pages/Listing.vue') },
+      {
+        path: '',
+        name: 'Rutas',
+        component: () => import('pages/Listing.vue'),
+        meta: { permissions: ['list.list'] },
+      },
     ],
   },
   {
     path: '/lending',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Lista de prestamos', component: () => import('pages/Lending.vue') },
+      {
+        path: '',
+        name: 'Lista de prestamos',
+        component: () => import('pages/Lending.vue'),
+        meta: { permissions: ['lending.list'] },
+      },
     ],
   },
   {
     path: '/district',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Lista de barrios', component: () => import('pages/District.vue') },
+      {
+        path: '',
+        name: 'Lista de barrios',
+        component: () => import('pages/District.vue'),
+        meta: { permissions: ['district.list'] },
+      },
     ],
   },
   {
     path: '/report-dinamic',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Reportes Dinamicos', component: () => import('pages/ReportDinamic.vue') },
+      {
+        path: '',
+        name: 'Reportes Dinamicos',
+        component: () => import('pages/ReportDinamic.vue'),
+        meta: { permissions: ['reportsDinamic.list'] },
+      },
     ],
   },
   {
     path: '/payment-voucher',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Revisar vouchers de pagos', component: () => import('pages/Payment.vue') },
+      {
+        path: '',
+        name: 'Revisar vouchers de pagos',
+        component: () => import('pages/Payment.vue'),
+        meta: { permissions: ['payment.list'] },
+      },
     ],
   },
   {
     path: '/payment-app',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Revisar pagos en app nequi', component: () => import('pages/PaymentApp.vue') },
+      {
+        path: '',
+        name: 'Revisar pagos en app nequi',
+        component: () => import('pages/PaymentApp.vue'),
+        meta: { permissions: ['paymentApp.list'] },
+      },
     ],
   },
   {
     path: '/expense-list-new',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Agregar voucher a nuevos aprobados', component: () => import('pages/NewsApproved.vue') },
+      {
+        path: '',
+        name: 'Agregar voucher a nuevos aprobados',
+        component: () => import('pages/NewsApproved.vue'),
+        meta: { permissions: ['expense.listNewApproved'] },
+      },
     ],
   },
   {
     path: '/expense',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Gestionar Egresos', component: () => import('pages/Expense.vue') },
+      {
+        path: '',
+        name: 'Gestionar Egresos',
+        component: () => import('pages/Expense.vue'),
+        meta: { permissions: ['expense.list'] },
+      },
     ],
   },
   {
     path: '/expense-renovated',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Agregar voucher a renovaciones', component: () => import('pages/ExpenseRenovated.vue') },
+      {
+        path: '',
+        name: 'Agregar voucher a renovaciones',
+        component: () => import('pages/ExpenseRenovated.vue'),
+        meta: { permissions: ['expense.listRenovated'] },
+      },
     ],
   },
   {
     path: '/users-location',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Ubicación de usuarios', component: () => import('pages/UsersLocation.vue') },
+      {
+        path: '',
+        name: 'Ubicación de usuarios',
+        component: () => import('pages/UsersLocation.vue'),
+        meta: { permissions: ['report.usersLocation'] },
+      },
     ],
   },
   {
     path: '/list-questions-nequi',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Solicitudes al grupo nequi', component: () => import('pages/QuestionNequi.vue') },
+      {
+        path: '',
+        name: 'Solicitudes al grupo nequi',
+        component: () => import('pages/QuestionNequi.vue'),
+        meta: { permissions: ['question.listGroupNequi'] },
+      },
     ],
   },
   {
     path: '/report-deliveries',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'Reporte de entregas por fecha', component: () => import('pages/ReportDeliveries.vue') },
+      {
+        path: '',
+        name: 'Reporte de entregas por fecha',
+        component: () => import('pages/ReportDeliveries.vue'),
+        meta: { permissions: ['report.Deliveries'] },
+      },
     ],
   },
   // Always leave this as last one,
@@ -193,6 +318,10 @@ const routes = [
   {
     path: '*',
     component: () => import('pages/Error404.vue'),
+  },
+  {
+    path: '/unauthorized',
+    component: () => import('pages/Error401.vue'),
   },
   {
     path: '/upload-payments',

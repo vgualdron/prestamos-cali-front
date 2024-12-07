@@ -29,7 +29,6 @@
 <script>
 import CvApp from './cv/CvApp.vue';
 import CvPdf from './cv/CvPdf.vue';
-import { havePermission } from '../../helpers/havePermission';
 
 export default {
   data() {
@@ -53,20 +52,6 @@ export default {
       set(val) {
         this.$emit('input', val);
       },
-    },
-    validatedPermissions() {
-      const statusReview = havePermission('visit.review');
-      const statusVoucher = havePermission('visit.voucher');
-      return {
-        review: {
-          title: statusReview ? 'Revisar visita' : 'No tiene permisos para revisar visitas',
-          status: statusReview,
-        },
-        voucher: {
-          title: statusVoucher ? 'Agregar voucher' : 'No tiene permisos para agregar voucher',
-          status: statusVoucher,
-        },
-      };
     },
   },
   async created() {

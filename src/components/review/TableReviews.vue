@@ -29,7 +29,7 @@
     </div>
     <div class="row q-mt-md">
       <div class="col-12 text-center">
-        <b>Prestador:</b>
+        <b>Asesor:</b>
         <q-radio
           v-for="user in optionsUsers"
           v-model="userSelected"
@@ -390,13 +390,13 @@ export default {
   },
   async mounted() {
     this.citySelected = parseInt(localStorage.getItem('cityMC'), 10);
-    await this.validateLogin();
+    await this.initData();
   },
   watch: {
     async citySelected(newVal) {
       showLoading('Cargando ...', 'Por favor, espere', true);
       await this.listYardsByZone({ id: newVal, displayAll: 1 });
-      await this.listUsersByRoleName({ roleName: 'Prestador', status: 1, city: this.citySelected });
+      await this.listUsersByRoleName({ roleName: 'Asesor', status: 1, city: this.citySelected });
       /* if (this.optionsSectors && this.optionsSectors.length > 0) {
         const hasItem = this.optionsSectors.some((sectors) => this.sectorSelected.includes(sectors.value));
         if (!hasItem) {
@@ -667,21 +667,17 @@ export default {
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
-    async validateLogin() {
-      if (localStorage.getItem('tokenMC')) {
-        showLoading('Cargando ...', 'Por favor, espere', true);
-        await this.listNewsMounted();
-        await this.listZones();
-        await this.listUsersByRoleName({ roleName: 'Prestador', status: 1, city: this.citySelected });
-        this.$q.loading.hide();
-        if (this.optionsUsers && this.optionsUsers.length > 0) {
-          const users = this.optionsUsers.filter((user) => parseInt(user.value, 10) === parseInt(this.userSelected, 10));
-          if (users.length === 0) {
-            this.userSelected = this.optionsUsers[0].value;
-          }
+    async initData() {
+      showLoading('Cargando ...', 'Por favor, espere', true);
+      await this.listNewsMounted();
+      await this.listZones();
+      await this.listUsersByRoleName({ roleName: 'Asesor', status: 1, city: this.citySelected });
+      this.$q.loading.hide();
+      if (this.optionsUsers && this.optionsUsers.length > 0) {
+        const users = this.optionsUsers.filter((user) => parseInt(user.value, 10) === parseInt(this.userSelected, 10));
+        if (users.length === 0) {
+          this.userSelected = this.optionsUsers[0].value;
         }
-      } else {
-        this.$router.push('/');
       }
     },
     clickRow(row) {

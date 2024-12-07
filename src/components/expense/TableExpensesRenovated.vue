@@ -64,7 +64,6 @@ import UploadImage from 'components/common/UploadImage.vue';
 import expenseTypes from '../../store/modules/expense/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
-import { havePermission } from '../../helpers/havePermission';
 import { formatDateWithTime } from '../../helpers/formatDate';
 
 export default {
@@ -144,7 +143,7 @@ export default {
     };
   },
   async mounted() {
-    this.validateLogin();
+    this.listMounted();
     this.pollData();
   },
   computed: {
@@ -160,30 +159,6 @@ export default {
         date: formatDateWithTime(element.date),
       }));
       return data;
-    },
-    validatedPermissions() {
-      const statusCreate = havePermission('new.create');
-      const statusEdit = havePermission('new.update');
-      const statusDelete = havePermission('new.delete');
-      const statuschangeStatus = havePermission('new.changeStatus');
-      return {
-        create: {
-          title: statusCreate ? 'Registrar nuevos' : 'No tiene permisos para registrar nuevos',
-          status: statusCreate,
-        },
-        edit: {
-          title: statusEdit ? 'Editar nuevo' : 'No tiene permisos para editar nuevos',
-          status: statusEdit,
-        },
-        delete: {
-          title: statusDelete ? 'Eliminar nuevo' : 'No tiene permisos para eliminar nuevos',
-          status: statusDelete,
-        },
-        changeStatus: {
-          title: statuschangeStatus ? 'Guardar el registro' : 'No tiene permisos',
-          status: statuschangeStatus,
-        },
-      };
     },
   },
   beforeDestroy() {
@@ -234,13 +209,6 @@ export default {
     },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
-    },
-    validateLogin() {
-      if (localStorage.getItem('tokenMC')) {
-        this.listMounted();
-      } else {
-        this.$router.push('/');
-      }
     },
   },
 };

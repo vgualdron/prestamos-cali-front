@@ -51,7 +51,6 @@ import { mapState, mapActions } from 'vuex';
 import userTypes from '../../store/modules/user/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
-import { havePermission } from '../../helpers/havePermission';
 
 export default {
   components: {
@@ -135,7 +134,7 @@ export default {
     };
   },
   async mounted() {
-    this.validateLogin();
+    await this.listUsersMounted();
     this.pollData();
   },
   computed: {
@@ -147,25 +146,6 @@ export default {
     ]),
     formatDate(date) {
       return moment(date).format('DD/MM/YYYY');
-    },
-    validatedPermissions() {
-      const statusCreate = havePermission('user.create');
-      const statusEdit = havePermission('user.update');
-      const statusDelete = havePermission('user.delete');
-      return {
-        create: {
-          title: statusCreate ? 'Registrar usuario' : 'No tiene permisos para registrar usuarios',
-          status: statusCreate,
-        },
-        edit: {
-          title: statusEdit ? 'Editar usuario' : 'No tiene permisos para editar usuarios',
-          status: statusEdit,
-        },
-        delete: {
-          title: statusDelete ? 'Eliminar usuario' : 'No tiene permisos para eliminar usuarios',
-          status: statusDelete,
-        },
-      };
     },
   },
   beforeDestroy() {
@@ -217,13 +197,6 @@ export default {
     },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
-    },
-    validateLogin() {
-      if (localStorage.getItem('tokenMC')) {
-        this.listUsersMounted();
-      } else {
-        this.$router.push('/');
-      }
     },
   },
 };

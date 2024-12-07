@@ -188,7 +188,7 @@ export default {
     };
   },
   async mounted() {
-    this.validateLogin();
+    await this.listYardsMounted();
   },
   computed: {
     ...mapState(yardTypes.PATH, [
@@ -254,13 +254,6 @@ export default {
     },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
-    },
-    validateLogin() {
-      if (localStorage.getItem('tokenMC')) {
-        this.listYardsMounted();
-      } else {
-        this.$router.push('/');
-      }
     },
   },
 };

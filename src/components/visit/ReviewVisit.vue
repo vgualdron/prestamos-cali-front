@@ -853,7 +853,6 @@ import userTypes from '../../store/modules/user/types';
 import lendingTypes from '../../store/modules/lending/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
-import { havePermission } from '../../helpers/havePermission';
 
 export default {
   data() {
@@ -887,20 +886,6 @@ export default {
       lendingStatus: 'status',
       lendingResponseMessages: 'responseMessages',
     }),
-    validatedPermissions() {
-      const statusReview = havePermission('visit.review');
-      const statusVoucher = havePermission('visit.voucher');
-      return {
-        review: {
-          title: statusReview ? 'Revisar visita' : 'No tiene permisos para revisar visitas',
-          status: statusReview,
-        },
-        voucher: {
-          title: statusVoucher ? 'Agregar voucher' : 'No tiene permisos para agregar voucher',
-          status: statusVoucher,
-        },
-      };
-    },
   },
   async mounted() {
     await this.getItem();

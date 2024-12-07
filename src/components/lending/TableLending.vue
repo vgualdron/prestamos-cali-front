@@ -1011,7 +1011,7 @@ export default {
         color = 'bg-red';
       } else if (days >= 19 && days <= 25) {
         color = 'bg-blue';
-      } else if (days > 12 && days <= 18) {
+      } else if (days >= 13 && days <= 18) {
         color = 'bg-yellow';
       }
       return color;
