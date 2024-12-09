@@ -141,6 +141,7 @@
                   <q-input
                     outlined
                     v-model.trim="item.date_lending"
+                    type="date"
                     label="Fecha prestamo*"
                     lazy-rules
                     :rules="[(val) => (!!val) || '']"
@@ -262,6 +263,7 @@
                     outlined
                     v-model.trim="item.created_at"
                     label="Fecha de registro *"
+                    type="date"
                     lazy-rules
                     :rules="[(val) => (!!val) || '']"
                     hide-bottom-space
