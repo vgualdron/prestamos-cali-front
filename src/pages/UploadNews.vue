@@ -1,14 +1,16 @@
 <template>
   <q-page padding>
     <div class="q-pa-md">
-      <q-btn
-        label="Nuevo"
-        color="primary"
-        :loading="loading"
-        :disable="loading"
-        class="q-ma-md"
-        @click="showDialog = true"
-      />
+      <div class="row q-mt-xs">
+        <q-btn
+          label="Nuevo"
+          color="primary"
+          :loading="loading"
+          :disable="loading"
+          class="q-ma-md"
+          @click="openNewModal"
+        />
+      </div>
       <q-card>
         <q-card-section>
           <q-table
@@ -37,6 +39,9 @@
             </template>
             <template v-slot:body-cell-listing_id="props">
               <q-td :props="props">
+                <q-badge color="blue">
+                  {{ props.row.listing_name }}
+                </q-badge><br>
                 <q-btn
                   icon="assignment_returned"
                   class="q-ml-md"
@@ -88,7 +93,6 @@
           </q-card-section>
           <q-separator />
           <q-card-section
-            style="max-height: 100vh"
             class="scroll"
           >
             <q-form
@@ -99,6 +103,40 @@
                 <b>Prestamo</b>
               </div>
               <div class="row q-mt-xs">
+                <div class="col-2 q-pa-xs">
+                  <q-select
+                    v-model="item.city_id"
+                    :dense="dense"
+                    outlined
+                    input-debounce="0"
+                    label="Ciudad *"
+                    :options="zones"
+                    option-label="name"
+                    option-value="id"
+                    :rules="[(val) => (!!val) || '']"
+                    @input="inputCity"
+                    lazy-rules
+                    hide-bottom-space
+                    map-options
+                    emit-value
+                    autocomplete="off"
+                  >
+                  </q-select>
+                </div>
+                <div class="col-2 q-pa-xs">
+                  <q-select
+                    label="Ruta *"
+                    outlined
+                    emit-value
+                    map-options
+                    :dense="dense"
+                    @input="inputList"
+                    option-value="id"
+                    option-label="name"
+                    :rules="[(val) => (!!val) || '']"
+                    v-model="item.listing_id"
+                    :options="optionsListings"/>
+                </div>
                 <div class="col-2 q-pa-xs">
                   <q-input
                     outlined
@@ -111,7 +149,7 @@
                     :dense="dense"
                   />
                 </div>
-                <div class="col-1 q-pa-xs">
+                <div class="col-2 q-pa-xs">
                   <q-input
                     outlined
                     v-model.trim="item.amount_lending"
@@ -125,7 +163,7 @@
                     step="1000"
                   />
                 </div>
-                <div class="col-1 q-pa-xs">
+                <div class="col-2 q-pa-xs">
                   <q-input
                     outlined
                     v-model.trim="item.amount_payment"
@@ -145,36 +183,6 @@
                 <b>Cliente</b>
               </div>
               <div class="row q-mt-xs">
-                <div class="col-1 q-pa-xs">
-                  <q-select
-                    v-model="item.city_id"
-                    :dense="dense"
-                    outlined
-                    input-debounce="0"
-                    label="Ciudad *"
-                    :options="zones"
-                    option-label="name"
-                    option-value="id"
-                    lazy-rules
-                    hide-bottom-space
-                    map-options
-                    emit-value
-                    autocomplete="off"
-                  >
-                  </q-select>
-                </div>
-                <div class="col-2 q-pa-xs">
-                  <q-select
-                    label="Ruta *"
-                    outlined
-                    emit-value
-                    map-options
-                    :dense="dense"
-                    option-value="id"
-                    option-label="name"
-                    v-model="item.listing_id"
-                    :options="listings"/>
-                </div>
                 <div class="col-3 q-pa-xs">
                   <q-input
                     outlined
@@ -249,7 +257,7 @@
                     step="1000"
                   />
                 </div>
-                <div class="col-1 q-pa-xs">
+                <div class="col-2 q-pa-xs">
                   <q-input
                     outlined
                     v-model.trim="item.created_at"
@@ -357,7 +365,7 @@
                     </template>
                   </q-select>
                 </div>
-                <div class="col-1 q-pa-xs">
+                <div class="col-2 q-pa-xs">
                   <q-select
                     label="Tipo casa *"
                     outlined
@@ -392,7 +400,7 @@
                     :dense="dense"
                   />
                 </div>
-                <div class="col-1 q-pa-xs">
+                <div class="col-2 q-pa-xs">
                   <q-select
                     label="Tipo empleo *"
                     outlined
@@ -417,9 +425,8 @@
                   <q-input
                     outlined
                     v-model.trim="item.address_work"
-                    label="Dirección trabajo *"
+                    label="Dirección trabajo"
                     lazy-rules
-                    :rules="[(val) => (!!val) || '']"
                     hide-bottom-space
                     autocomplete="off"
                     :dense="dense"
@@ -430,13 +437,12 @@
                     v-model="item.address_work_sector"
                     outlined
                     input-debounce="0"
-                    label="Sector *"
+                    label="Sector"
                     option-label="name"
                     option-value="id"
                     :options="yards"
                     @input="changeSector"
                     lazy-rules
-                    :rules="[(val) => (!!val) || '']"
                     hide-bottom-space
                     map-options
                     emit-value
@@ -451,12 +457,11 @@
                     use-input
                     outlined
                     input-debounce="0"
-                    label="Barrio *"
+                    label="Barrio"
                     :options="optionsDistrictsWork"
                     @filter="filterDistricts"
                     option-label="name"
                     option-value="id"
-                    :rules="[(val) => (!!val) || '']"
                     lazy-rules
                     hide-bottom-space
                     map-options
@@ -496,6 +501,7 @@
                     emit-value
                     autocomplete="off"
                     :dense="dense"
+                    :disable="true"
                   >
                     <template v-slot:no-option>
                       <q-item>
@@ -658,19 +664,6 @@
                 <div class="col-2 q-pa-xs">
                   <q-input
                     outlined
-                    v-model.trim="item.family_reference_relationship"
-                    label="Parentesco"
-                    lazy-rules
-                    hide-bottom-space
-                    autocomplete="off"
-                    :dense="dense"
-                  />
-                </div>
-              </div>
-              <div class="row q-mt-xs">
-                <div class="col-2 q-pa-xs">
-                  <q-input
-                    outlined
                     v-model.trim="item.family_reference_address"
                     label="Dirección"
                     lazy-rules
@@ -725,6 +718,17 @@
                     </template>
                   </q-select>
                 </div>
+                <div class="col-2 q-pa-xs">
+                  <q-input
+                    outlined
+                    v-model.trim="item.family_reference_relationship"
+                    label="Parentesco"
+                    lazy-rules
+                    hide-bottom-space
+                    autocomplete="off"
+                    :dense="dense"
+                  />
+                </div>
               </div>
               <q-separator />
               <div class="row q-mt-xs">
@@ -753,19 +757,6 @@
                     :dense="dense"
                   />
                 </div>
-                <div class="col-2 q-pa-xs">
-                  <q-input
-                    outlined
-                    v-model.trim="item.family2_reference_relationship"
-                    label="Parentesco"
-                    lazy-rules
-                    hide-bottom-space
-                    autocomplete="off"
-                    :dense="dense"
-                  />
-                </div>
-              </div>
-              <div class="row q-mt-xs">
                 <div class="col-2 q-pa-xs">
                   <q-input
                     outlined
@@ -823,25 +814,133 @@
                     </template>
                   </q-select>
                 </div>
+                <div class="col-2 q-pa-xs">
+                  <q-input
+                    outlined
+                    v-model.trim="item.family2_reference_relationship"
+                    label="Parentesco"
+                    lazy-rules
+                    hide-bottom-space
+                    autocomplete="off"
+                    :dense="dense"
+                  />
+                </div>
               </div>
               <q-separator />
               <div class="row q-mt-xs">
                 <b>Cuenta</b>
               </div>
               <div class="row q-mt-xs">
-                <div class="col-1 q-pa-xs">
+                <div class="col-2 q-pa-xs">
+                  <q-select
+                    v-model="item.account_type"
+                    use-input
+                    outlined
+                    input-debounce="0"
+                    label="Tipo cuenta principal*"
+                    :options="[{
+                      label: 'Nequi',
+                      value: 'nequi',
+                    },
+                    {
+                      label: 'Bancolombia',
+                      value: 'bancolombia',
+                    }]"
+                    option-label="label"
+                    option-value="value"
+                    lazy-rules
+                    hide-bottom-space
+                    map-options
+                    emit-value
+                    autocomplete="off"
+                    :dense="dense"
+                  >
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          No hay coincidencias
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                </div>
+                <div class="col-2 q-pa-xs">
+                  <q-input
+                    outlined
+                    v-model.trim="item.account_number"
+                    label="Numero cuenta principal *"
+                    :rules="[(val) => (!!val) || '']"
+                    lazy-rules
+                    hide-bottom-space
+                    :dense="dense"
+                  />
+                </div>
+                <div class="col-2 q-pa-xs">
+                  <q-select
+                    v-model="item.account_type_third"
+                    use-input
+                    outlined
+                    input-debounce="0"
+                    label="Tipo cuenta tercero"
+                    :options="[{
+                      label: 'Nequi',
+                      value: 'nequi',
+                    },
+                    {
+                      label: 'Bancolombia',
+                      value: 'bancolombia',
+                    }]"
+                    option-label="label"
+                    option-value="value"
+                    lazy-rules
+                    hide-bottom-space
+                    map-options
+                    emit-value
+                    autocomplete="off"
+                    :dense="dense"
+                  >
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          No hay coincidencias
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                </div>
+                <div class="col-2 q-pa-xs">
+                  <q-input
+                    outlined
+                    v-model.trim="item.account_number_third"
+                    label="Numero cuenta tercero"
+                    lazy-rules
+                    hide-bottom-space
+                    :dense="dense"
+                  />
+                </div>
+                <div class="col-2 q-pa-xs">
+                  <q-input
+                    outlined
+                    v-model.trim="item.account_name_third"
+                    label="Nombre cuenta tercero"
+                    lazy-rules
+                    hide-bottom-space
+                    :dense="dense"
+                  />
+                </div>
+                <div class="col-2 q-pa-xs">
                   <q-select
                     v-model="item.account_active"
                     use-input
                     outlined
                     input-debounce="0"
-                    label="Cual activa *"
+                    label="Cual es la cuenta activa *"
                     :options="[{
-                      label: 'Princ',
+                      label: 'Principal',
                       value: 'principal',
                     },
                     {
-                      label: 'Terc',
+                      label: 'Tercero',
                       value: 'tercero',
                     }]"
                     option-label="label"
@@ -862,93 +961,10 @@
                     </template>
                   </q-select>
                 </div>
-                <div class="col-1 q-pa-xs">
-                  <q-select
-                    v-model="item.account_type"
-                    use-input
-                    outlined
-                    input-debounce="0"
-                    label="Tipo principal*"
-                    :options="[{
-                      label: 'Nequi',
-                      value: 'nequi',
-                    },
-                    {
-                      label: 'Banc',
-                      value: 'bancolombia',
-                    }]"
-                    option-label="label"
-                    option-value="value"
-                    lazy-rules
-                    hide-bottom-space
-                    map-options
-                    emit-value
-                    autocomplete="off"
-                    :dense="dense"
-                  >
-                    <template v-slot:no-option>
-                      <q-item>
-                        <q-item-section class="text-grey">
-                          No hay coincidencias
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                  </q-select>
-                </div>
-                <div class="col-1 q-pa-xs">
-                  <q-input
-                    outlined
-                    v-model.trim="item.account_number"
-                    label="Numero principal"
-                    lazy-rules
-                    hide-bottom-space
-                    :dense="dense"
-                  />
-                </div>
-                <div class="col-1 q-pa-xs">
-                  <q-select
-                    v-model="item.account_type_third"
-                    use-input
-                    outlined
-                    input-debounce="0"
-                    label="Tipo tercero *"
-                    :options="[{
-                      label: 'Nequi',
-                      value: 'nequi',
-                    },
-                    {
-                      label: 'Banc',
-                      value: 'bancolombia',
-                    }]"
-                    option-label="label"
-                    option-value="value"
-                    lazy-rules
-                    hide-bottom-space
-                    map-options
-                    emit-value
-                    autocomplete="off"
-                    :dense="dense"
-                  >
-                    <template v-slot:no-option>
-                      <q-item>
-                        <q-item-section class="text-grey">
-                          No hay coincidencias
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                  </q-select>
-                </div>
-                <div class="col-1 q-pa-xs">
-                  <q-input
-                    outlined
-                    v-model.trim="item.account_number_third"
-                    label="Numero tercero"
-                    lazy-rules
-                    hide-bottom-space
-                    :dense="dense"
-                  />
-                </div>
-                <div class="col-4 q-pa-xs">
+              </div>
+              <q-separator />
+              <div class="row q-mt-xs">
+                <div class="col-6 q-pa-xs">
                   <q-input
                     outlined
                     v-model.trim="item.extra_reference"
@@ -958,7 +974,7 @@
                     :dense="dense"
                   />
                 </div>
-                <div class="col-3 q-pa-xs">
+                <div class="col-6 q-pa-xs">
                   <q-input
                     outlined
                     v-model.trim="item.observation"
@@ -1022,6 +1038,7 @@ export default {
       loading: false,
       items: [],
       columns: [],
+      optionsListings: [],
       optionsDistricts: [],
       optionsDistrictsWork: [],
       optionsDistrictsGuarantor: [],
@@ -1035,7 +1052,7 @@ export default {
         name: '',
         document_number: '',
         phone: '',
-        period: 'diario',
+        period: 'semanal',
         quantity: 300000,
         created_at: '2024-12-01',
         lent_by: 9,
@@ -1081,9 +1098,10 @@ export default {
         account_number: '',
         account_type_third: '',
         account_number_third: '',
+        account_name_third: '',
         account_active: 'principal',
         observation: '',
-        has_letter: 1,
+        has_letter: 0,
         extra_reference: '',
       },
     };
@@ -1107,6 +1125,9 @@ export default {
       this.optionsDistrictsGuarantor = [...val.filter((district) => district.sector === this.item.guarantor_sector)];
       this.optionsDistrictsRef1 = [...val.filter((district) => district.sector === this.item.family_reference_sector)];
       this.optionsDistrictsRef2 = [...val.filter((district) => district.sector === this.item.family2_reference_sector)];
+    },
+    listings(val) {
+      this.optionsListings = [...val.filter((district) => district.city_id === this.item.city_id)];
     },
   },
   computed: {
@@ -1170,6 +1191,17 @@ export default {
     ...mapActions(newTypes.PATH, {
       completeDataNew: newTypes.actions.COMPLETE_DATA_NEW,
     }),
+    inputCity(val) {
+      localStorage.setItem('citySelectedMigration', val);
+    },
+    inputList(val) {
+      localStorage.setItem('listSelectedMigration', val);
+    },
+    openNewModal() {
+      this.item.city_id = parseInt(localStorage.getItem('citySelectedMigration'), 10);
+      this.item.listing_id = parseInt(localStorage.getItem('listSelectedMigration'), 10);
+      this.showDialog = true;
+    },
     async completeNew(row) {
       showLoading('completando ...', 'Por favor, espere', true);
       await this.completeDataNew({
@@ -1191,11 +1223,14 @@ export default {
     clearItem() {
       this.item = { ...this.user };
     },
-    changeCity(cityValue) {
+    async changeCity(cityValue) {
+      console.log('changecity: ', cityValue);
       this.item.sector = null;
       this.item.district = null;
+      this.item.listing_id = parseInt(localStorage.getItem('listSelectedMigration'), 10);
       showLoading('Cargando ...', 'Por favor, espere', true);
-      this.listYardsByZone({ id: cityValue, displayAll: 1 });
+      await this.listYardsByZone({ id: cityValue, displayAll: 1 });
+      this.optionsListings = [...this.listings.filter((district) => district.city_id === this.item.city_id)];
       this.$q.loading.hide();
     },
     async changeSector() {
@@ -1229,15 +1264,16 @@ export default {
       });
     },
     async getNews() {
+      showLoading('Cargando ...', 'Por favor, espere', true);
       this.loading = true;
       try {
         const url = 'https://micomercio.com.co/api-prestamos/public/index.php/api/list-news';
         const response = await axios.get(url);
-        this.items = [...response.data.data];
-        console.log(this.items);
+        const items = [...response.data.data];
+        this.items = items.filter((item) => item.listing_id === this.item.listing_id);
         this.$q.notify({
           type: 'positive',
-          message: '¡Datos enviados correctamente!',
+          message: '¡Datos recibidos correctamente!',
         });
         console.log('Respuesta del servidor:', response.data);
       } catch (error) {
@@ -1248,6 +1284,7 @@ export default {
         console.error('Error al enviar los datos:', error);
       } finally {
         this.loading = false;
+        this.$q.loading.hide();
       }
     },
     async saveNew() {

@@ -13,6 +13,12 @@
           <q-toolbar-title>
             {{$router.currentRoute.name}}
           </q-toolbar-title>
+          <q-btn
+            outline
+            dense
+            label="Ir a la migracion de rutas"
+            @click="$router.push('/upload-news')"
+          />
           <q-btn-dropdown
             color="primary"
             class="no-shadow"

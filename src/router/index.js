@@ -32,7 +32,6 @@ export default (/* { store, ssrContext } */) => {
   });
 
   Router.beforeEach(async (to, from, next) => {
-    console.log(Router);
     Loading.show({
       message: 'Cargando...',
       spinnerSize: 30,
