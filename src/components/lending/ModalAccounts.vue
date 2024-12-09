@@ -50,7 +50,7 @@
               >
                 <tbody>
                   <tr :class="row.account_active === 'tercero' ? 'bg-green-4' : ''">
-                    <td class="td-table" colspan="2">
+                    <td class="td-table" colspan="3">
                       <b>Cuenta de tercero</b>
                     </td>
                   </tr>
@@ -59,12 +59,18 @@
                       Número
                     </td>
                     <td class="td-table">
+                      Nombre
+                    </td>
+                    <td class="td-table">
                       Tipo
                     </td>
                   </tr>
                   <tr class="tr-table">
                     <td class="td-table">
                       {{ row.account_number_third }}
+                    </td>
+                    <td class="td-table">
+                      {{ row.account_name_third }}
                     </td>
                     <td class="td-table">
                       {{ row.account_type_third }}
@@ -79,13 +85,16 @@
               >
                 <tbody>
                   <tr class="bg-blue-4">
-                    <td class="td-table" colspan="2">
+                    <td class="td-table" colspan="3">
                       <b>Solicitar agregar o cambiar cuenta de tercero</b>
                     </td>
                   </tr>
                   <tr class="tr-table">
                     <td class="td-table">
                       Número
+                    </td>
+                    <td class="td-table">
+                      Nombre
                     </td>
                     <td class="td-table">
                       Tipo
@@ -97,6 +106,14 @@
                       {{ accountNumber }}
                       <q-popup-edit :value="accountNumber" v-slot="scope" buttons
                         @input="val => accountNumber = val">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                    <td class="td-table">
+                      <q-icon v-if="!question || (question && question.status !== 'pendiente')" size="xs" name="edit" />
+                      {{ accountName }}
+                      <q-popup-edit :value="accountName" v-slot="scope" buttons
+                        @input="val => accountName = val">
                         <q-input v-model="scope.value" dense autofocus />
                       </q-popup-edit>
                     </td>
@@ -123,7 +140,7 @@
                     </td>
                   </tr>
                   <tr>
-                    <td colspan="2">
+                    <td colspan="3">
                       <div v-if="!question || (question && question.status !== 'pendiente')" class="col-3 is-flex">
                         <div class="div-container">
                           <p class="text-subtitle1 text-weight-bold text-center">VIDEO AUTORIZA CUENTA TERCERO</p>
@@ -140,7 +157,7 @@
                           label="Enviar solicitud"
                           color="primary"
                           class="col q-my-sm"
-                          :disabled="!accountNumber || !accountType"
+                          :disabled="!accountName || !accountNumber || !accountType"
                           @click="saveQuestionAccount(row)"
                         />
                       </div>
@@ -177,6 +194,7 @@ export default {
   data() {
     return {
       accountNumber: '',
+      accountName: '',
       accountType: '',
     };
   },
@@ -225,6 +243,7 @@ export default {
         account_active: 'tercero',
         account_type_third: this.accountType,
         account_number_third: this.accountNumber,
+        account_name_third: this.accountName,
       };
       const data = {
         model_id: row.id,
@@ -232,7 +251,7 @@ export default {
         area_id: 1, // nequi
         type: 'cuenta',
         status: 'pendiente',
-        observation: `Agregar cuenta para el cliente ${row.name}, tipo: ${value.account_type_third} y numero: ${value.account_number_third}.`,
+        observation: `Agregar cuenta para el cliente ${row.name}, TIPO: ${value.account_type_third}, NUMERO: ${value.account_number_third}, NOMBRE: ${value.account_name_third}.`,
         value: JSON.stringify(value),
       };
       await this.saveQuestion(data);

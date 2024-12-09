@@ -157,7 +157,7 @@
                 </q-list>
               </q-btn-dropdown>
             </q-td>
-            <q-td key="index" :props="props">
+            <q-td key="index" :props="props" :class="props.row.has_letter ? 'bg-yellow' : 'bg-white'">
               {{ props.row.index }}
             </q-td>
             <q-td key="name" :props="props">

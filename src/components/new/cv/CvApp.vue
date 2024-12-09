@@ -216,7 +216,7 @@
             CUENTA TERCERO
           </td>
           <td class="text-bold text-center" colspan="2">
-            {{ item.account_type_third }}: {{ item.account_number_third }}
+            {{ item.account_type_third }}: {{ item.account_number_third }}, {{ item.account_name_third }}
           </td>
           <td class="bg-blue-1 text-bold text-center" colspan="1">
             CUENTA ACTIVA

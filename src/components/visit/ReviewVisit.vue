@@ -302,11 +302,22 @@
                 </tr>
                 <tr class="tr-table">
                   <td class="td-table">
-                    <p class="text-subtitle1 text-weight-bold text-center">Número de cuenta:</p>
+                    <p class="text-subtitle1 text-weight-bold text-center">Número de cuenta de tercero:</p>
                     <q-icon size="xs" name="edit" />
                     {{ item.account_number_third }}
                     <q-popup-edit :value="item.account_number_third" v-slot="scope" buttons
                       @input="val => saveDateNew('account_number_third', val)">
+                      <q-input v-model="scope.value" dense autofocus />
+                    </q-popup-edit>
+                  </td>
+                </tr>
+                <tr class="tr-table">
+                  <td class="td-table">
+                    <p class="text-subtitle1 text-weight-bold text-center">Nombre de cuenta de tercero:</p>
+                    <q-icon size="xs" name="edit" />
+                    {{ item.account_name_third }}
+                    <q-popup-edit :value="item.account_name_third" v-slot="scope" buttons
+                      @input="val => saveDateNew('account_name_third', val)">
                       <q-input v-model="scope.value" dense autofocus />
                     </q-popup-edit>
                   </td>
