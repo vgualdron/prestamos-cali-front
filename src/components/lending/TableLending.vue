@@ -376,7 +376,9 @@
             <q-td><strong>{{ formatPrice(totalRepayment) }}</strong></q-td>
             <q-td><strong>{{ formatPrice(totalStreet) }}</strong></q-td>
             <q-td><strong>{{ formatPrice(totalArticle) }}</strong></q-td>
-            <q-td colspan="8"><strong>{{ formatPrice(totalCollection) }}</strong></q-td>
+            <q-td colspan="5"><strong>{{ formatPrice(totalCollection) }}</strong></q-td>
+            <q-td class="text-red-4"><strong>{{ formatPrice(totalCapital) }}</strong></q-td>
+            <q-td></q-td>
           </q-tr>
         </template>
       </q-table>
@@ -782,6 +784,14 @@ export default {
         ...row,
         index: index + 1,
       }));
+    },
+    totalCapital() {
+      let total = 0;
+      this.lendings.forEach((lending) => {
+        const balance = this.getBalance(lending);
+        total += parseInt(balance, 10);
+      });
+      return total;
     },
     totalRenovated() {
       const lendings = this.getLendingsTodayRenovated();

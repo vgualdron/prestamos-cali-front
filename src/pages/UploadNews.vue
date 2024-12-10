@@ -278,7 +278,7 @@
                     outlined
                     input-debounce="0"
                     label="Prestó *"
-                    :options="users"
+                    :options="optionsUsers1"
                     option-label="name"
                     option-value="id"
                     lazy-rules
@@ -296,7 +296,7 @@
                     outlined
                     input-debounce="0"
                     label="Autorizó *"
-                    :options="users"
+                    :options="optionsUsers2"
                     option-label="name"
                     option-value="id"
                     lazy-rules
@@ -1046,6 +1046,8 @@ export default {
       optionsDistrictsGuarantor: [],
       optionsDistrictsRef1: [],
       optionsDistrictsRef2: [],
+      optionsUsers1: [],
+      optionsUsers2: [],
       item: {},
       showDialog: false,
       user: {
@@ -1057,8 +1059,8 @@ export default {
         period: 'semanal',
         quantity: 300000,
         created_at: '2024-12-01',
-        lent_by: 9,
-        approved_by: 9,
+        lent_by: 73,
+        approved_by: 52,
         address: '',
         sector: null,
         district: null,
@@ -1159,7 +1161,18 @@ export default {
     await this.listZones();
     await this.fetchListings();
     await this.getNews();
-    await this.listUsers({ displayAll: 1 });
+    await this.listUsersByNameRole({
+      roleName: 'Asesor migra',
+      status: 1,
+      city: 0,
+    });
+    this.optionsUsers1 = [...this.users];
+    await this.listUsersByNameRole({
+      roleName: 'Revisor de datos visita migra',
+      status: 1,
+      city: 0,
+    });
+    this.optionsUsers2 = [...this.users];
     if (this.items.length) {
       this.columns = Object.keys(this.user).map((key) => ({
         name: key,
@@ -1180,6 +1193,7 @@ export default {
     }),
     ...mapActions(userTypes.PATH, {
       listUsers: userTypes.actions.LIST_USERS,
+      listUsersByNameRole: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
     }),
     ...mapActions(yardTypes.PATH, {
       listYardsByZone: yardTypes.actions.LIST_YARDS_BY_ZONE,
