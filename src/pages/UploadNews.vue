@@ -1073,7 +1073,7 @@ export default {
         type_work: 'empleado',
         date_lending: '2024-12-01',
         amount_lending: 300000,
-        amount_payment: 20000,
+        amount_payment: 0,
         status: 'migracion',
         attempts: 1,
         type_cv: 'pdf',
