@@ -847,6 +847,10 @@
                     {
                       label: 'ahorro a la mano',
                       value: 'ahorro a la mano',
+                    },
+                    {
+                      label: 'daviplata',
+                      value: 'daviplata',
                     }]"
                     option-label="label"
                     option-value="value"
@@ -895,6 +899,10 @@
                     {
                       label: 'ahorro a la mano',
                       value: 'ahorro a la mano',
+                    },
+                    {
+                      label: 'daviplata',
+                      value: 'daviplata',
                     }]"
                     option-label="label"
                     option-value="value"

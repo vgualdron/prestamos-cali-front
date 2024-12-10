@@ -298,6 +298,10 @@
                               label: 'ahorro a la mano',
                               value: 'ahorro a la mano',
                             },
+                            {
+                              label: 'daviplata',
+                              value: 'daviplata',
+                            },
                           ]"
                           color="primary"
                         />
@@ -336,6 +340,10 @@
                             {
                               label: 'ahorro a la mano',
                               value: 'ahorro a la mano',
+                            },
+                            {
+                              label: 'daviplata',
+                              value: 'daviplata',
                             },
                           ]"
                           color="primary"
