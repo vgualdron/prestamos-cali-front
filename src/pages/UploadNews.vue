@@ -547,7 +547,6 @@
                     v-model.trim="item.guarantor_phone"
                     label="Teléfono"
                     lazy-rules
-                    type="number"
                     hide-bottom-space
                     autocomplete="off"
                     :dense="dense"
@@ -656,7 +655,6 @@
                     v-model.trim="item.family_reference_phone"
                     label="Teléfono"
                     lazy-rules
-                    type="number"
                     hide-bottom-space
                     autocomplete="off"
                     :dense="dense"
@@ -752,7 +750,6 @@
                     v-model.trim="item.family2_reference_phone"
                     label="Teléfono"
                     lazy-rules
-                    type="number"
                     hide-bottom-space
                     autocomplete="off"
                     :dense="dense"
@@ -1311,28 +1308,43 @@ export default {
       }
     },
     async saveNew() {
-      console.log(this.item);
-      this.loading = true;
-      try {
-        const url = 'https://micomercio.com.co/api-prestamos/public/index.php/api/create-new';
-        const response = await axios.post(url, this.item);
-        console.log(response.data);
-        this.$q.notify({
-          type: 'positive',
-          message: '¡Datos enviados correctamente!',
-        });
-        this.showDialog = false;
-        console.log('Respuesta del servidor:', response.data);
-      } catch (error) {
-        this.$q.notify({
-          type: 'negative',
-          message: 'Hubo un problema al enviar los datos.',
-        });
-        console.error('Error al enviar los datos:', error);
-      } finally {
-        this.loading = false;
-        await this.getNews();
-      }
+      this.$q.dialog({
+        title: 'Guardar',
+        message: 'Está seguro que desea guardar ?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        this.loading = true;
+        try {
+          const url = 'https://micomercio.com.co/api-prestamos/public/index.php/api/create-new';
+          await axios.post(url, this.item);
+          this.$q.notify({
+            type: 'positive',
+            message: '¡Datos enviados correctamente!',
+          });
+          this.showDialog = false;
+        } catch (error) {
+          this.$q.notify({
+            type: 'negative',
+            message: 'Hubo un problema al enviar los datos.',
+          });
+          console.error('Error al enviar los datos:', error);
+        } finally {
+          this.loading = false;
+          await this.getNews();
+        }
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
     },
   },
 };
