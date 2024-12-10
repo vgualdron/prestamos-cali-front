@@ -317,6 +317,7 @@ export default {
         nequi: value.nameNequi,
         date_transaction: value.dateTransaction,
         observation: value.observation,
+        is_valid: status === 'aprobado' ? 1 : 0,
       });
       this.$q.loading.hide();
       this.showModal = false;

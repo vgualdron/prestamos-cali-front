@@ -443,7 +443,7 @@ export default {
       });
     },
     getPaymentByDate(payments, date) {
-      const pays = payments.filter((pay) => this.formatDate(pay.date) === this.formatDate(date) && (pay.status === 'aprobado' || pay.status === 'verificado'));
+      const pays = payments.filter((pay) => this.formatDate(pay.date) === this.formatDate(date) && pay.is_valid);
       if (pays) {
         let classes = '';
         let totalAmountNequi = 0;
@@ -479,10 +479,10 @@ export default {
       };
     },
     getPaymentPostEndDate(payments, date) {
-      return payments.filter((pay) => new Date(pay.date) > new Date(date) && (pay.status === 'aprobado' || pay.status === 'verificado'));
+      return payments.filter((pay) => new Date(pay.date) > new Date(date) && pay.is_valid);
     },
     getPaymentBeforeFirstDate(payments, date) {
-      return payments.filter((pay) => (new Date(pay.date) <= new Date(date) || this.formatDate(pay.date) === this.formatDate(date)) && (pay.status === 'aprobado' || pay.status === 'verificado'));
+      return payments.filter((pay) => (new Date(pay.date) <= new Date(date) || this.formatDate(pay.date) === this.formatDate(date)) && pay.is_valid);
     },
     formatDate(date) {
       return moment(date).format('DD/MM/YYYY');
@@ -515,7 +515,7 @@ export default {
       const total = row.amount + (row.amount * ((row.percentage * 2) / 100));
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0) {
-        const payments = row.payments.filter((payment) => ((payment.status === 'aprobado' || payment.status === 'verificado') && dateDouble < new Date(payment.date)));
+        const payments = row.payments.filter((payment) => (payment.is_valid && dateDouble < new Date(payment.date)));
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
       return (total - totalPayments);
@@ -528,12 +528,12 @@ export default {
       const total = this.hasDoubleInterest ? this.valueWithDoubleInterest(row) : this.valueWithInterest(row);
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0 && !this.hasDoubleInterest) {
-        const payments = row.payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
+        const payments = row.payments.filter((payment) => payment.is_valid);
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
       if (row.payments && row.payments.length > 0 && this.hasDoubleInterest) {
         const dateDouble = new Date(row.doubleDate);
-        const payments = row.payments.filter((payment) => ((payment.status === 'aprobado' || payment.status === 'verificado') && dateDouble < new Date(payment.date)));
+        const payments = row.payments.filter((payment) => (payment.is_valid && dateDouble < new Date(payment.date)));
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
       return (total - totalPayments);
@@ -543,7 +543,7 @@ export default {
       let totalPayments = 0;
       let valueAmuntFeesPaid = 0;
       if (row.payments && row.payments.length > 0) {
-        const payments = row.payments.filter((payment) => payment.status === 'aprobado' || payment.status === 'verificado');
+        const payments = row.payments.filter((payment) => payment.is_valid);
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
         valueAmuntFeesPaid = (parseInt(totalPayments, 10) / parseInt(valueFee, 10));
       }

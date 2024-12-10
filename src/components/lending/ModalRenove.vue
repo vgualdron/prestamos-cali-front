@@ -430,7 +430,7 @@ export default {
       const total = row.hasDoubleInterest ? this.valueWithDoubleInterest(row) : this.valueWithInterest(row);
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0) {
-        const payments = row.payments.filter((payment) => payment.type === 'nequi' && (payment.status === 'aprobado' || payment.status === 'verificado'));
+        const payments = row.payments.filter((payment) => payment.type === 'nequi' && payment.is_valid);
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
       return (total - totalPayments);

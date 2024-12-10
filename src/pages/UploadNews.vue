@@ -159,6 +159,7 @@
                     type="number"
                     :rules="[(val) => (!!val) || '']"
                     hide-bottom-space
+                    :hint="formattedPrice(item.amount_lending)"
                     autocomplete="off"
                     :dense="dense"
                     step="1000"
@@ -173,6 +174,7 @@
                     type="number"
                     :rules="[(val) => (!!val) || '' || val < 0]"
                     hide-bottom-space
+                    :hint="formattedPrice(item.amount_payment)"
                     autocomplete="off"
                     :dense="dense"
                     min="0"
@@ -252,6 +254,7 @@
                     type="number"
                     :rules="[(val) => (!!val) || '']"
                     hide-bottom-space
+                    :hint="formattedPrice(item.quantity)"
                     autocomplete="off"
                     :dense="dense"
                     step="1000"
@@ -1219,6 +1222,13 @@ export default {
     ...mapActions(newTypes.PATH, {
       completeDataNew: newTypes.actions.COMPLETE_DATA_NEW,
     }),
+    formattedPrice(value) {
+      if (!value) return '';
+      return value
+        .toString()
+        .replace(/\D/g, '') // Elimina caracteres no numéricos
+        .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Agrega puntos como separadores
+    },
     inputCity(val) {
       localStorage.setItem('citySelectedMigration', val);
     },
