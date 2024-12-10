@@ -171,11 +171,11 @@
                     label="Cantidad abonada *"
                     lazy-rules
                     type="number"
-                    :rules="[(val) => (!!val) || '']"
+                    :rules="[(val) => (!!val) || '' || val < 0]"
                     hide-bottom-space
                     autocomplete="off"
                     :dense="dense"
-                    step="1000"
+                    min="0"
                   />
                 </div>
               </div>
