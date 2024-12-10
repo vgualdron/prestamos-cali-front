@@ -294,6 +294,10 @@
                               label: 'bancolombia',
                               value: 'bancolombia'
                             },
+                            {
+                              label: 'ahorro a la mano',
+                              value: 'ahorro a la mano',
+                            },
                           ]"
                           color="primary"
                         />
@@ -328,6 +332,10 @@
                             {
                               label: 'bancolombia',
                               value: 'bancolombia'
+                            },
+                            {
+                              label: 'ahorro a la mano',
+                              value: 'ahorro a la mano',
                             },
                           ]"
                           color="primary"

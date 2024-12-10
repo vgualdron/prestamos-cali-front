@@ -846,6 +846,10 @@
                     {
                       label: 'Bancolombia',
                       value: 'bancolombia',
+                    },
+                    {
+                      label: 'ahorro a la mano',
+                      value: 'ahorro a la mano',
                     }]"
                     option-label="label"
                     option-value="value"
@@ -890,6 +894,10 @@
                     {
                       label: 'Bancolombia',
                       value: 'bancolombia',
+                    },
+                    {
+                      label: 'ahorro a la mano',
+                      value: 'ahorro a la mano',
                     }]"
                     option-label="label"
                     option-value="value"
