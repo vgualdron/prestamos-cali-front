@@ -214,7 +214,6 @@
                     v-model.trim="item.phone"
                     label="Teléfono *"
                     lazy-rules
-                    type="number"
                     :rules="[(val) => (!!val) || '']"
                     hide-bottom-space
                     autocomplete="off"

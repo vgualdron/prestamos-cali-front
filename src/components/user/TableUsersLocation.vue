@@ -126,7 +126,9 @@ export default {
         },
       ],
       pagination: {
-        rowsPerPage: 50,
+        rowsPerPage: 0,
+        sortBy: 'date_location',
+        descending: true,
       },
       filter: '',
       data: [],

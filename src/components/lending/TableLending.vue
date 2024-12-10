@@ -886,9 +886,6 @@ export default {
       fetchListings: listingTypes.actions.FETCH_LISTINGS,
       fetchMineListings: listingTypes.actions.FETCH_MINE_LISTINGS,
     }),
-    ...mapActions(userTypes.PATH, {
-      listUsersByNameRole: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
-    }),
     ...mapActions(newTypes.PATH, {
       getNew: newTypes.actions.GET_NEW,
     }),
