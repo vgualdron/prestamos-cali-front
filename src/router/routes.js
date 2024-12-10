@@ -230,6 +230,18 @@ const routes = [
     ],
   },
   {
+    path: '/payment-whatsapp',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Certificar pagos en app WhatsApp',
+        component: () => import('src/pages/PaymentWhatsapp.vue'),
+        meta: { permissions: ['paymentWhatsapp.list'] },
+      },
+    ],
+  },
+  {
     path: '/payment-app',
     component: () => import('layouts/MainLayout.vue'),
     children: [

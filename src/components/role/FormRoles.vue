@@ -121,7 +121,7 @@ export default {
         name: [
           (val) => (!!val) || 'El nombre es requerido',
           (val) => (val.length >= 4) || 'El nombre debe tener un mínimo de 4 caracteres',
-          (val) => (val.length <= 30) || 'El nombre debe tener un máximo de 30 caracteres',
+          (val) => (val.length <= 100) || 'El nombre debe tener un máximo de 100 caracteres',
         ],
         route: [
           (val) => (!!val) || 'El link  es requerido',
