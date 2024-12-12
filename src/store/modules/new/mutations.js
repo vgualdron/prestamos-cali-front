@@ -4,6 +4,9 @@ export default {
   [types.mutations.SET_NEWS](state, payload) {
     state.news = payload;
   },
+  [types.mutations.SET_NEWS_REDS](state, payload) {
+    state.newsReds = payload;
+  },
   [types.mutations.SET_NEW](state, payload) {
     state.new = payload;
   },
@@ -20,5 +23,13 @@ export default {
   [types.mutations.SET_SECTOR_SELECTED_REVIEW](state, payload) {
     localStorage.setItem('sectorSelectedReview', JSON.stringify(payload));
     state.sectorSelectedReview = payload;
+  },
+  [types.mutations.SET_USER_SELECTED_REDS](state, payload) {
+    localStorage.setItem('userSelectedReds', JSON.stringify(payload));
+    state.userSelectedReds = payload;
+  },
+  [types.mutations.SET_SECTOR_SELECTED_REDS](state, payload) {
+    localStorage.setItem('sectorSelectedReds', JSON.stringify(payload));
+    state.sectorSelectedReds = payload;
   },
 };

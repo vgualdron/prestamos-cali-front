@@ -164,7 +164,7 @@
                 <q-card>
                   <q-card-section class="text-weight-light q-pt-xs q-pb-xs">
                     <q-option-group
-                      class="text-center"
+                      class=""
                       :options="normalizedRoles"
                       type="checkbox"
                       v-model="user.roles"

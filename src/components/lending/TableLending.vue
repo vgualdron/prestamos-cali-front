@@ -167,7 +167,7 @@
                   :color="props.row.type === 'N' ? 'green' : 'orange'">
                   {{ props.row.type }}
                 </q-badge>
-                {{ formatText(props.row.nameDebtor, 20) }}
+                {{ formatText(props.row.nameDebtor, 30) }}
               </p>
             </q-td>
             <q-td key="amount" :props="props">
@@ -334,9 +334,16 @@
                 size="12px"
                 :auto-close="false"
                 outline
-                :label="props.row.phone"
                 @click="fetchPhonesNew(props.row.new_id)"
               >
+              <template v-slot:label>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <span>{{ processedPhones(props.row.phone)[0] }}</span>
+                  <span v-if="processedPhones(props.row.phone)[1] !== null">
+                    {{ processedPhones(props.row.phone)[1] }}
+                  </span>
+                </div>
+              </template>
                 <q-list>
                   <q-item v-close-popup v-if="newItem.family_reference_name">
                     <q-item-section>
@@ -898,6 +905,10 @@ export default {
     }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
+    },
+    processedPhones(str) {
+      const parts = str.split('/');
+      return parts.length === 2 ? parts : [parts[0], null];
     },
     async getLocation() {
       try {

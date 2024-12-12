@@ -5,6 +5,10 @@ export default {
     url: `${process.env.URL_API}/api/new/list/${status}`,
     method: 'GET',
   }),
+  listReds: (city) => http({
+    url: `${process.env.URL_API}/api/new/list-reds/${city}`,
+    method: 'GET',
+  }),
   get: (id) => http({
     url: `${process.env.URL_API}/api/new/get/${id}`,
     method: 'GET',

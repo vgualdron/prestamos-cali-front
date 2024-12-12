@@ -21,6 +21,25 @@ export default {
       }
     }
   },
+  async [types.actions.LIST_NEWS_REDS]({ commit }, status) {
+    try {
+      const response = await newApi.listReds(status);
+      commit(types.mutations.SET_STATUS, true);
+      commit(types.mutations.SET_NEWS_REDS, response.data.data);
+    } catch (error) {
+      commit(types.mutations.SET_STATUS, false);
+      if (error.message !== 'Network Error') {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
+      } else {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, [
+          {
+            text: 'Error de red',
+            detail: 'Intente conectarse a otra red de internet',
+          },
+        ]);
+      }
+    }
+  },
   async [types.actions.GET_NEW]({ commit }, id) {
     try {
       const response = await newApi.get(id);
@@ -159,5 +178,11 @@ export default {
   },
   async [types.actions.UPDATE_SECTOR_SELECTED_REVIEW]({ commit }, payload) {
     commit(types.mutations.SET_SECTOR_SELECTED_REVIEW, payload);
+  },
+  async [types.actions.UPDATE_USER_SELECTED_REDS]({ commit }, payload) {
+    commit(types.mutations.SET_USER_SELECTED_REDS, payload);
+  },
+  async [types.actions.UPDATE_SECTOR_SELECTED_REDS]({ commit }, payload) {
+    commit(types.mutations.SET_SECTOR_SELECTED_REDS, payload);
   },
 };

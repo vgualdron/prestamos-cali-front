@@ -325,6 +325,18 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/list-reds',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Listar direcciones de rojos',
+        component: () => import('pages/Reds.vue'),
+        meta: { permissions: ['red.list'] },
+      },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
