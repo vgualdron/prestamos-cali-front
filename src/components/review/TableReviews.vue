@@ -395,6 +395,7 @@ export default {
   watch: {
     async citySelected(newVal) {
       showLoading('Cargando ...', 'Por favor, espere', true);
+      this.sectorSelected = [];
       await this.listYardsByZone({ id: newVal, displayAll: 1 });
       await this.listUsersByRoleName({ roleName: 'Asesor', status: 1, city: this.citySelected });
       /* if (this.optionsSectors && this.optionsSectors.length > 0) {

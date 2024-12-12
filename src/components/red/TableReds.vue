@@ -50,17 +50,21 @@
       :title="title"
       separator="cell"
       class="q-mt-md"
-      row-key="address"
+      row-key="order"
       dense
     >
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
-          <q-btn
-            icon="delete"
-            class="q-ml-sm"
-            color="primary"
-            title="Click para eliminar el egreso">
-          </q-btn>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-remaining_balance="props">
+        <q-td :props="props">
+          {{ formatPrice(props.row.remaining_balance) }}
+        </q-td>
+      </template>
+      <template v-slot:body-cell-address="props">
+        <q-td :props="props">
+          {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
         </q-td>
       </template>
     </q-table>
@@ -127,7 +131,13 @@ export default {
           align: 'left',
           label: 'Cliente',
           field: 'news_name',
-          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'remaining_balance',
+          align: 'left',
+          label: 'Deuda',
+          field: 'remaining_balance',
           visible: true,
         },
         {
@@ -135,7 +145,6 @@ export default {
           align: 'left',
           label: 'Ruta',
           field: 'listing_name',
-          sortable: true,
           visible: true,
         },
         {
@@ -143,7 +152,20 @@ export default {
           align: 'left',
           label: 'Nombre REF',
           field: 'address_name',
-          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'address_type',
+          align: 'left',
+          label: 'Tipo',
+          field: 'address_type',
+          visible: true,
+        },
+        {
+          name: 'address',
+          align: 'left',
+          label: 'Dirección',
+          field: 'address',
           visible: true,
         },
       ],
@@ -168,6 +190,7 @@ export default {
   watch: {
     async citySelected(newVal) {
       showLoading('Cargando ...', 'Por favor, espere', true);
+      this.sectorSelected = [];
       await this.listYardsByZone({ id: newVal, displayAll: 1 });
       await this.listUsersByRoleName({ roleName: 'Cobrador', status: 1, city: this.citySelected });
       if (this.optionsUsers && this.optionsUsers.length > 0) {
@@ -340,6 +363,14 @@ export default {
       this.objSelected = { ...row };
       this.showModalFormNews = true;
     },
+    formatPrice(val) {
+      return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(val);
+    },
     getColorBadge(i) {
       const colors = [
         'white',
@@ -433,6 +464,7 @@ export default {
     async initData() {
       showLoading('Cargando ...', 'Por favor, espere', true);
       await this.listNewsMounted();
+      console.log(this.newsReds);
       await this.listZones();
       await this.listUsersByRoleName({ roleName: 'Cobrador', status: 1, city: this.citySelected });
       this.$q.loading.hide();

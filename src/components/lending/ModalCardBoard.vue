@@ -162,7 +162,7 @@
                         {{ formatPrice(payment.balance) }}
                       </td>
                     </tr>
-                    <tr v-if="lending.period === 'semanal'">
+                    <tr v-if="lending.period === 'semanal' && !lending.has_double_interest">
                       <td colspan="4">
                         <b>LAS FECHAS DE PAGO SON:</b>
                         <div v-for="date in datesPaymentsWeek(lending.firstDate, lending.amountFees)" :key="date">
@@ -515,7 +515,7 @@ export default {
       const total = row.amount + (row.amount * ((row.percentage * 2) / 100));
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0) {
-        const payments = row.payments.filter((payment) => (payment.is_valid && dateDouble < new Date(payment.date)));
+        const payments = row.payments.filter((payment) => (payment.is_valid && new Date(payment.date) < dateDouble));
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
       return (total - totalPayments);
