@@ -29,6 +29,12 @@
     </div>
     <div class="row q-mt-md">
       <div class="col-12 text-center">
+        <b>Cantidad de Clientes:</b>
+        {{ amountClients }}
+      </div>
+    </div>
+    <div class="row q-mt-md">
+      <div class="col-12 text-center">
         <b>Cobrador:</b>
         <q-radio
           v-for="user in optionsUsers"
@@ -55,6 +61,11 @@
     >
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
+        </q-td>
+      </template>
+      <template v-slot:body-cell-firstDate="props">
+        <q-td :props="props">
+          {{ formatDate(props.row.firstDate) }}
         </q-td>
       </template>
       <template v-slot:body-cell-remaining_balance="props">
@@ -131,6 +142,13 @@ export default {
           align: 'left',
           label: 'Cliente',
           field: 'news_name',
+          visible: true,
+        },
+        {
+          name: 'firstDate',
+          align: 'left',
+          label: 'Fecha ini',
+          field: 'firstDate',
           visible: true,
         },
         {
@@ -243,6 +261,17 @@ export default {
         data = data.filter((item) => this.sectorSelected.includes(item.sector_id));
       }
       return data;
+    },
+    amountClients() {
+      const uniqueByNewsId = new Map();
+      this.dataTable.forEach((item) => {
+        if (!uniqueByNewsId.has(item.lending_id)) {
+          uniqueByNewsId.set(item.lending_id, item);
+        }
+      });
+
+      const groupedCount = uniqueByNewsId.size;
+      return groupedCount;
     },
     validatedPermissions() {
       const statusCreate = havePermission('new.create');
@@ -371,31 +400,8 @@ export default {
         maximumFractionDigits: 0,
       }).format(val);
     },
-    getColorBadge(i) {
-      const colors = [
-        'white',
-        'black',
-        'yellow',
-        'red',
-        'green',
-        'blue',
-        'purple',
-        'orange',
-      ];
-      return colors[i];
-    },
-    getColorText(i) {
-      const colors = [
-        'white',
-        'white',
-        'black',
-        'white',
-        'white',
-        'white',
-        'white',
-        'white',
-      ];
-      return colors[i];
+    formatDate(date) {
+      return Moment(date).format('DD/MM/YYYY');
     },
     disabledBtnPending(row) {
       return !row.observation;
