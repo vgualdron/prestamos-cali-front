@@ -45,6 +45,14 @@
           :key="user.value"
           class="q-ml-lg">
         </q-radio>
+        <q-btn
+          round
+          icon="refresh"
+          class="q-ml-md"
+          color="primary"
+          title="Click para refrescar la tabla"
+          @click="initData()">
+        </q-btn>
         <br>
         <q-btn
           v-if="sectorSelected"
@@ -235,6 +243,7 @@ export default {
       showModalFormNews: false,
       objSelected: {},
       typeActionFormNew: 'house',
+      polling: null,
     };
   },
   props: {
@@ -242,6 +251,7 @@ export default {
   async mounted() {
     this.citySelected = parseInt(localStorage.getItem('cityMC'), 10);
     await this.initData();
+    this.pollData();
   },
   watch: {
     async citySelected(newVal) {
@@ -381,6 +391,9 @@ export default {
       },
     },
   },
+  beforeDestroy() {
+    clearInterval(this.polling);
+  },
   methods: {
     ...mapActions(newTypes.PATH, {
       listNewsReds: newTypes.actions.LIST_NEWS_REDS,
@@ -406,6 +419,11 @@ export default {
     },
     clickRow(row) {
       this.itemSelected = { ...row };
+    },
+    async pollData() {
+      this.polling = setInterval(async () => {
+        await this.initData();
+      }, 180000);
     },
     generateLinkGoogleMaps(row) {
       const latEnd = row.address_latitude;
@@ -513,8 +531,8 @@ export default {
 </script>
 <style scoped>
   .text-wrap {
-    white-space: normal; /* Permite que el texto salte a nuevas líneas */
-    word-wrap: break-word; /* Permite dividir palabras largas si no caben */
-    word-break: break-word; /* Dividir palabras largas para navegadores más antiguos */
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-word;
   }
 </style>
