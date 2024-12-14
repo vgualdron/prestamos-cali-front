@@ -314,10 +314,10 @@
             <q-td key="daysPassed" :props="props">
               {{ daysSinceGivenDate(props.row.firstDate) }}
             </q-td>
-            <q-td key="firstDate" :class="rowClass(props.row)" :props="props">
+            <q-td key="firstDate" :props="props">
               {{ formatDate(props.row.firstDate) }}
             </q-td>
-            <q-td key="endDate" :props="props">
+            <q-td key="endDate" :class="rowClass(props.row)" :props="props">
               {{ formatDate(props.row.endDate) }}
             </q-td>
             <q-td key="endPaymentDate" :props="props">

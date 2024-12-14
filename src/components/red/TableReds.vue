@@ -49,7 +49,7 @@
         <q-btn
           v-if="sectorSelected"
           class="cursor-pointer"
-          outline color="green"
+          color="green"
           :label="labelBtnAsig"
           @click="addRedcollector"/>
       </div>
@@ -91,8 +91,34 @@
         </q-td>
       </template>
       <template v-slot:body-cell-address="props">
+        <q-td :props="props" class="text-wrap">
+          <a v-if="props.row.address_latitude" :href="generateLinkGoogleMaps(props.row)" target="_blank">
+            {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
+          </a>
+          <b v-else target="_blank">
+            {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
+          </b>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-news_observation="props">
         <q-td :props="props">
-          {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
+          <q-btn-dropdown
+            v-if="props.row.news_observation"
+            color="black"
+            size="12px"
+            :auto-close="false"
+            outline
+          >
+            <q-list>
+              <q-item v-close-popup>
+                <q-item-section>
+                  <q-item-label>
+                    {{ props.row.news_observation }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </q-td>
       </template>
     </q-table>
@@ -189,6 +215,13 @@ export default {
           align: 'left',
           label: 'Dirección',
           field: 'address',
+          visible: true,
+        },
+        {
+          name: 'news_observation',
+          align: 'center',
+          label: 'Observación',
+          field: 'news_observation',
           visible: true,
         },
       ],
@@ -374,6 +407,20 @@ export default {
     clickRow(row) {
       this.itemSelected = { ...row };
     },
+    generateLinkGoogleMaps(row) {
+      const latEnd = row.address_latitude;
+      const lngEnd = row.address_longitude;
+      let latIni = '';
+      let lngIni = '';
+      const user = this.users.find((item) => item.id === this.userSelected);
+      if (user) {
+        latIni = user.latitude;
+        lngIni = user.longitude;
+      }
+      const baseUrl = 'https://www.google.com/maps/dir/?api=1';
+      const url = `${baseUrl}&origin=${latIni},${lngIni}&destination=${latEnd},${lngEnd}`;
+      return url;
+    },
     getColorBadge(i) {
       const colors = [
         'black',
@@ -464,3 +511,10 @@ export default {
   },
 };
 </script>
+<style scoped>
+  .text-wrap {
+    white-space: normal; /* Permite que el texto salte a nuevas líneas */
+    word-wrap: break-word; /* Permite dividir palabras largas si no caben */
+    word-break: break-word; /* Dividir palabras largas para navegadores más antiguos */
+  }
+</style>
