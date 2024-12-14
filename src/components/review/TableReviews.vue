@@ -42,7 +42,6 @@
       </div>
     </div>
     <q-table
-      :grid="$q.screen.xs"
       :data="dataTable"
       :columns="columns"
       :filter="filter"

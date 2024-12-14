@@ -56,7 +56,6 @@
     </q-banner>
     <div v-else class="table-container">
       <q-table
-        :grid="$q.screen.xs"
         :data="data"
         :columns="columns"
         row-key="id"
@@ -152,6 +151,14 @@
                     @click="fetchAccountsNew(props.row.new_id)">
                     <q-item-section>
                       <q-item-label>Cuentas autorizadas</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    clickable
+                    v-close-popup
+                    @click="showModalNequis = true">
+                    <q-item-section>
+                      <q-item-label>Cuentas Nequi</q-item-label>
                     </q-item-section>
                   </q-item>
                 </q-list>
@@ -482,6 +489,10 @@
       :userSend="listingSelected.userId"
       :showUserSend="false"
     />
+    <modal-list-nequi
+      v-if="showModalNequis"
+      v-model="showModalNequis"
+      :listing="itemSelected.listing_id"/>
   </div>
 </template>
 <script>
@@ -491,6 +502,7 @@ import moment from 'moment';
 import ModalAddPayment from 'components/payment/ModalAddPayment.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
 import ModalPreviewFile from 'components/common/ModalPreviewFile.vue';
+import ModalListNequi from 'components/nequi/ModalListNequi.vue';
 import FormNews from 'components/new/FormNews.vue';
 import ModalRenove from './ModalRenove.vue';
 import ModalDelivery from './ModalDelivery.vue';
@@ -516,6 +528,7 @@ export default {
     ModalClosed,
     ModalAccounts,
     FormNews,
+    ModalListNequi,
   },
   data() {
     return {
@@ -721,6 +734,7 @@ export default {
       showModalAddNew: false,
       objNew: {},
       location: null,
+      showModalNequis: false,
     };
   },
   watch: {

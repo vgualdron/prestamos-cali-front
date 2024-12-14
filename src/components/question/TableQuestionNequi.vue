@@ -27,7 +27,6 @@
       </div>
     </div>
     <q-table
-      :grid="$q.screen.xs"
       :data="data"
       :columns="columns"
       row-key="name"

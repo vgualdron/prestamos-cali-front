@@ -63,7 +63,6 @@
       </div>
     </div>
     <q-table
-      :grid="$q.screen.xs"
       :data="dataTable"
       :columns="columns"
       :filter="filter"
@@ -72,10 +71,50 @@
       separator="cell"
       class="q-mt-md"
       row-key="order"
-      dense
+      striped
     >
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
+          <q-btn-dropdown
+            class="q-px-none"
+            color="black"
+            outline>
+            <q-list>
+              <q-item
+                clickable
+                v-close-popup
+                @click="openModal('normal', props.row)">
+                <q-item-section>
+                  <q-item-label>Ver cartulina</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item
+                v-if="props.row.has_double_interest"
+                clickable
+                v-close-popup
+                @click="openModal('double', props.row)">
+                <q-item-section>
+                  <q-item-label>Ver cartulina doble interes</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item
+                clickable
+                v-close-popup
+                @click="openModal('history', props.row)">
+                <q-item-section>
+                  <q-item-label>Ver Historial</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item
+                clickable
+                v-close-popup
+                @click="openModal('nequis', props.row)">
+                <q-item-section>
+                  <q-item-label>Cuentas Nequi</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </q-td>
       </template>
       <template v-slot:body-cell-collector_name="props">
@@ -88,9 +127,19 @@
           </q-badge>
         </q-td>
       </template>
+      <template v-slot:body-cell-total_value="props">
+        <q-td :props="props">
+          {{ formatPrice(props.row.total_value) }}
+        </q-td>
+      </template>
       <template v-slot:body-cell-firstDate="props">
         <q-td :props="props">
           {{ formatDate(props.row.firstDate) }}
+        </q-td>
+      </template>
+      <template v-slot:body-cell-endDate="props">
+        <q-td :props="props">
+          {{ formatDate(props.row.endDate) }}
         </q-td>
       </template>
       <template v-slot:body-cell-remaining_balance="props">
@@ -130,15 +179,45 @@
         </q-td>
       </template>
     </q-table>
+    <modal-list-nequi
+      v-if="showModalNequis"
+      v-model="showModalNequis"
+      :listing="itemSelected.listing_id"/>
+    <modal-card-board
+      v-if="showModalCardBoard"
+      v-model="showModalCardBoard"
+      :showBtnDownload="true"
+      :showBtnApplyDoubleInterest="false"
+      title="Cartulina actual"
+      :lendings="[lending]"/>
+    <modal-card-board
+      v-if="showModalCardBoardDouble"
+      v-model="showModalCardBoardDouble"
+      :showBtnDownload="true"
+      :showBtnApplyDoubleInterest="false"
+      :hasDoubleInterest="true"
+      title="Cartulina doble interés"
+      :lendings="[lending]"/>
+    <modal-card-board
+      v-if="showModalHistory"
+      v-model="showModalHistory"
+      :showBtnDownload="true"
+      :showBtnApplyDoubleInterest="false"
+      :hasDoubleInterest="false"
+      title="Historial"
+      :lendings="history"/>
   </div>
 </template>
 <script>
 import Moment from 'moment';
 import { mapState, mapActions } from 'vuex';
+import ModalListNequi from 'components/nequi/ModalListNequi.vue';
+import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
 import newTypes from '../../store/modules/new/types';
 import zoneTypes from '../../store/modules/zone/types';
 import yardTypes from '../../store/modules/yard/types';
 import userTypes from '../../store/modules/user/types';
+import lendingTypes from '../../store/modules/lending/types';
 import redcollectorTypes from '../../store/modules/redcollector/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
@@ -146,6 +225,8 @@ import { havePermission } from '../../helpers/havePermission';
 
 export default {
   components: {
+    ModalListNequi,
+    ModalCardBoard,
   },
   data() {
     return {
@@ -184,22 +265,36 @@ export default {
           visible: true,
         },
         {
+          name: 'total_value',
+          align: 'center',
+          label: 'Valor',
+          field: 'total_value',
+          visible: true,
+        },
+        {
           name: 'firstDate',
-          align: 'left',
+          align: 'center',
           label: 'Fecha ini',
           field: 'firstDate',
           visible: true,
         },
         {
+          name: 'endDate',
+          align: 'center',
+          label: 'Fecha fin',
+          field: 'endDate',
+          visible: true,
+        },
+        {
           name: 'remaining_balance',
-          align: 'left',
+          align: 'center',
           label: 'Deuda',
           field: 'remaining_balance',
           visible: true,
         },
         {
           name: 'listing_name',
-          align: 'left',
+          align: 'center',
           label: 'Ruta',
           field: 'listing_name',
           visible: true,
@@ -213,7 +308,7 @@ export default {
         },
         {
           name: 'address_type',
-          align: 'left',
+          align: 'center',
           label: 'Tipo',
           field: 'address_type',
           visible: true,
@@ -244,6 +339,10 @@ export default {
       objSelected: {},
       typeActionFormNew: 'house',
       polling: null,
+      showModalCardBoard: false,
+      showModalCardBoardDouble: false,
+      showModalHistory: false,
+      showModalNequis: false,
     };
   },
   props: {
@@ -281,6 +380,13 @@ export default {
       zones: 'zones',
       zoneStatus: 'status',
       zoneResponseMessages: 'responseMessages',
+    }),
+    ...mapState(lendingTypes.PATH, {
+      lending: 'lending',
+      lendings: 'lendings',
+      history: 'history',
+      lendingStatus: 'status',
+      lendingResponseMessages: 'responseMessages',
     }),
     ...mapState(yardTypes.PATH, {
       yards: 'yards',
@@ -414,6 +520,11 @@ export default {
     ...mapActions(redcollectorTypes.PATH, {
       saveRedcollector: redcollectorTypes.actions.SAVE_REDCOLLECTOR,
     }),
+    ...mapActions(lendingTypes.PATH, {
+      getLending: lendingTypes.actions.GET_LENDING,
+      fetchLendings: lendingTypes.actions.FETCH_LENDINGS,
+      fetchHistory: lendingTypes.actions.FETCH_HISTORY,
+    }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
@@ -424,6 +535,27 @@ export default {
       this.polling = setInterval(async () => {
         await this.initData();
       }, 180000);
+    },
+    async openModal(action, row) {
+      this.itemSelected = { ...row };
+      if (action === 'normal') {
+        showLoading('consultando ...', 'Por favor, espere', true);
+        await this.getLending(row.lending_id);
+        this.$q.loading.hide();
+        this.showModalCardBoard = true;
+      } else if (action === 'double') {
+        showLoading('consultando ...', 'Por favor, espere', true);
+        await this.getLending(row.lending_id);
+        this.$q.loading.hide();
+        this.showModalCardBoardDouble = true;
+      } else if (action === 'history') {
+        showLoading('consultando ...', 'Por favor, espere', true);
+        await this.fetchHistory(row.news_id);
+        this.$q.loading.hide();
+        this.showModalHistory = true;
+      } else if (action === 'nequis') {
+        this.showModalNequis = true;
+      }
     },
     generateLinkGoogleMaps(row) {
       const latEnd = row.address_latitude;

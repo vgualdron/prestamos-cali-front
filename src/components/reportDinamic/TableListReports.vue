@@ -20,7 +20,6 @@
     </div>
     <q-table
       v-if="columns && columns.length > 0"
-      :grid="$q.screen.xs"
       :data="data"
       :columns="columns"
       row-key="id"
