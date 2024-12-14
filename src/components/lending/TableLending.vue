@@ -158,7 +158,9 @@
               </q-btn-dropdown>
             </q-td>
             <q-td key="index" :props="props" :class="props.row.has_letter ? 'bg-yellow' : 'bg-white'">
-              {{ props.row.index }}
+              <div :class="props.row.file_pdf_url ? 'text-black' : 'text-red'">
+                {{ props.row.index }}
+              </div>
             </q-td>
             <q-td key="name" :props="props">
               <p :title="props.row.nameDebtor" class="q-my-auto">

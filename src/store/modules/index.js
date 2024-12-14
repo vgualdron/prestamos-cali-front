@@ -21,6 +21,7 @@ import area, { name as areaName } from './area';
 import item, { name as itemName } from './item';
 import question, { name as questionName } from './question';
 import nequi, { name as nequiName } from './nequi';
+import redcollector, { name as redcollectorName } from './redcollector';
 
 export default {
   [homeName]: home,
@@ -46,4 +47,5 @@ export default {
   [itemName]: item,
   [questionName]: question,
   [nequiName]: nequi,
+  [redcollectorName]: redcollector,
 };

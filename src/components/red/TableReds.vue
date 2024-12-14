@@ -22,12 +22,12 @@
           v-model="sectorSelected"
           :options="optionsSectors"
           color="primary"
-          type="checkbox"
           inline
         />
+        <q-badge class="cursor-pointer" outline color="primary" label="Ver todos" @click="viewAll"/>
       </div>
     </div>
-    <div class="row q-mt-md">
+    <div class="row q-mt-xs">
       <div class="col-12 text-center">
         <b>Cantidad de Clientes:</b>
         {{ amountClients }}
@@ -45,6 +45,13 @@
           :key="user.value"
           class="q-ml-lg">
         </q-radio>
+        <br>
+        <q-btn
+          v-if="sectorSelected"
+          class="cursor-pointer"
+          outline color="green"
+          :label="labelBtnAsig"
+          @click="addRedcollector"/>
       </div>
     </div>
     <q-table
@@ -63,6 +70,16 @@
         <q-td :props="props">
         </q-td>
       </template>
+      <template v-slot:body-cell-collector_name="props">
+        <q-td :props="props">
+          <q-badge
+            v-if="props.row.collector_name"
+            :color="getColorBadge(props.row.sector_code.replace(/C|B/gi, ''))"
+            :text-color="getColorText(props.row.sector_code.replace(/C|B/gi, ''))">
+            {{ props.row.collector_name }}
+          </q-badge>
+        </q-td>
+      </template>
       <template v-slot:body-cell-firstDate="props">
         <q-td :props="props">
           {{ formatDate(props.row.firstDate) }}
@@ -79,41 +96,22 @@
         </q-td>
       </template>
     </q-table>
-    <modal-diary
-      v-if="showModalDiary"
-      v-model="showModalDiary"
-      :type="typeDiary"
-      :userId="userSelected"
-      @addVisit="addVisit"
-    />
-    <form-news
-      v-if="showModalFormNews"
-      v-model="showModalFormNews"
-      :type="typeActionFormNew"
-      :obj="objSelected"
-      @refreshList="listNewsMounted"
-    />
   </div>
 </template>
 <script>
 import Moment from 'moment';
 import { mapState, mapActions } from 'vuex';
-import ModalDiary from 'components/diary/ModalDiary.vue';
-import FormNews from 'components/review/FormNews.vue';
 import newTypes from '../../store/modules/new/types';
 import zoneTypes from '../../store/modules/zone/types';
 import yardTypes from '../../store/modules/yard/types';
 import userTypes from '../../store/modules/user/types';
-import diaryTypes from '../../store/modules/diary/types';
+import redcollectorTypes from '../../store/modules/redcollector/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { havePermission } from '../../helpers/havePermission';
-// import { formatDateWithTime } from '../../helpers/formatDate';
 
 export default {
   components: {
-    ModalDiary,
-    FormNews,
   },
   data() {
     return {
@@ -128,6 +126,13 @@ export default {
           name: 'actions',
           label: 'Acciones',
           align: 'center',
+          visible: false,
+        },
+        {
+          name: 'collector_name',
+          label: 'Cobrador',
+          align: 'center',
+          field: 'collector_name',
           visible: false,
         },
         {
@@ -208,7 +213,7 @@ export default {
   watch: {
     async citySelected(newVal) {
       showLoading('Cargando ...', 'Por favor, espere', true);
-      this.sectorSelected = [];
+      this.sectorSelected = null;
       await this.listYardsByZone({ id: newVal, displayAll: 1 });
       await this.listUsersByRoleName({ roleName: 'Cobrador', status: 1, city: this.citySelected });
       if (this.optionsUsers && this.optionsUsers.length > 0) {
@@ -244,12 +249,19 @@ export default {
       userStatus: 'status',
       userResponseMessages: 'responseMessages',
     }),
-    ...mapState(diaryTypes.PATH, {
-      diaries: 'diaries',
-      diariesDayByDay: 'diariesDayByDay',
-      diaryStatus: 'status',
-      diaryResponseMessages: 'responseMessages',
+    ...mapState(redcollectorTypes.PATH, {
+      redcollectorStatus: 'status',
+      redcollectorResponseMessages: 'responseMessages',
     }),
+    labelBtnAsig() {
+      let label = 'Asignar';
+      const user = this.optionsUsers.find((option) => option.value === this.userSelected);
+      const sector = this.optionsSectors.find((option) => option.value === this.sectorSelected);
+      if (user && sector) {
+        label = `Asignar sector de ${sector.label} a cobrador ${user.label}`;
+      }
+      return label;
+    },
     dataTable() {
       let data = this.newsReds.map((element) => ({
         ...element,
@@ -257,8 +269,8 @@ export default {
       if (this.citySelected > 0) {
         data = data.filter((item) => item.city_id === this.citySelected);
       }
-      if (this.sectorSelected && this.sectorSelected.length > 0) {
-        data = data.filter((item) => this.sectorSelected.includes(item.sector_id));
+      if (this.sectorSelected > 0) {
+        data = data.filter((item) => item.sector_id === this.sectorSelected);
       }
       return data;
     },
@@ -274,36 +286,8 @@ export default {
       return groupedCount;
     },
     validatedPermissions() {
-      const statusCreate = havePermission('new.create');
-      const statusEdit = havePermission('new.update');
-      const statusDelete = havePermission('new.delete');
-      const statuschangeStatus = havePermission('new.changeStatus');
       const statusAllCities = havePermission('red.allCities');
       return {
-        create: {
-          title: statusCreate ? 'Registrar nuevos' : 'No tiene permisos para registrar nuevos',
-          status: statusCreate,
-        },
-        edit: {
-          title: statusEdit ? 'Editar nuevo' : 'No tiene permisos para editar nuevos',
-          status: statusEdit,
-        },
-        delete: {
-          title: statusDelete ? 'Eliminar nuevo' : 'No tiene permisos para eliminar nuevos',
-          status: statusDelete,
-        },
-        changeStatus: {
-          title: statuschangeStatus ? 'Asignar visita' : 'No tiene permisos',
-          status: statuschangeStatus,
-        },
-        changeStatusPending: {
-          title: statuschangeStatus ? 'Poner como pendiente' : 'No tiene permisos',
-          status: statuschangeStatus,
-        },
-        changeStatusReject: {
-          title: statuschangeStatus ? 'Rechazar' : 'No tiene permisos',
-          status: statuschangeStatus,
-        },
         allCities: {
           title: statusAllCities ? 'Todas las ciudades' : 'No tiene permisos',
           status: statusAllCities,
@@ -360,7 +344,7 @@ export default {
         return this.sectorSelectedReds;
       },
       set(newValue) {
-        this.updateSectorSelectedReds(newValue);
+        this.updateSectorSelectedReds(parseInt(newValue, 10));
       },
     },
   },
@@ -378,19 +362,44 @@ export default {
     ...mapActions(yardTypes.PATH, {
       listYardsByZone: yardTypes.actions.LIST_YARDS_BY_ZONE,
     }),
-    ...mapActions(diaryTypes.PATH, {
-      listDiaries: diaryTypes.actions.LIST_DIARIES,
-      listDiariesDayByDay: diaryTypes.actions.LIST_DIARIES_DAY_BY_DAY,
-      updateDiary: diaryTypes.actions.UPDATE_DIARY,
-    }),
     ...mapActions(userTypes.PATH, {
       listUsersByRoleName: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
     }),
-    clickEditAddress(row, type) {
-      console.log(row);
-      this.typeActionFormNew = type;
-      this.objSelected = { ...row };
-      this.showModalFormNews = true;
+    ...mapActions(redcollectorTypes.PATH, {
+      saveRedcollector: redcollectorTypes.actions.SAVE_REDCOLLECTOR,
+    }),
+    showNotification(messages, status, align, timeout) {
+      showNotifications(messages, status, align, timeout);
+    },
+    clickRow(row) {
+      this.itemSelected = { ...row };
+    },
+    getColorBadge(i) {
+      const colors = [
+        'black',
+        'red',
+        'green',
+        'blue',
+        'purple',
+        'orange',
+        'yellow',
+      ];
+      return colors[i];
+    },
+    getColorText(i) {
+      const colors = [
+        'white',
+        'white',
+        'white',
+        'white',
+        'white',
+        'white',
+        'black',
+      ];
+      return colors[i];
+    },
+    viewAll() {
+      this.sectorSelected = null;
     },
     formatPrice(val) {
       return new Intl.NumberFormat('es-CO', {
@@ -403,15 +412,6 @@ export default {
     formatDate(date) {
       return Moment(date).format('DD/MM/YYYY');
     },
-    disabledBtnPending(row) {
-      return !row.observation;
-    },
-    disabledBtnDenied(row) {
-      return !row.observation;
-    },
-    disabledBtnAddVisit(row) {
-      return !row.address_house || !row.site_visit;
-    },
     async listNewsMounted() {
       await this.listNewsReds(this.citySelected);
       if (this.status === false) {
@@ -419,58 +419,9 @@ export default {
         this.data = [];
       }
     },
-    async openModalVisit() {
-      this.typeDiary = 'readwrite';
-      this.showModalDiary = true;
-    },
-    async addVisit(item) {
-      await this.changeStatus(this.itemSelected, 'agendado');
-      await this.changeStatusDiary({
-        ...item,
-        userId: item.user_id,
-        new_id: this.itemSelected.id,
-        status: 'agendado',
-      });
-      this.typeDiary = 'read';
-    },
-    async changeStatusDiary(data) {
-      showLoading('Guardando ...', 'Por favor, espere', true);
-      await this.updateDiary(data);
-
-      if (this.diaryStatus === true) {
-        await this.listDiariesDayByDay({
-          userId: this.userSelected,
-          date: new Moment(new Date()).format('YYYY-MM-DD'),
-          moment: 'current',
-        });
-        await this.listNewsMounted();
-      }
-      this.$q.loading.hide();
-      this.showNotification(this.diaryResponseMessages, this.diaryStatus, 'top-right', 5000);
-    },
-    async changeStatus(obj, type) {
-      this.obj = obj;
-      showLoading('Guardando ...', 'Por favor, espere', true);
-      await this.updateStatusNew({
-        ...obj,
-        status: type,
-        attempts: 1,
-      });
-
-      if (this.status === true) {
-        this.user = { ...this.copyUser };
-        await this.listNewsMounted();
-      }
-      this.$q.loading.hide();
-      this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
-    },
-    showNotification(messages, status, align, timeout) {
-      showNotifications(messages, status, align, timeout);
-    },
     async initData() {
       showLoading('Cargando ...', 'Por favor, espere', true);
       await this.listNewsMounted();
-      console.log(this.newsReds);
       await this.listZones();
       await this.listUsersByRoleName({ roleName: 'Cobrador', status: 1, city: this.citySelected });
       this.$q.loading.hide();
@@ -481,13 +432,34 @@ export default {
         }
       }
     },
-    clickRow(row) {
-      this.itemSelected = { ...row };
-    },
-    async save(field, value) {
-      this.itemSelected[field] = value.value ? value.value : value;
-      await this.completeDataNew(this.itemSelected);
-      await this.listNewsMounted();
+    async addRedcollector() {
+      this.$q.dialog({
+        title: 'Asignar',
+        message: 'Está seguro que desea asignar el sector al cobrador?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        showLoading('Guardando ...', 'Por favor, espere', true);
+        await this.saveRedcollector({
+          collector_id: this.userSelected,
+          sector_id: this.sectorSelected,
+        });
+        this.showNotification(this.redcollectorResponseMessages, this.redcollectorStatus, 'top-right', 5000);
+        await this.listNewsMounted();
+        this.$q.loading.hide();
+        this.viewAll();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
     },
   },
 };
