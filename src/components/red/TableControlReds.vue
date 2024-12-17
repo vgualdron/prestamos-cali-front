@@ -16,7 +16,7 @@
         />
       </div>
     </div>
-    <div class="row q-mt-md">
+    <div v-show="false" class="row q-mt-md">
       <div class="col-12 text-center">
         <q-option-group
           v-model="sectorSelected"
@@ -25,12 +25,6 @@
           inline
         />
         <q-badge class="cursor-pointer" outline color="primary" label="Ver todos" @click="viewAll"/>
-      </div>
-    </div>
-    <div class="row q-mt-xs">
-      <div class="col-12 text-center">
-        <b>Cantidad de Clientes:</b>
-        {{ amountClients }}
       </div>
     </div>
     <div class="row q-mt-md">
@@ -62,6 +56,12 @@
           @click="addRedcollector"/>
       </div>
     </div>
+    <div class="row q-mt-xs">
+      <div class="col-12 text-center">
+        <b>Cantidad de Clientes:</b>
+        {{ amountClients }}
+      </div>
+    </div>
     <q-table
       :data="dataTable"
       :columns="columns"
@@ -71,7 +71,6 @@
       separator="cell"
       class="q-mt-md"
       row-key="order"
-      :rows-class="getRowClass"
       striped
     >
       <template v-slot:body="props">
@@ -377,6 +376,12 @@ export default {
           this.userSelected = this.optionsUsers[0].value;
         }
       }
+      await this.listNewsMounted();
+      this.$q.loading.hide();
+    },
+    async userSelected() {
+      showLoading('Cargando ...', 'Por favor, espere', true);
+      await this.listNewsMounted();
       this.$q.loading.hide();
     },
   },
@@ -482,8 +487,8 @@ export default {
       });
     },
     optionsUsers() {
-      return this.users.map(({ name, id, sector_name_collector }) => {
-        const label = `${name} (${sector_name_collector})`;
+      return this.users.map(({ name, id }) => {
+        const label = `${name}`;
         return {
           label,
           value: id,
@@ -627,8 +632,8 @@ export default {
     },
     async listNewsMounted() {
       await this.listNewsReds({
-        city: 0,
-        user: 0,
+        city: this.citySelected,
+        user: this.userSelected,
       });
       if (this.status === false) {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
@@ -668,7 +673,7 @@ export default {
           sector_id: this.sectorSelected,
         });
         this.showNotification(this.redcollectorResponseMessages, this.redcollectorStatus, 'top-right', 5000);
-        await this.initData();
+        await this.listNewsMounted();
         this.$q.loading.hide();
         this.viewAll();
       }).onCancel(() => {
