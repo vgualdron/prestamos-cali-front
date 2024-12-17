@@ -28,8 +28,15 @@
           >
             <div class="row no-wrap q-pa-md">
               <div class="column items-center">
-                <q-avatar size="72px">
-                  <img src="~/assets/default-profile-picture.png">
+                <q-avatar size="100px">
+                  <upload-image-profile
+                    :config="{
+                      name: 'FOTO_PROFILE',
+                      storage: 'users',
+                      modelName: 'users',
+                      modelId: user
+                    }"
+                  />
                 </q-avatar>
                 <div
                   class="text-subtitle1 q-mt-xs text-weight-bolder"
@@ -75,15 +82,6 @@
         <q-item-label header class="text-grey-8">
           <img src="~/assets/logo-rectangle.png" width="250" class="q-mr-auto q-ml-auto">
         </q-item-label>
-        <!-- <EssentialLink
-            key="home-menu"
-            title="Inicio"
-            link="/home"
-            icon="home"
-            :class="'/home' === $router.currentRoute.name && 'bg-blue-grey-3'"
-            :clickable="'/home' !== $router.currentRoute.path"
-            :active="'/home' === $router.currentRoute.path"
-          /> -->
         <q-expansion-item
           v-for="({ name, icon, label, options }) in linksData"
           expand-separator
@@ -127,6 +125,7 @@ import { mapState, mapActions } from 'vuex';
 import EssentialLink from 'components/common/EssentialLink.vue';
 import FormChangePassword from 'components/user/FormChangePassword.vue';
 import MapCurrentPosition from 'components/common/MapCurrentPosition.vue';
+import UploadImageProfile from 'components/common/UploadImageProfile.vue';
 import commonTypes from '../store/modules/common/types';
 import { showNotifications } from '../helpers/showNotifications';
 import { showLoading } from '../helpers/showLoading';
@@ -137,6 +136,7 @@ export default {
     EssentialLink,
     FormChangePassword,
     MapCurrentPosition,
+    UploadImageProfile,
   },
   data() {
     return {
@@ -159,6 +159,7 @@ export default {
       'menu',
       'currentRoute',
       'name',
+      'user',
       'roles',
       'rolesArray',
     ]),
