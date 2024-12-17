@@ -22,6 +22,7 @@ import item, { name as itemName } from './item';
 import question, { name as questionName } from './question';
 import nequi, { name as nequiName } from './nequi';
 import redcollector, { name as redcollectorName } from './redcollector';
+import reddirection, { name as reddirectionName } from './reddirection';
 
 export default {
   [homeName]: home,
@@ -48,4 +49,5 @@ export default {
   [questionName]: question,
   [nequiName]: nequi,
   [redcollectorName]: redcollector,
+  [reddirectionName]: reddirection,
 };

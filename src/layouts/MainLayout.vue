@@ -28,7 +28,7 @@
           >
             <div class="row no-wrap q-pa-md">
               <div class="column items-center">
-                <q-avatar size="100px">
+                <q-avatar size="200px">
                   <upload-image-profile
                     :config="{
                       name: 'FOTO_PROFILE',

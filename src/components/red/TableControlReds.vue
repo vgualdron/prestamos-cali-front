@@ -114,6 +114,15 @@
                     <q-item-label>Cuentas Nequi</q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-item
+                  v-if="!props.row.is_current"
+                  clickable
+                  v-close-popup
+                  @click="openModal('visit', props.row)">
+                  <q-item-section>
+                    <q-item-label>Asignar a visita</q-item-label>
+                  </q-item-section>
+                </q-item>
               </q-list>
             </q-btn-dropdown>
           </q-td>
@@ -228,6 +237,7 @@ import yardTypes from '../../store/modules/yard/types';
 import userTypes from '../../store/modules/user/types';
 import lendingTypes from '../../store/modules/lending/types';
 import redcollectorTypes from '../../store/modules/redcollector/types';
+import reddirectionTypes from '../../store/modules/reddirection/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { havePermission } from '../../helpers/havePermission';
@@ -420,6 +430,10 @@ export default {
       redcollectorStatus: 'status',
       redcollectorResponseMessages: 'responseMessages',
     }),
+    ...mapState(reddirectionTypes.PATH, {
+      reddirectionStatus: 'status',
+      reddirectionResponseMessages: 'responseMessages',
+    }),
     labelBtnAsig() {
       let label = 'Asignar';
       const user = this.optionsUsers.find((option) => option.value === this.userSelected);
@@ -538,6 +552,9 @@ export default {
     ...mapActions(redcollectorTypes.PATH, {
       saveRedcollector: redcollectorTypes.actions.SAVE_REDCOLLECTOR,
     }),
+    ...mapActions(reddirectionTypes.PATH, {
+      saveReddirection: reddirectionTypes.actions.SAVE_REDDIRECTION,
+    }),
     ...mapActions(lendingTypes.PATH, {
       getLending: lendingTypes.actions.GET_LENDING,
       fetchLendings: lendingTypes.actions.FETCH_LENDINGS,
@@ -576,6 +593,20 @@ export default {
         this.showModalHistory = true;
       } else if (action === 'nequis') {
         this.showModalNequis = true;
+      } else if (action === 'visit') {
+        showLoading('guardando ...', 'Por favor, espere', true);
+        await this.saveReddirection({
+          collector_id: this.userSelected,
+          lending_id: row.lending_id,
+          address: row.address,
+          district_id: row.district,
+          type_ref: row.address_type,
+          description_ref: row.address_name,
+          value: row.remaining_balance,
+          status: 'creado',
+        });
+        await this.initData();
+        this.$q.loading.hide();
       }
     },
     generateLinkGoogleMaps(row) {

@@ -304,6 +304,7 @@ export default {
     width: 210px;
   }
   .editable-image {
+    border-radius: 50% !important;
     cursor: pointer; /* Cambia el cursor a una mano */
     transition: box-shadow 0.3s ease, transform 0.3s ease; /* Transición suave */
   }
