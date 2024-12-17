@@ -349,6 +349,18 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/visit-reds',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Visita a dirección de rojo',
+        component: () => import('pages/VisitReds.vue'),
+        meta: { permissions: ['red.visit'] },
+      },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

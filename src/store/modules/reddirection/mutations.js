@@ -1,6 +1,9 @@
 import types from './types';
 
 export default {
+  [types.mutations.SET_REDDIRECTION](state, payload) {
+    state.reddirection = payload;
+  },
   [types.mutations.SET_STATUS](state, payload) {
     state.status = payload;
   },

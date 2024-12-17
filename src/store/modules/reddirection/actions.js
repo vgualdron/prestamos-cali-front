@@ -21,4 +21,23 @@ export default {
       }
     }
   },
+  async [types.actions.GET_CURRENT_BY_USER]({ commit }, id) {
+    try {
+      const response = await reddirectionApi.getCurrentByUser(id);
+      commit(types.mutations.SET_STATUS, true);
+      commit(types.mutations.SET_REDDIRECTION, response.data.data);
+    } catch (error) {
+      commit(types.mutations.SET_STATUS, false);
+      if (error.message !== 'Network Error') {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
+      } else {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, [
+          {
+            text: 'Error de red',
+            detail: 'Intente conectarse a otra red de internet',
+          },
+        ]);
+      }
+    }
+  },
 };

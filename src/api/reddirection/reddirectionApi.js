@@ -6,4 +6,8 @@ export default {
     method: 'POST',
     data,
   }),
+  getCurrentByUser: (id) => http({
+    url: `${process.env.URL_API}/api/reddirections/get-current-by-user/${id}`,
+    method: 'GET',
+  }),
 };

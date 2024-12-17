@@ -375,7 +375,10 @@
                 </q-list>
               </q-btn-dropdown>
               <div v-else>
-                {{ props.row.phone }}
+                <span>{{ processedPhones(props.row.phone)[0] }}</span>
+                <span v-if="processedPhones(props.row.phone)[1] !== null">
+                  <br>{{ processedPhones(props.row.phone)[1] }}
+                </span>
               </div>
             </q-td>
           </q-tr>
@@ -923,7 +926,7 @@ export default {
       showNotifications(messages, status, align, timeout);
     },
     processedPhones(str) {
-      const parts = str.split('/');
+      const parts = str.split(/\s*\/\s*/);
       return parts.length === 2 ? parts : [parts[0], null];
     },
     async getLocation() {
