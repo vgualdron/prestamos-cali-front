@@ -110,6 +110,14 @@
                 <q-item
                   clickable
                   v-close-popup
+                  @click="openModal('cv', props.row)">
+                  <q-item-section>
+                    <q-item-label>Ver Hoja de Vida</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
                   @click="openModal('nequis', props.row)">
                   <q-item-section>
                     <q-item-label>Cuentas Nequi</q-item-label>
@@ -216,6 +224,10 @@
       :hasDoubleInterest="false"
       title="Historial"
       :lendings="history"/>
+    <cv
+      v-model="showModalCv"
+      v-if="showModalCv"
+      :row="itemSelected" />
   </div>
 </template>
 <script>
@@ -223,6 +235,7 @@ import Moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import ModalListNequi from 'components/nequi/ModalListNequi.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
+import Cv from 'components/new/Cv.vue';
 import newTypes from '../../store/modules/new/types';
 import zoneTypes from '../../store/modules/zone/types';
 import yardTypes from '../../store/modules/yard/types';
@@ -237,6 +250,7 @@ export default {
   components: {
     ModalListNequi,
     ModalCardBoard,
+    Cv,
   },
   data() {
     return {
@@ -356,6 +370,7 @@ export default {
       showModalCardBoardDouble: false,
       showModalHistory: false,
       showModalNequis: false,
+      showModalCv: false,
     };
   },
   props: {
@@ -571,6 +586,12 @@ export default {
         this.showModalHistory = true;
       } else if (action === 'nequis') {
         this.showModalNequis = true;
+      } else if (action === 'cv') {
+        this.itemSelected = {
+          id: row.news_id,
+          type_cv: row.news_type_cv,
+        };
+        this.showModalCv = true;
       }
     },
     generateLinkGoogleMaps(row) {

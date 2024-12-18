@@ -29,7 +29,7 @@
               <q-td :props="props">
                 <upload-pdf
                   :config="{
-                    name: 'CV_PFD',
+                    name: 'PDF_CV',
                     storage: 'news',
                     modelName: 'news',
                     modelId: props.row.id
