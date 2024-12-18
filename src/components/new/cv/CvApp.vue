@@ -2,6 +2,7 @@
   <div>
     <div class="row text-center">
       <q-btn
+        v-if="id && !onlyTable"
         icon="content_copy"
         color="primary"
         @click="captureImage"
@@ -9,7 +10,7 @@
     </div>
     <q-markup-table
       id="div-container-table-cv"
-      class="cv-table"
+      class="cv-table q-mb-sm"
       separator="cell"
       dense
     >
@@ -233,9 +234,17 @@
             {{ item.extra_reference }}
           </td>
         </tr>
+        <tr class="">
+          <td class="bg-blue-5 text-bold text-center" colspan="1">
+            OBSERVACIÓN
+          </td>
+          <td class="text-bold text-center text-red" colspan="7">
+            {{ item.observation }}
+          </td>
+        </tr>
       </tbody>
     </q-markup-table>
-    <q-card v-if="id" class="q-mt-lg">
+    <q-card v-if="id && !onlyTable" class="q-mt-lg">
       <q-card-section class="row q-pb-none">
         <div class="text-h6">ARCHIVOS DE CLIENTE</div>
       </q-card-section>
@@ -388,7 +397,7 @@
         </div>
       </q-card-section>
     </q-card>
-    <q-card v-if="id" class="q-mt-lg">
+    <q-card v-if="id && !onlyTable" class="q-mt-lg">
       <q-card-section class="row q-pb-none">
         <div class="text-h6">ARCHIVOS DE REFERENCIA FAMILIAR 1</div>
       </q-card-section>
@@ -444,7 +453,7 @@
         </div>
       </q-card-section>
     </q-card>
-    <q-card v-if="id" class="q-mt-lg">
+    <q-card v-if="id && !onlyTable" class="q-mt-lg">
       <q-card-section class="row q-pb-none">
         <div class="text-h6">ARCHIVOS DE REFERENCIA FAMILIAR 2</div>
       </q-card-section>
@@ -500,7 +509,7 @@
         </div>
       </q-card-section>
     </q-card>
-    <q-card v-if="id" class="q-mt-lg">
+    <q-card v-if="id && !onlyTable" class="q-mt-lg">
       <q-card-section class="row q-pb-none">
         <div class="text-h6">ARCHIVOS DE FIADOR</div>
       </q-card-section>
@@ -633,6 +642,10 @@ export default {
     },
     id: {
       require: true,
+    },
+    onlyTable: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

@@ -18,7 +18,8 @@
           />
         </q-card-section>
         <q-separator />
-        <q-card-section class="row q-pb-none">
+        <q-card-section class="row q-pb-none block">
+          <cv-app v-if="row.type_cv === 'pdf' && onlyTable" :id="row.id" :onlyTable="onlyTable"/>
           <cv-app v-if="row.type_cv === 'app'" :id="row.id"/>
           <cv-pdf v-else :id="row.id"/>
         </q-card-section>
@@ -42,6 +43,10 @@ export default {
     },
     row: {
       require: true,
+    },
+    onlyTable: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

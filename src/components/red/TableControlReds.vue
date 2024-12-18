@@ -7,10 +7,10 @@
           v-model="citySelected"
           class="my-custom-toggle"
           :options="optionsZones"
-          toggle-color="grey"
+          toggle-color="primary"
           toggle-text-color="white"
           color="white"
-          text-color="grey"
+          text-color="primary"
           spread
           rounded
         />
@@ -47,19 +47,6 @@
           title="Click para refrescar la tabla"
           @click="initData()">
         </q-btn>
-        <br>
-        <q-btn
-          v-if="sectorSelected"
-          class="cursor-pointer"
-          color="green"
-          :label="labelBtnAsig"
-          @click="addRedcollector"/>
-      </div>
-    </div>
-    <div class="row q-mt-xs">
-      <div class="col-12 text-center">
-        <b>Cantidad de Clientes:</b>
-        {{ amountClients }}
       </div>
     </div>
     <q-table
@@ -109,6 +96,14 @@
                 <q-item
                   clickable
                   v-close-popup
+                  @click="openModal('cv', props.row)">
+                  <q-item-section>
+                    <q-item-label>Ver Hoja de Vida</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
                   @click="openModal('nequis', props.row)">
                   <q-item-section>
                     <q-item-label>Cuentas Nequi</q-item-label>
@@ -135,12 +130,6 @@
             </q-badge>
           </q-td>
           <q-td :props="props" key="district_order">
-            <q-badge
-              v-if="props.row.is_current"
-              color="orange"
-              text-color="white"
-              rounded>
-            </q-badge>
             {{ props.row.district_order }}
           </q-td>
           <q-td :props="props" class="text-wrap" key="news_name">
@@ -224,6 +213,11 @@
       :hasDoubleInterest="false"
       title="Historial"
       :lendings="history"/>
+    <cv
+      v-model="showModalCv"
+      v-if="showModalCv"
+      :row="itemSelected"
+      :onlyTable="true"/>
   </div>
 </template>
 <script>
@@ -231,6 +225,7 @@ import Moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import ModalListNequi from 'components/nequi/ModalListNequi.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
+import Cv from 'components/new/Cv.vue';
 import newTypes from '../../store/modules/new/types';
 import zoneTypes from '../../store/modules/zone/types';
 import yardTypes from '../../store/modules/yard/types';
@@ -246,6 +241,7 @@ export default {
   components: {
     ModalListNequi,
     ModalCardBoard,
+    Cv,
   },
   data() {
     return {
@@ -365,6 +361,7 @@ export default {
       showModalCardBoardDouble: false,
       showModalHistory: false,
       showModalNequis: false,
+      showModalCv: false,
     };
   },
   props: {
@@ -453,21 +450,11 @@ export default {
       if (this.sectorSelected > 0) {
         data = data.filter((item) => item.sector_id === this.sectorSelected);
       }
+      data = data.filter((item) => item.is_current);
       return data;
     },
-    amountClients() {
-      const uniqueByNewsId = new Map();
-      this.dataTable.forEach((item) => {
-        if (!uniqueByNewsId.has(item.lending_id)) {
-          uniqueByNewsId.set(item.lending_id, item);
-        }
-      });
-
-      const groupedCount = uniqueByNewsId.size;
-      return groupedCount;
-    },
     validatedPermissions() {
-      const statusAllCities = havePermission('red.allCities');
+      const statusAllCities = havePermission('red.allCitySupervise');
       return {
         allCities: {
           title: statusAllCities ? 'Todas las ciudades' : 'No tiene permisos',
@@ -482,8 +469,8 @@ export default {
         cities = this.zones.filter((zone) => zone.id === this.citySelected);
       }
       return cities.map(({ name, id }) => {
-        const items = this.newsReds.filter(({ city_id }) => id === city_id);
-        const label = `[ ${items.length} ] ${name}`;
+        // const items = this.newsReds.filter(({ city_id }) => id === city_id);
+        const label = `${name}`;
         return {
           label,
           value: id,
@@ -492,19 +479,21 @@ export default {
     },
     optionsSectors() {
       return this.yards.map(({ name, id }) => {
-        const items = this.newsReds.filter(({ sector_id }) => id === sector_id);
-        const label = `[ ${items.length} ] ${name}`;
+        // const items = this.newsReds.filter(({ sector_id }) => id === sector_id);
+        const label = `${name}`;
         return {
           label,
+          name,
           value: id,
         };
       });
     },
     optionsUsers() {
-      return this.users.map(({ name, id }) => {
-        const label = `${name}`;
+      return this.users.map(({ name, id, sector_name_collector }) => {
+        const label = `${name} (${sector_name_collector || 'X'})`;
         return {
           label,
+          name,
           value: id,
         };
       });
@@ -593,20 +582,43 @@ export default {
         this.showModalHistory = true;
       } else if (action === 'nequis') {
         this.showModalNequis = true;
+      } else if (action === 'cv') {
+        this.itemSelected = {
+          id: row.news_id,
+          type_cv: row.news_type_cv,
+        };
+        this.showModalCv = true;
       } else if (action === 'visit') {
-        showLoading('guardando ...', 'Por favor, espere', true);
-        await this.saveReddirection({
-          collector_id: this.userSelected,
-          lending_id: row.lending_id,
-          address: row.address,
-          district_id: row.district,
-          type_ref: row.address_type,
-          description_ref: row.address_name,
-          value: row.remaining_balance,
-          status: 'creado',
+        this.$q.dialog({
+          title: 'Asignar',
+          message: 'Está seguro que desea asignar la dirección al cobrador?',
+          ok: {
+            push: true,
+          },
+          cancel: {
+            push: true,
+            color: 'negative',
+          },
+          persistent: true,
+        }).onOk(async () => {
+          showLoading('Guardando ...', 'Por favor, espere', true);
+          await this.saveReddirection({
+            collector_id: this.userSelected,
+            lending_id: row.lending_id,
+            address: row.address,
+            district_id: row.district,
+            type_ref: row.address_type,
+            description_ref: row.address_name,
+            value: row.remaining_balance,
+            status: 'creado',
+          });
+          await this.initData();
+          this.$q.loading.hide();
+        }).onCancel(() => {
+          // console.log('>>>> Cancel')
+        }).onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
         });
-        await this.initData();
-        this.$q.loading.hide();
       }
     },
     generateLinkGoogleMaps(row) {
@@ -683,35 +695,6 @@ export default {
           this.userSelected = this.optionsUsers[0].value;
         }
       }
-    },
-    async addRedcollector() {
-      this.$q.dialog({
-        title: 'Asignar',
-        message: 'Está seguro que desea asignar el sector al cobrador?',
-        ok: {
-          push: true,
-        },
-        cancel: {
-          push: true,
-          color: 'negative',
-          text: 'adsa',
-        },
-        persistent: true,
-      }).onOk(async () => {
-        showLoading('Guardando ...', 'Por favor, espere', true);
-        await this.saveRedcollector({
-          collector_id: this.userSelected,
-          sector_id: this.sectorSelected,
-        });
-        this.showNotification(this.redcollectorResponseMessages, this.redcollectorStatus, 'top-right', 5000);
-        await this.listNewsMounted();
-        this.$q.loading.hide();
-        this.viewAll();
-      }).onCancel(() => {
-        // console.log('>>>> Cancel')
-      }).onDismiss(() => {
-        // console.log('I am triggered on both OK and Cancel')
-      });
     },
   },
 };

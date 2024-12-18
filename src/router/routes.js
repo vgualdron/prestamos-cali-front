@@ -331,9 +331,21 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Asignar direcciones de rojos',
+        name: 'Listar direcciones de rojos',
         component: () => import('pages/Reds.vue'),
         meta: { permissions: ['red.list'] },
+      },
+    ],
+  },
+  {
+    path: '/supervise-reds',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Supervisar rojos',
+        component: () => import('pages/SuperviseReds.vue'),
+        meta: { permissions: ['red.supervise'] },
       },
     ],
   },
@@ -343,7 +355,7 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Control de direcciones de rojos',
+        name: 'Control de rojos',
         component: () => import('pages/ControlReds.vue'),
         meta: { permissions: ['red.control'] },
       },

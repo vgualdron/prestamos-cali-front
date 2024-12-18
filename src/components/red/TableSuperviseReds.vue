@@ -16,7 +16,7 @@
         />
       </div>
     </div>
-    <div class="row q-mt-md">
+    <div v-show="false" class="row q-mt-md">
       <div class="col-12 text-center">
         <q-option-group
           v-model="sectorSelected"
@@ -51,16 +51,6 @@
     </div>
     <div class="row q-mt-xs">
       <div class="col-12 text-center">
-        <q-btn
-          v-if="sectorSelected"
-          class="cursor-pointer"
-          color="green"
-          :label="labelBtnAsig"
-          @click="addRedcollector"/>
-      </div>
-    </div>
-    <div class="row q-mt-xs">
-      <div class="col-12 text-center">
         <b>Cantidad de Clientes:</b>
         {{ amountClients }}
       </div>
@@ -74,7 +64,6 @@
       separator="cell"
       class="q-mt-md"
       row-key="order"
-      :rows-class="getRowClass"
       striped
     >
       <template v-slot:body="props">
@@ -126,6 +115,15 @@
                     <q-item-label>Cuentas Nequi</q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-item
+                  v-if="!hasReddirectionActive"
+                  clickable
+                  v-close-popup
+                  @click="openModal('visit', props.row)">
+                  <q-item-section>
+                    <q-item-label>Asignar a visita {{ hasReddirectionActive }}</q-item-label>
+                  </q-item-section>
+                </q-item>
               </q-list>
             </q-btn-dropdown>
           </q-td>
@@ -138,12 +136,6 @@
             </q-badge>
           </q-td>
           <q-td :props="props" key="district_order">
-            <q-badge
-              v-if="props.row.is_current"
-              color="orange"
-              text-color="white"
-              rounded>
-            </q-badge>
             {{ props.row.district_order }}
           </q-td>
           <q-td :props="props" class="text-wrap" key="news_name">
@@ -246,6 +238,7 @@ import yardTypes from '../../store/modules/yard/types';
 import userTypes from '../../store/modules/user/types';
 import lendingTypes from '../../store/modules/lending/types';
 import redcollectorTypes from '../../store/modules/redcollector/types';
+import reddirectionTypes from '../../store/modules/reddirection/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { havePermission } from '../../helpers/havePermission';
@@ -396,6 +389,12 @@ export default {
           this.userSelected = this.optionsUsers[0].value;
         }
       }
+      await this.listNewsMounted();
+      this.$q.loading.hide();
+    },
+    async userSelected() {
+      showLoading('Cargando ...', 'Por favor, espere', true);
+      await this.listNewsMounted();
       this.$q.loading.hide();
     },
   },
@@ -434,12 +433,20 @@ export default {
       redcollectorStatus: 'status',
       redcollectorResponseMessages: 'responseMessages',
     }),
+    ...mapState(reddirectionTypes.PATH, {
+      reddirection: 'reddirection',
+      reddirectionStatus: 'status',
+      reddirectionResponseMessages: 'responseMessages',
+    }),
+    hasReddirectionActive() {
+      return (this.reddirection && this.reddirection.status === 'activo');
+    },
     labelBtnAsig() {
       let label = 'Asignar';
       const user = this.optionsUsers.find((option) => option.value === this.userSelected);
       const sector = this.optionsSectors.find((option) => option.value === this.sectorSelected);
       if (user && sector) {
-        label = `Asignar sector de ${sector.name} a cobrador ${user.name}`;
+        label = `Asignar sector de ${sector.label} a cobrador ${user.label}`;
       }
       return label;
     },
@@ -467,7 +474,7 @@ export default {
       return groupedCount;
     },
     validatedPermissions() {
-      const statusAllCities = havePermission('red.allCities');
+      const statusAllCities = havePermission('red.allCitySupervise');
       return {
         allCities: {
           title: statusAllCities ? 'Todas las ciudades' : 'No tiene permisos',
@@ -482,8 +489,8 @@ export default {
         cities = this.zones.filter((zone) => zone.id === this.citySelected);
       }
       return cities.map(({ name, id }) => {
-        const items = this.newsReds.filter(({ city_id }) => id === city_id);
-        const label = `[ ${items.length} ] ${name}`;
+        // const items = this.newsReds.filter(({ city_id }) => id === city_id);
+        const label = `${name}`;
         return {
           label,
           value: id,
@@ -492,8 +499,8 @@ export default {
     },
     optionsSectors() {
       return this.yards.map(({ name, id }) => {
-        const items = this.newsReds.filter(({ sector_id }) => id === sector_id);
-        const label = `[ ${items.length} ] ${name}`;
+        // const items = this.newsReds.filter(({ sector_id }) => id === sector_id);
+        const label = `${name}`;
         return {
           label,
           name,
@@ -554,6 +561,10 @@ export default {
     ...mapActions(redcollectorTypes.PATH, {
       saveRedcollector: redcollectorTypes.actions.SAVE_REDCOLLECTOR,
     }),
+    ...mapActions(reddirectionTypes.PATH, {
+      getCurrentByUser: reddirectionTypes.actions.GET_CURRENT_BY_USER,
+      saveReddirection: reddirectionTypes.actions.SAVE_REDDIRECTION,
+    }),
     ...mapActions(lendingTypes.PATH, {
       getLending: lendingTypes.actions.GET_LENDING,
       fetchLendings: lendingTypes.actions.FETCH_LENDINGS,
@@ -598,6 +609,37 @@ export default {
           type_cv: row.news_type_cv,
         };
         this.showModalCv = true;
+      } else if (action === 'visit') {
+        this.$q.dialog({
+          title: 'Asignar',
+          message: 'Está seguro que desea asignar la dirección al cobrador?',
+          ok: {
+            push: true,
+          },
+          cancel: {
+            push: true,
+            color: 'negative',
+          },
+          persistent: true,
+        }).onOk(async () => {
+          showLoading('Guardando ...', 'Por favor, espere', true);
+          await this.saveReddirection({
+            collector_id: this.userSelected,
+            lending_id: row.lending_id,
+            address: row.address,
+            district_id: row.district,
+            type_ref: row.address_type,
+            description_ref: row.address_name,
+            value: row.remaining_balance,
+            status: 'activo',
+          });
+          await this.initData();
+          this.$q.loading.hide();
+        }).onCancel(() => {
+          // console.log('>>>> Cancel')
+        }).onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
+        });
       }
     },
     generateLinkGoogleMaps(row) {
@@ -654,8 +696,8 @@ export default {
     },
     async listNewsMounted() {
       await this.listNewsReds({
-        city: 0,
-        user: 0,
+        city: this.citySelected,
+        user: this.userSelected,
       });
       if (this.status === false) {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
@@ -667,42 +709,14 @@ export default {
       await this.listNewsMounted();
       await this.listZones();
       await this.listUsersByRoleName({ roleName: 'Cobrador', status: 1, city: this.citySelected });
-      this.$q.loading.hide();
       if (this.optionsUsers && this.optionsUsers.length > 0) {
         const users = this.optionsUsers.filter((user) => parseInt(user.value, 10) === parseInt(this.userSelected, 10));
         if (users.length === 0) {
           this.userSelected = this.optionsUsers[0].value;
         }
+        await this.getCurrentByUser(this.userSelected);
       }
-    },
-    async addRedcollector() {
-      this.$q.dialog({
-        title: 'Asignar',
-        message: 'Está seguro que desea asignar el sector al cobrador?',
-        ok: {
-          push: true,
-        },
-        cancel: {
-          push: true,
-          color: 'negative',
-          text: 'adsa',
-        },
-        persistent: true,
-      }).onOk(async () => {
-        showLoading('Guardando ...', 'Por favor, espere', true);
-        await this.saveRedcollector({
-          collector_id: this.userSelected,
-          sector_id: this.sectorSelected,
-        });
-        this.showNotification(this.redcollectorResponseMessages, this.redcollectorStatus, 'top-right', 5000);
-        await this.initData();
-        this.$q.loading.hide();
-        this.viewAll();
-      }).onCancel(() => {
-        // console.log('>>>> Cancel')
-      }).onDismiss(() => {
-        // console.log('I am triggered on both OK and Cancel')
-      });
+      this.$q.loading.hide();
     },
   },
 };
