@@ -141,8 +141,8 @@
                   ></q-btn>
                   <q-btn
                     class="q-mt-sm"
-                    icon="delete"
-                    color="red"
+                    icon="diner"
+                    color="green"
                   ></q-btn>
                 </q-item-section>
               </q-item>
