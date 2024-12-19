@@ -74,11 +74,10 @@
       separator="cell"
       class="q-mt-md"
       row-key="order"
-      :rows-class="getRowClass"
       striped
     >
       <template v-slot:body="props">
-        <q-tr :props="props" @click="clickRow(props.row)" :class="{ 'bg-green-2': props.row.is_current }">
+        <q-tr :props="props" @click="clickRow(props.row)" :class="getRowClass(props.row)">
           <q-td :props="props" key="actions">
             <q-btn-dropdown
               class="q-px-none"
@@ -354,7 +353,7 @@ export default {
         {
           name: 'news_observation',
           align: 'center',
-          label: 'Observación',
+          label: 'Nota',
           field: 'news_observation',
           visible: true,
         },
@@ -563,7 +562,13 @@ export default {
       showNotifications(messages, status, align, timeout);
     },
     getRowClass(row) {
-      return row.is_current ? 'bg-green' : '';
+      let c = 'bg-white';
+      if (row.is_current) {
+        c = 'bg-blue-2';
+      } else if (row.has_visited) {
+        c = 'bg-grey-5';
+      }
+      return c;
     },
     clickRow(row) {
       this.itemSelected = { ...row };

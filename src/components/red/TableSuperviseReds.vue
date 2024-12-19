@@ -67,7 +67,7 @@
       striped
     >
       <template v-slot:body="props">
-        <q-tr :props="props" @click="clickRow(props.row)" :class="{ 'bg-green-2': props.row.is_current }">
+        <q-tr :props="props" @click="clickRow(props.row)" :class="getRowClass(props.row)">
           <q-td :props="props" key="actions">
             <q-btn-dropdown
               class="q-px-none"
@@ -121,7 +121,7 @@
                   v-close-popup
                   @click="openModal('visit', props.row)">
                   <q-item-section>
-                    <q-item-label>Asignar a visita {{ hasReddirectionActive }}</q-item-label>
+                    <q-item-label>Asignar a visita</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -347,7 +347,7 @@ export default {
         {
           name: 'news_observation',
           align: 'center',
-          label: 'Observación',
+          label: 'Nota',
           field: 'news_observation',
           visible: true,
         },
@@ -574,7 +574,13 @@ export default {
       showNotifications(messages, status, align, timeout);
     },
     getRowClass(row) {
-      return row.is_current ? 'bg-green' : '';
+      let c = 'bg-white';
+      if (row.is_current) {
+        c = 'bg-blue-2';
+      } else if (row.has_visited) {
+        c = 'bg-grey-5';
+      }
+      return c;
     },
     clickRow(row) {
       this.itemSelected = { ...row };

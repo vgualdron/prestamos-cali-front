@@ -76,7 +76,7 @@ export default {
       default: false,
     },
     listing: {
-      type: Object,
+      require: true,
     },
   },
   methods: {

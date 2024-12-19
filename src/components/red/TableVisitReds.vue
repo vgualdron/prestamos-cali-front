@@ -24,164 +24,145 @@
       striped
       grid
     >
-      <template v-slot:body="props">
-        <q-tr :props="props" @click="clickRow(props.row)" :class="{ 'bg-green-2': props.row.is_current }">
-          <q-td :props="props" key="actions">
-            <q-btn-dropdown
-              class="q-px-none"
-              color="black"
-              outline>
-              <q-list>
-                <q-item
-                  clickable
-                  v-close-popup
-                  @click="openModal('normal', props.row)">
-                  <q-item-section>
-                    <q-item-label>Ver cartulina</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  v-if="props.row.has_double_interest"
-                  clickable
-                  v-close-popup
-                  @click="openModal('double', props.row)">
-                  <q-item-section>
-                    <q-item-label>Ver cartulina doble interes</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  clickable
-                  v-close-popup
-                  @click="openModal('history', props.row)">
-                  <q-item-section>
-                    <q-item-label>Ver Historial</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  clickable
-                  v-close-popup
-                  @click="openModal('nequis', props.row)">
-                  <q-item-section>
-                    <q-item-label>Cuentas Nequi</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  v-if="!props.row.is_current"
-                  clickable
-                  v-close-popup
-                  @click="openModal('visit', props.row)">
-                  <q-item-section>
-                    <q-item-label>Asignar a visita</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
-          </q-td>
-          <q-td :props="props" key="collector_name">
-            <q-badge
-              v-if="props.row.collector_name"
-              :color="getColorBadge(props.row.sector_code.replace(/C|B/gi, ''))"
-              :text-color="getColorText(props.row.sector_code.replace(/C|B/gi, ''))">
-              {{ props.row.collector_name }}
-            </q-badge>
-          </q-td>
-          <q-td :props="props" key="district_order">
-            <q-badge
-              v-if="props.row.is_current"
-              color="orange"
-              text-color="white"
-              rounded>
-            </q-badge>
-            {{ props.row.district_order }}
-          </q-td>
-          <q-td :props="props" class="text-wrap" key="news_name">
-            {{ props.row.news_name }}
-          </q-td>
-          <q-td :props="props" key="total_value">
-            {{ formatPrice(props.row.total_value) }}
-          </q-td>
-          <q-td :props="props" key="firstDate">
-            {{ formatDate(props.row.firstDate) }}
-          </q-td>
-          <q-td :props="props" key="endDate">
-            {{ formatDate(props.row.endDate) }}
-          </q-td>
-          <q-td :props="props" key="remaining_balance">
-            {{ formatPrice(props.row.remaining_balance) }}
-          </q-td>
-          <q-td :props="props" key="listing_name">
-            {{ props.row.listing_name }}
-          </q-td>
-          <q-td :props="props" class="text-wrap" key="address_name">
-            {{ props.row.address_name }}
-          </q-td>
-          <q-td :props="props" class="text-wrap" key="address_type">
-            {{ props.row.address_type }}
-          </q-td>
-          <q-td :props="props" class="text-wrap" key="address">
-            <a v-if="props.row.address_latitude" :href="generateLinkGoogleMaps(props.row)" target="_blank">
-              {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
-            </a>
-            <b v-else target="_blank">
-              {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
-            </b>
-          </q-td>
-          <q-td :props="props" key="news_observation">
-            <q-btn-dropdown
-              v-if="props.row.news_observation"
-              color="black"
-              size="12px"
-              :auto-close="false"
-              outline
-            >
-              <q-list>
-                <q-item v-close-popup>
-                  <q-item-section>
+    <!--items for small screens-->
+    <template v-slot:item="props">
+        <div
+          class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+        >
+          <q-card>
+            <q-list bordered separator>
+              <q-item v-ripple>
+                <q-item-section>
+                  <template>
                     <q-item-label>
-                      {{ props.row.news_observation }}
+                      Código
                     </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
-          </q-td>
-        </q-tr>
+                    <q-item-label caption>
+                      {{ props.row.district_order}}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item v-ripple>
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Cliente
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ props.row.new_name}}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item v-ripple>
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Nombre Ref
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ props.row.description_ref}} - {{ props.row.type_ref}}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item v-ripple>
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Fecha
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ formatDate(props.row.lending_first_date) }} - {{ formatDate(props.row.lending_end_date) }}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item v-ripple>
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Deuda
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ formatPrice(props.row.value) }}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item v-ripple>
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Ruta
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ props.row.listing_name }}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item v-ripple>
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Dirección
+                    </q-item-label>
+                    <q-item-label caption>
+                      <a v-if="props.row.address_latitude" :href="generateLinkGoogleMaps(props.row)" target="_blank">
+                        {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
+                      </a>
+                      <b v-else target="_blank">
+                        {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
+                      </b>
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item v-ripple>
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Nota
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ props.row.new_observation }}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-btn
+                    label="Ver nequis"
+                    size="xs"
+                    color="primary"
+                    @click="openModal('nequis', props.row)"
+                  ></q-btn>
+                  <q-btn
+                    class="q-mt-sm"
+                    icon="delete"
+                    size="xs"
+                    color="red"
+                  ></q-btn>
+                </q-item-section>
+              </q-item>
+            </q-list>
+           </q-card>
+        </div>
       </template>
     </q-table>
     <modal-list-nequi
       v-if="showModalNequis"
       v-model="showModalNequis"
       :listing="itemSelected.listing_id"/>
-    <modal-card-board
-      v-if="showModalCardBoard"
-      v-model="showModalCardBoard"
-      :showBtnDownload="true"
-      :showBtnApplyDoubleInterest="false"
-      title="Cartulina actual"
-      :lendings="[lending]"/>
-    <modal-card-board
-      v-if="showModalCardBoardDouble"
-      v-model="showModalCardBoardDouble"
-      :showBtnDownload="true"
-      :showBtnApplyDoubleInterest="false"
-      :hasDoubleInterest="true"
-      title="Cartulina doble interés"
-      :lendings="[lending]"/>
-    <modal-card-board
-      v-if="showModalHistory"
-      v-model="showModalHistory"
-      :showBtnDownload="true"
-      :showBtnApplyDoubleInterest="false"
-      :hasDoubleInterest="false"
-      title="Historial"
-      :lendings="history"/>
   </div>
 </template>
 <script>
 import Moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import ModalListNequi from 'components/nequi/ModalListNequi.vue';
-import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
 import lendingTypes from '../../store/modules/lending/types';
 import reddirectionTypes from '../../store/modules/reddirection/types';
 import { showNotifications } from '../../helpers/showNotifications';
@@ -191,7 +172,6 @@ import { havePermission } from '../../helpers/havePermission';
 export default {
   components: {
     ModalListNequi,
-    ModalCardBoard,
   },
   data() {
     return {
@@ -291,7 +271,7 @@ export default {
         {
           name: 'news_observation',
           align: 'center',
-          label: 'Observación',
+          label: 'Nota',
           field: 'news_observation',
           visible: true,
         },
@@ -368,7 +348,13 @@ export default {
       showNotifications(messages, status, align, timeout);
     },
     getRowClass(row) {
-      return row.is_current ? 'bg-green' : '';
+      let c = 'bg-white';
+      if (row.is_current) {
+        c = 'bg-blue-2';
+      } else if (row.has_visited) {
+        c = 'bg-grey-5';
+      }
+      return c;
     },
     clickRow(row) {
       this.itemSelected = { ...row };
@@ -380,37 +366,8 @@ export default {
     },
     async openModal(action, row) {
       this.itemSelected = { ...row };
-      if (action === 'normal') {
-        showLoading('consultando ...', 'Por favor, espere', true);
-        await this.getLending(row.lending_id);
-        this.$q.loading.hide();
-        this.showModalCardBoard = true;
-      } else if (action === 'double') {
-        showLoading('consultando ...', 'Por favor, espere', true);
-        await this.getLending(row.lending_id);
-        this.$q.loading.hide();
-        this.showModalCardBoardDouble = true;
-      } else if (action === 'history') {
-        showLoading('consultando ...', 'Por favor, espere', true);
-        await this.fetchHistory(row.news_id);
-        this.$q.loading.hide();
-        this.showModalHistory = true;
-      } else if (action === 'nequis') {
+      if (action === 'nequis') {
         this.showModalNequis = true;
-      } else if (action === 'visit') {
-        showLoading('guardando ...', 'Por favor, espere', true);
-        await this.saveReddirection({
-          collector_id: this.userSelected,
-          lending_id: row.lending_id,
-          address: row.address,
-          district_id: row.district,
-          type_ref: row.address_type,
-          description_ref: row.address_name,
-          value: row.remaining_balance,
-          status: 'creado',
-        });
-        await this.initData();
-        this.$q.loading.hide();
       }
     },
     async getLocation() {
