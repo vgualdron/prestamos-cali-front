@@ -160,7 +160,7 @@
             <a v-if="props.row.address_latitude" :href="generateLinkGoogleMaps(props.row)" target="_blank">
               {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
             </a>
-            <b v-else target="_blank">
+            <b v-else>
               {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
             </b>
           </q-td>

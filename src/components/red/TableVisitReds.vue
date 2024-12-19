@@ -91,7 +91,7 @@
                   </template>
                 </q-item-section>
               </q-item>
-              <q-item v-ripple>
+              <q-item>
                 <q-item-section>
                   <template>
                     <q-item-label>
@@ -103,24 +103,24 @@
                   </template>
                 </q-item-section>
               </q-item>
-              <q-item v-ripple>
+              <q-item >
                 <q-item-section>
                   <template>
                     <q-item-label>
                       Dirección
                     </q-item-label>
                     <q-item-label caption>
-                      <a v-if="props.row.address_latitude" :href="generateLinkGoogleMaps(props.row)" target="_blank">
+                      <a v-if="props.row.address_latitude" @click="generateLinkGoogleMaps(props.row)" class="link-style">
                         {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
                       </a>
-                      <b v-else target="_blank">
+                      <b v-else>
                         {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
                       </b>
                     </q-item-label>
                   </template>
                 </q-item-section>
               </q-item>
-              <q-item v-ripple>
+              <q-item>
                 <q-item-section>
                   <template>
                     <q-item-label>
@@ -136,14 +136,12 @@
                 <q-item-section>
                   <q-btn
                     label="Ver nequis"
-                    size="xs"
                     color="primary"
                     @click="openModal('nequis', props.row)"
                   ></q-btn>
                   <q-btn
                     class="q-mt-sm"
                     icon="delete"
-                    size="xs"
                     color="red"
                   ></q-btn>
                 </q-item-section>
@@ -181,101 +179,7 @@ export default {
       type: 'C',
       route: '/review',
       name: 'Revisión de información',
-      columns: [
-        {
-          name: 'actions',
-          label: 'Acciones',
-          align: 'center',
-          visible: false,
-        },
-        {
-          name: 'collector_name',
-          label: 'Cobrador',
-          align: 'center',
-          field: 'collector_name',
-          visible: false,
-        },
-        {
-          name: 'district_order',
-          label: 'Codigo',
-          align: 'center',
-          field: 'district_order',
-          visible: false,
-        },
-        {
-          name: 'news_name',
-          align: 'left',
-          label: 'Cliente',
-          field: 'news_name',
-          style: 'max-width: 300px',
-          visible: true,
-        },
-        {
-          name: 'total_value',
-          align: 'center',
-          label: 'Valor',
-          field: 'total_value',
-          visible: true,
-        },
-        {
-          name: 'firstDate',
-          align: 'center',
-          label: 'Fecha ini',
-          field: 'firstDate',
-          visible: true,
-        },
-        {
-          name: 'endDate',
-          align: 'center',
-          label: 'Fecha fin',
-          field: 'endDate',
-          visible: true,
-        },
-        {
-          name: 'remaining_balance',
-          align: 'center',
-          label: 'Deuda',
-          field: 'remaining_balance',
-          visible: true,
-        },
-        {
-          name: 'listing_name',
-          align: 'center',
-          label: 'Ruta',
-          field: 'listing_name',
-          visible: true,
-        },
-        {
-          name: 'address_name',
-          align: 'left',
-          label: 'Nombre REF',
-          field: 'address_name',
-          style: 'max-width: 300px',
-          visible: true,
-        },
-        {
-          name: 'address_type',
-          align: 'center',
-          label: 'Tipo',
-          field: 'address_type',
-          visible: true,
-        },
-        {
-          name: 'address',
-          align: 'left',
-          label: 'Dirección',
-          field: 'address',
-          style: 'max-width: 300px',
-          visible: true,
-        },
-        {
-          name: 'news_observation',
-          align: 'center',
-          label: 'Nota',
-          field: 'news_observation',
-          visible: true,
-        },
-      ],
+      columns: [],
       pagination: {
         rowsPerPage: 0,
       },
@@ -370,42 +274,17 @@ export default {
         this.showModalNequis = true;
       }
     },
-    async getLocation() {
-      try {
-        if (navigator.geolocation) {
-          // Usamos una promesa para envolver el método getCurrentPosition
-          const position = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject);
-          });
-          // Almacenamos la latitud y longitud
-          this.location = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          };
-        } else {
-          this.error = 'Unable to retrieve location. Please allow access.';
-        }
-      } catch (err) {
-        this.error = 'Geolocation is not supported by this browser.';
-      }
-    },
     async generateLinkGoogleMaps(row) {
       showLoading('Cargando ...', 'Por favor, espere', true);
-      await this.getLocation();
-      const {
-        latitude,
-        longitude,
-      } = this.location;
-
-      const latIni = latitude;
-      const lngIni = longitude;
+      const latIni = row.user_latitude;
+      const lngIni = row.user_longitude;
       const latEnd = row.address_latitude;
       const lngEnd = row.address_longitude;
 
       const baseUrl = 'https://www.google.com/maps/dir/?api=1';
       const url = `${baseUrl}&origin=${latIni},${lngIni}&destination=${latEnd},${lngEnd}`;
       this.$q.loading.hide();
-      return url;
+      window.open(url, '_blank');
     },
     getColorBadge(i) {
       const colors = [
@@ -482,5 +361,13 @@ export default {
     white-space: normal;
     word-wrap: break-word;
     word-break: break-word;
+  }
+  .link-style {
+    color: #1976D2; /* Color azul */
+    text-decoration: underline; /* Subrayado */
+    cursor: pointer; /* Cambio de cursor a mano */
+  }
+  .link-style:hover {
+    text-decoration: none; /* Sin subrayado cuando el cursor pasa sobre el enlace */
   }
 </style>
