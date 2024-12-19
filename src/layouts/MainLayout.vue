@@ -16,7 +16,8 @@
           <q-btn
             outline
             dense
-            label="Ir a la migracion de rutas"
+            size="xs"
+            label="Migracion"
             @click="$router.push('/upload-news')"
           />
           <q-btn-dropdown
