@@ -160,6 +160,7 @@ export default {
         this.$q.loading.hide();
         this.showDialog = false;
         this.$emit('updateTable', this.row.listing_id);
+        this.$emit('addPayment', { idFile: this.file.id });
       }
     },
   },

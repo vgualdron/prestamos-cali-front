@@ -15,4 +15,8 @@ export default {
     method: 'PUT',
     data,
   }),
+  getByLending: (id) => http({
+    url: `${process.env.URL_API}/api/reddirections/get-by-lending/${id}`,
+    method: 'GET',
+  }),
 };

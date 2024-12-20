@@ -172,7 +172,7 @@
       :row="itemSelected"
       :isStreet="true"
       type="nequi"
-      @updateTable="console.log('updateTable')"/>
+      @addPayment="onAddPayment"/>
     <modal-photo-house
       v-if="showModalPhotoHouse"
       v-model="showModalPhotoHouse"
@@ -309,7 +309,6 @@ export default {
     },
     async openModal(action, row) {
       this.itemSelected = { ...row };
-      console.log(this.itemSelected);
       if (action === 'nequis') {
         this.showModalNequis = true;
       } else if (action === 'payment') {
@@ -377,6 +376,17 @@ export default {
         ...this.reddirection,
         file_id: value.id,
         start_date: Moment().format('YYYY-MM-DD HH:mm:ss'),
+      };
+      await this.updateReddirection(data);
+      await this.initData();
+      this.$q.loading.hide();
+    },
+    async onAddPayment(value) {
+      showLoading('Cargando ...', 'Por favor, espere', true);
+      const data = {
+        ...this.reddirection,
+        file2_id: value.idFile,
+        end_date: Moment().format('YYYY-MM-DD HH:mm:ss'),
       };
       await this.updateReddirection(data);
       await this.initData();

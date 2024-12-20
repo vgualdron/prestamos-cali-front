@@ -12,6 +12,7 @@
           <div class="row text-center">
             <camera-photo
               :config="config"
+              state="aprobado"
               @savedFile="onSavedFile"
             />
           </div>

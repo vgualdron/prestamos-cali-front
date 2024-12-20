@@ -116,6 +116,14 @@
                   </q-item-section>
                 </q-item>
                 <q-item
+                  clickable
+                  v-close-popup
+                  @click="openModal('reddirections', props.row)">
+                  <q-item-section>
+                    <q-item-label>Ver visitas</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
                   v-if="!hasReddirectionActive"
                   clickable
                   v-close-popup
@@ -136,6 +144,7 @@
             </q-badge>
           </q-td>
           <q-td :props="props" key="district_order">
+            <q-icon v-if="props.row.reddirection_start_date" name="flag" color="black" size="md"/>
             {{ props.row.district_order }}
           </q-td>
           <q-td :props="props" class="text-wrap" key="news_name">
@@ -224,6 +233,10 @@
       v-if="showModalCv"
       :row="itemSelected"
       :onlyTable="true"/>
+    <modal-list-visits
+      v-model="showModalListVisits"
+      v-if="showModalListVisits"
+      :items="reddirections"/>
   </div>
 </template>
 <script>
@@ -231,6 +244,7 @@ import Moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import ModalListNequi from 'components/nequi/ModalListNequi.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
+import ModalListVisits from 'components/red/ModalListVisits.vue';
 import Cv from 'components/new/Cv.vue';
 import newTypes from '../../store/modules/new/types';
 import zoneTypes from '../../store/modules/zone/types';
@@ -247,6 +261,7 @@ export default {
   components: {
     ModalListNequi,
     ModalCardBoard,
+    ModalListVisits,
     Cv,
   },
   data() {
@@ -368,6 +383,7 @@ export default {
       showModalHistory: false,
       showModalNequis: false,
       showModalCv: false,
+      showModalListVisits: false,
     };
   },
   props: {
@@ -435,6 +451,7 @@ export default {
     }),
     ...mapState(reddirectionTypes.PATH, {
       reddirection: 'reddirection',
+      reddirections: 'reddirections',
       reddirectionStatus: 'status',
       reddirectionResponseMessages: 'responseMessages',
     }),
@@ -563,6 +580,7 @@ export default {
     }),
     ...mapActions(reddirectionTypes.PATH, {
       getCurrentByUser: reddirectionTypes.actions.GET_CURRENT_BY_USER,
+      getByLending: reddirectionTypes.actions.GET_BY_LENDING,
       saveReddirection: reddirectionTypes.actions.SAVE_REDDIRECTION,
     }),
     ...mapActions(lendingTypes.PATH, {
@@ -646,6 +664,11 @@ export default {
         }).onDismiss(() => {
           // console.log('I am triggered on both OK and Cancel')
         });
+      } else if (action === 'reddirections') {
+        showLoading('consultando ...', 'Por favor, espere', true);
+        await this.getByLending(row.lending_id);
+        this.$q.loading.hide();
+        this.showModalListVisits = true;
       }
     },
     generateLinkGoogleMaps(row) {

@@ -178,6 +178,11 @@ export default {
       type: String,
       default: '',
     },
+    state: {
+      type: String,
+      default: 'creado',
+      required: false,
+    },
   },
   async mounted() {
     await this.fetchFile();
@@ -338,7 +343,7 @@ export default {
         type: 'image',
         file: this.file,
         extension: this.extension,
-        status: name === 'FOTO_VOUCHER' ? 'creado' : 'creado',
+        status: this.state,
         latitude,
         longitude,
       });
