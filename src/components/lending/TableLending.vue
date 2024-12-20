@@ -161,6 +161,24 @@
                       <q-item-label>Cuentas Nequi</q-item-label>
                     </q-item-section>
                   </q-item>
+                  <q-item
+                    v-if="props.row.order !== 0 && hasPermission('list.blockRedLending')"
+                    clickable
+                    v-close-popup
+                    @click="blockForReds(props.row, 0)">
+                    <q-item-section>
+                      <q-item-label>Bloquear para ocultar en rojos</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    v-if="props.row.order === 0 && hasPermission('list.blockRedLending')"
+                    clickable
+                    v-close-popup
+                    @click="blockForReds(props.row, 1)">
+                    <q-item-section>
+                      <q-item-label>Desbloquear para mostrar rojos</q-item-label>
+                    </q-item-section>
+                  </q-item>
                 </q-list>
               </q-btn-dropdown>
             </q-td>
@@ -903,6 +921,7 @@ export default {
   methods: {
     ...mapActions(lendingTypes.PATH, {
       fetchLendings: lendingTypes.actions.FETCH_LENDINGS,
+      updateLending: lendingTypes.actions.UPDATE_LENDING,
       deleteLending: lendingTypes.actions.DELETE_LENDING,
       renovateLending: lendingTypes.actions.RENOVATE_LENDING,
       fetchHistory: lendingTypes.actions.FETCH_HISTORY,
@@ -922,6 +941,9 @@ export default {
       getFile: fileTypes.actions.GET_FILE,
       saveFile: fileTypes.actions.SAVE_FILE,
     }),
+    hasPermission(value) {
+      return havePermission(value);
+    },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
@@ -1409,6 +1431,32 @@ export default {
         await this.deletePaid(row.id);
         await this.getLendings(this.listingSelected.value);
         this.isLoadingTable = false;
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
+    },
+    async blockForReds(row, order) {
+      this.$q.dialog({
+        title: `${order !== 0 ? 'Desbloquear' : 'Bloquear'} para rojos`,
+        message: `Está seguro que desea ${order !== 0 ? 'desbloquear para mostrar' : 'bloquear para ocultar'} en rojos?`,
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        showLoading('Cargando ...', 'Por favor, espere', true);
+        await this.updateLending({
+          id: row.id,
+          order,
+        });
+        await this.getLendings(this.listingSelected.value);
+        this.$q.loading.hide();
       }).onCancel(() => {
         // console.log('>>>> Cancel')
       }).onDismiss(() => {

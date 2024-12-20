@@ -2,6 +2,7 @@ export default {
   PATH: '@module/reddirection',
   actions: {
     SAVE_REDDIRECTION: '@actions/saveReddirection',
+    UPDATE_REDDIRECTION: '@actions/updateReddirection',
     GET_CURRENT_BY_USER: '@actions/getCurrentByUser',
   },
   getters: {

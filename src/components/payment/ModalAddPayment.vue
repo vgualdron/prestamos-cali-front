@@ -80,6 +80,11 @@ export default {
       required: false,
       default: 'nequi',
     },
+    isStreet: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     valuePayment: {
       required: true,
     },
@@ -139,6 +144,7 @@ export default {
         date: moment().format('YYYY-MM-DD HH:mm:ss'),
         observation: '',
         type: this.type,
+        is_street: this.isStreet,
         status: this.type === 'nequi' ? 'creado' : 'aprobado',
         file_id: this.type === 'nequi' ? this.file.id : null,
       });

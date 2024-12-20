@@ -25,13 +25,13 @@
       grid
     >
     <!--items for small screens-->
-    <template v-slot:item="props">
+      <template v-slot:item="props">
         <div
           class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
         >
           <q-card>
             <q-list bordered separator>
-              <q-item v-ripple>
+              <q-item>
                 <q-item-section>
                   <template>
                     <q-item-label>
@@ -43,7 +43,7 @@
                   </template>
                 </q-item-section>
               </q-item>
-              <q-item v-ripple>
+              <q-item>
                 <q-item-section>
                   <template>
                     <q-item-label>
@@ -55,7 +55,7 @@
                   </template>
                 </q-item-section>
               </q-item>
-              <q-item v-ripple>
+              <q-item>
                 <q-item-section>
                   <template>
                     <q-item-label>
@@ -67,7 +67,7 @@
                   </template>
                 </q-item-section>
               </q-item>
-              <q-item v-ripple>
+              <q-item>
                 <q-item-section>
                   <template>
                     <q-item-label>
@@ -79,7 +79,7 @@
                   </template>
                 </q-item-section>
               </q-item>
-              <q-item v-ripple>
+              <q-item>
                 <q-item-section>
                   <template>
                     <q-item-label>
@@ -135,14 +135,24 @@
               <q-item>
                 <q-item-section>
                   <q-btn
-                    label="Ver nequis"
+                    class="q-mt-sm"
+                    label="Foto de la casa"
                     color="primary"
-                    @click="openModal('nequis', props.row)"
+                    @click="openModal('photo1', props.row)"
                   ></q-btn>
                   <q-btn
                     class="q-mt-sm"
-                    icon="diner"
+                    label="Agregar pago"
                     color="green"
+                    :disabled="!props.row.file_id"
+                    @click="openModal('payment', props.row)"
+                  ></q-btn>
+                  <q-btn
+                    class="q-mt-sm"
+                    label="Ver nequis"
+                    color="primary"
+                    :disabled="!props.row.file_id"
+                    @click="openModal('nequis', props.row)"
                   ></q-btn>
                 </q-item-section>
               </q-item>
@@ -155,12 +165,33 @@
       v-if="showModalNequis"
       v-model="showModalNequis"
       :listing="itemSelected.listing_id"/>
+    <modal-add-payment
+      v-if="showModalPaymentNequi"
+      v-model="showModalPaymentNequi"
+      :valuePayment="reddirection.value"
+      :row="itemSelected"
+      :isStreet="true"
+      type="nequi"
+      @updateTable="console.log('updateTable')"/>
+    <modal-photo-house
+      v-if="showModalPhotoHouse"
+      v-model="showModalPhotoHouse"
+      :config="{
+        name: 'FOTO_CASA_REDDIRECTION',
+        storage: 'reddirections',
+        modelName: 'reddirections',
+        modelId: reddirection.id
+      }"
+      @savedFile="updateData"
+    />
   </div>
 </template>
 <script>
 import Moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import ModalListNequi from 'components/nequi/ModalListNequi.vue';
+import ModalPhotoHouse from 'components/red/ModalPhotoHouse.vue';
+import ModalAddPayment from 'components/payment/ModalAddPayment.vue';
 import lendingTypes from '../../store/modules/lending/types';
 import reddirectionTypes from '../../store/modules/reddirection/types';
 import { showNotifications } from '../../helpers/showNotifications';
@@ -170,6 +201,8 @@ import { havePermission } from '../../helpers/havePermission';
 export default {
   components: {
     ModalListNequi,
+    ModalPhotoHouse,
+    ModalAddPayment,
   },
   data() {
     return {
@@ -195,6 +228,8 @@ export default {
       showModalCardBoardDouble: false,
       showModalHistory: false,
       showModalNequis: false,
+      showModalPaymentNequi: false,
+      showModalPhotoHouse: false,
       location: null,
     };
   },
@@ -221,6 +256,9 @@ export default {
       reddirectionResponseMessages: 'responseMessages',
     }),
     dataTable() {
+      if (!this.reddirection) {
+        return [];
+      }
       return [this.reddirection];
     },
     validatedPermissions() {
@@ -242,6 +280,7 @@ export default {
   methods: {
     ...mapActions(reddirectionTypes.PATH, {
       getCurrentByUser: reddirectionTypes.actions.GET_CURRENT_BY_USER,
+      updateReddirection: reddirectionTypes.actions.UPDATE_REDDIRECTION,
     }),
     ...mapActions(lendingTypes.PATH, {
       getLending: lendingTypes.actions.GET_LENDING,
@@ -270,8 +309,14 @@ export default {
     },
     async openModal(action, row) {
       this.itemSelected = { ...row };
+      console.log(this.itemSelected);
       if (action === 'nequis') {
         this.showModalNequis = true;
+      } else if (action === 'payment') {
+        this.itemSelected.id = row.lending_id;
+        this.showModalPaymentNequi = true;
+      } else if (action === 'photo1') {
+        this.showModalPhotoHouse = true;
       }
     },
     async generateLinkGoogleMaps(row) {
@@ -326,32 +371,16 @@ export default {
       await this.getCurrentByUser(this.userSelected);
       this.$q.loading.hide();
     },
-    async addRedcollector() {
-      this.$q.dialog({
-        title: 'Asignar',
-        message: 'Está seguro que desea asignar el sector al cobrador?',
-        ok: {
-          push: true,
-        },
-        cancel: {
-          push: true,
-          color: 'negative',
-          text: 'adsa',
-        },
-        persistent: true,
-      }).onOk(async () => {
-        showLoading('Guardando ...', 'Por favor, espere', true);
-        await this.saveRedcollector({
-          collector_id: this.userSelected,
-        });
-        this.showNotification(this.redcollectorResponseMessages, this.redcollectorStatus, 'top-right', 5000);
-        await this.initData();
-        this.$q.loading.hide();
-      }).onCancel(() => {
-        // console.log('>>>> Cancel')
-      }).onDismiss(() => {
-        // console.log('I am triggered on both OK and Cancel')
-      });
+    async updateData(value) {
+      showLoading('Cargando ...', 'Por favor, espere', true);
+      const data = {
+        ...this.reddirection,
+        file_id: value.id,
+        start_date: Moment().format('YYYY-MM-DD HH:mm:ss'),
+      };
+      await this.updateReddirection(data);
+      await this.initData();
+      this.$q.loading.hide();
     },
   },
 };

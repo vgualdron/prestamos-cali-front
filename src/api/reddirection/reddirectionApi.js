@@ -10,4 +10,9 @@ export default {
     url: `${process.env.URL_API}/api/reddirections/get-current-by-user/${id}`,
     method: 'GET',
   }),
+  update: (data) => http({
+    url: `${process.env.URL_API}/api/reddirections/${data.id}`,
+    method: 'PUT',
+    data,
+  }),
 };
