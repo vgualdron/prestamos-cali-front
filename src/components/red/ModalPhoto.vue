@@ -3,7 +3,7 @@
     <q-dialog v-model="showDialog" persistent>
       <q-card>
         <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">Foto de la casa</div>
+          <div class="text-h6">Agregar foto</div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>

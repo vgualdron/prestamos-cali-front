@@ -135,6 +135,7 @@
               <q-item>
                 <q-item-section>
                   <q-btn
+                    :disabled="props.row.file2_id"
                     class="q-mt-sm"
                     label="Foto de la casa"
                     color="primary"
@@ -144,14 +145,21 @@
                     class="q-mt-sm"
                     label="Agregar pago"
                     color="green"
-                    :disabled="!props.row.file_id"
+                    :disabled="!props.row.file_id || props.row.file2_id"
                     @click="openModal('payment', props.row)"
+                  ></q-btn>
+                  <q-btn
+                    class="q-mt-sm"
+                    label="Agregar aviso"
+                    color="grey"
+                    :disabled="!props.row.file_id || props.row.file2_id"
+                    @click="openModal('warning', props.row)"
                   ></q-btn>
                   <q-btn
                     class="q-mt-sm"
                     label="Ver nequis"
                     color="primary"
-                    :disabled="!props.row.file_id"
+                    :disabled="!props.row.file_id || props.row.file2_id"
                     @click="openModal('nequis', props.row)"
                   ></q-btn>
                 </q-item-section>
@@ -173,7 +181,7 @@
       :isStreet="true"
       type="nequi"
       @addPayment="onAddPayment"/>
-    <modal-photo-house
+    <modal-photo
       v-if="showModalPhotoHouse"
       v-model="showModalPhotoHouse"
       :config="{
@@ -184,13 +192,24 @@
       }"
       @savedFile="updateData"
     />
+    <modal-photo
+      v-if="showModalPhotoWarning"
+      v-model="showModalPhotoWarning"
+      :config="{
+        name: 'FOTO_AVISO_REDDIRECTION',
+        storage: 'reddirections',
+        modelName: 'reddirections',
+        modelId: reddirection.id
+      }"
+      @savedFile="updateDataWarning"
+    />
   </div>
 </template>
 <script>
 import Moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import ModalListNequi from 'components/nequi/ModalListNequi.vue';
-import ModalPhotoHouse from 'components/red/ModalPhotoHouse.vue';
+import ModalPhoto from 'src/components/red/ModalPhoto.vue';
 import ModalAddPayment from 'components/payment/ModalAddPayment.vue';
 import lendingTypes from '../../store/modules/lending/types';
 import reddirectionTypes from '../../store/modules/reddirection/types';
@@ -201,7 +220,7 @@ import { havePermission } from '../../helpers/havePermission';
 export default {
   components: {
     ModalListNequi,
-    ModalPhotoHouse,
+    ModalPhoto,
     ModalAddPayment,
   },
   data() {
@@ -230,6 +249,7 @@ export default {
       showModalNequis: false,
       showModalPaymentNequi: false,
       showModalPhotoHouse: false,
+      showModalPhotoWarning: false,
       location: null,
     };
   },
@@ -316,6 +336,8 @@ export default {
         this.showModalPaymentNequi = true;
       } else if (action === 'photo1') {
         this.showModalPhotoHouse = true;
+      } else if (action === 'warning') {
+        this.showModalPhotoWarning = true;
       }
     },
     async generateLinkGoogleMaps(row) {
@@ -376,6 +398,18 @@ export default {
         ...this.reddirection,
         file_id: value.id,
         start_date: Moment().format('YYYY-MM-DD HH:mm:ss'),
+      };
+      await this.updateReddirection(data);
+      await this.initData();
+      this.$q.loading.hide();
+    },
+    async updateDataWarning(value) {
+      showLoading('Cargando ...', 'Por favor, espere', true);
+      const data = {
+        ...this.reddirection,
+        file2_id: value.id,
+        solution: 'aviso',
+        end_date: Moment().format('YYYY-MM-DD HH:mm:ss'),
       };
       await this.updateReddirection(data);
       await this.initData();
