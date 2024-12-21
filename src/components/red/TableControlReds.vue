@@ -133,28 +133,25 @@
             {{ props.row.district_order }}
           </q-td>
           <q-td :props="props" class="text-wrap" key="news_name">
-            {{ props.row.news_name }}
-          </q-td>
-          <q-td :props="props" key="total_value">
-            {{ formatPrice(props.row.total_value) }}
+            {{ props.row.new_name }}
           </q-td>
           <q-td :props="props" key="firstDate">
-            {{ formatDate(props.row.firstDate) }}
+            {{ formatDate(props.row.lending_first_date) }}
           </q-td>
           <q-td :props="props" key="endDate">
-            {{ formatDate(props.row.endDate) }}
+            {{ formatDate(props.row.lending_end_date) }}
           </q-td>
           <q-td :props="props" key="remaining_balance">
-            {{ formatPrice(props.row.remaining_balance) }}
+            {{ formatPrice(props.row.value) }}
           </q-td>
           <q-td :props="props" key="listing_name">
             {{ props.row.listing_name }}
           </q-td>
           <q-td :props="props" class="text-wrap" key="address_name">
-            {{ props.row.address_name }}
+            {{ props.row.description_ref }}
           </q-td>
           <q-td :props="props" class="text-wrap" key="address_type">
-            {{ props.row.address_type }}
+            {{ props.row.type_ref }}
           </q-td>
           <q-td :props="props" class="text-wrap" key="address">
             <a v-if="props.row.address_latitude" :href="generateLinkGoogleMaps(props.row)" target="_blank">
@@ -182,6 +179,76 @@
                 </q-item>
               </q-list>
             </q-btn-dropdown>
+          </q-td>
+          <q-td :props="props" class="text-wrap" key="attended">
+            <q-icon size="xs" name="edit" />
+            {{ props.row.attended }}
+            <q-popup-edit :value="props.row.attended" v-slot="scope" buttons
+              @input="val => saveDate('attended', val)">
+              <q-option-group
+                v-model="scope.value"
+                :options="[
+                  {
+                    label: 'vacio',
+                    value: 'vacio'
+                  },
+                  {
+                    label: 'cliente',
+                    value: 'cliente'
+                  },
+                  {
+                    label: 'fiador',
+                    value: 'fiador',
+                  },
+                  {
+                    label: 'familiar',
+                    value: 'familiar',
+                  },
+                  {
+                    label: 'otro',
+                    value: 'otro',
+                  },
+                ]"
+                color="primary"
+              />
+            </q-popup-edit>
+          </q-td>
+          <q-td :props="props" class="text-wrap" key="solution">
+            <q-icon size="xs" name="edit" />
+            {{ props.row.solution }}
+            <q-popup-edit :value="props.row.solution" v-slot="scope" buttons
+              @input="val => saveDate('solution', val)">
+              <q-option-group
+                v-model="scope.value"
+                :options="[
+                  {
+                    label: 'acuerdo',
+                    value: 'acuerdo'
+                  },
+                  {
+                    label: 'pago',
+                    value: 'pago'
+                  },
+                  {
+                    label: 'aviso',
+                    value: 'aviso',
+                  },
+                  {
+                    label: 'no paga',
+                    value: 'no paga',
+                  },
+                ]"
+                color="primary"
+              />
+            </q-popup-edit>
+          </q-td>
+          <q-td :props="props" class="text-wrap" key="observation">
+            <q-icon size="xs" name="edit" />
+            {{ props.row.observation }}
+            <q-popup-edit :value="props.row.observation" v-slot="scope" buttons
+              @input="val => saveDate('observation', val)">
+              <q-input v-model="scope.value" dense autofocus />
+            </q-popup-edit>
           </q-td>
         </q-tr>
       </template>
@@ -287,13 +354,6 @@ export default {
           visible: true,
         },
         {
-          name: 'total_value',
-          align: 'center',
-          label: 'Valor',
-          field: 'total_value',
-          visible: true,
-        },
-        {
           name: 'firstDate',
           align: 'center',
           label: 'Fecha ini',
@@ -349,6 +409,27 @@ export default {
           align: 'center',
           label: 'Nota',
           field: 'news_observation',
+          visible: true,
+        },
+        {
+          name: 'attended',
+          align: 'center',
+          label: 'Atendido por',
+          field: 'attended',
+          visible: true,
+        },
+        {
+          name: 'solution',
+          align: 'center',
+          label: 'Solución',
+          field: 'solution',
+          visible: true,
+        },
+        {
+          name: 'observation',
+          align: 'center',
+          label: 'Observación',
+          field: 'observation',
           visible: true,
         },
       ],
@@ -435,6 +516,7 @@ export default {
       redcollectorResponseMessages: 'responseMessages',
     }),
     ...mapState(reddirectionTypes.PATH, {
+      reddirection: 'reddirection',
       reddirections: 'reddirections',
       reddirectionStatus: 'status',
       reddirectionResponseMessages: 'responseMessages',
@@ -449,17 +531,10 @@ export default {
       return label;
     },
     dataTable() {
-      let data = this.newsReds.map((element) => ({
-        ...element,
-      }));
-      if (this.citySelected > 0) {
-        data = data.filter((item) => item.city_id === this.citySelected);
+      if (!this.reddirection) {
+        return [];
       }
-      if (this.sectorSelected > 0) {
-        data = data.filter((item) => item.sector_id === this.sectorSelected);
-      }
-      data = data.filter((item) => item.is_current);
-      return data;
+      return [this.reddirection];
     },
     validatedPermissions() {
       const statusAllCities = havePermission('red.allCitySupervise');
@@ -552,6 +627,8 @@ export default {
     ...mapActions(reddirectionTypes.PATH, {
       getByLending: reddirectionTypes.actions.GET_BY_LENDING,
       saveReddirection: reddirectionTypes.actions.SAVE_REDDIRECTION,
+      getCurrentByUser: reddirectionTypes.actions.GET_CURRENT_BY_USER,
+      updateReddirection: reddirectionTypes.actions.UPDATE_REDDIRECTION,
     }),
     ...mapActions(lendingTypes.PATH, {
       getLending: lendingTypes.actions.GET_LENDING,
@@ -576,7 +653,7 @@ export default {
     async pollData() {
       this.polling = setInterval(async () => {
         await this.initData();
-      }, 180000);
+      }, 60000);
     },
     async openModal(action, row) {
       this.itemSelected = { ...row };
@@ -592,15 +669,15 @@ export default {
         this.showModalCardBoardDouble = true;
       } else if (action === 'history') {
         showLoading('consultando ...', 'Por favor, espere', true);
-        await this.fetchHistory(row.news_id);
+        await this.fetchHistory(row.new_id);
         this.$q.loading.hide();
         this.showModalHistory = true;
       } else if (action === 'nequis') {
         this.showModalNequis = true;
       } else if (action === 'cv') {
         this.itemSelected = {
-          id: row.news_id,
-          type_cv: row.news_type_cv,
+          id: row.new_id,
+          type_cv: row.new_type_cv,
         };
         this.showModalCv = true;
       } else if (action === 'reddirections') {
@@ -663,10 +740,7 @@ export default {
       return Moment(date).format('DD/MM/YYYY');
     },
     async listNewsMounted() {
-      await this.listNewsReds({
-        city: this.citySelected,
-        user: this.userSelected,
-      });
+      await this.getCurrentByUser(this.userSelected);
       if (this.status === false) {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
         this.data = [];
@@ -684,6 +758,14 @@ export default {
           this.userSelected = this.optionsUsers[0].value;
         }
       }
+    },
+    async saveDate(field, value) {
+      showLoading('Guardando ...', 'Por favor, espere', true);
+      const item = { ...this.reddirection };
+      item[field] = value.value ? value.value : value;
+      await this.updateReddirection(item);
+      await this.listNewsMounted();
+      this.$q.loading.hide();
     },
   },
 };

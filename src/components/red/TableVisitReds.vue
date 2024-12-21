@@ -134,6 +134,30 @@
               </q-item>
               <q-item>
                 <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Quien atendió de la visita?
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ props.row.attended }}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Observación de la visita
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ props.row.observation }}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
                   <q-btn
                     :disabled="props.row.file2_id"
                     class="q-mt-sm"
@@ -325,7 +349,7 @@ export default {
     async pollData() {
       this.polling = setInterval(async () => {
         await this.initData();
-      }, 180000);
+      }, 60000);
     },
     async openModal(action, row) {
       this.itemSelected = { ...row };
