@@ -28,7 +28,7 @@
                   :rules="[(val) => (!!val) || '']"
                   hide-bottom-space
                   autocomplete="off"
-                  readonly
+                  :readonly="false"
                 />
                 <q-input
                   outlined

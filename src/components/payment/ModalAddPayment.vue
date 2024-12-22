@@ -144,6 +144,7 @@ export default {
         date: moment().format('YYYY-MM-DD HH:mm:ss'),
         observation: '',
         type: this.type,
+        is_valid: this.type === 'renovacion',
         is_street: this.isStreet,
         status: this.type === 'nequi' ? 'creado' : 'aprobado',
         file_id: this.type === 'nequi' ? this.file.id : null,
