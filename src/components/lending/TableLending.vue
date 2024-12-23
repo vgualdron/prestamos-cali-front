@@ -341,10 +341,24 @@
               {{ daysSinceGivenDate(props.row.firstDate) }}
             </q-td>
             <q-td key="firstDate" :props="props">
+              <q-icon size="xs" name="edit" />
               {{ formatDate(props.row.firstDate) }}
+              <q-popup-edit
+                :value="formatDateInit(props.row.firstDate)"
+                v-slot="scope" buttons
+                @input="val => changeRow('firstDate', val)">
+                <q-input v-model="scope.value" dense autofocus type="datetime-local" />
+              </q-popup-edit>
             </q-td>
             <q-td key="endDate" :class="rowClass(props.row)" :props="props">
+              <q-icon size="xs" name="edit" />
               {{ formatDate(props.row.endDate) }}
+              <q-popup-edit
+                :value="formatDateInit(props.row.endDate)"
+                v-slot="scope" buttons
+                @input="val => changeRow('endDate', val)">
+                <q-input v-model="scope.value" dense autofocus type="datetime-local" />
+              </q-popup-edit>
             </q-td>
             <q-td key="endPaymentDate" :props="props">
               {{ getLastPaymentDate(props.row) }}
@@ -424,7 +438,7 @@
     <modal-add-payment
       v-if="showModalPaymentNequi"
       v-model="showModalPaymentNequi"
-      :valuePayment="valuePayment"
+      :valuePayment="0"
       :row="itemSelected"
       type="nequi"
       @updateTable="getLendings"/>
@@ -1062,7 +1076,7 @@ export default {
     async pollData() {
       this.polling = setInterval(async () => {
         await this.getLendings(this.listingSelected.value);
-      }, 60000);
+      }, 300000);
     },
     rowClass(row) {
       let color = 'bg-white';
@@ -1482,6 +1496,20 @@ export default {
         }
       }
       return false;
+    },
+    async changeRow(field, value) {
+      showLoading('Modificando ...', 'Por favor, espere', true);
+      const item = {
+        id: this.itemSelected.id,
+      };
+      item[field] = value.value ? value.value : value;
+      await this.updateLending({
+        ...item,
+      });
+      this.$q.loading.hide();
+    },
+    formatDateInit(date) {
+      return date;
     },
   },
 };
