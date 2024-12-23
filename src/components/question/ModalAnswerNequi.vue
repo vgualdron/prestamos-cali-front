@@ -50,6 +50,11 @@
                 value: 600000,
                 disable: 600000 < row.observation
               },
+              {
+                label: '$1.000.000',
+                value: 1000000,
+                disable: 1000000 < row.observation
+              },
             ]"
             color="primary"
           />
@@ -82,12 +87,14 @@
             label="Rechazar"
             color="red"
             class="col q-ml-sm"
+            :disabled="!amount"
             @click="changeStatus('rechazado')"
           />
           <q-btn
             label="Aprobar"
             color="green"
             class="col q-ml-sm"
+            :disabled="!amount"
             @click="changeStatus('aprobado')"
           />
         </div>
