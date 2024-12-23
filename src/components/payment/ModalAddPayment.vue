@@ -17,11 +17,12 @@
                 label="Valor *"
                 type="number"
                 step="1000"
-                :max="valuePayment"
-                :hint="formattedPrice(amount)" />
+                :max="getBalance(row)"
+                :hint="formattedPrice(amount)"
+                :readonly="type === 'renovacion'"/>
             </div>
           </div>
-          <div class="row q-mt-md" v-if="amount > 0 && (this.type === 'nequi' || this.type === 'articulo') && amount <= valuePayment">
+          <div class="row q-mt-md" v-if="amount > 0 && (this.type === 'nequi' || this.type === 'articulo') && amount <= getBalance(row)">
             <div class="col-12 text-center">
               <p class="text-subtitle1 text-weight-bold text-center">AGREGAR FOTO DE SOPORTE DE PAGO</p>
               <upload-image
@@ -91,6 +92,9 @@ export default {
   },
   mounted() {
     showLoading('consultando ...', 'Por favor, espere', true);
+    if (this.type === 'renovacion') {
+      this.amount = parseInt(this.valuePayment, 10);
+    }
     this.$q.loading.hide();
   },
   computed: {
@@ -134,6 +138,29 @@ export default {
       updateFile: fileTypes.actions.UPDATE_FILE,
       getFile: fileTypes.actions.GET_FILE,
     }),
+    getBalance(row) {
+      const total = row.has_double_interest ? this.valueWithInterest(row) : this.valueWithInterest(row);
+      let totalPayments = 0;
+      if (row.payments && row.payments.length > 0) {
+        const payments = row.payments.filter((payment) => payment.is_valid);
+        totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+      }
+      return (total - totalPayments);
+    },
+    valueWithInterest(row) {
+      const val = row.amount + (row.amount * (row.percentage / 100));
+      return (val);
+    },
+    valueWithDoubleInterest(row) {
+      const dateDouble = new Date(row.doubleDate);
+      const total = row.amount + (row.amount * ((row.percentage * 2) / 100));
+      let totalPayments = 0;
+      if (row.payments && row.payments.length > 0) {
+        const payments = row.payments.filter((payment) => (payment.is_valid && new Date(payment.date) < dateDouble));
+        totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+      }
+      return (total - totalPayments);
+    },
     async saveAddPayment() {
       const { id } = this.row;
       showLoading('Guardando ...', 'Por favor, espere', true);
