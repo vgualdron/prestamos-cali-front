@@ -107,6 +107,11 @@
                               value: 600000,
                               disable: 600000 <= amount
                             },
+                            {
+                              label: '$1.000.000',
+                              value: 1000000,
+                              disable: 1000000 <= amount
+                            },
                           ]"
                           color="primary"
                         />
