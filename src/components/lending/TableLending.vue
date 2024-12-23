@@ -279,7 +279,8 @@
                 title="Ya pagó todo el préstamo">
                 <q-icon name="block" color="red" />
               </b>
-              <b v-else-if="!hasPaymentToday(props.row, 'renovacion', 0) && formatDate(props.row.created_at) !== formatDate(new Date())">
+              <!-- <b v-else-if="!hasPaymentToday(props.row, 'renovacion', 0) && formatDate(props.row.created_at) !== formatDate(new Date())"> -->
+              <b v-if="props.row.status === 'open'">
                 <q-btn
                   color="primary"
                   label="$"
@@ -341,9 +342,10 @@
               {{ daysSinceGivenDate(props.row.firstDate) }}
             </q-td>
             <q-td key="firstDate" :props="props">
-              <q-icon size="xs" name="edit" />
+              <q-icon size="xs" name="edit" v-if="props.row.status === 'open'" />
               {{ formatDate(props.row.firstDate) }}
               <q-popup-edit
+                v-if="props.row.status === 'open'"
                 :value="formatDateInit(props.row.firstDate)"
                 v-slot="scope" buttons
                 @input="val => changeRow('firstDate', val)">
@@ -351,9 +353,10 @@
               </q-popup-edit>
             </q-td>
             <q-td key="endDate" :class="rowClass(props.row)" :props="props">
-              <q-icon size="xs" name="edit" />
+              <q-icon size="xs" name="edit" v-if="props.row.status === 'open'" />
               {{ formatDate(props.row.endDate) }}
               <q-popup-edit
+                v-if="props.row.status === 'open'"
                 :value="formatDateInit(props.row.endDate)"
                 v-slot="scope" buttons
                 @input="val => changeRow('endDate', val)">
