@@ -174,6 +174,13 @@
                   ></q-btn>
                   <q-btn
                     class="q-mt-sm"
+                    label="Agregar pago con articulo"
+                    color="green"
+                    :disabled="!props.row.file_id || props.row.file2_id"
+                    @click="openModal('article', props.row)"
+                  ></q-btn>
+                  <q-btn
+                    class="q-mt-sm"
                     label="Agregar aviso"
                     color="grey"
                     :disabled="!props.row.file_id || props.row.file2_id"
@@ -204,6 +211,14 @@
       :row="itemSelected"
       :isStreet="true"
       type="nequi"
+      @addPayment="onAddPayment"/>
+    <modal-add-payment
+      v-if="showModalPaymentArticle"
+      v-model="showModalPaymentArticle"
+      :valuePayment="reddirection.value"
+      :row="itemSelected"
+      :isStreet="true"
+      type="articulo"
       @addPayment="onAddPayment"/>
     <modal-photo
       v-if="showModalPhotoHouse"
@@ -274,6 +289,7 @@ export default {
       showModalPaymentNequi: false,
       showModalPhotoHouse: false,
       showModalPhotoWarning: false,
+      showModalPaymentArticle: false,
       location: null,
     };
   },
@@ -358,6 +374,9 @@ export default {
       } else if (action === 'payment') {
         this.itemSelected.id = row.lending_id;
         this.showModalPaymentNequi = true;
+      } else if (action === 'article') {
+        this.itemSelected.id = row.lending_id;
+        this.showModalPaymentArticle = true;
       } else if (action === 'photo1') {
         this.showModalPhotoHouse = true;
       } else if (action === 'warning') {

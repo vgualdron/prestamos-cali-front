@@ -364,6 +364,26 @@ export default {
           label: '$1.000.000',
           value: 1000000,
         },
+        {
+          label: '$1.100.000',
+          value: 1100000,
+        },
+        {
+          label: '$1.200.000',
+          value: 1200000,
+        },
+        {
+          label: '$1.300.000',
+          value: 1300000,
+        },
+        {
+          label: '$1.400.000',
+          value: 1400000,
+        },
+        {
+          label: '$1.500.000',
+          value: 1500000,
+        },
       ],
       accountSelected: null,
     };

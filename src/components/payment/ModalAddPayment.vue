@@ -21,7 +21,7 @@
                 lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']" />
             </div>
           </div>
-          <div class="row q-mt-md" v-if="amount > 0 && this.type === 'nequi'">
+          <div class="row q-mt-md" v-if="amount > 0 && (this.type === 'nequi' || this.type === 'articulo')">
             <div class="col-12 text-center">
               <p class="text-subtitle1 text-weight-bold text-center">AGREGAR FOTO DE SOPORTE DE PAGO</p>
               <upload-image
@@ -38,7 +38,7 @@
           </div>
         </q-card-section>
         <q-separator />
-        <div class="row text-center q-pa-md" v-if="type !=='nequi'">
+        <div class="row text-center q-pa-md" v-if="type !=='nequi' && type !=='articulo'">
           <q-btn
             label="Guardar"
             color="primary"
@@ -120,7 +120,7 @@ export default {
       return this.fields;
     },
     title() {
-      return `Agregar cobro ${this.type === 'nequi' ? 'nequi' : 'para renovación'}`;
+      return `Agregar cobro ${this.type}`;
     },
   },
   methods: {
@@ -146,12 +146,12 @@ export default {
         type: this.type,
         is_valid: this.type === 'renovacion',
         is_street: this.isStreet,
-        status: this.type === 'nequi' ? 'creado' : 'aprobado',
-        file_id: this.type === 'nequi' ? this.file.id : null,
+        status: this.type === 'renovacion' ? 'aprobado' : 'creado',
+        file_id: this.type === 'renovacion' ? null : this.file.id,
       });
       this.$q.loading.hide();
       if (this.paymentResponseMessages && this.paymentResponseMessages.data) {
-        if (this.type === 'nequi') {
+        if (this.type === 'nequi' || this.type === 'articulo') {
           this.idPayment = this.paymentResponseMessages.data.id;
           await this.updateFile({
             ...this.file,

@@ -189,6 +189,7 @@
             </q-td>
             <q-td key="name" :props="props">
               <p :title="props.row.nameDebtor" class="q-my-auto">
+                <q-icon v-if="hasReddirectionsActive(props.row)" name="two_wheeler" color="red" size="md"/>
                 <q-badge
                   v-if="isNew(props.row)"
                   :color="props.row.type === 'N' ? 'green' : 'orange'">
@@ -246,7 +247,7 @@
                   label="$"
                   size="sm"
                   @click="addPaymentRenovation(props.row)"
-                  :disable="isDiabledAdd"
+                  :disable="hasReddirectionsActive(props.row)"
                 />
               </b>
             </q-td>
@@ -284,7 +285,7 @@
                   label="$"
                   size="sm"
                   @click="addPaymentNequi(props.row)"
-                  :disable="isDiabledAdd"
+                  :disable="hasReddirectionsActive(props.row)"
                 />
               </b>
             </q-td>
@@ -1471,6 +1472,16 @@ export default {
     },
     async closedLending() {
       await this.getLendings(this.listingSelected.value);
+    },
+    hasReddirectionsActive(row) {
+      const reds = row.reddirections;
+      if (reds && reds.length > 0) {
+        const actives = reds.filter((red) => red.status === 'activo');
+        if (actives && actives.length > 0) {
+          return true;
+        }
+      }
+      return false;
     },
   },
 };
