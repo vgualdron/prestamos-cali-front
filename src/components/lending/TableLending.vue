@@ -222,9 +222,20 @@
                     {{ formatPrice(getPaymentTodayRenovation(props.row).amount) }}
                   </b>
                 </q-badge>
-                <b v-else>
-                  {{ formatPrice(getPaymentTodayRenovation(props.row).amount) }}
-                </b>
+                <q-badge
+                  v-else
+                  color="black">
+                  <b>
+                    {{ formatPrice(getPaymentTodayRenovation(props.row).amount) }}
+                  </b>
+                  <q-icon
+                    v-if="props.row.status === 'open' && getPaymentTodayRenovation(props.row).id && getPaymentTodayRenovation(props.row).classes !== 'green'"
+                    name="close"
+                    size="14px"
+                    class="q-ml-xs pointer-cursor"
+                    @click="deletePayment(getPaymentTodayRenovation(props.row))"
+                  />
+                </q-badge>
               </template>
               <b
                 v-else-if="getBalance(props.row) > props.row.amount"
@@ -441,7 +452,7 @@
     <modal-add-payment
       v-if="showModalPaymentNequi"
       v-model="showModalPaymentNequi"
-      :valuePayment="0"
+      :valuePayment="valuePayment"
       :row="itemSelected"
       type="nequi"
       @updateTable="getLendings"/>

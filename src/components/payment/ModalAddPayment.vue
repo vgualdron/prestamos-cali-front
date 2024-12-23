@@ -15,13 +15,13 @@
                 outlined
                 v-model="amount"
                 label="Valor *"
-                hint="Escriba el valor"
                 type="number"
                 step="1000"
-                lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']" />
+                :max="valuePayment"
+                :hint="formattedPrice(amount)" />
             </div>
           </div>
-          <div class="row q-mt-md" v-if="amount > 0 && (this.type === 'nequi' || this.type === 'articulo')">
+          <div class="row q-mt-md" v-if="amount > 0 && (this.type === 'nequi' || this.type === 'articulo') && amount <= valuePayment">
             <div class="col-12 text-center">
               <p class="text-subtitle1 text-weight-bold text-center">AGREGAR FOTO DE SOPORTE DE PAGO</p>
               <upload-image
@@ -43,7 +43,7 @@
             label="Guardar"
             color="primary"
             class="col q-ml-sm"
-            :disabled="amount <= 0"
+            :disabled="amount <= 0 || amount > valuePayment"
             @click="saveAddPayment"
           />
         </div>
@@ -91,7 +91,6 @@ export default {
   },
   mounted() {
     showLoading('consultando ...', 'Por favor, espere', true);
-    this.amount = parseInt(this.valuePayment, 10);
     this.$q.loading.hide();
   },
   computed: {
@@ -163,6 +162,13 @@ export default {
         this.$emit('updateTable', this.row.listing_id);
         this.$emit('addPayment', { idFile: this.file.id });
       }
+    },
+    formattedPrice(value) {
+      if (!value) return '';
+      return value
+        .toString()
+        .replace(/\D/g, '') // Elimina caracteres no numéricos
+        .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Agrega puntos como separadores
     },
   },
   components: {
