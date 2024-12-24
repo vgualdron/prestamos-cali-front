@@ -353,26 +353,26 @@
               {{ daysSinceGivenDate(props.row.firstDate) }}
             </q-td>
             <q-td key="firstDate" :props="props">
-              <!-- <q-icon size="xs" name="edit" v-if="props.row.status === 'open'" /> -->
+              <q-icon size="xs" name="edit" v-if="props.row.status === 'open'" />
               {{ formatDate(props.row.firstDate) }}
-              <!-- <q-popup-edit
+              <q-popup-edit
                 v-if="props.row.status === 'open'"
                 :value="formatDateInit(props.row.firstDate)"
                 v-slot="scope" buttons
                 @input="val => changeRow('firstDate', val)">
                 <q-input v-model="scope.value" dense autofocus type="datetime-local" />
-              </q-popup-edit> -->
+              </q-popup-edit>
             </q-td>
             <q-td key="endDate" :class="rowClass(props.row)" :props="props">
-              <!-- <q-icon size="xs" name="edit" v-if="props.row.status === 'open'" /> -->
+              <q-icon size="xs" name="edit" v-if="props.row.status === 'open'" />
               {{ formatDate(props.row.endDate) }}
-              <!-- <q-popup-edit
+              <q-popup-edit
                 v-if="props.row.status === 'open'"
                 :value="formatDateInit(props.row.endDate)"
                 v-slot="scope" buttons
                 @input="val => changeRow('endDate', val)">
                 <q-input v-model="scope.value" dense autofocus type="datetime-local" />
-              </q-popup-edit> -->
+              </q-popup-edit>
             </q-td>
             <q-td key="endPaymentDate" :props="props">
               {{ getLastPaymentDate(props.row) }}
