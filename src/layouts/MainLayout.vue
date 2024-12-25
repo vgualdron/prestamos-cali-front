@@ -13,13 +13,20 @@
           <q-toolbar-title>
             {{$router.currentRoute.name}}
           </q-toolbar-title>
-          <q-btn
+          <!-- <q-btn
             outline
             dense
             size="xs"
             label="Migracion"
             @click="$router.push('/upload-news')"
-          />
+          /> -->
+          <q-btn
+            icon="add_location_alt"
+            class="q-ml-md"
+            color="primary"
+            title="Click para registrar una dirección"
+            @click="showModalAddNew = true">
+          </q-btn>
           <q-btn-dropdown
             color="primary"
             class="no-shadow"
@@ -118,6 +125,14 @@
       ref="formChangePasswordReference"
       :titleRef="title"
     />
+    <form-news
+      v-if="showModalAddNew"
+      v-model="showModalAddNew"
+      type="C"
+      :obj="objNew"
+      :userSend="user"
+      :showUserSend="false"
+    />
   </q-layout>
 </template>
 
@@ -127,6 +142,7 @@ import EssentialLink from 'components/common/EssentialLink.vue';
 import FormChangePassword from 'components/user/FormChangePassword.vue';
 import MapCurrentPosition from 'components/common/MapCurrentPosition.vue';
 import UploadImageProfile from 'components/common/UploadImageProfile.vue';
+import FormNews from 'components/new/FormNews.vue';
 import commonTypes from '../store/modules/common/types';
 import { showNotifications } from '../helpers/showNotifications';
 import { showLoading } from '../helpers/showLoading';
@@ -138,6 +154,7 @@ export default {
     FormChangePassword,
     MapCurrentPosition,
     UploadImageProfile,
+    FormNews,
   },
   data() {
     return {
@@ -147,6 +164,8 @@ export default {
       linksData: [],
       statusSendingData: false,
       showModalWarnigs: false,
+      showModalAddNew: false,
+      objNew: {},
     };
   },
   async mounted() {

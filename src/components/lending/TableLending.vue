@@ -15,13 +15,13 @@
       title="Click para revisar la entrega"
       @click="showModalDelivery = true">
     </q-btn>
-    <q-btn
+    <!-- <q-btn
       icon="add_location_alt"
       class="q-ml-md"
       color="primary"
       title="Click para registrar una dirección"
       @click="showModalAddNew = true">
-    </q-btn>
+    </q-btn> -->
     <div class="row q-mt-md">
       <div class="col-6 text-center">
         <q-select

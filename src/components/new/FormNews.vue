@@ -404,7 +404,7 @@ export default {
       listYardsByZone: yardTypes.actions.LIST_YARDS_BY_ZONE,
     }),
     ...mapActions(userTypes.PATH, {
-      listUsersByRoleName: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
+      listUsers: userTypes.actions.LIST_USERS,
     }),
     ...mapActions(districtTypes.PATH, {
       listDistricts: districtTypes.actions.FETCH_DISTRICTS,
@@ -441,7 +441,7 @@ export default {
       await Promise.all([
         this.listZones(),
         this.getStatusQuestionNew(this.obj),
-        await this.listUsersByRoleName({ roleName: 'Secretaria', status: 1, city: 0 }),
+        await this.listUsers({ displayAll: 0 }),
       ]);
       if (this.zoneStatus === true && this.userStatus === true) {
         this.title = this.type === 'C' ? 'Agregar' : (this.type === 'E' ? 'Editar' : 'Eliminar');
