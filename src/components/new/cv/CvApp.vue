@@ -23,7 +23,7 @@
             RUTA
           </td>
           <td class="text-bold text-center" colspan="1">
-            {{ item.list_name.toUpperCase() }}
+            {{ item.list_name }}
           </td>
           <td class="text-bold text-center" colspan="1">
             ZONA
@@ -37,7 +37,7 @@
             CLIENTE
           </td>
           <td class="text-bold text-center" colspan="3">
-            {{ item.name.toUpperCase() }}
+            {{ item.name }}
           </td>
           <td class="bg-blue-1 text-bold text-center" colspan="1">
             TELEFONO
@@ -49,7 +49,7 @@
             CONDICIÓN
           </td>
           <td class="text-bold text-center" colspan="1">
-            {{ item.period.toUpperCase() }}
+            {{ item.period }}
           </td>
         </tr>
         <tr class="">
@@ -69,13 +69,13 @@
             PRESTÓ
           </td>
           <td class="text-bold text-center" colspan="1">
-            {{ item.lent_by_name.toUpperCase() }}
+            {{ item.lent_by_name }}
           </td>
           <td class="bg-blue-1 text-bold text-center" colspan="1">
             AUTORIZÓ
           </td>
           <td class="text-bold text-center" colspan="1">
-            {{ item.approved_by_name.toUpperCase() }}
+            {{ item.approved_by_name }}
           </td>
         </tr>
         <tr class="">
@@ -89,7 +89,7 @@
             TIPO VIVIENDA
           </td>
           <td class="text-bold text-center" colspan="1">
-            {{ item.type_house.toUpperCase() }}
+            {{ item.type_house }}
           </td>
         </tr>
         <tr class="">
