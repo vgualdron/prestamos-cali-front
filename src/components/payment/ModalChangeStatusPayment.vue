@@ -13,7 +13,10 @@
             <div class="col-8 text-center">
               <img v-if="url" :src="url" class="inherit-width"/>
             </div>
-            <div v-show="type === 'nequi'" class="col-4 text-center q-mt-md">
+            <div
+              v-show="type === 'nequi'"
+              class="col-4 text-center q-mt-md"
+              style="position: fixed;margin-left: 55%;">
               <q-form class="q-gutter-md">
                 <q-select
                   v-model="inputValue.nameNequi"

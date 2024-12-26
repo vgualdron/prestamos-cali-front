@@ -191,7 +191,12 @@
                 <q-icon v-if="hasReddirectionsActive(props.row)" name="two_wheeler" color="red" size="md"/>
                 <q-badge
                   v-if="isNew(props.row)"
-                  :color="props.row.type === 'N' ? 'green' : 'orange'">
+                  :color="'green'">
+                  {{ props.row.type }}
+                </q-badge>
+                <q-badge
+                  v-if="isRenove(props.row)"
+                  :color="'orange'">
                   {{ props.row.type }}
                 </q-badge>
                 {{ formatText(props.row.nameDebtor, 30) }}
@@ -1041,7 +1046,14 @@ export default {
       const now = new Date();
       const maxLimit = new Date(date);
       maxLimit.setDate(date.getDate() + 3);
-      return now <= maxLimit;
+      return now <= maxLimit && row.type === 'N';
+    },
+    isRenove(row) {
+      const date = new Date(row.created_at);
+      const now = new Date();
+      const maxLimit = new Date(date);
+      maxLimit.setDate(date.getDate() + 1);
+      return now <= maxLimit && row.type === 'R';
     },
     hasPhones(row) {
       return row.family_reference_phone || row.family2_reference_phone || row.guarantor_phone;
