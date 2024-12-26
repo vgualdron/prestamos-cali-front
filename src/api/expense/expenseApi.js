@@ -5,8 +5,8 @@ export default {
     url: `${process.env.URL_API}/api/expense/${status}/exclude-items/${items}`,
     method: 'GET',
   }),
-  listByItem: (item) => http({
-    url: `${process.env.URL_API}/api/expense/item/${item}`,
+  listByItem: ({ status, item }) => http({
+    url: `${process.env.URL_API}/api/expense/item/${status}/${item}`,
     method: 'GET',
   }),
   get: (id) => http({

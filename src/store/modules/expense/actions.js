@@ -21,9 +21,9 @@ export default {
       }
     }
   },
-  async [types.actions.LIST_EXPENSES_BY_ITEM]({ commit }, item) {
+  async [types.actions.LIST_EXPENSES_BY_ITEM]({ commit }, payload) {
     try {
-      const response = await expenseApi.listByItem(item);
+      const response = await expenseApi.listByItem(payload);
       commit(types.mutations.SET_STATUS, true);
       commit(types.mutations.SET_EXPENSES, response.data.data);
     } catch (error) {

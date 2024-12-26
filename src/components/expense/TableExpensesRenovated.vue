@@ -183,7 +183,7 @@ export default {
     },
     async listMounted() {
       showLoading('Cargando ...', 'Por favor, espere', true);
-      await this.listExpensesByItem(1);
+      await this.listExpensesByItem({ status: 'creado', item: 1 });
       if (this.status === false) {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
         this.data = [];
