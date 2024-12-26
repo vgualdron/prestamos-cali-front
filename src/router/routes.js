@@ -117,7 +117,7 @@ const routes = [
         path: '',
         name: 'Visita',
         component: () => import('pages/Visit.vue'),
-        meta: { permissions: ['visit.list'] },
+        meta: { permissions: [] },
       },
     ],
   },
