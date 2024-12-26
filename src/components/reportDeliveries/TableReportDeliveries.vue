@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="row q-mt-md">
-      <div class="col-3 text-center">
+      <div class="col-9 text-center">
         <q-input
           debounce="400"
           color="primary"

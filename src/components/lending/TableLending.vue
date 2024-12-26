@@ -54,7 +54,7 @@
       </template>
       Ya se realizó la entrega del día
     </q-banner>
-    <div v-else class="table-container">
+    <div v-else class="table-container" id="div-container-list">
       <q-table
         :data="data"
         :columns="columns"
@@ -65,8 +65,7 @@
         separator="cell"
         class="q-mt-md"
         :row-class="'bg-purple'"
-        dense
-        id="div-container-list">
+        dense>
         <template v-slot:body="props">
           <q-tr :props="props" @click="clickRow(props.row)">
             <q-td key="actions" :props="props">
@@ -547,7 +546,6 @@
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
-import domtoimage from 'dom-to-image';
 import moment from 'moment';
 import ModalAddPayment from 'components/payment/ModalAddPayment.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
@@ -998,45 +996,6 @@ export default {
       } catch (err) {
         this.error = 'Geolocation is not supported by this browser.';
       }
-    },
-    async captureImage() {
-      showLoading('Guardando ...', 'Por favor, espere', true);
-      const element = document.getElementById('div-container-delivery');
-      domtoimage.toPng(element).then(async (blob) => {
-        this.sendImage(blob.split(',')[1]);
-        this.$q.loading.hide();
-      }).catch((error) => {
-        console.log(error);
-      });
-    },
-    async sendImage(file) {
-      await this.getLocation();
-      const {
-        latitude,
-        longitude,
-      } = this.location;
-      showLoading('Guardando ...', 'Por favor, espere', true);
-
-      await this.saveFile({
-        name: 'CAPTURE_ROUTE',
-        storage: 'listings',
-        modelName: 'listings',
-        modelId: this.list.value,
-        type: 'image',
-        file,
-        extension: 'png',
-        status: 'aprobado',
-        latitude,
-        longitude,
-        maintain: true,
-      });
-      this.$q.loading.hide();
-      /* if (this.responseMessages && this.status) {
-        this.showModal = false;
-        this.$emit('savedFile', { name });
-        await this.fetchFile();
-      } */
-      // this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
     },
     async fetchFileRedSocial(row) {
       showLoading('consultando archivo ...', 'Por favor, espere', true);

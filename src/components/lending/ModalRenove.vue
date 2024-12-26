@@ -208,7 +208,7 @@
             label="Adelantar"
             color="primary"
             class="col q-ml-sm"
-            :disabled="!date || amount <= 0 || amount > row.amount || action === 'up' || repayment === 0"
+            :disabled="!date || amount <= 0 || amount > row.amount || action === 'up' || repayment === 0 || repayment > 100000"
             @click="renoveLending('repayment')"
           />
           <q-btn
