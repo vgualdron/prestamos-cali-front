@@ -83,6 +83,25 @@
           <q-td key="userName" :props="props">
             {{ props.row.userName }}
           </q-td>
+          <q-td :props="props" key="observation">
+            <q-btn-dropdown
+              v-if="props.row.observation"
+              color="black"
+              size="12px"
+              :auto-close="false"
+              outline
+            >
+              <q-list>
+                <q-item v-close-popup>
+                  <q-item-section>
+                    <q-item-label>
+                      {{ props.row.observation }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+          </q-td>
         </q-tr>
       </template>
     </q-table>
@@ -202,6 +221,15 @@ export default {
           align: 'center',
           style: 'width: 150px',
           field: (row) => row.userName,
+          format: (val) => `${val}`,
+          sortable: true,
+        },
+        {
+          name: 'observation',
+          required: true,
+          label: 'Observación',
+          align: 'center',
+          style: 'width: 150px',
           format: (val) => `${val}`,
           sortable: true,
         },
