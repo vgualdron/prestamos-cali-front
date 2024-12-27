@@ -572,7 +572,6 @@ export default {
       listUsersByRoleName: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
     }),
     clickEditAddress(row, type) {
-      console.log(row);
       this.typeActionFormNew = type;
       this.objSelected = { ...row };
       this.showModalFormNews = true;

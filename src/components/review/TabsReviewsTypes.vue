@@ -87,7 +87,7 @@ export default {
     async pollData() {
       this.polling = setInterval(async () => {
         await this.getData();
-      }, 60000);
+      }, 300000);
     },
   },
 };
