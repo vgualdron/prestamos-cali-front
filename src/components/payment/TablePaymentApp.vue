@@ -92,7 +92,7 @@
       :url="formatLink(itemSelected)"
       :type="itemSelected.typeFile"
       :title="`Valor: ${formatPrice(itemSelected.amount)} - Referencia: ${itemSelected.reference}`"
-      :showBtnCancel="false"
+      :showBtnCancel="true"
       :showBtnAccept="true"
       labelBtnCancel="Rechazar"
       labelBtnAccept="Marcar como verificado"
@@ -342,9 +342,28 @@ export default {
         status: 'verificado',
       });
     },
-    rejectPayment() {
-      this.updateStatusPayment({
-        status: 'rechazado',
+    async rejectPayment() {
+      this.$q.dialog({
+        title: 'Rechazar',
+        message: 'Está seguro?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        showLoading('Rechazando ...', 'Por favor, espere', true);
+        await this.deletePayment(this.itemSelected.id);
+        this.showModal = false;
+        this.$q.loading.hide();
+        this.getPayments();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
       });
     },
     async updateStatusPayment({ status }) {
