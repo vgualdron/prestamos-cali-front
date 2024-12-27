@@ -186,7 +186,7 @@
                 {{ props.row.index }}
               </div>
             </q-td>
-            <q-td key="name" :props="props">
+            <q-td key="name" :props="props" :class="tdNameClass(props.row)">
               <p :title="props.row.nameDebtor" class="q-my-auto">
                 <q-icon v-if="hasReddirectionsActive(props.row)" name="two_wheeler" color="red" size="md"/>
                 <q-badge
@@ -511,7 +511,9 @@
       :url="formatUrl(itemSelected.file_url_r)"
       :type="'image'"
       :showBtnCancel="false"
-      :showBtnCopy="false"/>
+      :showBtnAccept="itemSelected.expense_status === 'creado'"
+      :showBtnCopy="false"
+      @clickBtnAccept="acceptVoucherRenovation"/>
     <modal-preview-file
       v-if="showModalPreviewN"
       v-model="showModalPreviewN"
@@ -567,6 +569,8 @@ import paymentTypes from '../../store/modules/payment/types';
 import userTypes from '../../store/modules/user/types';
 import newTypes from '../../store/modules/new/types';
 import fileTypes from '../../store/modules/file/types';
+import expenseTypes from '../../store/modules/expense/types';
+import commonTypes from '../../store/modules/common/types';
 import { showLoading } from '../../helpers/showLoading';
 import { havePermission } from '../../helpers/havePermission';
 import { showNotifications } from '../../helpers/showNotifications';
@@ -805,6 +809,9 @@ export default {
     this.pollData();
   },
   computed: {
+    ...mapState(commonTypes.PATH, [
+      'user',
+    ]),
     ...mapState(lendingTypes.PATH, {
       lendings: 'lendings',
       history: 'history',
@@ -973,6 +980,33 @@ export default {
       getFile: fileTypes.actions.GET_FILE,
       saveFile: fileTypes.actions.SAVE_FILE,
     }),
+    ...mapActions(expenseTypes.PATH, {
+      updateExpense: expenseTypes.actions.UPDATE_EXPENSE,
+    }),
+    tdNameClass(row) {
+      let c = '';
+      if (row.expense_id && !row.file_id_r) {
+        c = 'bg-blue-3';
+      }
+      if (row.expense_id && row.expense_status !== 'aprobado' && row.file_id_r) {
+        c = 'bg-green-3';
+      }
+      return c;
+    },
+    async acceptVoucherRenovation() {
+      console.log(this.itemSelected);
+      showLoading('Guardando ...', 'Por favor, espere', true);
+      const data = {
+        id: this.itemSelected.expense_id,
+        status: 'aprobado',
+        file_id: this.itemSelected.file_id_r,
+        approved_by: this.user,
+      };
+      await this.updateExpense(data);
+      await this.getLendings(this.listingSelected.value);
+      this.showModalPreviewR = false;
+      this.$q.loading.hide();
+    },
     hasPermission(value) {
       return havePermission(value);
     },
@@ -1066,11 +1100,11 @@ export default {
     rowClass(row) {
       let color = 'bg-white';
       const days = this.daysSinceGivenDate(row.firstDate);
-      if (days > 25) {
+      if (days > 23) {
         color = 'bg-red';
-      } else if (days >= 19 && days <= 25) {
+      } else if (days >= 16 && days <= 23) {
         color = 'bg-blue';
-      } else if (days >= 13 && days <= 18) {
+      } else if (days >= 8 && days <= 15) {
         color = 'bg-yellow';
       }
       return color;

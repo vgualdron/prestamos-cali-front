@@ -187,7 +187,6 @@ export default {
       updateStatusNew: newTypes.actions.UPDATE_STATUS_NEW,
     }),
     openCv(row) {
-      console.log(row);
       this.newSelected = { ...row };
       this.showModalCv = true;
     },

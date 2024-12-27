@@ -40,6 +40,16 @@
       class="q-mt-md"
       dense
     >
+      <template v-slot:body-cell-cv="props">
+        <q-td :props="props">
+          <q-btn
+            class=""
+            color="primary"
+            icon="plagiarism"
+            title="Click para ver la hoja de vida"
+            @click="openCv(props.row)" />
+        </q-td>
+      </template>
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <div>
@@ -55,11 +65,16 @@
         </q-td>
       </template>
     </q-table>
+    <cv
+      v-model="showModalCv"
+      v-if="showModalCv"
+      :row="newSelected" />
   </div>
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
 import UploadImage from 'components/common/UploadImage.vue';
+import Cv from 'components/new/Cv.vue';
 import expenseTypes from '../../store/modules/expense/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
@@ -68,17 +83,26 @@ import { formatDateWithTime } from '../../helpers/formatDate';
 export default {
   components: {
     UploadImage,
+    Cv,
   },
   data() {
     return {
       showModal: false,
+      showModalCv: false,
       obj: {},
+      newSelected: {},
       type: 'C',
       route: '/expense',
       columns: [
         {
+          name: 'cv',
+          label: 'Hoja de vida',
+          align: 'center',
+          visible: false,
+        },
+        {
           name: 'actions',
-          label: 'Acciones',
+          label: 'Voucher',
           align: 'center',
           visible: false,
         },
@@ -95,7 +119,7 @@ export default {
           name: 'user_name',
           align: 'left',
           label: 'Secretaria',
-          field: 'user_name',
+          field: (row) => `${row.listing_name} - ${row.user_name}`,
           sortable: true,
           visible: true,
         },
@@ -168,6 +192,13 @@ export default {
       listExpensesByItem: expenseTypes.actions.LIST_EXPENSES_BY_ITEM,
       updateExpense: expenseTypes.actions.UPDATE_EXPENSE,
     }),
+    openCv(row) {
+      this.newSelected = {
+        id: row.new_id,
+        type_cv: row.new_type_cv,
+      };
+      this.showModalCv = true;
+    },
     formatPrice(val) {
       return new Intl.NumberFormat('es-CO', {
         style: 'currency',

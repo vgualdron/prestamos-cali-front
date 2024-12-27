@@ -10,12 +10,33 @@
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
         <q-separator />
-        <q-card-section style="max-height: 80vh" class="scroll" v-if="row && row.id">
-          <div class="row q-mt-md">
+        <q-card-section class="scroll" v-if="row && row.id">
+          <div class="row">
             <div class="col-12 text-center">
               <q-banner v-if="row.has_double_interest" dense class="bg-info text-white text-center q-mb-md">
                 El préstamo tiene aplicado el doble interés.
               </q-banner>
+            </div>
+            <div class="col-12 text-center">
+              <q-option-group
+                v-model="periodSelected"
+                inline
+                :options="[
+                  {
+                    label: 'diario',
+                    value: 'diario'
+                  },
+                  {
+                    label: 'semanal',
+                    value: 'semanal'
+                  },
+                  {
+                    label: 'quincenal',
+                    value: 'quincenal'
+                  },
+                ]"
+                color="primary"
+              />
             </div>
             <div class="col-12 text-center">
               <q-form class="q-gutter-md">
@@ -391,6 +412,7 @@ export default {
         },
       ],
       accountSelected: null,
+      periodSelected: 'diario',
     };
   },
   props: {
@@ -407,6 +429,7 @@ export default {
     this.optionsValues = [...this.optionsValuesTmp];
     this.amount = this.row.amount;
     this.amountNew = this.optionsValues.find((option) => option.value === this.row.amount);
+    this.periodSelected = this.row.period;
     if (this.row.has_double_interest) {
       const [date] = new Date(this.row.doubleDate).toISOString().split('T');
       this.date = date;
@@ -417,7 +440,6 @@ export default {
   },
   watch: {
     action(value) {
-      console.log(value);
       const options = [...this.optionsValuesTmp];
       if (value === 'down') {
         this.optionsValues = options.filter((option) => option.value <= this.amount && option.value >= this.getBalance(this.row));
@@ -576,6 +598,7 @@ export default {
           date: this.date,
           amount: this.amountNew.value,
           repayment: this.repayment,
+          period: this.periodSelected,
           action,
           status: 'renovated',
         });
