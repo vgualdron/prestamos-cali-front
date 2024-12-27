@@ -11,7 +11,7 @@
         </q-card-section>
         <q-separator />
         <q-card-section style="max-height: 80vh" class="scroll">
-          <div class="row q-mt-md">
+          <div class="row">
             <div class="col-12 text-center">
               <q-input
                 debounce="400"
@@ -29,7 +29,7 @@
               </q-input>
             </div>
           </div>
-          <div class="row q-mt-md">
+          <div class="row">
             <q-table
               :data="lendingsClosed"
               :columns="columns"
@@ -77,15 +77,13 @@
           </div>
         </q-card-section>
         <q-separator />
-        <div class="row text-center q-pa-md">
+        <!-- <div class="row text-center q-pa-md">
           <q-btn
-            label="Cerrar prestamo"
+            label="Boton"
             color="primary"
             class="col q-ml-sm"
-            :disabled="!selectedReason"
-            @click="closedLending"
           />
-        </div>
+        </div> -->
       </q-card>
     </q-dialog>
   </div>
@@ -101,7 +99,7 @@ export default {
   data() {
     return {
       date: moment().format('YYYY-MM-DD'),
-      selectedReason: null,
+      itemSelected: null,
       isLoadingTable: false,
       filter: '',
       pagination: {
@@ -217,6 +215,9 @@ export default {
     ...mapActions(newTypes.PATH, {
       completeDataNew: newTypes.actions.COMPLETE_DATA_NEW,
     }),
+    clickRow(row) {
+      this.itemSelected = { ...row };
+    },
     formatDate(date) {
       return moment(date).format('DD/MM/YYYY');
     },
@@ -238,20 +239,6 @@ export default {
     processedPhones(str) {
       const parts = str.split(/\s*\/\s*/);
       return parts.length === 2 ? parts : [parts[0], null];
-    },
-    async closedLending() {
-      showLoading('cerrando ...', 'Por favor, espere', true);
-      await this.updateLending({
-        ...this.row,
-        status: 'closed',
-      });
-      await this.completeDataNew({
-        id: this.row.new_id,
-        score: this.selectedReason,
-      });
-      this.$emit('closedLending');
-      this.$q.loading.hide();
-      this.showDialog = false;
     },
   },
   components: {
