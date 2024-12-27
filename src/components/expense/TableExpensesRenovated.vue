@@ -50,6 +50,16 @@
             @click="openCv(props.row)" />
         </q-td>
       </template>
+      <template v-slot:body-cell-video="props">
+        <q-td :props="props">
+          <video
+            v-if="props.row.file_auth_url"
+            :src="getUrlFile(props.row)"
+            width="100rem"
+            controls>
+          </video>
+        </q-td>
+      </template>
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <div>
@@ -97,6 +107,12 @@ export default {
         {
           name: 'cv',
           label: 'Hoja de vida',
+          align: 'center',
+          visible: false,
+        },
+        {
+          name: 'video',
+          label: 'Video de Aut',
           align: 'center',
           visible: false,
         },
@@ -192,6 +208,9 @@ export default {
       listExpensesByItem: expenseTypes.actions.LIST_EXPENSES_BY_ITEM,
       updateExpense: expenseTypes.actions.UPDATE_EXPENSE,
     }),
+    getUrlFile(row) {
+      return `${process.env.URL_FILES}${row.file_auth_url}`;
+    },
     openCv(row) {
       this.newSelected = {
         id: row.new_id,

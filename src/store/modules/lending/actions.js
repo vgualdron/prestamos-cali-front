@@ -11,6 +11,15 @@ export default {
       commit(types.mutations.SET_LENDINGS, error.response.data);
     }
   },
+  async [types.actions.FETCH_LENDINGS_CLOSED]({ commit }, payload) {
+    try {
+      const response = await lendingApi.fetchLendingsForSale(payload);
+      commit(types.mutations.SET_LENDINGS_CLOSED, response.data.data);
+    } catch (error) {
+      console.error(error);
+      commit(types.mutations.SET_LENDINGS_CLOSED, error.response.data);
+    }
+  },
   async [types.actions.GET_LENDING]({ commit }, payload) {
     try {
       const response = await lendingApi.getLending(payload);

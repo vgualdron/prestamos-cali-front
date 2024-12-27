@@ -13,6 +13,10 @@ export default {
     url: `${process.env.URL_API}/api/lending/list/${data.idList}/payments/current-date`,
     method: 'GET',
   }),
+  fetchLendingsForSale: (data) => http({
+    url: `${process.env.URL_API}/api/lending/list-for-sale/${data}`,
+    method: 'GET',
+  }),
   addLending: (data) => http({
     url: `${process.env.URL_API}/api/lending`,
     method: 'POST',

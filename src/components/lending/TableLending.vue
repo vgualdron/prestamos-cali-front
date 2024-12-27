@@ -15,6 +15,13 @@
       title="Click para revisar la entrega"
       @click="showModalDelivery = true">
     </q-btn>
+    <q-btn
+      icon="fiber_new"
+      class="q-ml-md"
+      color="primary"
+      title="Click para ver los clientes cerrados"
+      @click="showModalListClosed = true">
+    </q-btn>
     <!-- <q-btn
       icon="add_location_alt"
       class="q-ml-md"
@@ -549,6 +556,10 @@
       v-if="showModalNequis"
       v-model="showModalNequis"
       :listing="itemSelected.listing_id"/>
+    <modal-list-closed
+      v-if="showModalListClosed"
+      v-model="showModalListClosed"
+      :idList="listingSelected.value"/>
   </div>
 </template>
 <script>
@@ -562,6 +573,7 @@ import FormNews from 'components/new/FormNews.vue';
 import ModalRenove from './ModalRenove.vue';
 import ModalDelivery from './ModalDelivery.vue';
 import ModalClosed from './ModalClosed.vue';
+import ModalListClosed from './ModalListClosed.vue';
 import ModalAccounts from './ModalAccounts.vue';
 import listingTypes from '../../store/modules/listing/types';
 import lendingTypes from '../../store/modules/lending/types';
@@ -586,6 +598,7 @@ export default {
     ModalAccounts,
     FormNews,
     ModalListNequi,
+    ModalListClosed,
   },
   data() {
     return {
@@ -792,6 +805,7 @@ export default {
       objNew: {},
       location: null,
       showModalNequis: false,
+      showModalListClosed: false,
     };
   },
   watch: {
@@ -1086,7 +1100,7 @@ export default {
       const date = new Date(row.created_at);
       const now = new Date();
       const maxLimit = new Date(date);
-      maxLimit.setDate(date.getDate());
+      maxLimit.setDate(date.getDate() + 1);
       return now <= maxLimit && row.type === 'R';
     },
     hasPhones(row) {

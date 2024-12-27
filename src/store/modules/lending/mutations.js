@@ -16,4 +16,7 @@ export default {
   [types.mutations.SET_HISTORY](state, payload) {
     state.history = payload;
   },
+  [types.mutations.SET_LENDINGS_CLOSED](state, payload) {
+    state.lendingsClosed = payload;
+  },
 };
