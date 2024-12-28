@@ -77,7 +77,7 @@
               option-value="id"
               lazy-rules
               :rules="[
-                (val) => (!!val) || 'El campo es requerido',
+                (val) => (val <= 0) || 'El campo es requerido',
               ]"
               hide-bottom-space
               map-options
