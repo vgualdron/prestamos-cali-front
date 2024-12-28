@@ -97,7 +97,6 @@
               v-model="amount"
               label="Valor *"
               lazy-rules
-              step="10000"
               :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
               type="number"/>
             <q-input
