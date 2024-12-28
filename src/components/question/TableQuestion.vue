@@ -72,7 +72,7 @@
           <q-td key="created_at" :props="props">
             {{ formatDate(props.row.created_at) }}
           </q-td>
-          <q-td key="observation" :props="props">
+          <q-td key="observation" class="text-wrap" :props="props">
             {{
               props.row.type === 'renovacion'
               ? `El valor solicitado es: ${formatPrice(props.row.observation)}`
@@ -97,7 +97,7 @@
       :showStikers="false"
       title="Historial"
       :lendings="history"/>
-    <modal-answer-nequi
+    <modal-answer
       v-if="showModal"
       v-model="showModal"
       :row="itemSelected"
@@ -110,7 +110,7 @@ import { mapState, mapActions } from 'vuex';
 // import ModalExistReference from 'components/payment/ModalExistReference.vue';
 import Cv from 'components/new/Cv.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
-import ModalAnswerNequi from './ModalAnswerNequi.vue';
+import ModalAnswer from './ModalAnswer.vue';
 import questionTypes from '../../store/modules/question/types';
 import lendingTypes from '../../store/modules/lending/types';
 import newTypes from '../../store/modules/new/types';
@@ -118,6 +118,12 @@ import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 
 export default {
+  props: {
+    type: {
+      type: String,
+      require: true,
+    },
+  },
   data() {
     return {
       isLoadingTable: false,
@@ -160,8 +166,8 @@ export default {
           name: 'observation',
           required: true,
           label: 'Solicitud',
-          align: 'center',
-          style: 'width: 100px',
+          align: 'left',
+          style: 'max-width: 100px',
           field: (row) => row.observation,
           format: (val) => `${val}`,
           sortable: true,
@@ -229,6 +235,7 @@ export default {
     ...mapActions(lendingTypes.PATH, {
       getLending: lendingTypes.actions.GET_LENDING,
       fetchHistory: lendingTypes.actions.FETCH_HISTORY,
+      renewOldLending: lendingTypes.actions.RENEW_OLD_LENDING,
     }),
     ...mapActions(newTypes.PATH, {
       getNew: newTypes.actions.GET_NEW,
@@ -256,7 +263,6 @@ export default {
     },
     async responseAnswer(data) {
       showLoading('Guardando ...', 'Por favor, espere', true);
-      await this.updateQuestion(data);
 
       if (data.type === 'cuenta' && data.status !== 'rechazado') {
         const obj = JSON.parse(data.json);
@@ -265,6 +271,15 @@ export default {
           ...obj,
         });
       }
+      if (data.type === 'nuevo-antiguo' && data.status !== 'rechazado') {
+        console.log(data);
+        const obj = JSON.parse(data.json);
+        await this.renewOldLending({
+          ...obj,
+        });
+      }
+
+      await this.updateQuestion(data);
 
       this.showNotification(this.questionResponseMessages, this.questionStatus, 'top-right', 5000);
       this.showModal = false;
@@ -273,7 +288,7 @@ export default {
     },
     async getItems() {
       showLoading('consultando ...', 'Por favor, espere', true);
-      await this.fetchQuestions({ status: 'pendiente', type: 'nuevo,renovacion,cuenta' });
+      await this.fetchQuestions({ status: 'pendiente', type: this.type });
       this.$q.loading.hide();
     },
     clickRow(row) {
@@ -293,6 +308,9 @@ export default {
       } else if (row.type === 'cuenta') {
         await this.getNew(row.model_id);
         this.newSelected = { ...this.new };
+      } else if (row.type === 'nuevo-antiguo') {
+        await this.getNew(row.model_id);
+        this.newSelected = { ...this.new };
       }
       this.$q.loading.hide();
       this.showModalCv = true;
@@ -306,6 +324,8 @@ export default {
       } else if (row.type === 'renovacion') {
         await this.getLending(row.model_id);
         await this.fetchHistory(this.lending.new_id);
+      } else if (row.type === 'nuevo-antiguo') {
+        await this.fetchHistory(row.model_id);
       }
       this.showModalHistory = true;
       this.$q.loading.hide();
@@ -318,7 +338,7 @@ export default {
   components: {
     Cv,
     ModalCardBoard,
-    ModalAnswerNequi,
+    ModalAnswer,
   },
 };
 </script>

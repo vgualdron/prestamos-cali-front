@@ -314,6 +314,18 @@ const routes = [
     ],
   },
   {
+    path: '/list-questions-news-olds',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Solicitudes de nuevos antiguos',
+        component: () => import('pages/QuestionNewOld.vue'),
+        meta: { permissions: ['question.listNewsOlds'] },
+      },
+    ],
+  },
+  {
     path: '/report-deliveries',
     component: () => import('layouts/MainLayout.vue'),
     children: [

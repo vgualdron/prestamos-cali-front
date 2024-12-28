@@ -36,6 +36,11 @@ export default {
     method: 'POST',
     data,
   }),
+  renewOldLending: (data) => http({
+    url: `${process.env.URL_API}/api/lending/renew-old`,
+    method: 'POST',
+    data,
+  }),
   fetchHistoryByNewId: (newId) => http({
     url: `${process.env.URL_API}/api/lending/history/${newId}`,
     method: 'GET',

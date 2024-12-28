@@ -1,6 +1,6 @@
 <template>
   <q-page class="">
-    <table-question-nequi type="nuevo,renovacion,cuenta"/>
+    <table-question-nequi type="nuevo-antiguo"/>
   </q-page>
 </template>
 
@@ -13,7 +13,7 @@ export default {
     return {
     };
   },
-  name: 'PageQuestionNequi',
+  name: 'PageQuestionNewOld',
   computed: {
   },
 };

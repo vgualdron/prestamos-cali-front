@@ -7,6 +7,7 @@ export default {
     UPDATE_LENDING: '@actions/updateLending',
     DELETE_LENDING: '@actions/deleteLending',
     RENOVATE_LENDING: '@actions/renovateLending',
+    RENEW_OLD_LENDING: '@actions/renewOldLending',
     FETCH_HISTORY: '@actions/fetchHistory',
     FETCH_LENDINGS_CLOSED: '@actions/fetchLendingsClosed',
   },

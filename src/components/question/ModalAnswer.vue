@@ -23,37 +23,30 @@
               {
                 label: '$100.000',
                 value: 100000,
-                disable: 100000 < row.observation
               },
               {
                 label: '$200.000',
                 value: 200000,
-                disable: 200000 < row.observation
               },
               {
                 label: '$300.000',
                 value: 300000,
-                disable: 300000 < row.observation
               },
               {
                 label: '$400.000',
                 value: 400000,
-                disable: 400000 < row.observation
               },
               {
                 label: '$500.000',
                 value: 500000,
-                disable: 500000 < row.observation
               },
               {
                 label: '$600.000',
                 value: 600000,
-                disable: 600000 < row.observation
               },
               {
                 label: '$1.000.000',
                 value: 1000000,
-                disable: 1000000 < row.observation
               },
             ]"
             color="primary"
@@ -125,7 +118,6 @@ export default {
   },
   mounted() {
     showLoading('consultando ...', 'Por favor, espere', true);
-    // this.amount = this.row.type === 'renovacion' ? parseInt(this.row.observation, 10) : '';
     this.$q.loading.hide();
   },
   computed: {
@@ -153,7 +145,7 @@ export default {
     changeStatus(status) {
       const data = {
         ...this.row,
-        json: this.row.type === 'cuenta' ? this.row.value : null,
+        json: (this.row.type === 'cuenta' || this.row.type === 'nuevo-antiguo') ? this.row.value : null,
         value: this.amount,
         status,
       };
@@ -167,6 +159,6 @@ export default {
 </script>
 <style scoped>
   .inherit-width {
-    width: -webkit-fill-available;;
+    width: -webkit-fill-available;
   }
 </style>
