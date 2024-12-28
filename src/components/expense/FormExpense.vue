@@ -250,7 +250,7 @@ export default {
       this.showDialog = false;
       await this.listExpenses({
         status: ['creado', 'borrador'],
-        items: [1],
+        items: [1, 8],
       });
     },
   },

@@ -213,7 +213,7 @@ export default {
       showLoading('Cargando ...', 'Por favor, espere', true);
       await this.listExpenses({
         status: ['creado', 'borrador'],
-        items: [1],
+        items: [1, 8],
       });
       if (this.status === false) {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
