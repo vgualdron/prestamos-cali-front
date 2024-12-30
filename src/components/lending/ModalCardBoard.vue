@@ -201,14 +201,15 @@
                   </tbody>
                 </q-markup-table>
               </div>
-              <!-- <div class="row text-center q-py-md">
-                <q-btn
+              <div class="row text-center q-py-md">
+                <vouchers v-if="showBtnPayments" :items="lending.payments" class="q-ml-sm" />
+                <!-- <q-btn
                   v-if="isDoubleInterest(lending)"
                   class="q-ml-sm"
                   label="Aplicar doble interés"
                   color="primary"
-                  @click="applyDoubleInterest(lending)" />
-              </div> -->
+                  @click="applyDoubleInterest(lending)" /> -->
+              </div>
               <div class="divider"></div>
             </div>
             <div class="row text-center">
@@ -231,6 +232,7 @@ import moment from 'moment';
 import domtoimage from 'dom-to-image';
 import { Notify } from 'quasar';
 import Stikers from './Stikers.vue';
+import Vouchers from './Vouchers.vue';
 import lendingTypes from '../../store/modules/lending/types';
 import { showLoading } from '../../helpers/showLoading';
 
@@ -285,9 +287,15 @@ export default {
       required: false,
       default: true,
     },
+    showBtnPayments: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
   components: {
     Stikers,
+    Vouchers,
   },
   watch: {
   },

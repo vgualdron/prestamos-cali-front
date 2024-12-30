@@ -29,20 +29,36 @@
           </div>
           <q-table
             v-if="columns && columns.length > 0"
-            :data="data"
+            :data="tableData"
             :columns="columns"
             row-key="id"
             :loading="isLoadingTable"
             :filter="filter"
             :pagination.sync="pagination"
             separator="cell"
-            class="q-mt-md"
+            class="q-mt-md my-sticky-header-table"
             :row-class="'bg-purple'"
+            :sticky-header="true"
+            flat
             dense>
             <template v-slot:body="props">
               <q-tr :props="props">
                 <q-td v-for="col in columns" :key="col.name" :props="props">
                   {{ props.row[col.name] }}
+                </q-td>
+              </q-tr>
+            </template>
+            <template v-slot:footer="props">
+              <q-tr>
+                <q-td v-for="col in columns" :key="col.name" :props="props">
+                  <template v-if="isNumericColumn(col)">
+                    <!-- Mostrar el total solo para columnas numéricas -->
+                    {{ getTotal(col.name) }}
+                  </template>
+                  <template v-else>
+                    <!-- Mostrar un guion o vacío para las columnas no numéricas -->
+                    -
+                  </template>
                 </q-td>
               </q-tr>
             </template>
@@ -94,13 +110,91 @@ export default {
         this.$emit('input', val);
       },
     },
+    tableData() {
+      // Se calculan los totales dinámicamente solo para las columnas numéricas
+      const totalsRow = {
+        id: 'totals',
+        name: 'Totals',
+      };
+
+      // Iteramos sobre las columnas y calculamos los totales solo para las numéricas
+      this.columns.forEach((col) => {
+        if (this.isNumericColumn(col.name)) {
+          totalsRow[col.name] = this.calculateTotal(col.name);
+        }
+      });
+
+      // Añadimos la fila de totales a los datos
+      return [...this.data, totalsRow];
+    },
     columns() {
       return this.fields;
     },
   },
   methods: {
+    // Determina si una columna es numérica y tiene un prefijo '_'
+    isNumericColumn(columnName) {
+      return columnName.startsWith('_') && this.data.every((row) => !Number.isNaN(this.parseNumber(row[columnName])) && Number.isFinite(this.parseNumber(row[columnName])));
+    },
+    // Calcula el total de una columna numérica
+    calculateTotal(columnName) {
+      const total = this.data.reduce((sum, row) => {
+        const value = this.parseNumber(row[columnName]); // Convertir el string con punto a número
+        if (!Number.isNaN(value)) {
+          return sum + value;
+        }
+        return sum;
+      }, 0);
+      // Formatear el número sin decimales y con separadores de miles
+      return this.formatNumber(total);
+    },
+
+    // Función que convierte un número con puntos a número flotante
+    parseNumber(value) {
+      // Aseguramos que el valor sea tratado como string, incluso si es un número
+      const valueStr = value.toString();
+      // Eliminar puntos de miles y convertir el valor a número flotante
+      const sanitizedValue = valueStr.replace(/\./g, '');
+      return parseFloat(sanitizedValue); // Convierte a número
+    },
+
+    // Función para formatear números con separadores de miles y sin decimales
+    formatNumber(value) {
+      return new Intl.NumberFormat('es-ES', {
+        style: 'decimal',
+        maximumFractionDigits: 0,
+        useGrouping: true,
+      }).format(value);
+    },
   },
   components: {
   },
 };
 </script>
+<style lang="sass">
+.my-sticky-header-table
+  /* height or max-height is important */
+  max-height: 450px
+
+  .q-table__top,
+  .q-table__bottom,
+  thead tr:first-child th
+    /* bg color is important for th; just specify one */
+    background-color: white
+
+  thead tr th
+    position: sticky
+    z-index: 1
+  thead tr:first-child th
+    top: 0
+
+  /* this is when the loading indicator appears */
+  &.q-table--loading thead tr:last-child th
+    /* height of all previous header rows */
+    top: 48px
+
+  /* prevent scrolling behind sticky top row on focus */
+  tbody
+    /* height of all previous header rows */
+    scroll-margin-top: 48px
+</style>
