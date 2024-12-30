@@ -2,8 +2,8 @@
   <div class="q-pa-md">
     <q-dialog v-model="showDialog" persistent full-width full-height>
       <q-card>
-        <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">{{ nameReport }}</div>
+        <q-card-section :class="`row items-center q-pb-none ${report.background} ${report.color}`">
+          <div class="text-h6">{{ report.name }}</div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
@@ -72,8 +72,8 @@ export default {
       type: Boolean,
       default: false,
     },
-    nameReport: {
-      type: String,
+    report: {
+      type: Object,
       required: true,
     },
     data: {

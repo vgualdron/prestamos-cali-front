@@ -11,7 +11,7 @@ const formatDateToSave = (dateToFormat) => {
   return formated.toISOString().split('T')[0];
 };
 
-const formatDateWithTime = (value) => new Moment(value).format('DD/MM/YYYY hh:mm A');
+const formatDateWithTime = (value) => new Moment(value).format('DD/MM/YYYY HH:mm:ss');
 
 const formatDateWithoutTime = (value) => {
   const utcDate = Moment.utc(value).format();

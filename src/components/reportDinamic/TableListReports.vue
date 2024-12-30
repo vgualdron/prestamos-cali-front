@@ -20,7 +20,7 @@
     </div>
     <q-table
       v-if="columns && columns.length > 0"
-      :data="data"
+      :data="items"
       :columns="columns"
       row-key="id"
       :loading="isLoadingTable"
@@ -31,7 +31,7 @@
       :row-class="'bg-purple'"
       dense>
       <template v-slot:body="props">
-        <q-tr :props="props">
+        <q-tr :props="props" v-if="props.row.show">
           <q-td key="actions" :props="props">
             <q-btn
               icon="visibility"
@@ -54,7 +54,7 @@
     <modal-report-dinamic
       v-if="showModal"
       v-model="showModal"
-      :nameReport="nameReport"
+      :report="reportSelected"
       :data="reportData"
       :fields="fields"/>
   </div>
@@ -62,6 +62,7 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import ModalReportDinamic from 'components/reportDinamic/ModalReportDinamic.vue';
+import commonTypes from '../../store/modules/common/types';
 import reportTypes from '../../store/modules/report/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
@@ -70,7 +71,7 @@ export default {
   data() {
     return {
       isLoadingTable: false,
-      itemSelected: {},
+      reportSelected: {},
       columns: [
         {
           name: 'actions',
@@ -81,19 +82,10 @@ export default {
           headerStyle: 'height: 50px',
         },
         {
-          name: 'order',
-          required: true,
-          label: 'Orden',
-          align: 'center',
-          style: 'width: 50px',
-          headerStyle: 'height: 50px',
-        },
-        {
           name: 'name',
           required: true,
           label: 'Nombre',
           align: 'center',
-          style: 'width: 50px',
           headerStyle: 'height: 50px',
         },
       ],
@@ -105,7 +97,6 @@ export default {
       showModal: false,
       listingSelected: null,
       fields: [],
-      nameReport: '',
     };
   },
   async mounted() {
@@ -114,14 +105,19 @@ export default {
     this.$q.loading.hide();
   },
   computed: {
+    ...mapState(commonTypes.PATH, [
+      'user',
+      'permissions',
+    ]),
     ...mapState(reportTypes.PATH, {
       reports: 'reports',
       reportData: 'data',
     }),
-    data() {
+    items() {
       return this.reports.map((row, index) => ({
         ...row,
         index: index + 1,
+        show: !!this.permissions.find((p) => p.name === row.permission),
       }));
     },
   },
@@ -150,7 +146,7 @@ export default {
     },
     async openModal(row) {
       showLoading('Consultando ...', 'Por favor, espere', true);
-      this.nameReport = row.name;
+      this.reportSelected = row;
       await this.executeReport(row.id);
       this.fields = this.getColumns();
       this.$q.loading.hide();

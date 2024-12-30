@@ -81,10 +81,11 @@
 import { mapState, mapActions } from 'vuex';
 import UploadImage from 'components/common/UploadImage.vue';
 import FormExpense from 'components/expense/FormExpense.vue';
+import Moment from 'moment';
 import expenseTypes from '../../store/modules/expense/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
-import { formatDateWithTime } from '../../helpers/formatDate';
+// import { formatDateWithTime } from '../../helpers/formatDate';
 
 export default {
   components: {
@@ -182,7 +183,7 @@ export default {
     dataTable() {
       const data = this.expenses.map((element) => ({
         ...element,
-        date: formatDateWithTime(element.date),
+        date: this.formatDateHour(element.date),
       }));
       return data;
     },
@@ -196,6 +197,9 @@ export default {
       updateExpense: expenseTypes.actions.UPDATE_EXPENSE,
       deleteExpense: expenseTypes.actions.DELETE_EXPENSE,
     }),
+    formatDateHour(date) {
+      return Moment(date).format('YYYY-MM-DD hh:mm A');
+    },
     formatPrice(val) {
       return new Intl.NumberFormat('es-CO', {
         style: 'currency',
