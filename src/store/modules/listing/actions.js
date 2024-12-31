@@ -104,4 +104,13 @@ export default {
       }
     }
   },
+  async [types.actions.GET_INFO_LISTING]({ commit }, payload) {
+    try {
+      const response = await listingApi.getInfo(payload);
+      commit(types.mutations.SET_INFO_LISTING, response.data.data);
+    } catch (error) {
+      console.error(error);
+      commit(types.mutations.SET_INFO_LISTING, error.response.data);
+    }
+  },
 };

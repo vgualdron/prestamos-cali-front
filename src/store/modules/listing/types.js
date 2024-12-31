@@ -9,6 +9,7 @@ export default {
     ADD_LISTING: '@actions/addListing',
     UPDATE_LISTING: '@actions/updateListing',
     DELETE_LISTING: '@actions/deleteListing',
+    GET_INFO_LISTING: '@actions/getInfoListing',
   },
   getters: {
   },
@@ -18,5 +19,6 @@ export default {
     SET_STATUS: '@mutations/setStatus',
     SET_RESPONSE_MESSAGES: '@mutations/setResponseMessages',
     SET_DELIVERY: '@mutations/setDelivery',
+    SET_INFO_LISTING: '@mutations/setInfoListing',
   },
 };

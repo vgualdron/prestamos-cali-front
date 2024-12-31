@@ -16,4 +16,7 @@ export default {
   [types.mutations.SET_DELIVERY](state, payload) {
     state.delivery = payload;
   },
+  [types.mutations.SET_INFO_LISTING](state, payload) {
+    state.info = payload;
+  },
 };

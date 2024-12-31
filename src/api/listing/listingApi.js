@@ -35,4 +35,8 @@ export default {
     url: `${process.env.URL_API}/api/listing/list-with-deliveries/${date}`,
     method: 'GET',
   }),
+  getInfo: (id) => http({
+    url: `${process.env.URL_API}/api/listing/get-info/${id}`,
+    method: 'GET',
+  }),
 };

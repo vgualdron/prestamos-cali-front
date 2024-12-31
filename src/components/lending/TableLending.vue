@@ -29,6 +29,9 @@
       title="Click para registrar una dirección"
       @click="showModalAddNew = true">
     </q-btn> -->
+    <div class="w-100">
+      <info :info="info"/>
+    </div>
     <div class="row q-mt-md">
       <div class="col-6 text-center">
         <q-select
@@ -575,6 +578,7 @@ import ModalDelivery from './ModalDelivery.vue';
 import ModalClosed from './ModalClosed.vue';
 import ModalListClosed from './ModalListClosed.vue';
 import ModalAccounts from './ModalAccounts.vue';
+import Info from './Info.vue';
 import listingTypes from '../../store/modules/listing/types';
 import lendingTypes from '../../store/modules/lending/types';
 import paymentTypes from '../../store/modules/payment/types';
@@ -599,6 +603,7 @@ export default {
     FormNews,
     ModalListNequi,
     ModalListClosed,
+    Info,
   },
   data() {
     return {
@@ -835,6 +840,7 @@ export default {
     ...mapState(listingTypes.PATH, [
       'listing',
       'listings',
+      'info',
     ]),
     ...mapState(userTypes.PATH, {
       users: 'users',
@@ -983,6 +989,7 @@ export default {
       getListing: listingTypes.actions.GET_LISTING,
       fetchListings: listingTypes.actions.FETCH_LISTINGS,
       fetchMineListings: listingTypes.actions.FETCH_MINE_LISTINGS,
+      getInfoListing: listingTypes.actions.GET_INFO_LISTING,
     }),
     ...mapActions(newTypes.PATH, {
       getNew: newTypes.actions.GET_NEW,
@@ -1422,6 +1429,7 @@ export default {
       await this.fetchLendings({
         idList,
       });
+      await this.getInfoListing(idList);
       this.$q.loading.hide();
     },
     async save(field, value) {
