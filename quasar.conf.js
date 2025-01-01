@@ -113,7 +113,7 @@ module.exports = function (ctx) {
         'Dialog',
         'Loading',
       ],
-      cssAddon: true
+      cssAddon: true,
     },
 
     // animations: 'all', // --- includes all animations
@@ -137,7 +137,7 @@ module.exports = function (ctx) {
         short_name: 'Control de Prestamos',
         description: 'Control de Prestamos',
         display: 'standalone',
-        orientation: 'portrait',
+        orientation: 'any',
         background_color: '#ffffff',
         theme_color: '#027be3',
         icons: [
