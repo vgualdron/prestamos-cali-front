@@ -137,7 +137,6 @@ module.exports = function (ctx) {
         short_name: 'Control de Prestamos',
         description: 'Control de Prestamos',
         display: 'standalone',
-        orientation: 'any',
         background_color: '#ffffff',
         theme_color: '#027be3',
         icons: [
