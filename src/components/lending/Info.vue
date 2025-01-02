@@ -45,10 +45,6 @@
           </tr>
           <tr class="">
             <td class="">
-              <b>Capital:</b>
-              ({{ formatPrice(info.capital.total) }})
-            </td>
-            <td class="">
               <b>Meta mes:</b>
               ({{ formatPrice(info.capital.total * 2) }})
             </td>
@@ -65,7 +61,7 @@
               ({{ formatPrice((info.capital.total * 2) - info.payments.total_payments) }})
             </td>
             <td class="">
-              <b>Cobro diario:</b>
+              <b>Cobro debe hacer:</b>
               ({{ formatPrice(((info.capital.total * 2) - info.payments.total_payments) / (24 - info.days.days_work)) }})
             </td>
           </tr>
