@@ -8,39 +8,65 @@
       >
         <tbody>
           <tr class="">
-            <td class="">
-              <q-icon name="swap_vert" color="orange-4" size="sm"/>
+            <td class="bg-yellow-3">
+              <b>Total:</b>
               {{ info.yellow.total_count }}
               ({{ formatPrice(info.yellow.total_pendiente) }})
             </td>
-            <td class="">
-              <q-icon name="publish" color="orange-4" size="sm"/>
+            <td class="bg-yellow-3">
+              <b>Encima:</b>
               {{ info.yellowUp.total_count }}
               ({{ formatPrice(info.yellowUp.total_pendiente) }})
             </td>
-            <td class="">
-              <q-icon name="download" color="orange-4" size="sm"/>
+            <td class="bg-yellow-3">
+              <b>Debajo:</b>
               {{ info.yellowDown.total_count }}
               ({{ formatPrice(info.yellowDown.total_pendiente) }})
             </td>
-            <td class="">
-              <q-icon name="swap_vert" color="blue" size="sm"/>
+            <td class="bg-blue-3">
+              <b>Total:</b>
               {{ info.blue.total_count }}
               ({{ formatPrice(info.blue.total_pendiente) }})
             </td>
-            <td class="">
-              <q-icon name="publish" color="blue" size="sm"/>
+            <td class="bg-blue-3">
+              <b>Encima:</b>
               {{ info.blueUp.total_count }}
               ({{ formatPrice(info.blueUp.total_pendiente) }})
             </td>
-            <td class="">
-              <q-icon name="download" color="blue" size="sm"/>
+            <td class="bg-blue-3">
+              <b>Debajo:</b>
               {{ info.blueDown.total_count }}
               ({{ formatPrice(info.blueDown.total_pendiente) }})
             </td>
-            <td class="">
-              <q-icon label="download" color="orange" size="xs">R</q-icon>
+            <td class="bg-orange-4">
+              <b> Renovar:</b>
               {{ info.renove.total_count }}
+            </td>
+          </tr>
+          <tr class="">
+            <td class="">
+              <b>Capital:</b>
+              ({{ formatPrice(info.capital.total) }})
+            </td>
+            <td class="">
+              <b>Meta mes:</b>
+              ({{ formatPrice(info.capital.total * 2) }})
+            </td>
+            <td class="">
+              <b>Meta secre:</b>
+              ({{ formatPrice((info.payments.total_payments / info.days.days_work) * 24 ) }})
+            </td>
+            <td class="">
+              <b>Cobro lleva:</b>
+              ({{ formatPrice(info.payments.total_payments) }})
+            </td>
+            <td class="">
+              <b>Cobro falta:</b>
+              ({{ formatPrice((info.capital.total * 2) - info.payments.total_payments) }})
+            </td>
+            <td class="">
+              <b>Cobro diario:</b>
+              ({{ formatPrice(((info.capital.total * 2) - info.payments.total_payments) / (24 - info.days.days_work)) }})
             </td>
           </tr>
         </tbody>

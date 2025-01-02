@@ -10,6 +10,7 @@ export default {
     UPDATE_LISTING: '@actions/updateListing',
     DELETE_LISTING: '@actions/deleteListing',
     GET_INFO_LISTING: '@actions/getInfoListing',
+    ADD_CAPITAL_LISTING: '@actions/addCapitallisting',
   },
   getters: {
   },

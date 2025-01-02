@@ -243,6 +243,9 @@ export default {
     totalAmount: {
       require: true,
     },
+    capital: {
+      require: true,
+    },
   },
   async mounted() {
     showLoading('Cargando ...', 'Por favor, espere', true);
@@ -289,6 +292,7 @@ export default {
   methods: {
     ...mapActions(listingTypes.PATH, {
       fetchDelivery: listingTypes.actions.FETCH_DELIVERY,
+      addCapitalListing: listingTypes.actions.ADD_CAPITAL_LISTING,
     }),
     ...mapActions(fileTypes.PATH, {
       saveFile: fileTypes.actions.SAVE_FILE,
@@ -333,31 +337,31 @@ export default {
       }
     },
     async captureImage() {
-      await this.captureImageDelivery();
+      showLoading('Guardando ...', 'Por favor, espere', true);
+      await this.addCapitalListing({
+        capital: this.capital,
+        listing_id: this.list.value,
+      });
       await this.captureImageList();
+      await this.captureImageDelivery();
       this.$emit('updateTable', this.list.value);
+      this.$q.loading.hide();
       this.showDialog = false;
     },
     async captureImageDelivery() {
-      showLoading('Guardando ...', 'Por favor, espere', true);
       const element = document.getElementById('div-container-delivery');
       await domtoimage.toPng(element).then(async (blob) => {
         await this.sendImage(blob.split(',')[1], 'CAPTURE_DELIVERY');
-        this.$q.loading.hide();
       }).catch((error) => {
         console.log(error);
       });
     },
     async captureImageList() {
-      showLoading('Guardando ...', 'Por favor, espere', true);
       const element = document.getElementById('div-container-list');
-
       const divsToExclude = document.querySelectorAll('#div-container-list > div.q-table__middle.scroll');
       divsToExclude.forEach((div) => { div.style.overflow = 'visible'; });
-
       await domtoimage.toPng(element).then(async (blob) => {
         await this.sendImage(blob.split(',')[1], 'CAPTURE_ROUTE');
-        this.$q.loading.hide();
       }).catch((error) => {
         console.log(error);
       }).finally(() => {

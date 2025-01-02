@@ -513,6 +513,7 @@
       v-model="showModalDelivery"
       :list="listingSelected"
       :totalAmount="totalCollection"
+      :capital="totalCapital"
       @updateTable="getLendings"
     />
     <modal-preview-file
