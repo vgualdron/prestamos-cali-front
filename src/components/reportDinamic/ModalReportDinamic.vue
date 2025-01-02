@@ -41,6 +41,9 @@
             :sticky-header="true"
             flat
             dense>
+            <template v-if="hasPermission('reportsDinamic.export')" v-slot:top-right>
+              <q-btn label="Exportar a Excel" size="sm" color="primary" @click="exportToExcel" />
+            </template>
             <template v-slot:body="props">
               <q-tr :props="props">
                 <q-td v-for="col in columns" :key="col.name" :props="props">
@@ -52,11 +55,9 @@
               <q-tr>
                 <q-td v-for="col in columns" :key="col.name" :props="props">
                   <template v-if="isNumericColumn(col)">
-                    <!-- Mostrar el total solo para columnas numéricas -->
                     {{ getTotal(col.name) }}
                   </template>
                   <template v-else>
-                    <!-- Mostrar un guion o vacío para las columnas no numéricas -->
                     -
                   </template>
                 </q-td>
@@ -69,6 +70,9 @@
   </div>
 </template>
 <script>
+import * as XLSX from 'xlsx';
+import { havePermission } from '../../helpers/havePermission';
+
 export default {
   data() {
     return {
@@ -111,20 +115,15 @@ export default {
       },
     },
     tableData() {
-      // Se calculan los totales dinámicamente solo para las columnas numéricas
       const totalsRow = {
         id: 'totals',
         name: 'Totals',
       };
-
-      // Iteramos sobre las columnas y calculamos los totales solo para las numéricas
       this.columns.forEach((col) => {
         if (this.isNumericColumn(col.name)) {
           totalsRow[col.name] = this.calculateTotal(col.name);
         }
       });
-
-      // Añadimos la fila de totales a los datos
       return [...this.data, totalsRow];
     },
     columns() {
@@ -132,33 +131,41 @@ export default {
     },
   },
   methods: {
-    // Determina si una columna es numérica y tiene un prefijo '_'
+    hasPermission(value) {
+      return havePermission(value);
+    },
+    formatText(val, length) {
+      let response = val;
+      if (val.length > length) {
+        response = `${val.substring(0, length)}`;
+      }
+      return response;
+    },
+    exportToExcel() {
+      const name = this.formatText(this.report.name, 31);
+      const worksheet = XLSX.utils.json_to_sheet(this.data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, name);
+      XLSX.writeFile(workbook, `${name}.xlsx`);
+    },
     isNumericColumn(columnName) {
       return columnName.startsWith('_') && this.data.every((row) => !Number.isNaN(this.parseNumber(row[columnName])) && Number.isFinite(this.parseNumber(row[columnName])));
     },
-    // Calcula el total de una columna numérica
     calculateTotal(columnName) {
       const total = this.data.reduce((sum, row) => {
-        const value = this.parseNumber(row[columnName]); // Convertir el string con punto a número
+        const value = this.parseNumber(row[columnName]);
         if (!Number.isNaN(value)) {
           return sum + value;
         }
         return sum;
       }, 0);
-      // Formatear el número sin decimales y con separadores de miles
       return this.formatNumber(total);
     },
-
-    // Función que convierte un número con puntos a número flotante
     parseNumber(value) {
-      // Aseguramos que el valor sea tratado como string, incluso si es un número
       const valueStr = value.toString();
-      // Eliminar puntos de miles y convertir el valor a número flotante
       const sanitizedValue = valueStr.replace(/\./g, '');
-      return parseFloat(sanitizedValue); // Convierte a número
+      return parseFloat(sanitizedValue);
     },
-
-    // Función para formatear números con separadores de miles y sin decimales
     formatNumber(value) {
       return new Intl.NumberFormat('es-ES', {
         style: 'decimal',
