@@ -36,10 +36,19 @@
       dense>
       <template v-slot:body="props">
         <q-tr :props="props" @click="clickRow(props.row)">
+          <q-td key="download" :props="props">
+            <q-btn
+              v-if="props.row.capture_route_file"
+              icon="download"
+              color="primary"
+              size="sm"
+              class="col q-ml-sm"
+              @click="downloadImage(props.row)"/>
+          </q-td>
           <q-td key="delivery" :props="props">
             <q-btn
               v-if="props.row.capture_delivery_file"
-              icon="search"
+              icon="visibility"
               color="primary"
               size="sm"
               class="col q-ml-sm"
@@ -48,7 +57,7 @@
           <q-td key="list" :props="props">
             <q-btn
               v-if="props.row.capture_route_file"
-              icon="search"
+              icon="visibility"
               color="primary"
               size="sm"
               class="col q-ml-sm"
@@ -96,6 +105,14 @@ export default {
       isLoadingTable: false,
       itemSelected: {},
       columns: [
+        {
+          name: 'download',
+          required: true,
+          label: 'Descargar',
+          align: 'center',
+          style: 'width: 100px',
+          headerStyle: 'height: 50px',
+        },
         {
           name: 'delivery',
           required: true,
@@ -155,6 +172,16 @@ export default {
     ...mapActions(listingTypes.PATH, {
       fetchWithDeliveries: listingTypes.actions.FETCH_WITH_DELIVERIES,
     }),
+    async downloadImage(row) {
+      const imageUrl = this.formatLinkRoute(row); // Aquí colocas tu URL de la imagen
+      const link = document.createElement('a');
+      window.open(imageUrl, '_blank');
+      link.href = imageUrl;
+      link.setAttribute('download', `capture-ruta-${row.name}-${this.filter}.jpg`);
+      document.body.appendChild(link); // Asegúrate de que el enlace esté en el DOM
+      link.click(); // Inicia la descarga
+      document.body.removeChild(link);
+    },
     formatLinkDelivery(row) {
       if (row.capture_delivery_file) {
         return `${process.env.URL_FILES}${row.capture_delivery_file}`;
