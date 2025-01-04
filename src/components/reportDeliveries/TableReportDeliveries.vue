@@ -174,14 +174,8 @@ export default {
     }),
     async downloadImage(row) {
       const imageUrl = this.formatLinkRoute(row);
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `capture-ruta-${row.name}-${this.filter}.jpg`;
-      link.click();
-      window.URL.revokeObjectURL(url);
+      const url = `${process.env.URL_API}/api/download-image-from-url?route=${(row.name)}&date=${(this.filter)}&imageUrl=${(imageUrl)}`;
+      window.open(url, '_blank');
     },
     formatLinkDelivery(row) {
       if (row.capture_delivery_file) {
