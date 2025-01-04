@@ -173,14 +173,15 @@ export default {
       fetchWithDeliveries: listingTypes.actions.FETCH_WITH_DELIVERIES,
     }),
     async downloadImage(row) {
-      const imageUrl = this.formatLinkRoute(row); // Aquí colocas tu URL de la imagen
+      const imageUrl = this.formatLinkRoute(row);
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
-      window.open(imageUrl, '_blank');
-      link.href = imageUrl;
-      link.setAttribute('download', `capture-ruta-${row.name}-${this.filter}.jpg`);
-      document.body.appendChild(link); // Asegúrate de que el enlace esté en el DOM
-      link.click(); // Inicia la descarga
-      document.body.removeChild(link);
+      link.href = url;
+      link.download = `capture-ruta-${row.name}-${this.filter}.jpg`;
+      link.click();
+      window.URL.revokeObjectURL(url);
     },
     formatLinkDelivery(row) {
       if (row.capture_delivery_file) {
