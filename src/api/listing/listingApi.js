@@ -39,8 +39,8 @@ export default {
     url: `${process.env.URL_API}/api/listing/get-info/${id}`,
     method: 'GET',
   }),
-  addCapitalListing: (data) => http({
-    url: `${process.env.URL_API}/api/capitallisting`,
+  addDeliveryListing: (data) => http({
+    url: `${process.env.URL_API}/api/delivery`,
     method: 'POST',
     data,
   }),

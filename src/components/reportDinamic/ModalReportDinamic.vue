@@ -47,22 +47,27 @@
             <template v-slot:body="props">
               <q-tr :props="props">
                 <q-td v-for="col in columns" :key="col.name" :props="props">
-                  {{ props.row[col.name] }}
+                  <template v-if="isNumericColumn(col.name)">
+                    {{ formatNumber(props.row[col.name]) }}
+                  </template>
+                  <template v-else>
+                    {{ props.row[col.name] }}
+                  </template>
                 </q-td>
               </q-tr>
             </template>
-            <template v-slot:footer="props">
+            <!-- <template v-slot:footer="props">
               <q-tr>
                 <q-td v-for="col in columns" :key="col.name" :props="props">
                   <template v-if="isNumericColumn(col)">
-                    {{ getTotal(col.name) }}
+                    {{ getTotal(col.name) }} xxxx
                   </template>
                   <template v-else>
-                    -
+                    - yyy
                   </template>
                 </q-td>
               </q-tr>
-            </template>
+            </template> -->
           </q-table>
         </q-card-section>
       </q-card>
@@ -159,7 +164,7 @@ export default {
         }
         return sum;
       }, 0);
-      return this.formatNumber(total);
+      return (total);
     },
     parseNumber(value) {
       const valueStr = value.toString();

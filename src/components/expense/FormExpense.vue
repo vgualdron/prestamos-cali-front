@@ -71,14 +71,12 @@
               outlined
               clearable
               input-debounce="0"
-              label="Persona *"
+              label="Persona"
               :options="optionsUsers"
               option-label="name"
               option-value="id"
               lazy-rules
-              :rules="[
-                (val) => (val <= 0) || 'El campo es requerido',
-              ]"
+              :rules="[]"
               hide-bottom-space
               map-options
               emit-value
@@ -98,6 +96,7 @@
               label="Valor *"
               lazy-rules
               :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
+              :hint="formattedPrice(amount)"
               type="number"/>
             <q-input
               outlined
@@ -133,7 +132,7 @@ export default {
   data() {
     return {
       isLoading: false,
-      optionsUsers: [{ id: 0, name: 'NINGUNO' }],
+      optionsUsers: [],
       optionsAreas: [],
       optionsItems: [],
       rules: {
@@ -155,7 +154,7 @@ export default {
   },
   watch: {
     users(val) {
-      this.optionsUsers = [{ id: 0, name: 'NINGUNO' }, ...val];
+      this.optionsUsers = [...val];
     },
     areas(val) {
       this.optionsAreas = [...val];
@@ -210,6 +209,13 @@ export default {
     ...mapActions(itemTypes.PATH, {
       listItems: itemTypes.actions.LIST_ITEMS,
     }),
+    formattedPrice(value) {
+      if (!value) return '';
+      return value
+        .toString()
+        .replace(/\D/g, '') // Elimina caracteres no numéricos
+        .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Agrega puntos como separadores
+    },
     formatDateHour(date) {
       return moment(date).format('YYYY-MM-DD hh:mm:ss');
     },

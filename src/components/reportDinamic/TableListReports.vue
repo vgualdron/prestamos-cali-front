@@ -110,6 +110,8 @@ export default {
       'permissions',
     ]),
     ...mapState(reportTypes.PATH, {
+      reportsStatus: 'status',
+      reportsResponseMessages: 'responseMessages',
       reports: 'reports',
       reportData: 'data',
     }),
@@ -148,9 +150,14 @@ export default {
       showLoading('Consultando ...', 'Por favor, espere', true);
       this.reportSelected = row;
       await this.executeReport(row.id);
-      this.fields = this.getColumns();
+      if (!this.reportsStatus) {
+        showNotifications(this.reportsResponseMessages, false, 'top-right', 5000);
+        this.$q.loading.hide();
+      } else {
+        this.fields = this.getColumns();
+        this.showModal = true;
+      }
       this.$q.loading.hide();
-      this.showModal = true;
     },
   },
   components: {

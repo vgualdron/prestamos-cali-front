@@ -47,14 +47,25 @@
       class="q-mt-md"
       dense
     >
-      <template v-slot:body-cell-delete="props">
+      <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
+            v-if="props.row.status === 'borrador'"
             icon="delete"
             class="q-ml-sm"
-            color="primary"
+            color="red"
             title="Click para eliminar el egreso"
+            size="sm"
             @click="remove(props.row)">
+          </q-btn>
+          <q-btn
+            v-if="props.row.status === 'borrador'"
+            icon="check"
+            class="q-ml-sm"
+            color="green"
+            title="Click para guardar el egreso"
+            size="sm"
+            @click="changeStatus(props.row)">
           </q-btn>
         </q-td>
       </template>
@@ -100,8 +111,8 @@ export default {
       route: '/expense',
       columns: [
         {
-          name: 'delete',
-          label: 'Borrar',
+          name: 'actions',
+          label: 'Acciones',
           align: 'center',
           visible: false,
         },
@@ -141,6 +152,14 @@ export default {
           align: 'left',
           label: 'Item',
           field: 'item_name',
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'description',
+          align: 'left',
+          label: 'Descripción',
+          field: 'description',
           sortable: true,
           visible: true,
         },
@@ -225,21 +244,38 @@ export default {
       }
       this.$q.loading.hide();
     },
-    async changeStatus(obj, type) {
-      this.obj = obj;
-      this.type = type;
-      showLoading('Guardando ...', 'Por favor, espere', true);
-      await this.updateStatusNew({
-        ...obj,
-        status: 'creado',
-      });
+    async changeStatus(obj) {
+      this.$q.dialog({
+        title: 'Guardar',
+        message: 'Está seguro que desea guardar?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        this.obj = obj;
+        showLoading('Guardando ...', 'Por favor, espere', true);
+        await this.updateExpense({
+          ...obj,
+          status: 'creado',
+        });
 
-      if (this.status === true) {
-        this.user = { ...this.copyUser };
-        await this.listMounted();
-      }
-      this.$q.loading.hide();
-      this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
+        if (this.status === true) {
+          this.user = { ...this.copyUser };
+          await this.listMounted();
+        }
+        this.$q.loading.hide();
+        this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
     },
     async remove(row) {
       this.$q.dialog({

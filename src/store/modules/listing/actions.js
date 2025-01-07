@@ -113,9 +113,9 @@ export default {
       commit(types.mutations.SET_INFO_LISTING, error.response.data);
     }
   },
-  async [types.actions.ADD_CAPITAL_LISTING]({ commit }, payload) {
+  async [types.actions.ADD_DELIVERY_LISTING]({ commit }, payload) {
     try {
-      const response = await listingApi.addCapitalListing(payload);
+      const response = await listingApi.addDeliveryListing(payload);
       commit(types.mutations.SET_STATUS, true);
       commit(types.mutations.SET_RESPONSE_MESSAGES, response.data.message);
     } catch (error) {

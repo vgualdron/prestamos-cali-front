@@ -292,7 +292,7 @@ export default {
   methods: {
     ...mapActions(listingTypes.PATH, {
       fetchDelivery: listingTypes.actions.FETCH_DELIVERY,
-      addCapitalListing: listingTypes.actions.ADD_CAPITAL_LISTING,
+      addDeliveryListing: listingTypes.actions.ADD_DELIVERY_LISTING,
     }),
     ...mapActions(fileTypes.PATH, {
       saveFile: fileTypes.actions.SAVE_FILE,
@@ -338,9 +338,25 @@ export default {
     },
     async captureImage() {
       showLoading('Guardando ...', 'Por favor, espere', true);
-      await this.addCapitalListing({
-        capital: this.capital,
+      await this.addDeliveryListing({
         listing_id: this.list.value,
+        date: moment().format('YYYY-MM-DD hh:mm:ss'),
+        transfers_count: this.delivery.itemPayment.total_count_nequi,
+        transfers_amount: this.delivery.itemPayment.total_amount_nequi,
+        advances_count: this.delivery.itemPayment.total_count_repayment,
+        advances_amount: this.delivery.itemPayment.total_amount_repayment,
+        articles_count: this.delivery.itemPayment.total_count_article,
+        articles_amount: this.delivery.itemPayment.total_amount_article,
+        renovations_count: this.delivery.itemRenove.total_count,
+        renovations_amount: this.delivery.itemRenove.total_amount,
+        expenses_news_count: this.delivery.itemNovel.total_count,
+        expenses_news_amount: this.delivery.itemNovel.total_amount,
+        expenses_renovations_count: this.delivery.itemExpense.total_count_renovation,
+        expenses_renovations_amount: this.delivery.itemExpense.total_amount_renovation,
+        collection_secre: this.delivery.itemPayment.total_amount_secre,
+        collection_street: this.delivery.itemPayment.total_amount_street,
+        clients: this.delivery.itemPayment.total_clients,
+        capital: this.capital,
       });
       await this.captureImageList();
       await this.captureImageDelivery();
