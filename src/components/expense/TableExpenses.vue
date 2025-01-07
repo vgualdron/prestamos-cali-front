@@ -50,7 +50,7 @@
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
-            v-if="props.row.status === 'borrador'"
+            v-if="props.row.status === 'borrador' || props.row.status === 'rechazado'"
             icon="delete"
             class="q-ml-sm"
             color="red"
@@ -70,15 +70,28 @@
         </q-td>
       </template>
       <template v-slot:body-cell-voucher="props">
-        <q-td :props="props">
+        <q-td :props="props" @click="clickRow(props.row)">
+          <img
+            v-if="props.row.file_url && props.row.status !== 'borrador'"
+            :src="formatLink(props.row)"
+            width="220rem" />
           <upload-image
+            v-else
             :config="{
               name: 'FOTO_EXPENSE',
               storage: 'expenses',
               modelName: 'expenses',
               modelId: props.row.id
             }"
+            @savedFile="saveFileExpense"
           />
+        </q-td>
+      </template>
+      <template v-slot:body-cell-status="props">
+        <q-td :props="props">
+          <q-badge :color="getColorBadge(props.row)">
+            {{ props.row.status }}
+          </q-badge>
         </q-td>
       </template>
     </q-table>
@@ -186,6 +199,7 @@ export default {
       filter: '',
       data: [],
       polling: null,
+      itemSelected: {},
     };
   },
   async mounted() {
@@ -216,6 +230,25 @@ export default {
       updateExpense: expenseTypes.actions.UPDATE_EXPENSE,
       deleteExpense: expenseTypes.actions.DELETE_EXPENSE,
     }),
+    getColorBadge(row) {
+      let color = 'black';
+      if (row.status === 'creado') {
+        color = 'blue';
+      } else if (row.status === 'rechazado') {
+        color = 'red';
+      }
+      return color;
+    },
+    formatLink(row) {
+      if (row.file_url) {
+        return `${process.env.URL_FILES}${row.file_url}`;
+      }
+      return '';
+    },
+    clickRow(row) {
+      this.itemSelected = { ...row };
+      console.log(this.itemSelected);
+    },
     formatDateHour(date) {
       return Moment(date).format('YYYY-MM-DD hh:mm A');
     },
@@ -235,7 +268,7 @@ export default {
     async listMounted() {
       showLoading('Cargando ...', 'Por favor, espere', true);
       await this.listExpenses({
-        status: ['creado', 'borrador'],
+        status: ['creado', 'borrador', 'rechazado'],
         items: [1, 8],
       });
       if (this.status === false) {
@@ -307,6 +340,12 @@ export default {
     },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
+    },
+    async saveFileExpense(obj) {
+      await this.updateExpense({
+        ...this.itemSelected,
+        file_id: obj.id,
+      });
     },
   },
 };

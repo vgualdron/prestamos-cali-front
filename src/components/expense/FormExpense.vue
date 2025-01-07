@@ -255,7 +255,7 @@ export default {
       this.$q.loading.hide();
       this.showDialog = false;
       await this.listExpenses({
-        status: ['creado', 'borrador'],
+        status: ['creado', 'borrador', 'rechazado'],
         items: [1, 8],
       });
     },
