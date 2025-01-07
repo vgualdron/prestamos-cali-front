@@ -340,7 +340,7 @@ export default {
       showLoading('Guardando ...', 'Por favor, espere', true);
       await this.addDeliveryListing({
         listing_id: this.list.value,
-        date: moment().format('YYYY-MM-DD hh:mm:ss'),
+        date: moment().format('YYYY-MM-DD HH:mm:ss'),
         transfers_count: this.delivery.itemPayment.total_count_nequi,
         transfers_amount: this.delivery.itemPayment.total_amount_nequi,
         advances_count: this.delivery.itemPayment.total_count_repayment,

@@ -140,7 +140,7 @@ export default {
           (val) => (!!val) || 'El campo es requerido',
         ],
       },
-      date: new Date(),
+      date: moment().format('YYYY-MM-DD HH:mm:ss'),
       amount: null,
       status: 'borrador',
       area_id: null,
@@ -217,7 +217,7 @@ export default {
         .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Agrega puntos como separadores
     },
     formatDateHour(date) {
-      return moment(date).format('YYYY-MM-DD hh:mm:ss');
+      return moment(date).format('YYYY-MM-DD hh:mm A');
     },
     async changeArea(value) {
       showLoading('Cargando ...', 'Por favor, espere', true);
@@ -244,7 +244,7 @@ export default {
     async onSubmit() {
       showLoading('Guardando ...', 'Por favor, espere', true);
       await this.addExpense({
-        date: this.formatDateHour(this.date),
+        date: this.date,
         amount: this.amount,
         status: this.status,
         description: this.description,
