@@ -124,6 +124,7 @@ import expenseTypes from '../../store/modules/expense/types';
 import userTypes from '../../store/modules/user/types';
 import areaTypes from '../../store/modules/area/types';
 import itemTypes from '../../store/modules/item/types';
+import notificationTypes from '../../store/modules/notification/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { removeAccents } from '../../helpers/removeAccents';
@@ -196,6 +197,9 @@ export default {
     },
   },
   methods: {
+    ...mapActions(notificationTypes.PATH, {
+      sendNotification: notificationTypes.actions.SEND_NOTIFICATION,
+    }),
     ...mapActions(expenseTypes.PATH, {
       listExpenses: expenseTypes.actions.LIST_EXPENSES,
       addExpense: expenseTypes.actions.SAVE_EXPENSE,
@@ -252,12 +256,29 @@ export default {
         item_id: this.item_id,
       });
       this.showNotification(this.expenseResponseMessages, this.expenseStatus, 'top-right', 5000);
+
+      if (this.expenseStatus) {
+        this.showDialog = false;
+        await this.listExpenses({
+          status: ['creado', 'borrador', 'rechazado'],
+          items: [1, 8],
+        });
+
+        if (this.user_id) {
+          const user = this.optionsUsers.find((u) => u.id === this.user_id);
+          if (user) {
+            const data = {
+              app_id: `${process.env.APP_ID_ONE_SIGNAL}`,
+              contents: { en: 'Se ha registrado en gasto a tu nombre' },
+              headings: { en: 'Haz click aquí y revisa' },
+              include_player_ids: [user.pushToken],
+              url: `${process.env.URL_FRONT}/my-expenses`,
+            };
+            await this.sendNotification(data);
+          }
+        }
+      }
       this.$q.loading.hide();
-      this.showDialog = false;
-      await this.listExpenses({
-        status: ['creado', 'borrador', 'rechazado'],
-        items: [1, 8],
-      });
     },
   },
 };

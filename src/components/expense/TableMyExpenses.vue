@@ -78,6 +78,18 @@
           </q-badge>
         </q-td>
       </template>
+      <template v-slot:body-cell-description="props">
+        <q-td :props="props" @click="clickRowDescription(props.row)">
+          <q-icon size="xs" name="edit" />
+          {{ (props.row.description) }}
+          <q-popup-edit
+            :value="props.row.description"
+            v-slot="scope" buttons
+            @input="val => changeRow('description', val)">
+            <q-input v-model="scope.value" dense autofocus />
+          </q-popup-edit>
+        </q-td>
+      </template>
     </q-table>
     <modal-preview-file
       v-if="showModalPreview"
@@ -237,7 +249,9 @@ export default {
       this.itemSelected = { ...row };
       this.itemSelected.urlPreview = `${process.env.URL_FILES}${row.file_url}`;
       this.showModalPreview = true;
-      console.log(this.itemSelected);
+    },
+    clickRowDescription(row) {
+      this.itemSelected = { ...row };
     },
     formatDateHour(date) {
       return Moment(date).format('YYYY-MM-DD hh:mm A');
@@ -268,6 +282,18 @@ export default {
       }
       this.$q.loading.hide();
     },
+    async changeRow(field, value) {
+      showLoading('Modificando ...', 'Por favor, espere', true);
+      const item = {
+        id: this.itemSelected.id,
+      };
+      item[field] = value.value ? value.value : value;
+      await this.updateExpense({
+        ...item,
+      });
+      await this.listMounted();
+      this.$q.loading.hide();
+    },
     async changeStatus(obj, status) {
       this.$q.dialog({
         title: 'Guardar',
@@ -286,11 +312,11 @@ export default {
         showLoading('Guardando ...', 'Por favor, espere', true);
         await this.updateExpense({
           ...obj,
+          approved_by: this.user,
           status,
         });
 
         if (this.status === true) {
-          this.user = { ...this.copyUser };
           await this.listMounted();
         }
         this.$q.loading.hide();
