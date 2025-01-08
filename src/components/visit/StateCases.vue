@@ -32,9 +32,16 @@
               v-if="type === 'review' && approvable && item.status != 'aprobado' && item.status != 'consignado'"
               label="APROBAR VISITA"
               class="q-mt-xs text-center"
-              color="primary"
-              outline
+              color="green"
+              size="md"
               @click="approve">
+            </q-btn>
+            <q-btn
+              v-if="type === 'review' && item.status == 'visitando'"
+              label="RECHAZAR VISITA"
+              class="q-ml-sm q-mt-xs text-center"
+              color="red"
+              size="md">
             </q-btn>
           </div>
         </div>

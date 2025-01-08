@@ -499,6 +499,7 @@
             <q-td><strong>{{ formatPrice(totalRepayment) }}</strong></q-td>
             <q-td><strong>{{ formatPrice(totalStreet) }}</strong></q-td>
             <q-td><strong>{{ formatPrice(totalArticle) }}</strong></q-td>
+            <q-td></q-td>
             <q-td colspan="5"><strong>{{ formatPrice(totalCollection) }}</strong></q-td>
             <q-td class="text-red-4"><strong>{{ formatPrice(totalCapital) }}</strong></q-td>
             <q-td></q-td>

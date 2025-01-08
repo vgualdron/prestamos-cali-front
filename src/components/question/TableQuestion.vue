@@ -72,7 +72,7 @@
           <q-td key="created_at" :props="props">
             {{ formatDate(props.row.created_at) }}
           </q-td>
-          <q-td key="observation" class="text-wrap" :props="props">
+          <q-td key="observation" class="wrap-text" :props="props">
             {{
               props.row.type === 'renovacion'
               ? `El valor solicitado es: ${formatPrice(props.row.observation)}`
@@ -342,3 +342,11 @@ export default {
   },
 };
 </script>
+<style scoped>
+  .wrap-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+  }
+</style>
