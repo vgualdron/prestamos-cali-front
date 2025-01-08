@@ -451,7 +451,7 @@ export default {
         }
         if (this.userSend) {
           this.user.userSend = this.userSend;
-          this.user.status = 'creado';
+          this.user.status = 'borrador';
         }
         this.$q.loading.hide();
       } else {

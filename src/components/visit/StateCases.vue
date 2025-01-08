@@ -41,7 +41,8 @@
               label="RECHAZAR VISITA"
               class="q-ml-sm q-mt-xs text-center"
               color="red"
-              size="md">
+              size="md"
+              @click="approve">
             </q-btn>
           </div>
         </div>

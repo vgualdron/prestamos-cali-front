@@ -235,7 +235,7 @@ export default {
         },
       ],
       pagination: {
-        rowsPerPage: 50,
+        rowsPerPage: 0,
       },
       filter: '',
       data: [],
