@@ -266,6 +266,17 @@ const routes = [
     ],
   },
   {
+    path: '/my-expenses',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Mis movimientos',
+        component: () => import('pages/MyExpense.vue'),
+      },
+    ],
+  },
+  {
     path: '/expense',
     component: () => import('layouts/MainLayout.vue'),
     children: [
@@ -385,6 +396,18 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/upload-news',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Migración de nuevos',
+        component: () => import('pages/UploadNews.vue'),
+        meta: { permissions: ['news.migration'] },
+      },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
@@ -400,13 +423,6 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', name: 'Cargar refs de payments', component: () => import('pages/UploadPayments.vue') },
-    ],
-  },
-  {
-    path: '/upload-news',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', name: 'Cargar datos de nuevos', component: () => import('pages/UploadNews.vue') },
     ],
   },
 ];

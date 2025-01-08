@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="row q-mt-md">
-      <div class="col-10 text-center">
+      <div class="col-11 text-center">
         <q-input
           debounce="400"
           color="primary"
@@ -18,7 +18,7 @@
         </q-input>
       </div>
       <div
-        class="col-2
+        class="col-1
         text-center"
       >
         <q-btn
@@ -28,13 +28,6 @@
           color="primary"
           title="Click para refrescar la tabla"
           @click="listMounted">
-        </q-btn>
-        <q-btn
-          icon="add"
-          class="q-ml-sm"
-          color="primary"
-          title="Click para agregar un nuevo egreso"
-          @click="showModal = true">
         </q-btn>
       </div>
     </div>
@@ -50,22 +43,22 @@
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
-            v-if="props.row.file_url && (props.row.status === 'borrador' || props.row.status === 'rechazado')"
-            icon="delete"
+            v-if="props.row.status === 'creado'"
+            icon="close"
             class="q-ml-sm"
             color="red"
-            title="Click para eliminar el egreso"
+            title="Click para rechazar"
             size="sm"
-            @click="remove(props.row)">
+            @click="changeStatus(props.row, 'rechazado')">
           </q-btn>
           <q-btn
-            v-if="props.row.file_url && props.row.status === 'borrador'"
+            v-if="props.row.status === 'creado'"
             icon="check"
             class="q-ml-sm"
             color="green"
-            title="Click para guardar el egreso"
+            title="Click para aprobar"
             size="sm"
-            @click="changeStatus(props.row)">
+            @click="changeStatus(props.row, 'aprobado')">
           </q-btn>
         </q-td>
       </template>
@@ -74,17 +67,8 @@
           <img
             v-if="props.row.file_url && props.row.status !== 'borrador'"
             :src="formatLink(props.row)"
-            width="220rem" />
-          <upload-image
-            v-else
-            :config="{
-              name: 'FOTO_EXPENSE',
-              storage: 'expenses',
-              modelName: 'expenses',
-              modelId: props.row.id
-            }"
-            @savedFile="saveFileExpense"
-          />
+            class="cursor-pointer"
+            width="150rem" />
         </q-td>
       </template>
       <template v-slot:body-cell-status="props">
@@ -95,30 +79,31 @@
         </q-td>
       </template>
     </q-table>
-    <form-expense
-      v-if="showModal"
-      v-model="showModal"
-    />
+    <modal-preview-file
+      v-if="showModalPreview"
+      v-model="showModalPreview"
+      :url="itemSelected.urlPreview"
+      :type="'image'"
+      :showBtnCancel="false"/>
   </div>
 </template>
 <script>
-import { mapState, mapActions } from 'vuex';
-import UploadImage from 'components/common/UploadImage.vue';
-import FormExpense from 'components/expense/FormExpense.vue';
 import Moment from 'moment';
+import { mapState, mapActions } from 'vuex';
+import ModalPreviewFile from 'components/common/ModalPreviewFile.vue';
 import expenseTypes from '../../store/modules/expense/types';
+import commonTypes from '../../store/modules/common/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
-// import { formatDateWithTime } from '../../helpers/formatDate';
 
 export default {
   components: {
-    UploadImage,
-    FormExpense,
+    ModalPreviewFile,
   },
   data() {
     return {
       showModal: false,
+      showModalPreview: false,
       obj: {},
       type: 'C',
       route: '/expense',
@@ -213,6 +198,9 @@ export default {
       'status',
       'expense',
     ]),
+    ...mapState(commonTypes.PATH, [
+      'user',
+    ]),
     dataTable() {
       const data = this.expenses.map((element) => ({
         ...element,
@@ -226,12 +214,12 @@ export default {
   },
   methods: {
     ...mapActions(expenseTypes.PATH, {
-      listExpenses: expenseTypes.actions.LIST_EXPENSES,
+      listExpensesByUser: expenseTypes.actions.LIST_EXPENSES_BY_USER,
       updateExpense: expenseTypes.actions.UPDATE_EXPENSE,
       deleteExpense: expenseTypes.actions.DELETE_EXPENSE,
     }),
     getColorBadge(row) {
-      let color = 'black';
+      let color = 'green';
       if (row.status === 'creado') {
         color = 'blue';
       } else if (row.status === 'rechazado') {
@@ -247,6 +235,8 @@ export default {
     },
     clickRow(row) {
       this.itemSelected = { ...row };
+      this.itemSelected.urlPreview = `${process.env.URL_FILES}${row.file_url}`;
+      this.showModalPreview = true;
       console.log(this.itemSelected);
     },
     formatDateHour(date) {
@@ -267,8 +257,9 @@ export default {
     },
     async listMounted() {
       showLoading('Cargando ...', 'Por favor, espere', true);
-      await this.listExpenses({
-        status: ['creado', 'borrador', 'rechazado'],
+      await this.listExpensesByUser({
+        user: this.user,
+        status: ['creado', 'aprobado', 'rechazado'],
         items: [1, 8],
       });
       if (this.status === false) {
@@ -277,7 +268,7 @@ export default {
       }
       this.$q.loading.hide();
     },
-    async changeStatus(obj) {
+    async changeStatus(obj, status) {
       this.$q.dialog({
         title: 'Guardar',
         message: 'Está seguro que desea guardar?',
@@ -295,7 +286,7 @@ export default {
         showLoading('Guardando ...', 'Por favor, espere', true);
         await this.updateExpense({
           ...obj,
-          status: 'creado',
+          status,
         });
 
         if (this.status === true) {
