@@ -363,6 +363,49 @@
                 </div>
               </div>
             </q-td>
+            <q-td key="discount" :props="props">
+              <template v-if="hasPermission('lending.addDiscounts')">
+                <div v-if="hasDiscounts(props.row)">
+                  <div v-for="discount in props.row.discounts" :key="`discount-${discount.id}`"
+                    class="q-ma-xs">
+                    <q-badge
+                      color="green">
+                      <b>{{ formatPrice(discount.amount) }}</b>
+                      <q-icon
+                        name="close"
+                        size="14px"
+                        class="q-ml-xs pointer-cursor"
+                        @click="removeDiscount(discount)"
+                      />
+                    </q-badge>
+                  </div>
+                </div>
+                <b
+                  v-else-if="getBalance(props.row) === 0"
+                  title="Ya pagó todo el préstamo">
+                  <q-icon name="block" color="red" />
+                </b>
+                <b v-else>
+                  <q-btn
+                    color="pink-4"
+                    label="D"
+                    size="sm"
+                    @click="addDiscount(props.row)"
+                  />
+                </b>
+              </template>
+              <template v-else>
+                <div v-if="hasDiscounts(props.row)">
+                  <div v-for="discount in props.row.discounts" :key="`discount-${discount.id}`"
+                    class="q-ma-xs">
+                    <q-badge
+                      color="green">
+                      <b>{{ formatPrice(discount.amount) }}</b>
+                    </q-badge>
+                  </div>
+                </div>
+              </template>
+            </q-td>
             <q-td key="daysPassed" :props="props">
               {{ daysSinceGivenDate(props.row.firstDate) }}
             </q-td>
@@ -463,6 +506,12 @@
         </template>
       </q-table>
     </div>
+    <modal-add-discount
+      v-if="showModalDiscount"
+      v-model="showModalDiscount"
+      :row="itemSelected"
+      :valuePayment="valuePayment"
+      @updateTable="getLendings"/>
     <modal-add-payment
       v-if="showModalPaymentNequi"
       v-model="showModalPaymentNequi"
@@ -569,6 +618,7 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import moment from 'moment';
+import ModalAddDiscount from 'components/discount/ModalAddDiscount.vue';
 import ModalAddPayment from 'components/payment/ModalAddPayment.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
 import ModalPreviewFile from 'components/common/ModalPreviewFile.vue';
@@ -588,12 +638,14 @@ import newTypes from '../../store/modules/new/types';
 import fileTypes from '../../store/modules/file/types';
 import expenseTypes from '../../store/modules/expense/types';
 import commonTypes from '../../store/modules/common/types';
+import discountTypes from '../../store/modules/discount/types';
 import { showLoading } from '../../helpers/showLoading';
 import { havePermission } from '../../helpers/havePermission';
 import { showNotifications } from '../../helpers/showNotifications';
 
 export default {
   components: {
+    ModalAddDiscount,
     ModalAddPayment,
     ModalCardBoard,
     ModalRenove,
@@ -724,6 +776,14 @@ export default {
           sortable: false,
         },
         {
+          name: 'discount',
+          required: true,
+          label: 'Desc',
+          align: 'center',
+          style: 'width: 100px',
+          sortable: false,
+        },
+        {
           name: 'daysPassed',
           required: true,
           label: 'Dias',
@@ -812,6 +872,7 @@ export default {
       location: null,
       showModalNequis: false,
       showModalListClosed: false,
+      showModalDiscount: false,
     };
   },
   watch: {
@@ -1005,6 +1066,9 @@ export default {
     ...mapActions(expenseTypes.PATH, {
       updateExpense: expenseTypes.actions.UPDATE_EXPENSE,
     }),
+    ...mapActions(discountTypes.PATH, {
+      deleteDiscount: discountTypes.actions.DELETE_DISCOUNT,
+    }),
     tdNameClass(row) {
       let c = '';
       if (row.expense_id && !row.file_id_r) {
@@ -1095,7 +1159,11 @@ export default {
         const payments = row.payments.filter((payment) => payment.type === 'nequi' && payment.is_valid);
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
-      return (total === totalPayments);
+      let totalDiscounts = 0;
+      if (row.discounts && row.discounts.length > 0) {
+        totalDiscounts = row.discounts.reduce((result, discount) => (parseInt(result, 10) + parseInt(discount.amount, 10)), 0);
+      }
+      return (total - totalPayments - totalDiscounts) === 0;
     },
     isNew(row) {
       const date = new Date(row.created_at);
@@ -1193,7 +1261,11 @@ export default {
         const payments = row.payments.filter((payment) => (payment.is_valid && new Date(payment.date) < dateDouble));
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
-      return (total - totalPayments);
+      const totalDiscounts = 0;
+      /* if (row.discounts && row.discounts.length > 0) {
+        totalDiscounts = row.discounts.reduce((result, discount) => (parseInt(result, 10) + parseInt(discount.amount, 10)), 0);
+      } */
+      return (total - totalPayments - totalDiscounts);
     },
     feeWithInterest(row) {
       const val = row.amount + (row.amount * (row.percentage / 100));
@@ -1217,7 +1289,18 @@ export default {
         const payments = row.payments.filter((payment) => payment.is_valid);
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
-      return (total - totalPayments);
+      let totalDiscounts = 0;
+      if (row.discounts && row.discounts.length > 0) {
+        totalDiscounts = row.discounts.reduce((result, discount) => (parseInt(result, 10) + parseInt(discount.amount, 10)), 0);
+      }
+      return (total - totalPayments - totalDiscounts);
+    },
+    hasDiscounts(row) {
+      let has = false;
+      if (row.discounts && row.discounts.length > 0) {
+        has = true;
+      }
+      return has;
     },
     hasPaymentToday(row, type, isStreet) {
       let has = false;
@@ -1450,6 +1533,10 @@ export default {
       this.valuePayment = this.getBalance(row);
       this.showModalPaymentRenovation = true;
     },
+    addDiscount(row) {
+      this.valuePayment = this.getBalance(row);
+      this.showModalDiscount = true;
+    },
     async openModal(action, row) {
       if (action === 'normal') {
         this.showModalCardBoard = true;
@@ -1469,6 +1556,30 @@ export default {
       } else if (action === 'close') {
         this.showModalClosed = true;
       }
+    },
+    removeDiscount(row) {
+      this.$q.dialog({
+        title: 'Eliminar',
+        message: 'Está seguro que desea eliminar el descuento?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        this.isLoadingTable = true;
+        await this.deleteDiscount(row.id);
+        await this.getLendings(this.listingSelected.value);
+        this.isLoadingTable = false;
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
     },
     deletePayment(row) {
       this.$q.dialog({

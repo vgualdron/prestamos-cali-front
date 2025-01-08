@@ -220,9 +220,6 @@ export default {
         .replace(/\D/g, '') // Elimina caracteres no numéricos
         .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Agrega puntos como separadores
     },
-    formatDateHour(date) {
-      return moment(date).format('YYYY-MM-DD hh:mm A');
-    },
     async changeArea(value) {
       showLoading('Cargando ...', 'Por favor, espere', true);
       this.item_id = null;

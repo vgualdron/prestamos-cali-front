@@ -574,7 +574,11 @@ export default {
         const payments = row.payments.filter((payment) => payment.type === 'nequi' && payment.is_valid);
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
-      return (total - totalPayments);
+      let totalDiscounts = 0;
+      if (row.discounts && row.discounts.length > 0) {
+        totalDiscounts = row.discounts.reduce((result, discount) => (parseInt(result, 10) + parseInt(discount.amount, 10)), 0);
+      }
+      return (total - totalPayments - totalDiscounts);
     },
     renoveLending(action) {
       const {

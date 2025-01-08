@@ -526,7 +526,11 @@ export default {
         const payments = row.payments.filter((payment) => (payment.is_valid && new Date(payment.date) < dateDouble));
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
-      return (total - totalPayments);
+      const totalDiscounts = 0;
+      /* if (row.discounts && row.discounts.length > 0) {
+        totalDiscounts = row.discounts.reduce((result, discount) => (parseInt(result, 10) + parseInt(discount.amount, 10)), 0);
+      } */
+      return (total - totalPayments - totalDiscounts);
     },
     feeWithInterest(row) {
       const val = row.amount + (row.amount * (row.percentage / 100));
@@ -544,7 +548,11 @@ export default {
         const payments = row.payments.filter((payment) => (payment.is_valid && dateDouble < new Date(payment.date)));
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
-      return (total - totalPayments);
+      let totalDiscounts = 0;
+      if (!this.hasDoubleInterest && row.discounts && row.discounts.length > 0) {
+        totalDiscounts = row.discounts.reduce((result, discount) => (parseInt(result, 10) + parseInt(discount.amount, 10)), 0);
+      }
+      return (total - totalPayments - totalDiscounts);
     },
     getAmountfeesPaid(row) {
       const valueFee = this.feeWithInterest(row);
@@ -585,6 +593,13 @@ export default {
       if (this.hasDoubleInterest) {
         finishDate = new Date(dateInit);
         finishDate.setDate(finishDate.getDate() + 21);
+      }
+
+      const { discounts } = row;
+      if (!this.hasDoubleInterest && discounts) {
+        discounts.forEach((payment) => {
+          value -= parseInt(payment.amount, 10);
+        });
       }
 
       const beforePayments = this.getPaymentBeforeFirstDate(payments, firstDate);

@@ -13,39 +13,23 @@
             <div class="col-12 text-center">
               <q-input
                 outlined
-                v-model="amount"
+                v-model.trim="amount"
                 label="Valor *"
                 type="number"
                 step="1000"
                 :max="getBalance(row)"
-                :hint="formattedPrice(amount)"
-                :readonly="type === 'renovacion'"/>
-            </div>
-          </div>
-          <div class="row q-mt-md" v-if="amount > 0 && (this.type === 'nequi' || this.type === 'articulo') && amount <= getBalance(row)">
-            <div class="col-12 text-center">
-              <p class="text-subtitle1 text-weight-bold text-center">AGREGAR FOTO DE SOPORTE DE PAGO</p>
-              <upload-image
-                :config="{
-                  name: 'FOTO_TRANSFERENCIA_CUOTA',
-                  storage: 'payments',
-                  modelName: 'payments',
-                  modelId: idPayment,
-                  labelBtn: null,
-                }"
-                @savedFile="saveAddPayment"
-              />
+                :hint="formattedPrice(amount)"/>
             </div>
           </div>
         </q-card-section>
         <q-separator />
-        <div class="row text-center q-pa-md" v-if="type !=='nequi' && type !=='articulo'">
+        <div class="row text-center q-pa-md">
           <q-btn
             label="Guardar"
             color="primary"
             class="col q-ml-sm"
             :disabled="amount <= 0 || amount > valuePayment"
-            @click="saveAddPayment"
+            @click="saveAddDiscount"
           />
         </div>
       </q-card>
@@ -55,9 +39,7 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import moment from 'moment';
-import UploadImage from 'components/common/UploadImage.vue';
-import paymentTypes from '../../store/modules/payment/types';
-import fileTypes from '../../store/modules/file/types';
+import discountTypes from '../../store/modules/discount/types';
 import { showLoading } from '../../helpers/showLoading';
 
 export default {
@@ -76,37 +58,19 @@ export default {
       type: Object,
       required: true,
     },
-    type: {
-      type: String,
-      required: false,
-      default: 'nequi',
-    },
-    isStreet: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
     valuePayment: {
       required: true,
     },
   },
   mounted() {
     showLoading('consultando ...', 'Por favor, espere', true);
-    if (this.type === 'renovacion') {
-      this.amount = parseInt(this.valuePayment, 10);
-    }
+    // this.amount = parseInt(this.valuePayment, 10);
     this.$q.loading.hide();
   },
   computed: {
-    ...mapState(paymentTypes.PATH, {
-      payments: 'payments',
-      paymentStatus: 'status',
-      paymentResponseMessages: 'responseMessages',
-    }),
-    ...mapState(fileTypes.PATH, {
-      file: 'file',
-      fileStatus: 'status',
-      fileResponseMessages: 'responseMessages',
+    ...mapState(discountTypes.PATH, {
+      discountStatus: 'status',
+      discountResponseMessages: 'responseMessages',
     }),
     isDiabledAdd() {
       return this.amount <= 0;
@@ -123,20 +87,12 @@ export default {
       return this.fields;
     },
     title() {
-      return `Agregar cobro ${this.type}`;
+      return 'Agregar descuento';
     },
   },
   methods: {
-    ...mapActions(paymentTypes.PATH, {
-      fetchPaymentsByLending: paymentTypes.actions.FETCH_PAYMENTS_BY_LENDING,
-      addPayment: paymentTypes.actions.ADD_PAYMENT,
-      updatePayment: paymentTypes.actions.UPDATE_PAYMENT,
-      deletePayment: paymentTypes.actions.DELETE_PAYMENT,
-    }),
-    ...mapActions(fileTypes.PATH, {
-      saveFile: fileTypes.actions.SAVE_FILE,
-      updateFile: fileTypes.actions.UPDATE_FILE,
-      getFile: fileTypes.actions.GET_FILE,
+    ...mapActions(discountTypes.PATH, {
+      addDiscount: discountTypes.actions.ADD_DISCOUNT,
     }),
     getBalance(row) {
       const total = row.has_double_interest ? this.valueWithInterest(row) : this.valueWithInterest(row);
@@ -155,33 +111,21 @@ export default {
       const val = row.amount + (row.amount * (row.percentage / 100));
       return (val);
     },
-    async saveAddPayment() {
+    async saveAddDiscount() {
       const { id } = this.row;
       showLoading('Guardando ...', 'Por favor, espere', true);
-      await this.addPayment({
+      await this.addDiscount({
         lending_id: id,
         amount: this.amount,
         date: moment().format('YYYY-MM-DD HH:mm:ss'),
         observation: '',
-        type: this.type,
-        is_valid: this.type === 'renovacion',
-        is_street: this.isStreet,
-        status: this.type === 'renovacion' ? 'aprobado' : 'creado',
-        file_id: this.type === 'renovacion' ? null : this.file.id,
+        status: 'aprobado',
       });
       this.$q.loading.hide();
-      if (this.paymentResponseMessages && this.paymentResponseMessages.data) {
-        if (this.type === 'nequi' || this.type === 'articulo') {
-          this.idPayment = this.paymentResponseMessages.data.id;
-          await this.updateFile({
-            ...this.file,
-            model_id: this.idPayment,
-          });
-        }
+      if (this.discountResponseMessages && this.discountResponseMessages.data) {
         this.$q.loading.hide();
         this.showDialog = false;
         this.$emit('updateTable', this.row.listing_id);
-        this.$emit('addPayment', { idFile: this.file.id });
       }
     },
     formattedPrice(value) {
@@ -193,7 +137,6 @@ export default {
     },
   },
   components: {
-    UploadImage,
   },
 };
 </script>
