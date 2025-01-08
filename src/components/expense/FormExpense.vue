@@ -225,6 +225,8 @@ export default {
     },
     async changeArea(value) {
       showLoading('Cargando ...', 'Por favor, espere', true);
+      this.item_id = null;
+      this.user_id = null;
       await this.listItems(value);
       await this.listUsersByArea({
         area: value,
