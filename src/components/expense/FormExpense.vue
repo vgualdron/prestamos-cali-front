@@ -271,8 +271,8 @@ export default {
           if (user) {
             const data = {
               app_id: `${process.env.APP_ID_ONE_SIGNAL}`,
-              contents: { en: 'Se ha registrado en gasto a tu nombre' },
-              headings: { en: 'Haz click aquí y revisa' },
+              headings: { en: 'Se ha registrado en gasto a tu nombre' },
+              contents: { en: 'Haz click aquí y revisa' },
               include_player_ids: [user.pushToken],
               url: `${process.env.URL_FRONT}/my-expenses`,
             };

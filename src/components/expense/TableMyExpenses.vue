@@ -45,16 +45,17 @@
           <q-btn
             v-if="props.row.status === 'creado'"
             icon="close"
-            class="q-ml-sm"
+            class="q-mb-sm"
             color="red"
             title="Click para rechazar"
             size="sm"
             @click="changeStatus(props.row, 'rechazado')">
           </q-btn>
+          <br>
           <q-btn
             v-if="props.row.status === 'creado'"
             icon="check"
-            class="q-ml-sm"
+            class="q-mt-sm"
             color="green"
             title="Click para aprobar"
             size="sm"
@@ -231,11 +232,13 @@ export default {
       deleteExpense: expenseTypes.actions.DELETE_EXPENSE,
     }),
     getColorBadge(row) {
-      let color = 'green';
+      let color = 'black';
       if (row.status === 'creado') {
         color = 'blue';
       } else if (row.status === 'rechazado') {
         color = 'red';
+      } else if (row.status === 'aprobado') {
+        color = 'green';
       }
       return color;
     },
@@ -273,7 +276,7 @@ export default {
       showLoading('Cargando ...', 'Por favor, espere', true);
       await this.listExpensesByUser({
         user: this.user,
-        status: ['creado', 'aprobado', 'rechazado'],
+        status: ['creado', 'aprobado', 'rechazado', 'borrador'],
         items: [1, 8],
       });
       if (this.status === false) {

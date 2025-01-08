@@ -52,16 +52,17 @@
           <q-btn
             v-if="props.row.file_url && (props.row.status === 'borrador' || props.row.status === 'rechazado')"
             icon="delete"
-            class="q-ml-sm"
+            class="q-mb-sm"
             color="red"
             title="Click para eliminar el egreso"
             size="sm"
             @click="remove(props.row)">
           </q-btn>
+          <br>
           <q-btn
             v-if="props.row.file_url && props.row.status === 'borrador'"
             icon="check"
-            class="q-ml-sm"
+            class="q-mt-sm"
             color="green"
             title="Click para guardar el egreso"
             size="sm"
@@ -107,6 +108,7 @@ import UploadImage from 'components/common/UploadImage.vue';
 import FormExpense from 'components/expense/FormExpense.vue';
 import Moment from 'moment';
 import expenseTypes from '../../store/modules/expense/types';
+import notificationTypes from '../../store/modules/notification/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 // import { formatDateWithTime } from '../../helpers/formatDate';
@@ -230,6 +232,9 @@ export default {
       updateExpense: expenseTypes.actions.UPDATE_EXPENSE,
       deleteExpense: expenseTypes.actions.DELETE_EXPENSE,
     }),
+    ...mapActions(notificationTypes.PATH, {
+      sendNotification: notificationTypes.actions.SEND_NOTIFICATION,
+    }),
     getColorBadge(row) {
       let color = 'black';
       if (row.status === 'creado') {
@@ -346,6 +351,7 @@ export default {
         ...this.itemSelected,
         file_id: obj.id,
       });
+      await this.listMounted();
     },
   },
 };
