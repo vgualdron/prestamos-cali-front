@@ -571,7 +571,7 @@
           />
         </div>
         <div class="div-container">
-          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FRONTAL REF FAMILIAR 1</p>
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FRONTAL REF FAMILIAR 1 (opcional)</p>
           <camera-photo
             :config="{
               name: 'FOTO_CEDULA_FRONTAL_REFERENCIA_FAMILIAR_1',
@@ -584,7 +584,7 @@
           />
         </div>
         <div class="div-container">
-          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA POSTERIOR REF FAMILIAR 1</p>
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA POSTERIOR REF FAMILIAR 1 (opcional)</p>
           <camera-photo
             :config="{
               name: 'FOTO_CEDULA_POSTERIOR_REFERENCIA_FAMILIAR_1',
@@ -669,7 +669,7 @@
           />
         </div>
         <div class="div-container">
-          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FRONTAL REF FAMILIAR 2</p>
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA FRONTAL REF FAMILIAR 2 (opcional)</p>
           <camera-photo
             :config="{
               name: 'FOTO_CEDULA_FRONTAL_REFERENCIA_FAMILIAR_2',
@@ -682,7 +682,7 @@
           />
         </div>
         <div class="div-container">
-          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA POSTERIOR REF FAMILIAR 2</p>
+          <p class="text-subtitle1 text-weight-bold text-center">FOTO CEDULA POSTERIOR REF FAMILIAR 2 (opcional)</p>
           <camera-photo
             :config="{
               name: 'FOTO_CEDULA_POSTERIOR_REFERENCIA_FAMILIAR_2',

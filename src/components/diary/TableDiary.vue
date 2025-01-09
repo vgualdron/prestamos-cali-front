@@ -35,6 +35,9 @@
                 <div class="wrap-text">
                   {{ e.site_visit === 'trabajo' ? e.address_work : e.address_house }}
                   {{ e.site_visit === 'trabajo' ? e.new_districtWorkName : e.new_districtHouseName }}
+                  <q-badge color="pink">
+                    {{ e.site_visit === 'trabajo' ? e.new_districtWorkOrder : e.new_districtHouseOrder }}
+                  </q-badge>
                 </div>
                 <span>
                   {{ e.new_occupation }}
@@ -48,6 +51,16 @@
                 Estado nuevo:
                 <q-badge :color="e.new_status === 'aprobado' ? 'green' : 'blue'">
                   {{ e.new_status }}
+                </q-badge>
+                <br>
+                <b v-if="e.visit_start_date">Inicio:</b>
+                <q-badge color="black" v-if="e.visit_start_date">
+                  {{ formatHour(e.visit_start_date) }} - {{ formatDate(e.visit_start_date) }}
+                </q-badge>
+                <br>
+                <b v-if="e.visit_end_date">Fin:</b>
+                <q-badge color="black" v-if="e.visit_end_date">
+                  {{ formatHour(e.visit_end_date) }} - {{ formatDate(e.visit_end_date) }}
                 </q-badge>
                 <p>
                   <q-btn

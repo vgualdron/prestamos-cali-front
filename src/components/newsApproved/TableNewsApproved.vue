@@ -79,6 +79,7 @@
   </div>
 </template>
 <script>
+import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import UploadImage from 'components/common/UploadImage.vue';
 import Cv from 'components/new/Cv.vue';
@@ -141,16 +142,19 @@ export default {
           visible: true,
         },
         {
-          name: 'status',
+          name: 'updated_at',
           align: 'left',
-          label: 'Estado',
-          field: 'status',
+          label: 'Fecha',
+          field: 'updated_at',
+          format: (row) => `${this.formatDate(row.updated_at)}`,
           sortable: true,
           visible: true,
         },
       ],
       pagination: {
-        rowsPerPage: 50,
+        rowsPerPage: 0,
+        sortBy: 'updated_at',
+        descending: true,
       },
       filter: '',
       data: [],
@@ -186,6 +190,9 @@ export default {
       listNews: newTypes.actions.LIST_NEWS,
       updateStatusNew: newTypes.actions.UPDATE_STATUS_NEW,
     }),
+    formatDate(date) {
+      return moment(date).format('DD/MM/YYYY');
+    },
     openCv(row) {
       this.newSelected = { ...row };
       this.showModalCv = true;

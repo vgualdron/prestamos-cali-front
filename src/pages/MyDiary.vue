@@ -65,7 +65,7 @@ export default {
 
         const now = new Moment().subtract(1, 'days');
         const startDate = now.startOf('day');
-        const end = new Moment().add(1, 'days');
+        const end = new Moment().add(0, 'days');
         const endDate = end.endOf('day');
 
         items.forEach((item) => {
