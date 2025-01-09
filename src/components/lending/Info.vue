@@ -64,7 +64,7 @@
               <b>Cobro debe hacer:</b>
               ({{ formatPrice(((info.capital.total * 2) - info.payments.total_payments) / (24 - info.days.days_work)) }})
             </td>
-            <td class="">
+            <td :class="(((info.payments.total_payments / info.days.days_work) * 24 ) / info.capital.total).toFixed(2) >= 2 ? 'bg-green-4' : 'bg-white'">
               <b>Porcentaje:</b>
               ({{ (((info.payments.total_payments / info.days.days_work) * 24 ) / info.capital.total).toFixed(2) }})
             </td>

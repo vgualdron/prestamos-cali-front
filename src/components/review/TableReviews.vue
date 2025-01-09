@@ -61,6 +61,7 @@
               field="changeStatus"
               icon="edit_calendar"
               size="sm"
+              :disabled="!validatedPermissions.changeStatus.status || disabledBtnAddVisit(props.row)"
               :title="validatedPermissions.changeStatus.title"
               @click="openModalVisit(props.row)"
               round
@@ -620,10 +621,11 @@ export default {
     async openModalVisit() {
       this.typeDiary = 'readwrite';
       this.showModalDiary = true;
+      // TO DO, msotrar calendario de fechas para selecionar, bloquear fechas del pasado
     },
     async addVisit(item) {
-      await this.changeStatus(this.itemSelected, 'agendado');
-      await this.changeStatusDiary({
+      await this.changeStatus(this.itemSelected, 'agendado'); // TO DO, está bien, cambia el status del new
+      await this.changeStatusDiary({ // TO DO, hay que ajustar para que se guarde el registro con la fecha selecciona y no cambiar status
         ...item,
         userId: item.user_id,
         new_id: this.itemSelected.id,
