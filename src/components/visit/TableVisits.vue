@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="row q-mt-md">
-      <div class="col-12 text-center">
+      <div class="col-11 text-center">
         <q-input
           dense
           debounce="400"
@@ -16,6 +16,16 @@
             <q-icon name="search" />
           </template>
         </q-input>
+      </div>
+      <div class="col-1 text-center">
+        <q-btn
+          round
+          icon="refresh"
+          class="q-my-xs"
+          color="primary"
+          title="Click para refrescar la tabla"
+          @click="listMounted()">
+        </q-btn>
       </div>
     </div>
     <q-table
@@ -50,6 +60,13 @@
               @click="showVisit(props.row)"
             /> -->
           </div>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-new_status="props">
+        <q-td :props="props">
+          <q-badge :color="getColorStatus(props.row)">
+            {{ props.row.new_status }}
+          </q-badge>
         </q-td>
       </template>
     </q-table>
@@ -171,10 +188,12 @@ export default {
       },
       filter: '',
       data: [],
+      polling: null,
     };
   },
   async mounted() {
     await this.listMounted();
+    this.pollData();
   },
   computed: {
     ...mapState(diaryTypes.PATH, [
@@ -198,10 +217,27 @@ export default {
       };
     },
   },
+  beforeDestroy() {
+    clearInterval(this.polling);
+  },
   methods: {
     ...mapActions(diaryTypes.PATH, {
       listVisitsReview: diaryTypes.actions.LIST_VISITS_REVIEW,
     }),
+    async pollData() {
+      this.polling = setInterval(async () => {
+        await this.listMounted();
+      }, 60000);
+    },
+    getColorStatus(item) {
+      let color = 'grey';
+      if (item.new_status === 'aprobado' || item.new_status === 'consignado') {
+        color = 'green';
+      } else if (item.new_status === 'visitando') {
+        color = 'blue';
+      }
+      return color;
+    },
     async listMounted() {
       showLoading('Cargando ...', 'Por favor, espere', true);
       await this.listVisitsReview({

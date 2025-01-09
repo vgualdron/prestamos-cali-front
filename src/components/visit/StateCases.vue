@@ -8,7 +8,6 @@
     >
       <template v-slot:header-root="prop">
         <div class="row items-center">
-          <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" class="q-mr-sm" style="width:50px;height:50px">
           <div>
             <b>{{ prop.node.label }}</b>
             <br>Nombre:
@@ -16,7 +15,7 @@
               {{ item.name }}
             </b>
             <br>Estado:
-            <q-badge :color="item.status === 'aprobado' || item.status === 'consignado' ? 'green' : 'blue'">
+            <q-badge :color="getColorStatus(item)">
               {{ item.status }}
             </q-badge>
             <br>Fecha inicio:
@@ -27,23 +26,6 @@
             <q-badge :color="prop.node.completed > 2 ? 'green' : 'red'">
               {{ prop.node.completed }}
             </q-badge>
-            <br>
-            <q-btn
-              v-if="type === 'review' && approvable && item.status != 'aprobado' && item.status != 'consignado'"
-              label="APROBAR VISITA"
-              class="q-mt-xs text-center"
-              color="green"
-              size="md"
-              @click="approve">
-            </q-btn>
-            <q-btn
-              v-if="type === 'review' && item.status == 'visitando'"
-              label="RECHAZAR VISITA"
-              class="q-ml-sm q-mt-xs text-center"
-              color="red"
-              size="md"
-              @click="approve">
-            </q-btn>
           </div>
         </div>
       </template>
@@ -72,6 +54,34 @@
         <p class="text-caption">{{ prop.node.caption }}</p>
       </template>
     </q-tree>
+    <q-input
+      :disable="type !== 'review' || item.status === 'rechazado'"
+      outlined
+      v-model.trim="novel_observation"
+      label="Observación"
+      lazy-rules
+      hide-bottom-space
+      hint="Debe poner una observación para poder rechazar la visita, la observación minimo debe tener 5 caracteres"
+      autocomplete="off"
+    />
+    <br>
+    <q-btn
+      v-if="type === 'review' && approvable && item.status != 'aprobado' && item.status != 'consignado'"
+      label="APROBAR VISITA"
+      class="q-mt-xs text-center"
+      color="green"
+      size="md"
+      @click="approve('aprobado')">
+    </q-btn>
+    <q-btn
+      v-if="type === 'review' && item.status == 'visitando'"
+      label="RECHAZAR VISITA"
+      class="q-ml-sm q-mt-xs text-center"
+      color="red"
+      size="md"
+      :disable="!novel_observation || novel_observation.length < 5"
+      @click="approve('rechazado')">
+    </q-btn>
   </div>
 </template>
 <script>
@@ -84,6 +94,7 @@ import { showLoading } from '../../helpers/showLoading';
 export default {
   data() {
     return {
+      novel_observation: '',
     };
   },
   props: [
@@ -153,6 +164,7 @@ export default {
     },
   },
   async mounted() {
+    this.novel_observation = this.item.observation;
     await this.getStatus();
   },
   methods: {
@@ -160,6 +172,15 @@ export default {
       getStatusCases: diaryTypes.actions.GET_STATUS_CASES,
       approveVisit: diaryTypes.actions.APPROVE_VISIT,
     }),
+    getColorStatus(item) {
+      let color = 'red';
+      if (item.status === 'aprobado' || item.status === 'consignado') {
+        color = 'green';
+      } else if (item.status === 'visitando') {
+        color = 'blue';
+      }
+      return color;
+    },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
@@ -169,13 +190,36 @@ export default {
     async getStatus() {
       await this.getStatusCases({ id: this.id });
     },
-    async approve() {
-      showLoading('Aprobando ...', 'Por favor, espere', true);
-      await this.approveVisit(this.item);
-      this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
-      await this.getStatus();
-      window.location.reload();
-      this.$q.loading.hide();
+    async approve(status) {
+      this.$q.dialog({
+        title: 'Guardar',
+        message: `Está seguro que desea pasar a ${status}?`,
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        showLoading('Guardando ...', 'Por favor, espere', true);
+        await this.approveVisit({
+          ...this.item,
+          novel_status: status,
+          novel_observation: this.novel_observation,
+        });
+        this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
+        await this.getStatus();
+        // window.location.reload();
+        this.$router.go(-1);
+        this.$q.loading.hide();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
     },
   },
 };

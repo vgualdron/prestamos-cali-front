@@ -16,7 +16,7 @@
       title="Refrezcar información"
       @click="reloadStatusFiles">
     </q-btn>
-    <state-cases v-if="id && showStateCases" :item="item" :id="id" type="review"/>
+    <state-cases v-if="id && showStateCases && item" :item="item" :id="id" type="review"/>
     <q-card v-if="id && showStateCases" class="q-mt-lg">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">DATOS DE CLIENTE</div>

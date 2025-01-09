@@ -403,7 +403,7 @@
           </div>
           <div class="div-container">
             <p class="text-subtitle1 text-weight-bold text-center">FOTO CLIENTE</p>
-            <camera-photo
+            <upload-image
               :config="{
                 name: 'FOTO_CLIENTE',
                 storage: 'news',

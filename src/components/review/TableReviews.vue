@@ -61,7 +61,6 @@
               field="changeStatus"
               icon="edit_calendar"
               size="sm"
-              :disabled="!validatedPermissions.changeStatus.status || disabledBtnAddVisit(props.row)"
               :title="validatedPermissions.changeStatus.title"
               @click="openModalVisit(props.row)"
               round
@@ -370,7 +369,7 @@ export default {
         },
       ],
       pagination: {
-        rowsPerPage: 50,
+        rowsPerPage: 0,
       },
       filter: '',
       data: [],

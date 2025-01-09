@@ -67,7 +67,7 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Recolección de datos',
+        name: 'Recolección de direcciones',
         component: () => import('pages/New.vue'),
         meta: { permissions: ['new.list'] },
       },

@@ -203,7 +203,7 @@
           </div>
         </q-card-section>
         <q-separator />
-        <div v-if="hasPermission('list.closedDelivery')" class="row text-center q-pa-md">
+        <div v-if="hasPermission('list.closedDelivery') && !delivery.itemDelivery" class="row text-center q-pa-md">
           <q-btn
             label="Cerrar entrega"
             icon="assignment_returned"

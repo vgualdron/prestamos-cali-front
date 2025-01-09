@@ -239,10 +239,12 @@ export default {
       },
       filter: '',
       data: [],
+      polling: null,
     };
   },
   async mounted() {
     this.listNewsMounted();
+    this.pollData();
   },
   computed: {
     ...mapState(newTypes.PATH, [
@@ -286,11 +288,19 @@ export default {
       };
     },
   },
+  beforeDestroy() {
+    clearInterval(this.polling);
+  },
   methods: {
     ...mapActions(newTypes.PATH, {
       listNews: newTypes.actions.LIST_NEWS,
       updateStatusNew: newTypes.actions.UPDATE_STATUS_NEW,
     }),
+    async pollData() {
+      this.polling = setInterval(async () => {
+        await this.listNewsMounted();
+      }, 60000);
+    },
     async listNewsMounted() {
       showLoading('Cargando ...', 'Por favor, espere', true);
       await this.listNews(['borrador', 'creado', 'analizando']);
