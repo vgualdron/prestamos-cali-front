@@ -55,6 +55,20 @@
           </div>
         </q-td>
       </template>
+      <template v-slot:body-cell-video="props">
+        <q-td :props="props">
+          <camera-video
+            :config="{
+              name: 'VIDEO_AUTORIZA_CUENTA_TERCERO',
+              storage: 'news',
+              modelName: 'news',
+              modelId: props.row.id
+            }"
+            :showApprove="false"
+            type="read"
+          />
+        </q-td>
+      </template>
       <template v-slot:body-cell-cv="props">
         <q-td :props="props">
           <q-btn
@@ -82,6 +96,7 @@
 import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import UploadImage from 'components/common/UploadImage.vue';
+import CameraVideo from 'components/common/CameraVideo.vue';
 import Cv from 'components/new/Cv.vue';
 import newTypes from '../../store/modules/new/types';
 import { showNotifications } from '../../helpers/showNotifications';
@@ -91,6 +106,7 @@ import { formatDateWithTime } from '../../helpers/formatDate';
 export default {
   components: {
     UploadImage,
+    CameraVideo,
     Cv,
   },
   data() {
@@ -103,6 +119,12 @@ export default {
         {
           name: 'actions',
           label: 'Cargar voucher',
+          align: 'center',
+          visible: false,
+        },
+        {
+          name: 'video',
+          label: 'Video de Aut',
           align: 'center',
           visible: false,
         },
