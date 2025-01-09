@@ -28,6 +28,10 @@
                   Lugar de visita: <b>{{ e.site_visit }}</b>
                 </span>
                 <br>
+                <span>
+                  <b>{{ e.sectorName }}</b>
+                </span>
+                <br>
                 <div class="wrap-text">
                   {{ e.site_visit === 'trabajo' ? e.address_work : e.address_house }}
                   {{ e.site_visit === 'trabajo' ? e.new_districtWorkName : e.new_districtHouseName }}
