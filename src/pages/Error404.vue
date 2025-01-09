@@ -4,17 +4,12 @@
       <div style="font-size: 30vh">
         404
       </div>
-
-      <div class="text-h2" style="opacity:.4">
-        Uups. No existe la pagina...
-      </div>
-
       <q-btn
         class="q-mt-xl"
         color="white"
         text-color="blue"
         unelevated
-        to="/home"
+        to="/#"
         label="Ir a Inicio"
         no-caps
       />
