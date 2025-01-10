@@ -1090,11 +1090,18 @@ export default {
     }),
     tdNameClass(row) {
       let c = '';
-      if (row.expense_id && !row.file_id_r) {
-        c = 'bg-blue-3';
-      }
-      if (row.expense_id && ((row.expense_status !== 'aprobado' && row.file_id_r) || (row.expense_status !== 'aprobado' && row.file_id_n))) {
-        c = 'bg-green-3';
+      if (row.type === 'R') {
+        if (row.expense_id && !row.file_id_r) {
+          c = 'bg-blue-3';
+        } if (row.expense_id && row.expense_status !== 'aprobado' && row.file_id_r) {
+          c = 'bg-green-3';
+        }
+      } else if (row.type === 'N') {
+        if (row.expense_id && !row.file_id_n) {
+          c = 'bg-blue-3';
+        } if (row.expense_id && row.expense_status !== 'aprobado' && row.file_id_n) {
+          c = 'bg-green-3';
+        }
       }
       return c;
     },
