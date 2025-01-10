@@ -1,26 +1,8 @@
 <template>
   <q-page class="">
-    <!-- <div class="row q-mt-sm">
-      <div class="col-12 text-center">
-        <q-btn
-          class="q-ml-xs"
-          color="primary"
-          label="Agenda actual"
-          size="md"
-          @click="viewDiary('current')"
-        />
-        <q-btn
-          class="q-ml-xs"
-          color="primary"
-          label="Agenda proxima semana"
-          size="md"
-          @click="viewDiary('next')"
-        />
-      </div>
-    </div> -->
     <table-diary
-      v-if="diariesDayByDay && diariesDayByDay.length > 0"
-      :data="dataTable"
+      v-if="diaries && diaries.length > 0"
+      :data="diaries"
       type="visitor"
       @addVisit="addVisit"/>
   </q-page>
@@ -83,8 +65,6 @@ export default {
   methods: {
     ...mapActions(diaryTypes.PATH, {
       listDiaries: diaryTypes.actions.LIST_DIARIES,
-      listDiariesDayByDay: diaryTypes.actions.LIST_DIARIES_DAY_BY_DAY,
-      saveDiary: diaryTypes.actions.SAVE_DIARY,
     }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
@@ -96,20 +76,6 @@ export default {
         date: new Moment(new Date()).format('YYYY-MM-DD'),
         moment,
       });
-
-      if (this.diaries.length === 0) {
-        await this.saveDiary({
-          userId: this.userId,
-          date: new Moment(new Date()).format('YYYY-MM-DD'),
-          moment,
-        });
-      }
-      await this.listDiariesDayByDay({
-        userId: this.userId,
-        date: new Moment(new Date()).format('YYYY-MM-DD'),
-        moment,
-      });
-      this.showModalDiaryRead = true;
       this.$q.loading.hide();
       this.showNotification(this.diaryResponseMessages, this.diaryStatus, 'top-right', 5000);
     },

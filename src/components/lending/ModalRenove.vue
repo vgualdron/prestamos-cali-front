@@ -486,7 +486,7 @@ export default {
       if (this.amountNew) {
         total = parseInt(this.amountNew.value, 10) - parseInt(this.getBalance(this.row), 10);
       }
-      return total;
+      return total < 0 ? 0 : total;
     },
   },
   methods: {
@@ -568,7 +568,7 @@ export default {
       return (val);
     },
     getBalance(row) {
-      const total = row.hasDoubleInterest ? this.valueWithDoubleInterest(row) : this.valueWithInterest(row);
+      const total = row.has_double_interest ? this.valueWithInterest(row) : this.valueWithInterest(row);
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0) {
         const payments = row.payments.filter((payment) => payment.type === 'nequi' && payment.is_valid);

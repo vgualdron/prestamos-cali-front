@@ -38,30 +38,13 @@
         </q-select>
       </div>
     </div>
-    <div class="row q-mt-sm">
-      <div class="col-12 text-center">
-        <q-btn
-          class="q-ml-xs"
-          color="primary"
-          label="Agenda actual"
-          size="md"
-          @click="viewDiary('current')"
-        />
-        <q-btn
-          class="q-ml-xs"
-          color="primary"
-          label="Agenda proxima semana"
-          size="md"
-          @click="viewDiary('next')"
-        />
-      </div>
-    </div>
     <div class="row q-mt-md">
       <div class="col-12 text-center">
         <table-diary
-          v-if="diariesDayByDay && diariesDayByDay.length > 0"
-          :data="diariesDayByDay"
-          @addVisit="addVisit"/>
+          v-if="diaries && diaries.length > 0"
+          :data="diaries"
+          @addVisit="addVisit"
+          @refreshDiary="viewDiary('current')"/>
       </div>
     </div>
   </q-page>
@@ -146,8 +129,6 @@ export default {
   methods: {
     ...mapActions(diaryTypes.PATH, {
       listDiaries: diaryTypes.actions.LIST_DIARIES,
-      listDiariesDayByDay: diaryTypes.actions.LIST_DIARIES_DAY_BY_DAY,
-      saveDiary: diaryTypes.actions.SAVE_DIARY,
     }),
     ...mapActions(userTypes.PATH, {
       listUsersByRoleName: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
@@ -165,20 +146,6 @@ export default {
         date: new Moment(new Date()).format('YYYY-MM-DD'),
         moment,
       });
-
-      if (this.diaries.length === 0) {
-        await this.saveDiary({
-          userId: this.userSelected,
-          date: new Moment(new Date()).format('YYYY-MM-DD'),
-          moment,
-        });
-      }
-      await this.listDiariesDayByDay({
-        userId: this.userSelected,
-        date: new Moment(new Date()).format('YYYY-MM-DD'),
-        moment,
-      });
-      this.showModalDiaryRead = true;
       this.$q.loading.hide();
       this.showNotification(this.diaryResponseMessages, this.diaryStatus, 'top-right', 5000);
     },

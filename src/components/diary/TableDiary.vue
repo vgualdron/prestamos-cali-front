@@ -1,10 +1,13 @@
 <template>
   <div class="q-pa-md">
-    <q-markup-table class="col-12" separator="cell">
+    <q-markup-table
+      class="markup-table q-mt-none"
+      separator="cell"
+      dense>
       <thead>
         <tr>
-          <th v-for="(el, index) in data[0].items" :key="`th_${el.date}_${index}`" class="text-center">
-            <span v-if="index != 0">
+          <th v-for="(el, index) in elements" :key="`th_${el.date}_${index}`" class="text-center">
+            <span>
               <b>{{ formatDateToDay(el.date) }}</b>
               <br>
               <b>{{ formatDate(el.date) }}</b>
@@ -13,82 +16,109 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(el, index) in data" :key="`tr_${el.date}_${index}`">
-          <td class="text-center" v-for="(e, i) in el.items" :key="`td_${el.id}_${i}`">
-            <span v-if="i === 0">
-              <b>{{ formatHour(e.date) }}</b>
-            </span>
-            <template v-else-if="e.new_id">
-              <div :class="e.status === 'visitando' ? 'bg-green-3 q-py-xs q-px-xs' : ''">
-                <b>
-                  {{ e.new_name }}
-                </b>
-                <br>
-                <span>
-                  Lugar de visita: <b>{{ e.site_visit }}</b>
-                </span>
-                <br>
-                <span>
-                  <b>{{ e.sectorName }}</b>
-                </span>
-                <br>
-                <div class="wrap-text">
-                  {{ e.site_visit === 'trabajo' ? e.address_work : e.address_house }}
-                  {{ e.site_visit === 'trabajo' ? e.new_districtWorkName : e.new_districtHouseName }}
-                  <q-badge color="pink">
-                    {{ e.site_visit === 'trabajo' ? e.new_districtWorkOrder : e.new_districtHouseOrder }}
-                  </q-badge>
-                </div>
-                <span>
-                  {{ e.new_occupation }}
-                </span>
-                <br>
-                Estado visita:
-                <q-badge :color="e.status === 'aprobado' ? 'green' : 'blue'">
-                  {{ e.status }}
-                </q-badge>
-                <br>
-                Estado nuevo:
-                <q-badge :color="e.new_status === 'aprobado' ? 'green' : 'blue'">
-                  {{ e.new_status }}
-                </q-badge>
-                <br>
-                <b v-if="e.visit_start_date">Inicio:</b>
-                <q-badge color="black" v-if="e.visit_start_date">
-                  {{ formatHour(e.visit_start_date) }} - {{ formatDate(e.visit_start_date) }}
-                </q-badge>
-                <br>
-                <b v-if="e.visit_end_date">Fin:</b>
-                <q-badge color="black" v-if="e.visit_end_date">
-                  {{ formatHour(e.visit_end_date) }} - {{ formatDate(e.visit_end_date) }}
-                </q-badge>
-                <p>
+        <tr>
+          <td v-for="(el, i) in elements" :key="`td_${el.date}_${i}`" class="text-center">
+            <p v-for="(item, j) in el.items" :key="`item_${item.date}_${j}`" class="text-center">
+              <q-card class="my-card">
+                <q-card-section class="bg-teal-2 text-black q-pa-none">
+                  <div class="text-subtitle1 text-bold wrap-text">
+                    {{ item.new_name }}
+                  </div>
+                  <div class="text-subtitle2 wrap-text">
+                    {{ item.new_occupation }}
+                  </div>
+                  <div v-if="type !== 'visitor'" class="text-subtitle2 wrap-text">
+                    <q-btn
+                      v-if="item.status === 'agendado' && isDateAllowed(item.date)"
+                      class="q-mb-xs"
+                      color="black"
+                      icon="edit_calendar"
+                      size="sm"
+                      @click="itemSelected = { ...item }"
+                      round
+                    >
+                      <q-popup-edit
+                        :value="item.date"
+                        v-slot="scope"
+                        @input="val => editDiary(val)"
+                        type="date"
+                        buttons>
+                        <q-date
+                          v-model="scope.value"
+                          mask="YYYY-MM-DD"
+                          dense
+                          default-view="Calendar"
+                          :options="isDateAllowed"
+                        />
+                      </q-popup-edit>
+                    </q-btn>
+                    {{ formatDate(item.date) }}
+                  </div>
+                </q-card-section>
+                <q-separator />
+                <q-card-section class="text-black">
+                  <div class="wrap-text">
+                    <div class="text-subtitle3 text-bold wrap-text">
+                      {{ item.sectorName }}
+                    </div>
+                    <div class="text-subtitle3 text-bold wrap-text">
+                      <span>
+                        Lugar de visita: <b>{{ item.site_visit }}</b>
+                      </span>
+                    </div>
+                    <div class="text-subtitle3 wrap-text">
+                      {{ item.site_visit === 'trabajo' ? item.address_work : item.address_house }}
+                      {{ item.site_visit === 'trabajo' ? item.new_districtWorkName : item.new_districtHouseName }}
+                    </div>
+                    <div class="text-subtitle3 wrap-text">
+                      <q-badge color="pink">
+                        {{ item.site_visit === 'trabajo' ? item.new_districtWorkOrder : item.new_districtHouseOrder }}
+                      </q-badge>
+                    </div>
+                    <div class="text-subtitle3 wrap-text">
+                      Estado visita:
+                      <q-badge :color="getColorStatus(item.status)">
+                        {{ item.status }}
+                      </q-badge>
+                      <br>
+                      Estado cliente:
+                      <q-badge :color="getColorStatus(item.new_status)">
+                        {{ item.new_status }}
+                      </q-badge>
+                    </div>
+                  </div>
+                </q-card-section>
+                <q-separator />
+                <q-card-actions>
+                  <q-btn flat round icon="event" />
+                  <span outline>
+                    <b v-if="item.visit_start_date">
+                      {{ formatHour(item.visit_start_date) }} - {{ formatDate(item.visit_start_date) }}
+                    </b>
+                    <b v-else>
+                      -
+                    </b>
+                  </span>
+                  <span class="q-ml-md">
+                    <b v-if="item.visit_end_date">
+                      {{ formatHour(item.visit_end_date) }} - {{ formatDate(item.visit_end_date) }}
+                    </b>
+                    <b v-else>
+                      -
+                    </b>
+                  </span>
                   <q-btn
                     v-if="type === 'visitor'"
-                    label="visita"
-                    color="black"
-                    class="q-mt-sm"
+                    color="primary"
+                    class="q-ml-md"
                     icon="arrow_forward"
-                    @click="goVisit(e)"
-                    outline
-                  />
-                </p>
-              </div>
-            </template>
-            <template v-else-if="e.id === tdSelected.id">
-              <div class="td-selected">
-                <q-btn
-                  class="q-ml-xs"
-                  color="primary"
-                  label="Agendar"
-                  size="md"
-                  @click="addVisit(tdSelected)"
-                />
-              </div>
-            </template>
-            <template v-else-if="type === 'readwrite'">
-              <div @click="clickTd(e)" class="td-selecteable"></div>
-            </template>
+                    :disable="item.status === 'finalizada'"
+                    @click="goVisit(item)">
+                    Entrar a visita
+                  </q-btn>
+                </q-card-actions>
+              </q-card>
+            </p>
           </td>
         </tr>
       </tbody>
@@ -97,14 +127,17 @@
 </template>
 <script>
 import moment from 'moment';
+import { mapState, mapActions } from 'vuex';
+import diaryTypes from '../../store/modules/diary/types';
 import { showNotifications } from '../../helpers/showNotifications';
-// import { showLoading } from '../../helpers/showLoading';
+import { showLoading } from '../../helpers/showLoading';
 
 export default {
   data() {
     return {
       name: 'TableDiary',
       tdSelected: {},
+      itemSelected: {},
     };
   },
   props: {
@@ -116,10 +149,55 @@ export default {
     },
   },
   computed: {
+    ...mapState(diaryTypes.PATH, {
+      diaryStatus: 'status',
+      diaryResponseMessages: 'responseMessages',
+    }),
+    elements() {
+      const groupedByDate = Object.entries(
+        this.data.reduce((groups, item) => {
+          if (item.new_id !== null) { // Filtrar solo los que tienen new_id no null
+            const date = item.date.split(' ')[0]; // Extraer solo la fecha
+            if (!groups[date]) {
+              groups[date] = [];
+            }
+            groups[date].push(item); // Agregar al grupo correspondiente
+          }
+          return groups;
+        }, {}),
+      ).map(([date, items]) => ({
+        date,
+        items,
+      }));
+      return groupedByDate;
+    },
   },
   methods: {
+    ...mapActions(diaryTypes.PATH, {
+      updateDiary: diaryTypes.actions.UPDATE_DIARY,
+    }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
+    },
+    async editDiary(date) {
+      showLoading('Guardando ...', 'Por favor, espere', true);
+      const data = {
+        id: this.itemSelected.id,
+        user_id: this.itemSelected.user_id,
+        new_id: this.itemSelected.new_id,
+        date,
+        status: 'agendado',
+      };
+      await this.updateDiary(data);
+      this.$emit('refreshDiary');
+      this.$q.loading.hide();
+    },
+    isDateAllowed(date) {
+      const today = new Date();
+      const selectedDate = new Date(date);
+      today.setHours(0, 0, 0, 0);
+      selectedDate.setHours(0, 0, 0, 0);
+      return selectedDate >= today;
     },
     formatDateToDay(date) {
       moment.locale('es');
@@ -131,25 +209,18 @@ export default {
     formatHour(date) {
       return moment(date).format('hh:mm A');
     },
-    clickRow(item) {
-      console.log(item);
-    },
-    clickTd(item) {
-      const fecha1 = new Date();
-      const fecha2 = new Date(item.date);
-      if (fecha1.getTime() > fecha2.getTime()) {
-        this.showNotification(
-          [
-            {
-              text: 'No puedes asignar visitas a fechas inferiores a la actual',
-              detail: 'Prueba con alguna fecha superior a la actual',
-            },
-          ],
-          false,
-        );
-      } else {
-        this.tdSelected = { ...item };
+    getColorStatus(status) {
+      let color = 'black';
+      if (status === 'aprobado' || status === 'consignado' || status === 'finalizada') {
+        color = 'green';
+      } else if (status === 'agendado') {
+        color = 'grey';
+      } else if (status === 'visitando') {
+        color = 'blue';
+      } else if (status === 'rechazado') {
+        color = 'red';
       }
+      return color;
     },
     addVisit(item) {
       this.$emit('addVisit', item);
@@ -177,7 +248,7 @@ export default {
     background-color: lightblue;
   }
   tr > td {
-    min-width: 160px;
+    min-width: 300px;
     max-width: 160px;
   }
   .wrap-text {
@@ -185,5 +256,16 @@ export default {
     overflow-wrap: break-word;
     word-break: break-all;
     white-space: normal;
+  }
+  .markup-table {
+    display: block;
+    border: solid 1px black;
+    width: 100%;
+  }
+  .markup-table th {
+    border: solid 1px black;
+  }
+  .markup-table td {
+    border: solid 1px black;
   }
 </style>

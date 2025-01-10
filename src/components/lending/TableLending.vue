@@ -209,6 +209,11 @@
                   :color="'orange'">
                   {{ props.row.type }}
                 </q-badge>
+                <q-badge
+                  v-if="props.row.type === 'F'"
+                  color="red">
+                  FALSO
+                </q-badge>
                 {{ formatText(props.row.nameDebtor, 30) }}
               </p>
             </q-td>
@@ -1267,6 +1272,10 @@ export default {
         totalDiscounts = row.discounts.reduce((result, discount) => (parseInt(result, 10) + parseInt(discount.amount, 10)), 0);
       } */
       return (total - totalPayments - totalDiscounts);
+    },
+    feeWithDoubleInterest(row) {
+      const val = row.amount + (row.amount * ((row.percentage * 2) / 100));
+      return (val / row.amountFees);
     },
     feeWithInterest(row) {
       const val = row.amount + (row.amount * (row.percentage / 100));

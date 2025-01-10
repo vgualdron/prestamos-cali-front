@@ -291,7 +291,9 @@ export default {
       this.showModal = true;
     },
     async approvePayment(value) {
+      showLoading('Guardando ...', 'Por favor, espere', true);
       await this.getPaymentByReference(value.reference);
+      this.$q.loading.hide();
       if (this.payment && this.payment.reference) {
         this.showModalExistReference = true;
       } else {

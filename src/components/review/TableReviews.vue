@@ -55,18 +55,6 @@
         <q-tr :props="props" @click="clickRow(props.row)">
           <q-td key="actions" :props="props">
             <q-btn
-              v-if="props.row.status"
-              class="q-ml-xs"
-              color="green"
-              field="changeStatus"
-              icon="edit_calendar"
-              size="sm"
-              :disabled="!validatedPermissions.changeStatus.status || disabledBtnAddVisit(props.row)"
-              :title="validatedPermissions.changeStatus.title"
-              @click="openModalVisit(props.row)"
-              round
-            />
-            <q-btn
               v-if="props.row.status === 'creado' && tab === 'one'"
               class="q-ml-xs"
               color="orange"
@@ -90,6 +78,33 @@
               @click="changeStatus(props.row, 'rechazado')"
               round
             />
+          </q-td>
+          <q-td key="calendar" :props="props">
+            <q-btn
+              v-if="props.row.status"
+              class="q-ml-xs"
+              color="green"
+              icon="edit_calendar"
+              size="sm"
+              :disabled="!validatedPermissions.changeStatus.status || disabledBtnAddVisit(props.row)"
+              :title="validatedPermissions.changeStatus.title"
+              round
+            >
+              <q-popup-edit
+                :value="props.row.date"
+                v-slot="scope"
+                @input="val => createDiary(val)"
+                type="date"
+                buttons>
+                <q-date
+                  v-model="scope.value"
+                  mask="YYYY-MM-DD"
+                  dense
+                  default-view="Calendar"
+                  :options="isDateAllowed"
+                />
+              </q-popup-edit>
+            </q-btn>
           </q-td>
           <q-td key="address_house" :props="props" @click="clickEditAddress(props.row, 'house')">
             <q-icon size="xs" name="edit"/>
@@ -131,9 +146,6 @@
               <q-input v-model="scope.value" dense autofocus />
             </q-popup-edit>
           </q-td>
-          <!-- <q-td key="documentNumber" :props="props">
-           {{ props.row.documentNumber }}
-          </q-td> -->
           <q-td key="name" :props="props">
             {{ props.row.name }}
           </q-td>
@@ -160,9 +172,6 @@
           <q-td key="districtOrder" :props="props">
             {{ props.row.districtOrder }}
           </q-td>
-          <!-- <q-td key="districtName" :props="props">
-            {{ props.row.districtName }}
-          </q-td> -->
           <q-td key="occupation" :props="props">
             {{ props.row.occupation }}
           </q-td>
@@ -178,13 +187,6 @@
         </q-tr>
       </template>
     </q-table>
-    <modal-diary
-      v-if="showModalDiary"
-      v-model="showModalDiary"
-      :type="typeDiary"
-      :userId="userSelected"
-      @addVisit="addVisit"
-    />
     <form-news
       v-if="showModalFormNews"
       v-model="showModalFormNews"
@@ -195,9 +197,7 @@
   </div>
 </template>
 <script>
-import Moment from 'moment';
 import { mapState, mapActions } from 'vuex';
-import ModalDiary from 'components/diary/ModalDiary.vue';
 import FormNews from 'components/review/FormNews.vue';
 import newTypes from '../../store/modules/new/types';
 import zoneTypes from '../../store/modules/zone/types';
@@ -211,12 +211,10 @@ import { formatDateWithTime } from '../../helpers/formatDate';
 
 export default {
   components: {
-    ModalDiary,
     FormNews,
   },
   data() {
     return {
-      typeDiary: 'readwrite',
       showModalDiary: false,
       obj: {},
       type: 'C',
@@ -226,6 +224,12 @@ export default {
         {
           name: 'actions',
           label: 'Acciones',
+          align: 'center',
+          visible: false,
+        },
+        {
+          name: 'calendar',
+          label: 'Agendar',
           align: 'center',
           visible: false,
         },
@@ -261,15 +265,6 @@ export default {
           sortable: true,
           visible: true,
         },
-        /* {
-          name: 'documentNumber',
-          label: 'Documento',
-          align: 'left',
-          field: 'documentNumber',
-          sortable: true,
-          visible: true,
-          headerStyle: 'height: 50px',
-        }, */
         {
           name: 'name',
           align: 'left',
@@ -328,14 +323,6 @@ export default {
           sortable: true,
           visible: true,
         },
-        /* {
-          name: 'districtName',
-          align: 'left',
-          label: 'Barrio',
-          field: 'districtName',
-          sortable: true,
-          visible: true,
-        }, */
         {
           name: 'occupation',
           align: 'left',
@@ -564,13 +551,18 @@ export default {
       listYardsByZone: yardTypes.actions.LIST_YARDS_BY_ZONE,
     }),
     ...mapActions(diaryTypes.PATH, {
-      listDiaries: diaryTypes.actions.LIST_DIARIES,
-      listDiariesDayByDay: diaryTypes.actions.LIST_DIARIES_DAY_BY_DAY,
-      updateDiary: diaryTypes.actions.UPDATE_DIARY,
+      saveDiary: diaryTypes.actions.SAVE_DIARY,
     }),
     ...mapActions(userTypes.PATH, {
       listUsersByRoleName: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
     }),
+    isDateAllowed(date) {
+      const today = new Date();
+      const selectedDate = new Date(date);
+      today.setHours(0, 0, 0, 0);
+      selectedDate.setHours(0, 0, 0, 0);
+      return selectedDate >= today;
+    },
     clickEditAddress(row, type) {
       this.typeActionFormNew = type;
       this.objSelected = { ...row };
@@ -618,35 +610,17 @@ export default {
         this.data = [];
       }
     },
-    async openModalVisit() {
-      this.typeDiary = 'readwrite';
-      this.showModalDiary = true;
-      // TO DO, msotrar calendario de fechas para selecionar, bloquear fechas del pasado
-    },
-    async addVisit(item) {
-      await this.changeStatus(this.itemSelected, 'agendado'); // TO DO, está bien, cambia el status del new
-      await this.changeStatusDiary({ // TO DO, hay que ajustar para que se guarde el registro con la fecha selecciona y no cambiar status
-        ...item,
-        userId: item.user_id,
-        new_id: this.itemSelected.id,
-        status: 'agendado',
-      });
-      this.typeDiary = 'read';
-    },
-    async changeStatusDiary(data) {
+    async createDiary(date) {
       showLoading('Guardando ...', 'Por favor, espere', true);
-      await this.updateDiary(data);
-
-      if (this.diaryStatus === true) {
-        await this.listDiariesDayByDay({
-          userId: this.userSelected,
-          date: new Moment(new Date()).format('YYYY-MM-DD'),
-          moment: 'current',
-        });
-        await this.listNewsMounted();
-      }
+      await this.changeStatus(this.itemSelected, 'agendado');
+      const data = {
+        user_id: this.userSelected,
+        new_id: this.itemSelected.id,
+        date,
+        status: 'agendado',
+      };
+      await this.saveDiary(data);
       this.$q.loading.hide();
-      this.showNotification(this.diaryResponseMessages, this.diaryStatus, 'top-right', 5000);
     },
     async changeStatus(obj, type) {
       this.obj = obj;
@@ -684,9 +658,11 @@ export default {
       this.itemSelected = { ...row };
     },
     async save(field, value) {
+      showLoading('Guardando ...', 'Por favor, espere', true);
       this.itemSelected[field] = value.value ? value.value : value;
       await this.completeDataNew(this.itemSelected);
       await this.listNewsMounted();
+      this.$q.loading.hide();
     },
   },
 };

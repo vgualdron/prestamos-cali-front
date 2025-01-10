@@ -139,7 +139,7 @@ export default {
       getFile: fileTypes.actions.GET_FILE,
     }),
     getBalance(row) {
-      const total = row.has_double_interest ? this.valueWithInterest(row) : this.valueWithInterest(row);
+      const total = row.has_double_interest ? this.valueWithDoubleInterest(row) : this.valueWithInterest(row);
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0) {
         const payments = row.payments.filter((payment) => payment.is_valid);
@@ -150,6 +150,10 @@ export default {
         totalDiscounts = row.discounts.reduce((result, discount) => (parseInt(result, 10) + parseInt(discount.amount, 10)), 0);
       }
       return (total - totalPayments - totalDiscounts);
+    },
+    valueWithDoubleInterest(row) {
+      const val = row.amount + (row.amount * ((row.percentage * 2) / 100));
+      return (val);
     },
     valueWithInterest(row) {
       const val = row.amount + (row.amount * (row.percentage / 100));
