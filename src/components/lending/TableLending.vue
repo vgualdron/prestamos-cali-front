@@ -1093,7 +1093,7 @@ export default {
       if (row.expense_id && !row.file_id_r) {
         c = 'bg-blue-3';
       }
-      if (row.expense_id && row.expense_status !== 'aprobado' && row.file_id_r) {
+      if (row.expense_id && ((row.expense_status !== 'aprobado' && row.file_id_r) || (row.expense_status !== 'aprobado' && row.file_id_n))) {
         c = 'bg-green-3';
       }
       return c;
