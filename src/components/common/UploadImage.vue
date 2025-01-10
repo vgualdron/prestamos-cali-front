@@ -17,7 +17,7 @@
         <p v-else class="text-subtitle1 text-center">No se ha cargado archivo</p>
         <q-banner
           v-if="item && item.status == 'rechazado' && item.observation"
-          class="bg-red text-white q-ma-md">
+          class="bg-red text-white q-ma-md wrap-text">
           {{ item.status }}: {{ item.observation }}
         </q-banner>
         <q-banner
@@ -332,5 +332,11 @@ export default {
   }
   .q-banner {
     width: 210px;
+  }
+  .wrap-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
   }
 </style>

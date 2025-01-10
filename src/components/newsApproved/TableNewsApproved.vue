@@ -32,6 +32,7 @@
       </div>
     </div>
     <q-table
+      v-if="!isLoading"
       :grid="$q.screen.xs"
       :data="dataTable"
       :columns="columns"
@@ -182,6 +183,7 @@ export default {
       data: [],
       polling: null,
       showModalCv: false,
+      isLoading: false,
       newSelected: null,
     };
   },
@@ -233,6 +235,7 @@ export default {
       }, 60000);
     },
     async listNewsMounted() {
+      this.isLoading = true;
       showLoading('Cargando ...', 'Por favor, espere', true);
       await this.listNews(['aprobado']);
       if (this.status === false) {
@@ -240,6 +243,7 @@ export default {
         this.data = [];
       }
       this.$q.loading.hide();
+      this.isLoading = false;
     },
     async changeStatus(obj, type) {
       this.obj = obj;
@@ -263,3 +267,14 @@ export default {
   },
 };
 </script>
+<style scoped>
+  .q-banner {
+    width: 95% !important;
+  }
+  .wrap-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+  }
+</style>

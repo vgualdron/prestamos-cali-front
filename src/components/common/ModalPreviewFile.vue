@@ -35,8 +35,9 @@
               :label="labelBtnCancel"
               type="reset"
               color="primary"
-              class="col"
+              class="col q-ml-sm"
               outline
+              :disabled="showInputValue && !inputValue"
               @click="clickBtnCancel"/>
             <q-btn
               v-if="showBtnAccept"
@@ -181,7 +182,7 @@ export default {
       this.$emit('clickBtnAccept', this.inputValue);
     },
     clickBtnCancel() {
-      this.$emit('clickBtnCancel', null);
+      this.$emit('clickBtnCancel', this.inputValue);
     },
   },
 };

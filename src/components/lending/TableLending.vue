@@ -576,17 +576,29 @@
       v-model="showModalPreviewR"
       :url="formatUrl(itemSelected.file_url_r)"
       :type="'image'"
-      :showBtnCancel="false"
+      :title="`${itemSelected.account_active === 'principal' ? itemSelected.account_number + ' ' + itemSelected.account_type : itemSelected.account_number_third + ' ' + itemSelected.account_type_third}`"
+      labelBtnCancel="Rechazar"
+      :showBtnCancel="itemSelected.expense_status === 'creado'"
       :showBtnAccept="itemSelected.expense_status === 'creado'"
+      :showInputValue="true"
+      labelInputValue="Observación"
       :showBtnCopy="false"
-      @clickBtnAccept="acceptVoucherRenovation"/>
+      @clickBtnAccept="acceptVoucherRenovation"
+      @clickBtnCancel="rejectVoucherRenovation"/>
     <modal-preview-file
       v-if="showModalPreviewN"
       v-model="showModalPreviewN"
       :url="formatUrl(itemSelected.file_url_n)"
       :type="'image'"
-      :showBtnCancel="false"
-      :showBtnCopy="false"/>
+      :title="`${itemSelected.account_active === 'principal' ? itemSelected.account_number + ' ' + itemSelected.account_type : itemSelected.account_number_third + ' ' + itemSelected.account_type_third}`"
+      labelBtnCancel="Rechazar"
+      :showBtnCancel="itemSelected.expense_status === 'creado'"
+      :showBtnAccept="itemSelected.expense_status === 'creado'"
+      :showInputValue="true"
+      labelInputValue="Observación"
+      :showBtnCopy="false"
+      @clickBtnAccept="acceptVoucherNew"
+      @clickBtnCancel="rejectVoucherNew"/>
     <modal-preview-file
       v-if="showModalPreviewRedSocial"
       v-model="showModalPreviewRedSocial"
@@ -1068,6 +1080,7 @@ export default {
     ...mapActions(fileTypes.PATH, {
       getFile: fileTypes.actions.GET_FILE,
       saveFile: fileTypes.actions.SAVE_FILE,
+      updateFile: fileTypes.actions.UPDATE_FILE,
     }),
     ...mapActions(expenseTypes.PATH, {
       updateExpense: expenseTypes.actions.UPDATE_EXPENSE,
@@ -1085,19 +1098,143 @@ export default {
       }
       return c;
     },
-    async acceptVoucherRenovation() {
+    async acceptVoucherRenovation(value) {
+      console.log(value);
       console.log(this.itemSelected);
-      showLoading('Guardando ...', 'Por favor, espere', true);
-      const data = {
-        id: this.itemSelected.expense_id,
-        status: 'aprobado',
-        file_id: this.itemSelected.file_id_r,
-        approved_by: this.user,
-      };
-      await this.updateExpense(data);
-      await this.getLendings(this.listingSelected.value);
-      this.showModalPreviewR = false;
-      this.$q.loading.hide();
+      this.$q.dialog({
+        title: 'Aceptar voucher',
+        message: 'Está seguro que desea aceptar el voucher de renovación',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        showLoading('Guardando ...', 'Por favor, espere', true);
+        /* const data = {
+          id: this.itemSelected.expense_id,
+          status: 'aprobado',
+          file_id: this.itemSelected.file_id_r,
+          approved_by: this.user,
+        };
+        await this.updateExpense(data); */
+        await this.updateFile({
+          id: this.itemSelected.file_id_r,
+          status: 'aprobado',
+          observation: value,
+        });
+        await this.getLendings(this.listingSelected.value);
+        this.showModalPreviewR = false;
+        this.$q.loading.hide();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
+    },
+    async rejectVoucherRenovation(value) {
+      console.log(value);
+      console.log(this.itemSelected);
+      this.$q.dialog({
+        title: 'Rechazar voucher',
+        message: 'Está seguro que desea rechazar el voucher de renovación',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        showLoading('Guardando ...', 'Por favor, espere', true);
+        await this.updateFile({
+          id: this.itemSelected.file_id_r,
+          status: 'rechazado',
+          observation: value,
+        });
+        await this.getLendings(this.listingSelected.value);
+        this.showModalPreviewR = false;
+        this.$q.loading.hide();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
+    },
+    async acceptVoucherNew(value) {
+      console.log(value);
+      console.log(this.itemSelected);
+      this.$q.dialog({
+        title: 'Aceptar voucher',
+        message: 'Está seguro que desea aceptar el voucher para cliente nuevo',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        showLoading('Guardando ...', 'Por favor, espere', true);
+        /* const data = {
+          id: this.itemSelected.expense_id,
+          status: 'aprobado',
+          file_id: this.itemSelected.file_id_n,
+          approved_by: this.user,
+        };
+        await this.updateExpense(data); */
+        await this.updateFile({
+          id: this.itemSelected.file_id_n,
+          status: 'aprobado',
+          observation: value,
+        });
+        await this.getLendings(this.listingSelected.value);
+        this.showModalPreviewN = false;
+        this.$q.loading.hide();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
+    },
+    async rejectVoucherNew(value) {
+      console.log(value);
+      console.log(this.itemSelected);
+      this.$q.dialog({
+        title: 'Rechazar voucher',
+        message: 'Está seguro que desea rechazar el voucher del cliente nuevo',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        showLoading('Guardando ...', 'Por favor, espere', true);
+        await this.updateFile({
+          id: this.itemSelected.file_id_n,
+          status: 'rechazado',
+          observation: value,
+        });
+        await this.getLendings(this.listingSelected.value);
+        this.showModalPreviewN = false;
+        this.$q.loading.hide();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
     },
     hasPermission(value) {
       return havePermission(value);
