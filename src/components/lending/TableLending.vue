@@ -1122,13 +1122,13 @@ export default {
         persistent: true,
       }).onOk(async () => {
         showLoading('Guardando ...', 'Por favor, espere', true);
-        /* const data = {
+        const data = {
           id: this.itemSelected.expense_id,
           status: 'aprobado',
           file_id: this.itemSelected.file_id_r,
           approved_by: this.user,
         };
-        await this.updateExpense(data); */
+        await this.updateExpense(data);
         await this.updateFile({
           id: this.itemSelected.file_id_r,
           status: 'aprobado',
@@ -1191,13 +1191,13 @@ export default {
         persistent: true,
       }).onOk(async () => {
         showLoading('Guardando ...', 'Por favor, espere', true);
-        /* const data = {
+        const data = {
           id: this.itemSelected.expense_id,
           status: 'aprobado',
           file_id: this.itemSelected.file_id_n,
           approved_by: this.user,
         };
-        await this.updateExpense(data); */
+        await this.updateExpense(data);
         await this.updateFile({
           id: this.itemSelected.file_id_n,
           status: 'aprobado',
