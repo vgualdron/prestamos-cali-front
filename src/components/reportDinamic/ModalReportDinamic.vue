@@ -50,6 +50,15 @@
                   <template v-if="isNumericColumn(col.name)">
                     {{ formatNumber(props.row[col.name]) }}
                   </template>
+                  <template v-else-if="isLinkColumn(col.name)">
+                    <a
+                      :href="props.row[col.name]"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style="color: blue; text-decoration: underline;">
+                      VER
+                    </a>
+                  </template>
                   <template v-else>
                     {{ props.row[col.name] }}
                   </template>
@@ -155,6 +164,9 @@ export default {
     },
     isNumericColumn(columnName) {
       return columnName.startsWith('_') && this.data.every((row) => !Number.isNaN(this.parseNumber(row[columnName])) && Number.isFinite(this.parseNumber(row[columnName])));
+    },
+    isLinkColumn(columnName) {
+      return columnName.startsWith('_LINK');
     },
     calculateTotal(columnName) {
       const total = this.data.reduce((sum, row) => {

@@ -45,6 +45,15 @@ export default {
         return itemDate === today; // Compara si es igual a la fecha actual
       });
     },
+    onlyOneItem() {
+      const visiting = this.dataTable.find((item) => item.status === 'visitando');
+      if (visiting) {
+        return [visiting];
+      }
+      const scheduled = this.dataTable.find((item) => item.status === 'agendado');
+      // Si no hay 'visitando', busca el primer objeto con status 'agendado'
+      return scheduled ? [scheduled] : [];
+    },
   },
   methods: {
     ...mapActions(diaryTypes.PATH, {

@@ -397,6 +397,18 @@ const routes = [
     ],
   },
   {
+    path: '/cv-client/:id',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Hoja de vida de cliente',
+        component: () => import('pages/Cv.vue'),
+        meta: { permissions: [] },
+      },
+    ],
+  },
+  {
     path: '/upload-news',
     component: () => import('layouts/MainLayout.vue'),
     children: [
@@ -417,13 +429,6 @@ const routes = [
   {
     path: '/unauthorized',
     component: () => import('pages/Error401.vue'),
-  },
-  {
-    path: '/upload-payments',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', name: 'Cargar refs de payments', component: () => import('pages/UploadPayments.vue') },
-    ],
   },
 ];
 
