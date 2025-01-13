@@ -1340,9 +1340,9 @@ export default {
     rowClass(row) {
       let color = 'bg-white';
       const days = this.daysSinceGivenDate(row.firstDate);
-      if (days > 23) {
+      if (days > 21) {
         color = 'bg-red';
-      } else if (days >= 16 && days <= 23) {
+      } else if (days >= 16 && days <= 21) {
         color = 'bg-blue';
       } else if (days >= 8 && days <= 15) {
         color = 'bg-yellow';
