@@ -63,6 +63,7 @@
       <div class="col-12 text-center">
         <b>Cantidad de Clientes:</b>
         {{ amountClients }}
+        ({{ formatPrice(totalPending) }})
       </div>
     </div>
     <q-table
@@ -464,6 +465,18 @@ export default {
 
       const groupedCount = uniqueByNewsId.size;
       return groupedCount;
+    },
+    totalPending() {
+      const uniqueByNewsId = new Map();
+      this.dataTable.forEach((item) => {
+        if (!uniqueByNewsId.has(item.lending_id)) {
+          uniqueByNewsId.set(item.lending_id, item);
+        }
+      });
+
+      const grouped = uniqueByNewsId;
+      const totalRemainingBalance = Array.from(grouped.values()).reduce((sum, item) => sum + (item.remaining_balance || 0), 0);
+      return totalRemainingBalance;
     },
     validatedPermissions() {
       const statusAllCities = havePermission('red.allCities');
