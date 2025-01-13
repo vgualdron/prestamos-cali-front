@@ -37,6 +37,17 @@
           </template>
         </q-select>
       </div>
+      <div class="col-1 text-center">
+        <q-btn
+          v-if="userSelected"
+          color="primary"
+          field="edit"
+          icon="location_on"
+          class="q-mt-md"
+          round
+          @click="openInGoogleMaps(userSelected)"
+        />
+      </div>
     </div>
     <div class="row q-mt-md">
       <div class="col-12 text-center">
@@ -117,11 +128,18 @@ export default {
       });
     },
     optionsUsers() {
-      return this.users.map(({ name, id }) => {
+      return this.users.map(({
+        name,
+        id,
+        latitude,
+        longitude,
+      }) => {
         const label = `${name}`;
         return {
           label,
           value: id,
+          latitude,
+          longitude,
         };
       });
     },
@@ -136,6 +154,13 @@ export default {
     ...mapActions(zoneTypes.PATH, {
       listZones: zoneTypes.actions.LIST_ZONES,
     }),
+    openInGoogleMaps(userId) {
+      const user = this.optionsUsers.find((u) => u.value === userId);
+      if (user) {
+        const googleMapsUrl = `https://www.google.com/maps?q=${user.latitude},${user.longitude}`;
+        window.open(googleMapsUrl, '_blank');
+      }
+    },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },

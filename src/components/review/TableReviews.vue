@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="row q-mt-md">
-      <div class="col-12 text-center">
+      <div class="col-8 text-center">
         <b>Asesor:</b>
         <q-radio
           v-for="user in optionsUsers"
@@ -39,6 +39,17 @@
           :key="user.value"
           class="q-ml-lg">
         </q-radio>
+      </div>
+      <div class="col-1 text-center">
+        <q-btn
+          v-if="userSelected"
+          color="primary"
+          field="edit"
+          icon="location_on"
+          class="q-mt-none"
+          round
+          @click="openInGoogleMaps(userSelected)"
+        />
       </div>
     </div>
     <q-table
@@ -508,11 +519,18 @@ export default {
       });
     },
     optionsUsers() {
-      return this.users.map(({ name, id }) => {
+      return this.users.map(({
+        name,
+        id,
+        latitude,
+        longitude,
+      }) => {
         const label = `${name}`;
         return {
           label,
           value: id,
+          latitude,
+          longitude,
         };
       });
     },
@@ -556,6 +574,13 @@ export default {
     ...mapActions(userTypes.PATH, {
       listUsersByRoleName: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
     }),
+    openInGoogleMaps(userId) {
+      const user = this.optionsUsers.find((u) => u.value === userId);
+      if (user) {
+        const googleMapsUrl = `https://www.google.com/maps?q=${user.latitude},${user.longitude}`;
+        window.open(googleMapsUrl, '_blank');
+      }
+    },
     isDateAllowed(date) {
       const today = new Date();
       const selectedDate = new Date(date);

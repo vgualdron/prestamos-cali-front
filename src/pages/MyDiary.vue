@@ -1,8 +1,8 @@
 <template>
   <q-page class="">
     <table-diary
-      v-if="diaries && diaries.length > 0"
-      :data="diaries"
+      v-if="dataTable && dataTable.length > 0"
+      :data="dataTable"
       type="visitor"
       @addVisit="addVisit"/>
   </q-page>
@@ -38,28 +38,12 @@ export default {
       diaryResponseMessages: 'responseMessages',
     }),
     dataTable() {
-      const a = [];
-      this.diariesDayByDay.forEach(({ date, items }) => {
-        const b = {
-          date,
-          items: [],
-        };
+      const today = Moment().format('YYYY-MM-DD'); // Obtiene la fecha actual en formato 'YYYY-MM-DD'
 
-        const now = new Moment().subtract(1, 'days');
-        const startDate = now.startOf('day');
-        const end = new Moment().add(0, 'days');
-        const endDate = end.endOf('day');
-
-        items.forEach((item) => {
-          const dateItem = new Moment(item.date);
-          const isInRangeExclusive = dateItem.isBetween(startDate, endDate);
-          if (isInRangeExclusive) {
-            b.items.push(item);
-          }
-        });
-        a.push(b);
+      return this.diaries.filter((item) => {
+        const itemDate = Moment(item.date).format('YYYY-MM-DD'); // Convierte la fecha del objeto al mismo formato
+        return itemDate === today; // Compara si es igual a la fecha actual
       });
-      return a;
     },
   },
   methods: {
