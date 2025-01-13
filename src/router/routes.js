@@ -404,7 +404,7 @@ const routes = [
         path: '',
         name: 'Hoja de vida de cliente',
         component: () => import('pages/Cv.vue'),
-        meta: { permissions: ['new.viewCv'] },
+        meta: { permissions: ['reportsDinamic.viewCv'] },
       },
     ],
   },

@@ -2,7 +2,7 @@
   <q-page class="">
     <table-diary
       v-if="dataTable && dataTable.length > 0"
-      :data="dataTable"
+      :data="onlyOneItem"
       type="visitor"
       @addVisit="addVisit"/>
   </q-page>
