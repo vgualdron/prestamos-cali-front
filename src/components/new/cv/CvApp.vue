@@ -1,12 +1,20 @@
 <template>
-  <div>
+  <div id="div-container-cv">
     <div class="row text-center">
       <q-btn
         v-if="id && !onlyTable"
         icon="content_copy"
+        label="Copiar tabla de datos"
         color="primary"
         @click="captureImage"
         class="q-mb-md"/>
+      <q-btn
+        v-if="id && !onlyTable"
+        icon="download"
+        label="descargar pdf"
+        color="primary"
+        @click="downloadPdf"
+        class="q-mb-md q-ml-md"/>
     </div>
     <q-markup-table
       id="div-container-table-cv"
@@ -751,6 +759,69 @@ export default {
         });
         console.log(error);
       });
+    },
+    downloadPdf() {
+      // Obtén el contenido HTML del elemento
+      const quasarStyles = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quasar@1.9.0/dist/quasar.min.css">';
+      const element = document.getElementById('div-container-cv');
+      const clonedElement = element.cloneNode(true);
+
+      // Elimina todos los botones del contenido clonado
+      const buttons = clonedElement.querySelectorAll('button');
+      buttons.forEach((button) => button.remove());
+
+      // Elimina todos los div con role="alert" del contenido clonado
+      const alerts = clonedElement.querySelectorAll('div[role="alert"]');
+      alerts.forEach((alert) => alert.remove());
+
+      // Convierte el contenido clonado en HTML
+      const htmlContent = `
+        <html>
+          <head>
+            <meta charset="UTF-8">
+            ${quasarStyles}
+              <style>
+                .cv-table {
+                  display: block;
+                  border: solid 1px black;
+                  border-collapse: collapse; /* Evitar espacios entre celdas */
+                }
+                .cv-table td {
+                  border: solid 1px black;
+                }
+              </style>
+          </head>
+          <body>
+            ${clonedElement.innerHTML}
+          </body>
+        </html>
+      `;
+
+      // Crea un formulario dinámico para enviar los datos por POST
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'https://micomercio.com.co/dompdf/generate.php';
+      form.target = '_blank'; // Abre en una nueva ventana
+
+      // Crea un campo de texto oculto para el contenido HTML
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'content'; // Nombre del parámetro que recibirá el servidor
+      input.value = htmlContent;
+      // Crea un campo de texto oculto para el nombre del file
+      const inputName = document.createElement('input');
+      inputName.type = 'hidden';
+      inputName.name = 'name'; // Nombre del parámetro que recibirá el servidor
+      inputName.value = this.item.name;
+
+      // Añade el input al formulario y envíalo
+      form.appendChild(input);
+      form.appendChild(inputName);
+      document.body.appendChild(form);
+      form.submit();
+
+      // Limpia el formulario después de enviarlo
+      document.body.removeChild(form);
     },
     async getItem() {
       await this.getNew(this.id);
