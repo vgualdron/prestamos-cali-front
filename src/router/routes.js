@@ -103,7 +103,7 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Agenda de usuarios',
+        name: 'Agenda de asesores',
         component: () => import('pages/UsersDiary.vue'),
         meta: { permissions: ['diary.getUsersDiary'] },
       },

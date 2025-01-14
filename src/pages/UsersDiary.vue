@@ -20,7 +20,7 @@
           v-model="userSelected"
           class="q-mt-md"
           input-debounce="0"
-          label="Seleccionar usuario"
+          label="Seleccionar asesor"
           :options="optionsUsers"
           option-label="label"
           option-value="value"
@@ -54,6 +54,7 @@
         <table-diary
           v-if="diaries && diaries.length > 0"
           :data="diaries"
+          :optionsUsers="optionsUsers"
           @addVisit="addVisit"
           @refreshDiary="viewDiary('current')"/>
       </div>

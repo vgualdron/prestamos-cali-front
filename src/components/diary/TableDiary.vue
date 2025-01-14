@@ -40,7 +40,7 @@
                       <q-popup-edit
                         :value="item.date"
                         v-slot="scope"
-                        @input="val => editDiary(val)"
+                        @input="val => editDiary('date', val)"
                         type="date"
                         buttons>
                         <q-date
@@ -53,6 +53,38 @@
                       </q-popup-edit>
                     </q-btn>
                     {{ formatDate(item.date) }}
+                  </div>
+                  <div v-if="type !== 'visitor'" class="text-subtitle2 wrap-text">
+                    <q-btn
+                      v-if="item.status === 'agendado' && isDateAllowed(item.date)"
+                      class="q-mb-xs"
+                      color="black"
+                      icon="manage_accounts"
+                      size="sm"
+                      @click="itemSelected = { ...item }"
+                      round
+                    >
+                      <q-popup-edit
+                        :value="item.user_id"
+                        v-slot="scope"
+                        @input="val => editDiary('user_id', val)"
+                        buttons>
+                        <q-select
+                          v-model="scope.value"
+                          class="q-mt-md"
+                          input-debounce="0"
+                          label="Seleccionar asesor"
+                          :options="optionsUsers"
+                          option-label="label"
+                          option-value="value"
+                          map-options
+                          emit-value
+                          outlined
+                        >
+                        </q-select>
+                      </q-popup-edit>
+                    </q-btn>
+                    {{ userSelected }}
                   </div>
                 </q-card-section>
                 <q-separator />
@@ -144,6 +176,9 @@ export default {
     data: {
       type: Array,
     },
+    optionsUsers: {
+      type: Array,
+    },
     type: {
       type: String,
     },
@@ -153,6 +188,16 @@ export default {
       diaryStatus: 'status',
       diaryResponseMessages: 'responseMessages',
     }),
+    userSelected() {
+      let name = 'x';
+      if (this.optionsUsers) {
+        const user = this.optionsUsers.find((u) => u.value === this.data[0].user_id);
+        if (user) {
+          name = user.label;
+        }
+      }
+      return name;
+    },
     elements() {
       const groupedByDate = Object.entries(
         this.data.reduce((groups, item) => {
@@ -179,15 +224,19 @@ export default {
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
-    async editDiary(date) {
+    async editDiary(field, value) {
       showLoading('Guardando ...', 'Por favor, espere', true);
+
       const data = {
         id: this.itemSelected.id,
         user_id: this.itemSelected.user_id,
         new_id: this.itemSelected.new_id,
-        date,
-        status: 'agendado',
+        date: this.itemSelected.date,
+        status: this.itemSelected.status,
       };
+
+      data[field] = value.value ? value.value : value;
+
       await this.updateDiary(data);
       this.$emit('refreshDiary');
       this.$q.loading.hide();

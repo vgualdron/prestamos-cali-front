@@ -784,7 +784,8 @@ export default {
                 .cv-table {
                   display: block;
                   border: solid 1px black;
-                  border-collapse: collapse; /* Evitar espacios entre celdas */
+                  border-collapse: collapse;
+                  padding: 20px;
                 }
                 .cv-table td {
                   border: solid 1px black;
