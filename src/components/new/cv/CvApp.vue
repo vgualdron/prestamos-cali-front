@@ -268,6 +268,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -280,6 +281,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -292,6 +294,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -304,6 +307,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -316,6 +320,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -328,6 +333,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -340,6 +346,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -352,6 +359,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -364,6 +372,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -376,6 +385,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -401,6 +411,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
       </q-card-section>
@@ -421,6 +432,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -433,6 +445,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -445,6 +458,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -457,6 +471,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
       </q-card-section>
@@ -477,6 +492,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -489,6 +505,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -501,6 +518,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -513,6 +531,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
       </q-card-section>
@@ -533,6 +552,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -545,6 +565,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -557,6 +578,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -569,6 +591,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -581,6 +604,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -593,6 +617,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -605,6 +630,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
         <div class="div-container">
@@ -617,6 +643,7 @@
               modelId: id
             }"
             type="read"
+            :showApprove="false"
           />
         </div>
       </q-card-section>

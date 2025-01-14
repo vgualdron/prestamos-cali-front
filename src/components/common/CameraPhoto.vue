@@ -184,6 +184,11 @@ export default {
       default: 'creado',
       required: false,
     },
+    showApprove: {
+      type: Boolean,
+      default: true,
+      require: false,
+    },
   },
   async mounted() {
     await this.fetchFile();
