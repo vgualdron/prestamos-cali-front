@@ -49,17 +49,27 @@
               :title="validatedPermissions.review.title"
               @click="showVisit(props.row)"
             />
-            <!-- <q-btn
-              color="primary"
-              field="edit"
-              label="Voucher"
-              size="sm"
-              class="q-ml-sm"
-              :disabled="!validatedPermissions.voucher.status || props.row.new_status !== 'aprobado'"
-              :title="validatedPermissions.voucher.title"
-              @click="showVisit(props.row)"
-            /> -->
           </div>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-date="props">
+        <q-td :props="props" @click="itemSelected = { ...props.row }">
+          <q-icon size="xs" name="edit" />
+          <q-popup-edit
+            :value="props.row.date"
+            v-slot="scope"
+            @input="val => editDiary('date', val)"
+            type="date"
+            buttons>
+            <q-date
+              v-model="scope.value"
+              mask="YYYY-MM-DD"
+              dense
+              default-view="Calendar"
+              :options="isDateAllowed"
+            />
+          </q-popup-edit>
+          {{ props.row.date }}
         </q-td>
       </template>
       <template v-slot:body-cell-new_status="props">
@@ -67,6 +77,26 @@
           <q-badge :color="getColorStatus(props.row)">
             {{ props.row.new_status }}
           </q-badge>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-new_name="props">
+        <q-td class="wrap-text" :props="props">
+          {{ props.row.new_name }}
+        </q-td>
+      </template>
+      <template v-slot:body-cell-address_house="props">
+        <q-td class="wrap-text" :props="props">
+          {{ props.row.address_house }}
+        </q-td>
+      </template>
+      <template v-slot:body-cell-address_work="props">
+        <q-td class="wrap-text" :props="props">
+          {{ props.row.address_work }}
+        </q-td>
+      </template>
+      <template v-slot:body-cell-new_occupation="props">
+        <q-td class="wrap-text" :props="props">
+          {{ props.row.new_occupation }}
         </q-td>
       </template>
     </q-table>
@@ -86,6 +116,12 @@ export default {
       route: '/list-visit',
       name: 'Lista de Visitas',
       columns: [
+        {
+          name: 'actions',
+          label: 'Acciones',
+          align: 'center',
+          visible: false,
+        },
         {
           name: 'date',
           align: 'left',
@@ -120,7 +156,7 @@ export default {
           field: 'new_name',
           sortable: true,
           visible: true,
-          headerStyle: 'height: 50px',
+          style: 'width: 300px',
         },
         {
           name: 'site_visit',
@@ -138,7 +174,7 @@ export default {
           field: 'address_house',
           sortable: true,
           visible: true,
-          headerStyle: 'height: 50px',
+          style: 'width: 200px',
         },
         {
           name: 'address_work',
@@ -147,7 +183,7 @@ export default {
           field: 'address_work',
           sortable: true,
           visible: true,
-          headerStyle: 'height: 50px',
+          style: 'width: 200px',
         },
         {
           name: 'new_occupation',
@@ -156,7 +192,7 @@ export default {
           field: 'new_occupation',
           sortable: true,
           visible: true,
-          headerStyle: 'height: 50px',
+          style: 'width: 200px',
         },
         {
           name: 'new_phone',
@@ -176,12 +212,6 @@ export default {
           visible: true,
           headerStyle: 'height: 50px',
         },
-        {
-          name: 'actions',
-          label: 'Acciones',
-          align: 'center',
-          visible: false,
-        },
       ],
       pagination: {
         rowsPerPage: 50,
@@ -189,6 +219,7 @@ export default {
       filter: '',
       data: [],
       polling: null,
+      itemSelected: {},
     };
   },
   async mounted() {
@@ -223,7 +254,15 @@ export default {
   methods: {
     ...mapActions(diaryTypes.PATH, {
       listVisitsReview: diaryTypes.actions.LIST_VISITS_REVIEW,
+      updateDiary: diaryTypes.actions.UPDATE_DIARY,
     }),
+    isDateAllowed(date) {
+      const today = new Date();
+      const selectedDate = new Date(date);
+      today.setHours(0, 0, 0, 0);
+      selectedDate.setHours(0, 0, 0, 0);
+      return selectedDate >= today;
+    },
     async pollData() {
       this.polling = setInterval(async () => {
         await this.listMounted();
@@ -262,8 +301,33 @@ export default {
     showVisit(row) {
       this.$router.push(`/review-visit/${row.new_id}`);
     },
+    async editDiary(field, value) {
+      showLoading('Guardando ...', 'Por favor, espere', true);
+
+      const data = {
+        id: this.itemSelected.id,
+        user_id: this.itemSelected.user_id,
+        new_id: this.itemSelected.new_id,
+        date: this.itemSelected.date,
+        status: this.itemSelected.status,
+      };
+
+      data[field] = value.value ? value.value : value;
+      console.log(data);
+      await this.updateDiary(data);
+      this.listMounted();
+      this.$q.loading.hide();
+    },
   },
   components: {
   },
 };
 </script>
+<style scoped>
+  .wrap-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+  }
+</style>

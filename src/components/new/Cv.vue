@@ -21,7 +21,7 @@
         <q-card-section class="row q-pb-none block">
           <cv-app v-if="row.type_cv === 'pdf' && onlyTable" :id="row.id" :onlyTable="onlyTable"/>
           <cv-app v-if="row.type_cv === 'app'" :id="row.id"/>
-          <cv-pdf v-else :id="row.id"/>
+          <cv-pdf v-else-if="row.id" :id="row.id"/>
         </q-card-section>
       </q-card>
     </q-dialog>
