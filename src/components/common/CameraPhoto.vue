@@ -26,15 +26,7 @@
           class="bg-green text-white q-ma-md">
           {{ item.status }}
         </q-banner>
-        <q-btn
-          v-if="(!item && type !== 'read') || (item && item.status !== 'aprobado' && type !== 'read')"
-          label="Agregar foto"
-          color="primary"
-          icon="add_a_photo"
-          ref="camera"
-          class="q-mt-sm"
-          @click="initCamera" />
-        <template v-else-if="item && item.status === 'creado'">
+        <template v-if="item && showApprove && type === 'read'">
           <div class="q-mt-md">
             <q-icon size="xs" name="edit" />
             {{ item.observation ? item.observation : 'Haz click para agregar una observación' }} <br>
@@ -48,6 +40,7 @@
             color="primary"
             ref="camera"
             class="q-mt-sm"
+            :disable="item.status == 'aprobado'"
             @click="save('status', 'aprobado')"
           />
           <q-btn
@@ -60,6 +53,14 @@
             @click="save('status', 'rechazado')"
           />
         </template>
+        <q-btn
+          v-else-if="(!item && type !== 'read') || (item && item.status !== 'aprobado' && type !== 'read')"
+          label="Agregar foto"
+          color="primary"
+          icon="add_a_photo"
+          ref="camera"
+          class="q-mt-sm"
+          @click="initCamera" />
       </div>
     </div>
     <q-dialog
