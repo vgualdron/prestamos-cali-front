@@ -84,11 +84,12 @@
     </q-btn>
     <q-btn
       v-if="type === 'review' && item.status == 'visitando'"
-      label="RECHAZAR VISITA"
+      label="PONER PENDIENTE"
       class="q-ml-sm q-mt-xs text-center"
-      color="red"
+      color="orange"
       size="md"
-      :disable="!novel_observation || novel_observation.length < 5">
+      :disable="!novel_observation || novel_observation.length < 5"
+      @click="approve('pendiente')">
     </q-btn>
   </div>
 </template>

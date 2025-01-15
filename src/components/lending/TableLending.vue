@@ -87,7 +87,7 @@
                     </q-item-section>
                   </q-item>
                   <q-item
-                    v-if="getBalance(props.row) <= 0 && allPaidsApproved(props.row)"
+                    v-if="getBalance(props.row) <= 0 && allPaidsApproved(props.row) && props.row.type !== 'F'"
                     clickable
                     v-close-popup
                     @click="openModal('renove', props.row)">
