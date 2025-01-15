@@ -377,6 +377,7 @@
                         class="q-ml-xs pointer-cursor"
                       />
                       <q-icon
+                        v-if="props.row.status === 'open'"
                         name="close"
                         size="14px"
                         class="q-ml-xs pointer-cursor"
