@@ -82,6 +82,14 @@
       :disable="!novel_observation || novel_observation.length < 5"
       @click="approve('rechazado')">
     </q-btn>
+    <q-btn
+      v-if="type === 'review' && item.status == 'visitando'"
+      label="RECHAZAR VISITA"
+      class="q-ml-sm q-mt-xs text-center"
+      color="red"
+      size="md"
+      :disable="!novel_observation || novel_observation.length < 5">
+    </q-btn>
   </div>
 </template>
 <script>

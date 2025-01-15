@@ -21,6 +21,14 @@
                 :hint="formattedPrice(amount)"/>
             </div>
           </div>
+          <div class="row q-mt-md">
+            <div class="col-12 text-center">
+              <q-input
+                outlined
+                v-model.trim="observation"
+                label="Observación *"/>
+            </div>
+          </div>
         </q-card-section>
         <q-separator />
         <div class="row text-center q-pa-md">
@@ -28,7 +36,7 @@
             label="Guardar"
             color="primary"
             class="col q-ml-sm"
-            :disabled="amount <= 0 || amount > valuePayment"
+            :disabled="!observation || amount <= 0 || amount > valuePayment"
             @click="saveAddDiscount"
           />
         </div>
@@ -46,6 +54,7 @@ export default {
   data() {
     return {
       amount: 0,
+      observation: '',
       idPayment: 0,
     };
   },
@@ -118,7 +127,7 @@ export default {
         lending_id: id,
         amount: this.amount,
         date: moment().format('YYYY-MM-DD HH:mm:ss'),
-        observation: '',
+        observation: this.observation,
         status: 'aprobado',
       });
       this.$q.loading.hide();

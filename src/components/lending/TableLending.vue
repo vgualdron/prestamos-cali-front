@@ -22,15 +22,8 @@
       title="Click para ver los clientes cerrados"
       @click="showModalListClosed = true">
     </q-btn>
-    <!-- <q-btn
-      icon="add_location_alt"
-      class="q-ml-md"
-      color="primary"
-      title="Click para registrar una dirección"
-      @click="showModalAddNew = true">
-    </q-btn> -->
     <div class="w-100">
-      <info :info="info"/>
+      <info v-if="info && info.yellowUp" :info="info"/>
     </div>
     <div class="row q-mt-md">
       <div class="col-6 text-center">
@@ -374,8 +367,15 @@
                   <div v-for="discount in props.row.discounts" :key="`discount-${discount.id}`"
                     class="q-ma-xs">
                     <q-badge
+                      :title="discount.id ? discount.observation : ''"
                       color="green">
                       <b>{{ formatPrice(discount.amount) }}</b>
+                      <q-icon
+                        v-if="discount.id && discount.observation"
+                        name="comment"
+                        size="14px"
+                        class="q-ml-xs pointer-cursor"
+                      />
                       <q-icon
                         name="close"
                         size="14px"

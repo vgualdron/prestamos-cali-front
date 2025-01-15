@@ -68,6 +68,10 @@
               <b>Porcentaje:</b>
               ({{ (((info.payments.total_payments / info.days.days_work) * 24 ) / info.capital.total).toFixed(2) }})
             </td>
+            <td>
+              <b>Cobro hoy:</b>
+              ({{ formatPrice(info.paymentsToday.total_payments) }})
+            </td>
           </tr>
         </tbody>
     </q-markup-table>
