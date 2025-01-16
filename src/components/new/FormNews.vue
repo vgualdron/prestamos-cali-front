@@ -344,7 +344,7 @@ export default {
     districts(val) {
       this.optionsDistricts = [...val.filter((district) => district.sector === this.user.sector)];
     },
-    users(val) {
+    usersOptions(val) {
       this.optionsUsers = [...val];
     },
   },
@@ -364,7 +364,7 @@ export default {
       yardResponseMessages: 'responseMessages',
     }),
     ...mapState(userTypes.PATH, {
-      users: 'users',
+      usersOptions: 'usersOptions',
       userStatus: 'status',
       userResponseMessages: 'responseMessages',
     }),
@@ -404,7 +404,7 @@ export default {
       listYardsByZone: yardTypes.actions.LIST_YARDS_BY_ZONE,
     }),
     ...mapActions(userTypes.PATH, {
-      listUsers: userTypes.actions.LIST_USERS,
+      listUsers: userTypes.actions.LIST_USERS_OPTIONS,
     }),
     ...mapActions(districtTypes.PATH, {
       listDistricts: districtTypes.actions.FETCH_DISTRICTS,
@@ -526,7 +526,7 @@ export default {
     filterUsers(val, update) {
       update(() => {
         const needle = val ? removeAccents(val.trim().toLowerCase()) : '';
-        this.optionsUsers = this.users.filter((option) => removeAccents(option.name).toLowerCase().indexOf(needle) > -1);
+        this.optionsUsers = this.usersOptions.filter((option) => removeAccents(option.name).toLowerCase().indexOf(needle) > -1);
       });
     },
     showNotification(messages, status, align, timeout) {

@@ -2,6 +2,7 @@ export default {
   PATH: '@module/user',
   actions: {
     LIST_USERS: '@actions/listUsers',
+    LIST_USERS_OPTIONS: '@actions/listUsersOptions',
     LIST_USERS_BY_NAME_ROLE: '@actions/listUsersByNameRole',
     LIST_USERS_BY_AREA: '@actions/listUsersByArea',
     GET_USER: '@actions/getUser',
@@ -16,6 +17,7 @@ export default {
   },
   mutations: {
     SET_USERS: '@mutations/setUsers',
+    SET_USERS_OPTIONS: '@mutations/setUsersOptions',
     SET_USER: '@mutations/setUser',
     SET_STATUS: '@mutations/setStatus',
     SET_RESPONSE_MESSAGES: '@mutations/setResponseMessages',

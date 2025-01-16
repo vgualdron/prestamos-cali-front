@@ -240,22 +240,6 @@ export default {
       }
       this.$q.loading.hide();
     },
-    async changeStatus(obj, type) {
-      this.obj = obj;
-      this.type = type;
-      showLoading('Guardando ...', 'Por favor, espere', true);
-      await this.updateStatusNew({
-        ...obj,
-        status: 'creado',
-      });
-
-      if (this.status === true) {
-        this.user = { ...this.copyUser };
-        await this.listMounted();
-      }
-      this.$q.loading.hide();
-      this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
-    },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },

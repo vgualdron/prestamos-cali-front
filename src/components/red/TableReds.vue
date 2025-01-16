@@ -549,8 +549,6 @@ export default {
   methods: {
     ...mapActions(newTypes.PATH, {
       listNewsReds: newTypes.actions.LIST_NEWS_REDS,
-      updateStatusNew: newTypes.actions.UPDATE_STATUS_NEW,
-      completeDataNew: newTypes.actions.COMPLETE_DATA_NEW,
       updateUserSelectedReds: newTypes.actions.UPDATE_USER_SELECTED_REDS,
       updateSectorSelectedReds: newTypes.actions.UPDATE_SECTOR_SELECTED_REDS,
     }),

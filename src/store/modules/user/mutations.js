@@ -4,6 +4,9 @@ export default {
   [types.mutations.SET_USERS](state, payload) {
     state.users = payload;
   },
+  [types.mutations.SET_USERS_OPTIONS](state, payload) {
+    state.usersOptions = payload;
+  },
   [types.mutations.SET_USER](state, payload) {
     state.user = payload;
   },

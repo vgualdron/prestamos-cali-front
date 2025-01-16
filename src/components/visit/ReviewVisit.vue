@@ -923,17 +923,10 @@ export default {
   },
   async mounted() {
     await this.getItem();
-    if (this.item.diary_status !== 'finalizada') {
-      await this.updateStatusNew({
-        ...this.item,
-        status: 'visitando',
-      });
-    }
   },
   methods: {
     ...mapActions(newTypes.PATH, {
       getNew: newTypes.actions.GET_NEW,
-      updateStatusNew: newTypes.actions.UPDATE_STATUS_NEW,
       completeDataNew: newTypes.actions.COMPLETE_DATA_NEW,
     }),
     ...mapActions(notificationTypes.PATH, {

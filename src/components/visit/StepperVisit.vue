@@ -1010,7 +1010,7 @@ export default {
   async mounted() {
     this.listUsersReviews();
     await this.getItem();
-    if (this.item.diary_status !== 'finalizada') {
+    if (this.item.diary_status === 'agendado') {
       await this.updateStatusNew({
         ...this.item,
         status: 'visitando',

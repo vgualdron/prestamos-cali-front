@@ -187,6 +187,8 @@ export default {
         color = 'green';
       } else if (item.status === 'visitando') {
         color = 'blue';
+      } else if (item.status === 'agendado') {
+        color = 'blue';
       }
       return color;
     },
@@ -215,7 +217,9 @@ export default {
       }).onOk(async () => {
         showLoading('Guardando ...', 'Por favor, espere', true);
         await this.approveVisit({
-          ...this.item,
+          id: this.item.id,
+          diary_id: this.item.diary_id,
+          userVisit: this.item.userVisit,
           novel_status: status,
           novel_observation: this.novel_observation,
         });
