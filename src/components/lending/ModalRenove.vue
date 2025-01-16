@@ -578,7 +578,8 @@ export default {
       if (row.discounts && row.discounts.length > 0) {
         totalDiscounts = row.discounts.reduce((result, discount) => (parseInt(result, 10) + parseInt(discount.amount, 10)), 0);
       }
-      return (total - totalPayments - totalDiscounts);
+      const r = (total - totalPayments - totalDiscounts);
+      return r;
     },
     renoveLending(action) {
       const {

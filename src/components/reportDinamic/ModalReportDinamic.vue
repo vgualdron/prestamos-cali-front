@@ -29,11 +29,12 @@
           </div>
           <q-table
             v-if="columns && columns.length > 0"
-            :data="tableData"
+            :data="data"
             :columns="columns"
             row-key="id"
             :loading="isLoadingTable"
             :filter="filter"
+            :filter-method="customFilterMethod"
             :pagination.sync="pagination"
             separator="cell"
             class="q-mt-md my-sticky-header-table"
@@ -65,18 +66,18 @@
                 </q-td>
               </q-tr>
             </template>
-            <!-- <template v-slot:footer="props">
+            <template v-slot:bottom-row>
               <q-tr>
-                <q-td v-for="col in columns" :key="col.name" :props="props">
-                  <template v-if="isNumericColumn(col)">
-                    {{ getTotal(col.name) }} xxxx
+                <q-td v-for="col in columns" :key="col.name" colspan="1">
+                  <template v-if="isNumericColumn(col.name)">
+                    {{ formatNumber(calculateTotal(col.name)) }}
                   </template>
                   <template v-else>
-                    - yyy
+                    -
                   </template>
                 </q-td>
               </q-tr>
-            </template> -->
+            </template>
           </q-table>
         </q-card-section>
       </q-card>
@@ -99,6 +100,7 @@ export default {
       isDiabledAdd: false,
       showModal: false,
       listingSelected: null,
+      filteredRows: [],
     };
   },
   props: {
@@ -119,6 +121,9 @@ export default {
       required: true,
     },
   },
+  mounted() {
+    this.filteredRows = [...this.data];
+  },
   computed: {
     showDialog: {
       get() {
@@ -138,13 +143,33 @@ export default {
           totalsRow[col.name] = this.calculateTotal(col.name);
         }
       });
-      return [...this.data, totalsRow];
+      return [...this.data];
     },
     columns() {
       return this.fields;
     },
   },
+  watch: {
+    filter(value) {
+      console.log('watch : ', value);
+      if (value === '') {
+        this.filteredRows = [...this.data];
+      }
+    },
+  },
   methods: {
+    customFilterMethod(rows, terms) {
+      console.log('filter:', terms);
+      if (!terms || terms.trim() === '') {
+        // Si el filtro está vacío, devolver todas las filas
+        return rows;
+      }
+      const filtered = rows.filter((row) => Object.keys(row).some((key) => row[key].toString().toLowerCase().includes(terms.toLowerCase())));
+
+      this.filteredRows = filtered;
+
+      return filtered;
+    },
     hasPermission(value) {
       return havePermission(value);
     },
@@ -168,8 +193,19 @@ export default {
     isLinkColumn(columnName) {
       return columnName.startsWith('_LINK');
     },
+    calculateFilteredTotal(rows, columnName) {
+      console.log(rows);
+      console.log(columnName);
+      /* if (!rows || rows.length === 0) {
+        return [];
+      }
+      return rows.reduce((sum, row) => {
+        const value = this.parseNumber(row[columnName]);
+        return !Number.isNaN(value) ? sum + value : sum;
+      }, 0); */
+    },
     calculateTotal(columnName) {
-      const total = this.data.reduce((sum, row) => {
+      const total = this.filteredRows.reduce((sum, row) => {
         const value = this.parseNumber(row[columnName]);
         if (!Number.isNaN(value)) {
           return sum + value;
