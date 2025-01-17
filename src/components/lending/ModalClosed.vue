@@ -111,7 +111,7 @@ export default {
     async closedLending() {
       showLoading('cerrando ...', 'Por favor, espere', true);
       await this.updateLending({
-        ...this.row,
+        id: this.row.id,
         status: 'closed',
       });
       await this.completeDataNew({
