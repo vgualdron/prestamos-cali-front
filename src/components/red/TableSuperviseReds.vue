@@ -50,9 +50,25 @@
       </div>
     </div>
     <div class="row q-mt-xs">
-      <div class="col-12 text-center">
+      <div class="col-6 text-center">
         <b>Cantidad de Clientes:</b>
         {{ amountClients }}
+      </div>
+      <div class="col-6 text-center">
+        <q-input
+          debounce="400"
+          color="primary"
+          v-model="filter"
+          class="q-ml-xs"
+          placeholder="Buscar"
+          clearable
+          dense
+          outlined
+        >
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
       </div>
     </div>
     <q-table

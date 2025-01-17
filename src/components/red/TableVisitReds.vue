@@ -1,5 +1,35 @@
 <template>
   <div class="q-px-md">
+    <div class="row q-mt-md justify-center">
+      <div class="col-8">
+        <q-btn-toggle
+          v-if="zones && zones.length > 0"
+          v-model="citySelected"
+          class="my-custom-toggle"
+          :options="optionsZones"
+          toggle-color="primary"
+          toggle-text-color="white"
+          color="white"
+          text-color="primary"
+          spread
+          rounded
+        />
+      </div>
+    </div>
+    <div class="row q-mt-md justify-center">
+      <div class="col-6 text-center">
+        <q-select
+          outlined
+          dense
+          option-label="label"
+          option-value="value"
+          emit-value
+          map-options
+          :readonly="!this.validatedPermissions.allCities.status"
+          v-model="userSelected"
+          :options="optionsUsers"/>
+      </div>
+    </div>
     <div class="row q-mt-md">
       <div class="col-12 text-center">
         <q-btn
@@ -252,6 +282,8 @@ import ModalPhoto from 'src/components/red/ModalPhoto.vue';
 import ModalAddPayment from 'components/payment/ModalAddPayment.vue';
 import lendingTypes from '../../store/modules/lending/types';
 import reddirectionTypes from '../../store/modules/reddirection/types';
+import zoneTypes from '../../store/modules/zone/types';
+import userTypes from '../../store/modules/user/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { havePermission } from '../../helpers/havePermission';
@@ -291,18 +323,36 @@ export default {
       showModalPhotoWarning: false,
       showModalPaymentArticle: false,
       location: null,
+      citySelected: 0,
     };
   },
   props: {
   },
   async mounted() {
-    this.userSelected = parseInt(localStorage.getItem('userMC'), 10);
+    this.citySelected = parseInt(localStorage.getItem('cityMC'), 10);
     await this.initData();
     this.pollData();
   },
   watch: {
+    async citySelected() {
+      showLoading('Cargando ...', 'Por favor, espere', true);
+      this.sectorSelected = null;
+      await this.listUsersByRoleName({ roleName: 'Cobrador', status: 1, city: this.citySelected });
+      if (this.optionsUsers && this.optionsUsers.length > 0) {
+        const users = this.optionsUsers.filter((user) => parseInt(user.value, 10) === parseInt(this.userSelected, 10));
+        if (users.length === 0) {
+          this.userSelected = this.optionsUsers[0].value;
+        }
+      }
+      this.$q.loading.hide();
+    },
   },
   computed: {
+    ...mapState(zoneTypes.PATH, {
+      zones: 'zones',
+      zoneStatus: 'status',
+      zoneResponseMessages: 'responseMessages',
+    }),
     ...mapState(lendingTypes.PATH, {
       lending: 'lending',
       lendings: 'lendings',
@@ -315,12 +365,53 @@ export default {
       reddirectionStatus: 'status',
       reddirectionResponseMessages: 'responseMessages',
     }),
+    ...mapState(userTypes.PATH, {
+      users: 'users',
+      userStatus: 'status',
+      userResponseMessages: 'responseMessages',
+    }),
+    optionsZones() {
+      const isAll = this.validatedPermissions.allCities.status;
+      let cities = [...this.zones];
+      if (!isAll) {
+        cities = this.zones.filter((zone) => zone.id === this.citySelected);
+      }
+      return cities.map(({ name, id }) => {
+        const label = name;
+        return {
+          label,
+          value: id,
+        };
+      });
+    },
+    optionsUsers() {
+      return this.users.map(({ name, id, sector_name_collector }) => {
+        const label = `${name} (${sector_name_collector || 'X'})`;
+        return {
+          label,
+          name,
+          value: id,
+        };
+      });
+    },
     dataTable() {
       if (!this.reddirection) {
         return [];
       }
       return [this.reddirection];
     },
+    /* dataTable() {
+      let data = this.reddirection.map((element) => ({
+        ...element,
+      }));
+      if (this.citySelected > 0) {
+        data = data.filter((item) => item.city_id === this.citySelected);
+      }
+      if (this.sectorSelected > 0) {
+        data = data.filter((item) => item.sector_id === this.sectorSelected);
+      }
+      return data;
+    }, */
     validatedPermissions() {
       const statusAllCities = havePermission('red.allCities');
       return {
@@ -346,6 +437,12 @@ export default {
       getLending: lendingTypes.actions.GET_LENDING,
       fetchLendings: lendingTypes.actions.FETCH_LENDINGS,
       fetchHistory: lendingTypes.actions.FETCH_HISTORY,
+    }),
+    ...mapActions(zoneTypes.PATH, {
+      listZones: zoneTypes.actions.LIST_ZONES,
+    }),
+    ...mapActions(userTypes.PATH, {
+      listUsersByRoleName: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
     }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
@@ -432,6 +529,15 @@ export default {
     },
     async initData() {
       showLoading('Cargando ...', 'Por favor, espere', true);
+      await this.listZones();
+      await this.listUsersByRoleName({ roleName: 'Cobrador', status: 1, city: this.citySelected });
+      const u = parseInt(localStorage.getItem('userMC'), 10);
+      if (u) {
+        const hasUser = this.optionsUsers.find((us) => us.value === u);
+        if (hasUser) {
+          this.userSelected = u;
+        }
+      }
       await this.getCurrentByUser(this.userSelected);
       this.$q.loading.hide();
     },

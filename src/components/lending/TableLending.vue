@@ -113,12 +113,12 @@
                     </q-item-section>
                   </q-item>
                   <q-item
-                    v-if="isCloseable(props.row)"
+                    v-if="props.row.type === 'F' ? isCloseableFalses(props.row) : isCloseable(props.row)"
                     clickable
                     v-close-popup
                     @click="openModal('close', props.row)">
                     <q-item-section>
-                      <q-item-label>Cerrar préstamo</q-item-label>
+                      <q-item-label>{{ props.row.type === 'F' ? 'Cerrar préstamo falso' : 'Cerrar préstamo' }}</q-item-label>
                     </q-item-section>
                   </q-item>
                   <q-item
@@ -1308,6 +1308,19 @@ export default {
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0) {
         const payments = row.payments.filter((payment) => payment.type === 'nequi' && payment.is_valid);
+        totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+      }
+      let totalDiscounts = 0;
+      if (row.discounts && row.discounts.length > 0) {
+        totalDiscounts = row.discounts.reduce((result, discount) => (parseInt(result, 10) + parseInt(discount.amount, 10)), 0);
+      }
+      return (total - totalPayments - totalDiscounts) === 0;
+    },
+    isCloseableFalses(row) {
+      const total = row.has_double_interest ? this.valueWithInterest(row) : this.valueWithInterest(row);
+      let totalPayments = 0;
+      if (row.payments && row.payments.length > 0) {
+        const payments = row.payments.filter((payment) => (payment.type === 'nequi' || payment.type === 'renovacion') && payment.is_valid);
         totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
       }
       let totalDiscounts = 0;
