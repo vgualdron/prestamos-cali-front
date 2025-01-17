@@ -170,6 +170,14 @@
                         </div>
                       </td>
                     </tr>
+                    <tr v-if="lending.discounts && lending.discounts.length > 0">
+                      <td colspan="4">
+                        <b>ESTE PRESTAMO TIENE APLICADO DESCUENTOS:</b>
+                        <div v-for="discount in lending.discounts" :key="`discount-${discount.id}`">
+                          {{ formatDate(discount.date) }} - {{ formatPrice(discount.amount) }}
+                        </div>
+                      </td>
+                    </tr>
                   </tbody>
                 </q-markup-table>
                 <img

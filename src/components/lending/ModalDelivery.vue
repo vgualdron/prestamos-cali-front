@@ -11,6 +11,15 @@
         </q-card-section>
         <q-separator />
         <q-card-section class="scroll" id="div-container-delivery">
+          <div v-if="delivery.itemPaymentRejects && delivery.itemPaymentRejects.total_count > 0" class="row q-mt-none">
+            <div class="col-12 text-center">
+              <q-banner class="bg-red text-white q-ma-md">
+                Tiene {{ delivery.itemPaymentRejects.total_count }} pagos rechazados,
+                que suman un total de {{ formatPrice(delivery.itemPaymentRejects.total_amount) }}.
+                Debe borrar los pagos rechazados, para poder realizar la entrega.
+              </q-banner>
+            </div>
+          </div>
           <div class="row q-mt-md">
             <div class="col-12 text-center">
               <q-markup-table
@@ -208,7 +217,7 @@
             label="Cerrar entrega"
             icon="assignment_returned"
             color="primary"
-            :disable="difference > 0"
+            :disable="(difference > 0) || (delivery.itemPaymentRejects && delivery.itemPaymentRejects.total_count > 0)"
             @click="captureImage" />
         </div>
       </q-card>
@@ -269,7 +278,7 @@ export default {
       },
     },
     subtotal() {
-      const transfer = parseInt(this.delivery.itemPayment.total_amount_nequi, 10);
+      const transfer = parseInt(this.delivery.itemPayment.total_amount_nequi, 10); // TODO VALIDAR
       const repayment = parseInt(this.delivery.itemPayment.total_amount_repayment, 10);
       const article = parseInt(this.delivery.itemPayment.total_amount_article, 10);
       const renove = parseInt(this.delivery.itemRenove.total_amount, 10);

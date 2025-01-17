@@ -65,6 +65,18 @@
                 />
                 <q-input
                   outlined
+                  :value="formatPrice(discount)"
+                  label-color="blue"
+                  bg-color="white"
+                  label="Descuento proximo credito *"
+                  lazy-rules
+                  :rules="[(val) => (!!val) || '']"
+                  hide-bottom-space
+                  autocomplete="off"
+                  readonly
+                />
+                <q-input
+                  outlined
                   :value="formatPrice(getBalance(row))"
                   label-color="blue"
                   bg-color="white"
@@ -226,14 +238,14 @@
             </div>
           </q-btn-dropdown>
           <q-btn
-            label="Adelantar"
+            label="ADELANTAR"
             color="primary"
             class="col q-ml-sm"
             :disabled="!date || amount <= 0 || amount > row.amount || action === 'up' || repayment === 0 || repayment > 100000"
             @click="renoveLending('repayment')"
           />
           <q-btn
-            label="Renovar"
+            label="RENOVAR"
             color="primary"
             class="col q-ml-sm"
             :disabled="repayment > 0"
@@ -488,6 +500,9 @@ export default {
       }
       return total < 0 ? 0 : total;
     },
+    discount() {
+      return this.getBalanceDiscount(this.row);
+    },
   },
   methods: {
     ...mapActions(questionTypes.PATH, {
@@ -567,7 +582,7 @@ export default {
       const val = row.amount + (row.amount * ((row.percentage * 2) / 100));
       return (val);
     },
-    getBalance(row) {
+    getBalanceDiscount(row) {
       const total = row.has_double_interest ? this.valueWithInterest(row) : this.valueWithInterest(row);
       let totalPayments = 0;
       if (row.payments && row.payments.length > 0) {
@@ -579,6 +594,21 @@ export default {
         totalDiscounts = row.discounts.reduce((result, discount) => (parseInt(result, 10) + parseInt(discount.amount, 10)), 0);
       }
       const r = (total - totalPayments - totalDiscounts);
+      return r;
+    },
+    getBalance(row) {
+      const disc = this.getBalanceDiscount(row) < 0 ? this.getBalanceDiscount(row) : 0;
+      const total = row.has_double_interest ? this.valueWithInterest(row) : this.valueWithInterest(row);
+      let totalPayments = 0;
+      if (row.payments && row.payments.length > 0) {
+        const payments = row.payments.filter((payment) => payment.type === 'nequi' && payment.is_valid);
+        totalPayments = payments.reduce((result, payment) => (parseInt(result, 10) + parseInt(payment.amount, 10)), 0);
+      }
+      let totalDiscounts = 0;
+      if (row.discounts && row.discounts.length > 0) {
+        totalDiscounts = row.discounts.reduce((result, discount) => (parseInt(result, 10) + parseInt(discount.amount, 10)), 0);
+      }
+      const r = (total - totalPayments - totalDiscounts - disc);
       return r;
     },
     renoveLending(action) {
@@ -603,6 +633,7 @@ export default {
           date: this.date,
           amount: this.amountNew.value,
           repayment: this.repayment,
+          discount: this.discount,
           period: this.periodSelected,
           action,
           status: 'renovated',
