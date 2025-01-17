@@ -278,11 +278,22 @@ export default {
       },
     },
     subtotal() {
-      const transfer = parseInt(this.delivery.itemPayment.total_amount_nequi, 10); // TODO VALIDAR
-      const repayment = parseInt(this.delivery.itemPayment.total_amount_repayment, 10);
-      const article = parseInt(this.delivery.itemPayment.total_amount_article, 10);
-      const renove = parseInt(this.delivery.itemRenove.total_amount, 10);
-      const novel = parseInt(this.delivery.itemNovel.total_amount, 10);
+      const transfer = this.delivery && this.delivery.itemPayment && this.delivery.itemPayment.total_amount_nequi
+        ? parseInt(this.delivery.itemPayment.total_amount_nequi, 10)
+        : 0;
+      const repayment = this.delivery && this.delivery.itemPayment && this.delivery.itemPayment.total_amount_repayment
+        ? parseInt(this.delivery.itemPayment.total_amount_repayment, 10)
+        : 0;
+      const article = this.delivery && this.delivery.itemPayment && this.delivery.itemPayment.total_amount_article
+        ? parseInt(this.delivery.itemPayment.total_amount_article, 10)
+        : 0;
+      const renove = this.delivery && this.delivery.itemRenove
+        ? parseInt(this.delivery.itemRenove.total_amount, 10)
+        : 0;
+      const novel = this.delivery && this.delivery.itemNovel
+        ? parseInt(this.delivery.itemNovel.total_amount, 10)
+        : 0;
+
       return transfer + renove + novel + repayment + article;
     },
     subtotalExpenses() {

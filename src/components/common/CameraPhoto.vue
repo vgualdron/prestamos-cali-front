@@ -233,6 +233,11 @@ export default {
         window.open(googleMapsUrl, '_blank');
       } else {
         this.error = 'Location not available. Please allow location access.';
+        const e = [{
+          text: 'Error',
+          detail: this.error,
+        }];
+        this.showNotification(e, false, 'top-right', 5000);
       }
     },
     async getLocation() {
@@ -249,9 +254,19 @@ export default {
           };
         } else {
           this.error = 'Unable to retrieve location. Please allow access.';
+          const e = [{
+            text: 'Error',
+            detail: this.error,
+          }];
+          this.showNotification(e, false, 'top-right', 5000);
         }
       } catch (err) {
         this.error = 'Geolocation is not supported by this browser.';
+        const e = [{
+          text: 'Error',
+          detail: this.error,
+        }];
+        this.showNotification(e, false, 'top-right', 5000);
       }
     },
     async initCamera() {
@@ -280,6 +295,11 @@ export default {
         }
       } catch (error) {
         console.error('Error fetching video input devices', error);
+        const e = [{
+          text: 'Error al acceder a la camara',
+          detail: error.message,
+        }];
+        this.showNotification(e, false, 'top-right', 5000);
       }
     },
     async startCamera() {
