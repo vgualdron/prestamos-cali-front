@@ -298,8 +298,8 @@ export default {
       this.chunks = [];
     },
     async send() {
-      await this.getLocation();
       showLoading('Guardando ...', 'Por favor, espere', true);
+      await this.getLocation();
       const {
         name,
         storage,

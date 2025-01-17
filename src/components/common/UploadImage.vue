@@ -234,8 +234,8 @@ export default {
       return file;
     },
     async sendImage() {
-      await this.getLocation();
       showLoading('Guardando ...', 'Por favor, espere', true);
+      await this.getLocation();
       const {
         name,
         storage,

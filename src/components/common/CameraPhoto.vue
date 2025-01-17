@@ -347,8 +347,8 @@ export default {
       this.$q.loading.hide();
     },
     async sendImage() {
-      await this.getLocation();
       showLoading('Guardando ...', 'Por favor, espere', true);
+      await this.getLocation();
       const {
         name,
         storage,
