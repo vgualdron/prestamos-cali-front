@@ -212,15 +212,14 @@
                   <q-btn
                     class="q-mt-sm"
                     label="Agregar aviso"
-                    color="grey"
-                    :disabled="!props.row.file_id || props.row.file2_id"
+                    color="black"
+                    :disabled="!props.row.file_id"
                     @click="openModal('warning', props.row)"
                   ></q-btn>
                   <q-btn
                     class="q-mt-sm"
-                    label="Ver nequis"
+                    label="Ver cuentas para pagar"
                     color="primary"
-                    :disabled="!props.row.file_id || props.row.file2_id"
                     @click="openModal('nequis', props.row)"
                   ></q-btn>
                 </q-item-section>
@@ -346,6 +345,11 @@ export default {
       }
       this.$q.loading.hide();
     },
+    async userSelected(value) {
+      showLoading('Cargando ...', 'Por favor, espere', true);
+      await this.getCurrentByUser(value);
+      this.$q.loading.hide();
+    },
   },
   computed: {
     ...mapState(zoneTypes.PATH, {
@@ -400,18 +404,6 @@ export default {
       }
       return [this.reddirection];
     },
-    /* dataTable() {
-      let data = this.reddirection.map((element) => ({
-        ...element,
-      }));
-      if (this.citySelected > 0) {
-        data = data.filter((item) => item.city_id === this.citySelected);
-      }
-      if (this.sectorSelected > 0) {
-        data = data.filter((item) => item.sector_id === this.sectorSelected);
-      }
-      return data;
-    }, */
     validatedPermissions() {
       const statusAllCities = havePermission('red.allCities');
       return {
@@ -462,7 +454,7 @@ export default {
     async pollData() {
       this.polling = setInterval(async () => {
         await this.initData();
-      }, 60000);
+      }, 120000);
     },
     async openModal(action, row) {
       this.itemSelected = { ...row };
@@ -557,6 +549,7 @@ export default {
       const data = {
         ...this.reddirection,
         file2_id: value.id,
+        attended: 'vacio',
         solution: 'aviso',
         end_date: Moment().format('YYYY-MM-DD HH:mm:ss'),
       };
@@ -569,6 +562,7 @@ export default {
       const data = {
         ...this.reddirection,
         file2_id: value.idFile,
+        solution: 'pago',
         end_date: Moment().format('YYYY-MM-DD HH:mm:ss'),
       };
       await this.updateReddirection(data);

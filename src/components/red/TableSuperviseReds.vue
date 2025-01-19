@@ -93,6 +93,23 @@
                 <q-item
                   clickable
                   v-close-popup
+                  @click="openModal('reddirections', props.row)">
+                  <q-item-section>
+                    <q-item-label>Ver visitas</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  v-if="!hasReddirectionActive"
+                  clickable
+                  v-close-popup
+                  @click="openModal('visit', props.row)">
+                  <q-item-section>
+                    <q-item-label>Asignar visita</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
                   @click="openModal('normal', props.row)">
                   <q-item-section>
                     <q-item-label>Ver cartulina</q-item-label>
@@ -129,23 +146,6 @@
                   @click="openModal('nequis', props.row)">
                   <q-item-section>
                     <q-item-label>Cuentas Nequi</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  clickable
-                  v-close-popup
-                  @click="openModal('reddirections', props.row)">
-                  <q-item-section>
-                    <q-item-label>Ver visitas</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  v-if="!hasReddirectionActive"
-                  clickable
-                  v-close-popup
-                  @click="openModal('visit', props.row)">
-                  <q-item-section>
-                    <q-item-label>Asignar a visita</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -252,7 +252,8 @@
     <modal-list-visits
       v-model="showModalListVisits"
       v-if="showModalListVisits"
-      :items="reddirections"/>
+      :items="reddirections"
+      @endVisit="endVisit"/>
   </div>
 </template>
 <script>
@@ -596,6 +597,7 @@ export default {
       getCurrentByUser: reddirectionTypes.actions.GET_CURRENT_BY_USER,
       getByLending: reddirectionTypes.actions.GET_BY_LENDING,
       saveReddirection: reddirectionTypes.actions.SAVE_REDDIRECTION,
+      updateReddirection: reddirectionTypes.actions.UPDATE_REDDIRECTION,
     }),
     ...mapActions(lendingTypes.PATH, {
       getLending: lendingTypes.actions.GET_LENDING,
@@ -684,6 +686,33 @@ export default {
         this.$q.loading.hide();
         this.showModalListVisits = true;
       }
+    },
+    async endVisit(row) {
+      this.$q.dialog({
+        title: 'Finalizar visita',
+        message: 'Está seguro que desea finalizar la visita a la dirección al cobrador?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        showLoading('Guardando ...', 'Por favor, espere', true);
+        await this.updateReddirection({
+          ...row,
+          status: 'finalizado',
+        });
+        this.showModalListVisits = false;
+        await this.initData();
+        this.$q.loading.hide();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
     },
     generateLinkGoogleMaps(row) {
       const latEnd = row.address_latitude;

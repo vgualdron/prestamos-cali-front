@@ -164,7 +164,7 @@
                     </q-item-section>
                   </q-item>
                   <q-item
-                    v-if="props.row.order !== 0 && hasPermission('list.blockRedLending')"
+                    v-if="props.row.order !== 0 && hasPermission('list.blockRedLending') && !hasReddirectionsActive(props.row)"
                     clickable
                     v-close-popup
                     @click="blockForReds(props.row, 0)">
@@ -173,7 +173,7 @@
                     </q-item-section>
                   </q-item>
                   <q-item
-                    v-if="props.row.order === 0 && hasPermission('list.blockRedLending')"
+                    v-if="props.row.order === 0 && hasPermission('list.blockRedLending') && !hasReddirectionsActive(props.row)"
                     clickable
                     v-close-popup
                     @click="blockForReds(props.row, 1)">

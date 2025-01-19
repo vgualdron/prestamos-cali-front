@@ -50,6 +50,7 @@
       </div>
     </div>
     <q-table
+      v-if="reddirection && reddirection.id && !isLoading"
       :data="dataTable"
       :columns="columns"
       :filter="filter"
@@ -59,198 +60,308 @@
       class="q-mt-md"
       row-key="order"
       striped
+      grid
     >
-      <template v-slot:body="props">
-        <q-tr :props="props" @click="clickRow(props.row)" :class="getRowClass(props.row)">
-          <q-td :props="props" key="actions">
-            <q-btn-dropdown
-              class="q-px-none"
-              color="black"
-              outline>
-              <q-list>
-                <q-item
-                  clickable
-                  v-close-popup
-                  @click="openModal('normal', props.row)">
-                  <q-item-section>
-                    <q-item-label>Ver cartulina</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  v-if="props.row.has_double_interest"
-                  clickable
-                  v-close-popup
-                  @click="openModal('double', props.row)">
-                  <q-item-section>
-                    <q-item-label>Ver cartulina doble interes</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  clickable
-                  v-close-popup
-                  @click="openModal('history', props.row)">
-                  <q-item-section>
-                    <q-item-label>Ver Historial</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  clickable
-                  v-close-popup
-                  @click="openModal('cv', props.row)">
-                  <q-item-section>
-                    <q-item-label>Ver Hoja de Vida</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  clickable
-                  v-close-popup
-                  @click="openModal('nequis', props.row)">
-                  <q-item-section>
-                    <q-item-label>Cuentas Nequi</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  clickable
-                  v-close-popup
-                  @click="openModal('reddirections', props.row)">
-                  <q-item-section>
-                    <q-item-label>Ver visitas</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
-          </q-td>
-          <q-td :props="props" key="collector_name">
-            <q-badge
-              v-if="props.row.collector_name"
-              :color="getColorBadge(props.row.sector_code.replace(/C|B/gi, ''))"
-              :text-color="getColorText(props.row.sector_code.replace(/C|B/gi, ''))">
-              {{ props.row.collector_name }}
-            </q-badge>
-          </q-td>
-          <q-td :props="props" key="district_order">
-            <q-icon v-if="props.row.reddirection_start_date" name="flag" color="black" size="md"/>
-            {{ props.row.district_order }}
-          </q-td>
-          <q-td :props="props" class="text-wrap" key="news_name">
-            {{ props.row.new_name }}
-          </q-td>
-          <q-td :props="props" key="firstDate">
-            {{ formatDate(props.row.lending_first_date) }}
-          </q-td>
-          <q-td :props="props" key="endDate">
-            {{ formatDate(props.row.lending_end_date) }}
-          </q-td>
-          <q-td :props="props" key="remaining_balance">
-            {{ formatPrice(props.row.value) }}
-          </q-td>
-          <q-td :props="props" key="listing_name">
-            {{ props.row.listing_name }}
-          </q-td>
-          <q-td :props="props" class="text-wrap" key="address_name">
-            {{ props.row.description_ref }}
-          </q-td>
-          <q-td :props="props" class="text-wrap" key="address_type">
-            {{ props.row.type_ref }}
-          </q-td>
-          <q-td :props="props" class="text-wrap" key="address">
-            <a v-if="props.row.address_latitude" :href="generateLinkGoogleMaps(props.row)" target="_blank">
-              {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
-            </a>
-            <b v-else>
-              {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
-            </b>
-          </q-td>
-          <q-td :props="props" key="news_observation">
-            <q-btn-dropdown
-              v-if="props.row.news_observation"
-              color="black"
-              size="12px"
-              :auto-close="false"
-              outline
-            >
-              <q-list>
-                <q-item v-close-popup>
-                  <q-item-section>
+    <template v-slot:item="props">
+        <div
+          class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+        >
+          <q-card>
+            <q-list bordered separator>
+              <q-item>
+                <q-item-section>
+                  <template>
                     <q-item-label>
-                      {{ props.row.news_observation }}
+                      Cobrador
                     </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
-          </q-td>
-          <q-td :props="props" class="text-wrap" key="attended">
-            <q-icon size="xs" name="edit" />
-            {{ props.row.attended }}
-            <q-popup-edit :value="props.row.attended" v-slot="scope" buttons
-              @input="val => saveDate('attended', val)">
-              <q-option-group
-                v-model="scope.value"
-                :options="[
-                  {
-                    label: 'vacio',
-                    value: 'vacio'
-                  },
-                  {
-                    label: 'cliente',
-                    value: 'cliente'
-                  },
-                  {
-                    label: 'fiador',
-                    value: 'fiador',
-                  },
-                  {
-                    label: 'familiar',
-                    value: 'familiar',
-                  },
-                  {
-                    label: 'otro',
-                    value: 'otro',
-                  },
-                ]"
-                color="primary"
-              />
-            </q-popup-edit>
-          </q-td>
-          <q-td :props="props" class="text-wrap" key="solution">
-            <q-icon size="xs" name="edit" />
-            {{ props.row.solution }}
-            <q-popup-edit :value="props.row.solution" v-slot="scope" buttons
-              @input="val => saveDate('solution', val)">
-              <q-option-group
-                v-model="scope.value"
-                :options="[
-                  {
-                    label: 'acuerdo',
-                    value: 'acuerdo'
-                  },
-                  {
-                    label: 'pago',
-                    value: 'pago'
-                  },
-                  {
-                    label: 'aviso',
-                    value: 'aviso',
-                  },
-                  {
-                    label: 'no paga',
-                    value: 'no paga',
-                  },
-                ]"
-                color="primary"
-              />
-            </q-popup-edit>
-          </q-td>
-          <q-td :props="props" class="text-wrap" key="observation">
-            <q-icon size="xs" name="edit" />
-            {{ props.row.observation }}
-            <q-popup-edit :value="props.row.observation" v-slot="scope" buttons
-              @input="val => saveDate('observation', val)">
-              <q-input v-model="scope.value" dense autofocus />
-            </q-popup-edit>
-          </q-td>
-        </q-tr>
+                    <q-item-label caption>
+                      {{ props.row.collector_name}}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Código
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ props.row.district_order}}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Cliente
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ props.row.new_name}}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Nombre Ref
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ props.row.description_ref}} - {{ props.row.type_ref}}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Fecha
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ formatDate(props.row.lending_first_date) }} - {{ formatDate(props.row.lending_end_date) }}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Deuda
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ formatPrice(props.row.value) }}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Ruta
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ props.row.listing_name }}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item >
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Dirección
+                    </q-item-label>
+                    <q-item-label caption>
+                      <a v-if="props.row.address_latitude" @click="generateLinkGoogleMaps(props.row)" class="link-style">
+                        {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
+                      </a>
+                      <b v-else>
+                        {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
+                      </b>
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Nota
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ props.row.new_observation }}
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item class="bg-blue-1">
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Quien atendió de la visita?
+                    </q-item-label>
+                    <q-item-label caption>
+                      <q-icon size="xs" name="edit" />
+                      {{ props.row.attended }}
+                      <q-popup-edit :value="props.row.attended" v-slot="scope" buttons
+                        @input="val => saveDate('attended', val)">
+                        <q-option-group
+                          v-model="scope.value"
+                          :options="[
+                            {
+                              label: 'vacio',
+                              value: 'vacio'
+                            },
+                            {
+                              label: 'cliente',
+                              value: 'cliente'
+                            },
+                            {
+                              label: 'fiador',
+                              value: 'fiador',
+                            },
+                            {
+                              label: 'familiar',
+                              value: 'familiar',
+                            },
+                            {
+                              label: 'otro',
+                              value: 'otro',
+                            },
+                          ]"
+                          color="primary"
+                        />
+                      </q-popup-edit>
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item class="bg-blue-1">
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Solución
+                    </q-item-label>
+                    <q-item-label caption>
+                      <q-icon size="xs" name="edit" />
+                      {{ props.row.solution }}
+                      <q-popup-edit :value="props.row.solution" v-slot="scope" buttons
+                        @input="val => saveDate('solution', val)">
+                        <q-option-group
+                          v-model="scope.value"
+                          :options="[
+                            {
+                              label: 'acuerdo',
+                              value: 'acuerdo'
+                            },
+                            {
+                              label: 'pago',
+                              value: 'pago'
+                            },
+                            {
+                              label: 'aviso',
+                              value: 'aviso',
+                            },
+                            {
+                              label: 'no paga',
+                              value: 'no paga',
+                            },
+                          ]"
+                          color="primary"
+                        />
+                      </q-popup-edit>
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item class="bg-blue-1">
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Observación de la visita
+                    </q-item-label>
+                    <q-item-label caption>
+                      <q-icon size="xs" name="edit" />
+                      {{ props.row.observation }}
+                      <q-popup-edit :value="props.row.observation" v-slot="scope" buttons
+                        @input="val => saveDate('observation', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item class="bg-blue-1">
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Foto de la casa
+                    </q-item-label>
+                    <q-item-label caption>
+                      <img
+                        v-if="reddirection.file_url"
+                        :src="getUrlFile(reddirection, 'file_url')"
+                        width="250rem"/>
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item class="bg-blue-1">
+                <q-item-section>
+                  <template>
+                    <q-item-label>
+                      Foto de la solución
+                    </q-item-label>
+                    <q-item-label caption>
+                      <!-- <camera-photo
+                        :config="{
+                          name: 'FOTO_AVISO_REDDIRECTION',
+                          storage: 'reddirections',
+                          modelName: 'reddirections',
+                          modelId: reddirection.id
+                        }"
+                        state="creado"
+                        type="read"
+                        @updateStatus="sendNotificationPush"
+                      /> -->
+                      <img
+                        v-if="reddirection.file2_url"
+                        :src="getUrlFile(reddirection, 'file2_url')"
+                        width="250rem"/>
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-btn
+                    class="q-mt-sm"
+                    label="Ver cartulina"
+                    color="primary"
+                    @click="openModal('normal', props.row)"
+                  ></q-btn>
+                  <q-btn
+                    class="q-mt-sm"
+                    label="Ver cartulina doble interes"
+                    color="primary"
+                    @click="openModal('double', props.row)"
+                  ></q-btn>
+                  <q-btn
+                    class="q-mt-sm"
+                    label="Ver historial de prestamos"
+                    color="primary"
+                    @click="openModal('history', props.row)"
+                  ></q-btn>
+                  <q-btn
+                    class="q-mt-sm"
+                    label="Ver hoja de vida"
+                    color="primary"
+                    @click="openModal('cv', props.row)"
+                  ></q-btn>
+                  <q-btn
+                    class="q-mt-sm"
+                    label="Ver visitas"
+                    color="primary"
+                    @click="openModal('reddirections', props.row)"
+                  ></q-btn>
+                  <q-btn
+                    class="q-mt-sm"
+                    label="Ver cuentas para pagar"
+                    color="primary"
+                    @click="openModal('nequis', props.row)"
+                  ></q-btn>
+                </q-item-section>
+              </q-item>
+            </q-list>
+           </q-card>
+        </div>
       </template>
     </q-table>
     <modal-list-nequi
@@ -297,6 +408,7 @@ import { mapState, mapActions } from 'vuex';
 import ModalListNequi from 'components/nequi/ModalListNequi.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
 import ModalListVisits from 'components/red/ModalListVisits.vue';
+// import CameraPhoto from 'components/common/CameraPhoto.vue';
 import Cv from 'components/new/Cv.vue';
 import newTypes from '../../store/modules/new/types';
 import zoneTypes from '../../store/modules/zone/types';
@@ -315,6 +427,7 @@ export default {
     ModalCardBoard,
     ModalListVisits,
     Cv,
+    // CameraPhoto,
   },
   data() {
     return {
@@ -450,6 +563,7 @@ export default {
       showModalNequis: false,
       showModalCv: false,
       showModalListVisits: false,
+      isLoading: false,
     };
   },
   props: {
@@ -633,6 +747,9 @@ export default {
       fetchLendings: lendingTypes.actions.FETCH_LENDINGS,
       fetchHistory: lendingTypes.actions.FETCH_HISTORY,
     }),
+    getUrlFile(row, field) {
+      return `${process.env.URL_FILES}${row[field]}`;
+    },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
@@ -651,7 +768,7 @@ export default {
     async pollData() {
       this.polling = setInterval(async () => {
         await this.initData();
-      }, 60000);
+      }, 120000);
     },
     async openModal(action, row) {
       this.itemSelected = { ...row };
@@ -738,11 +855,13 @@ export default {
       return Moment(date).format('DD/MM/YYYY');
     },
     async listNewsMounted() {
+      this.isLoading = true;
       await this.getCurrentByUser(this.userSelected);
       if (this.status === false) {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
         this.data = [];
       }
+      this.isLoading = false;
     },
     async initData() {
       showLoading('Cargando ...', 'Por favor, espere', true);
@@ -764,6 +883,18 @@ export default {
       await this.updateReddirection(item);
       await this.listNewsMounted();
       this.$q.loading.hide();
+    },
+    async sendNotificationPush({ name, value }) {
+      const players = [this.item.collector_token];
+      const data = {
+        app_id: `${process.env.APP_ID_ONE_SIGNAL}`,
+        contents: { en: `Se ha ${value} el archivo ${name} de una visita` },
+        headings: { en: 'Haz click aquí y revisa' },
+        include_player_ids: players,
+        url: `${process.env.URL_FRONT}/visit-reds`,
+      };
+      await this.sendNotification(data);
+      this.listNewsMounted();
     },
   },
 };

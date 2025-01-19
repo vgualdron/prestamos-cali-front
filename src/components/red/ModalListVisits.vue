@@ -19,6 +19,9 @@
               <tbody>
                 <tr class="">
                   <td class="td-table">
+                    <b>FINALIZAR</b>
+                  </td>
+                  <td class="td-table">
                     <b>FECHA</b>
                   </td>
                   <td class="td-table">
@@ -46,7 +49,18 @@
                     <b>FOTO SOLUCIÓN</b>
                   </td>
                 </tr>
-                <tr :class="{ 'bg-green-3' : isToday(item.start_date) }" v-for="item in items" :key="`tr_td_${item.id}`">
+                <tr :class="{ 'bg-blue-3' : isToday(item.start_date) }" v-for="item in items" :key="`tr_td_${item.id}`">
+                  <td class="td-table wrap-text">
+                    <q-btn
+                      v-if="isToday(item.start_date) && item.status === 'activo'"
+                      round
+                      icon="do_not_touch"
+                      class="q-ml-none"
+                      color="primary"
+                      title="Click para refrescar la tabla"
+                      @click="endVisit(item)">
+                    </q-btn>
+                  </td>
                   <td class="td-table wrap-text">
                     <div>
                       {{ formatDate(item.start_date) }}
@@ -179,6 +193,9 @@ export default {
       const seconds = duration.seconds();
 
       return `${hours}h:${minutes}m:${seconds}s`;
+    },
+    endVisit(item) {
+      this.$emit('endVisit', item);
     },
     onSavedFile(value) {
       this.$emit('savedFile', value);

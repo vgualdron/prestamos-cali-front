@@ -22,7 +22,7 @@
                 :readonly="type === 'renovacion'"/>
             </div>
           </div>
-          <div class="row q-mt-md" v-if="amount > 0 && (this.type === 'nequi' || this.type === 'articulo') && amount <= getBalance(row)">
+          <div class="row q-mt-md" v-if="(amount > 0 && (this.type === 'nequi' || this.type === 'articulo') && amount <= getBalance(row)) || (this.isStreet && amount > 0 && amount <= row.value)">
             <div class="col-12 text-center">
               <p class="text-subtitle1 text-weight-bold text-center">AGREGAR FOTO DE SOPORTE DE PAGO</p>
               <upload-image
