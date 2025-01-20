@@ -206,7 +206,7 @@
           <q-btn-dropdown
             color="primary"
             label="Transferir"
-            :disabled="!date || amount <= 0 || amount > row.amount || repayment === 0"
+            :disabled="!date || amount <= 0 || amount > row.amount || repayment === 0 || discount < 0"
           >
             <div class="row no-wrap q-pa-md" v-if="newItem">
               <div class="column">
@@ -241,7 +241,7 @@
             label="ADELANTAR"
             color="primary"
             class="col q-ml-sm"
-            :disabled="!date || amount <= 0 || amount > row.amount || action === 'up' || repayment === 0 || repayment > 100000"
+            :disabled="!date || amount <= 0 || amount > row.amount || action === 'up' || repayment === 0 || (repayment > 100000 && discount >= 0)"
             @click="renoveLending('repayment')"
           />
           <q-btn
