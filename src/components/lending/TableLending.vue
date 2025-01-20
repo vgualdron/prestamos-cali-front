@@ -192,7 +192,7 @@
             <q-td key="name" :props="props" :class="tdNameClass(props.row)">
               <p :title="props.row.nameDebtor" class="q-my-auto">
                 <q-icon v-if="hasReddirectionsActive(props.row)" name="two_wheeler" color="red" size="md"/>
-                <q-icon v-if="props.row.order === 0" name="look" color="red" size="md"/>
+                <q-icon v-if="props.row.order === 0" name="lock" color="red" size="md"/>
                 <q-badge
                   v-if="isNew(props.row)"
                   :color="'green'">
