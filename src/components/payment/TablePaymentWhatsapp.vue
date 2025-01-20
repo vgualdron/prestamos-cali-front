@@ -94,7 +94,7 @@
       :title="`Valor: ${formatPrice(itemSelected.amount)} - Referencia: ${itemSelected.reference}`"
       :showBtnCancel="true"
       :showBtnAccept="true"
-      labelBtnCancel="No certificado"
+      labelBtnCancel="Rechazar"
       labelBtnAccept="Certificado"
       @clickBtnCancel="rejectPayment"
       @clickBtnAccept="approvePayment"
@@ -342,9 +342,33 @@ export default {
         status: 'certificado',
       });
     },
-    rejectPayment() {
+    /* rejectPayment() {
       this.updateStatusPayment({
         status: 'no certificado',
+      });
+    }, */
+    async rejectPayment() {
+      this.$q.dialog({
+        title: 'Rechazar',
+        message: 'Está seguro?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        showLoading('Rechazando ...', 'Por favor, espere', true);
+        await this.deletePayment(this.itemSelected.id);
+        this.showModal = false;
+        this.$q.loading.hide();
+        this.getPayments();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
       });
     },
     async updateStatusPayment({ status }) {
