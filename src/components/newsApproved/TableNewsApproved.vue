@@ -56,6 +56,24 @@
           </div>
         </q-td>
       </template>
+      <template v-slot:body-cell-reject="props">
+        <q-td :props="props">
+          <!-- <q-icon size="xs" name="edit" />
+            {{ props.row.observation }}
+            <q-popup-edit :value="props.row.observation" v-slot="scope" buttons
+              @input="val => saveDataNew('observation', val)">
+              <q-input v-model="scope.value" dense autofocus />
+            </q-popup-edit> -->
+          <q-btn
+            v-if="props.row.id && props.row.diary_id"
+            class=""
+            color="orange"
+            label="DEVOLVER"
+            title="Click para devolver a visita"
+            @click="changeStatusReject(props.row)">
+          </q-btn>
+        </q-td>
+      </template>
       <template v-slot:body-cell-video="props">
         <q-td :props="props">
           <camera-video
@@ -78,7 +96,7 @@
             label="Ver"
             title="Click para ver la hoja de vida"
             @click="openCv(props.row)">
-        </q-btn>
+          </q-btn>
         </q-td>
       </template>
       <template v-slot:body-cell-quantity="props">
@@ -100,6 +118,7 @@ import UploadImage from 'components/common/UploadImage.vue';
 import CameraVideo from 'components/common/CameraVideo.vue';
 import Cv from 'components/new/Cv.vue';
 import newTypes from '../../store/modules/new/types';
+import diaryTypes from '../../store/modules/diary/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { formatDateWithTime } from '../../helpers/formatDate';
@@ -117,6 +136,12 @@ export default {
       route: '/new',
       name: 'Información de nuevos',
       columns: [
+        {
+          name: 'reject',
+          label: 'Devolver',
+          align: 'center',
+          visible: false,
+        },
         {
           name: 'actions',
           label: 'Cargar voucher',
@@ -212,7 +237,10 @@ export default {
   methods: {
     ...mapActions(newTypes.PATH, {
       listNews: newTypes.actions.LIST_NEWS,
-      updateStatusNew: newTypes.actions.UPDATE_STATUS_NEW,
+      completeDataNew: newTypes.actions.COMPLETE_DATA_NEW,
+    }),
+    ...mapActions(diaryTypes.PATH, {
+      completeDataDiary: diaryTypes.actions.COMPLETE_DATA_DIARY,
     }),
     formatDate(date) {
       return moment(date).format('DD/MM/YYYY');
@@ -245,21 +273,52 @@ export default {
       this.$q.loading.hide();
       this.isLoading = false;
     },
-    async changeStatus(obj, type) {
-      this.obj = obj;
-      this.type = type;
+    /* async saveDataNew(field, value) {
       showLoading('Guardando ...', 'Por favor, espere', true);
-      await this.updateStatusNew({
-        ...obj,
-        status: 'creado',
-      });
-
-      if (this.status === true) {
-        this.user = { ...this.copyUser };
-        await this.listNewsMounted();
-      }
+      const item = {
+        id: this.item.id,
+      };
+      item[field] = value.value ? value.value : value;
+      await this.completeDataNew(item);
+      await this.getItem();
       this.$q.loading.hide();
-      this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
+    }, */
+    async changeStatusReject(obj) {
+      this.$q.dialog({
+        title: 'Devolver a visita',
+        message: 'Está seguro que desea devolver a visitando?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        this.obj = obj;
+        showLoading('Guardando ...', 'Por favor, espere', true);
+        await this.completeDataNew({
+          id: obj.id,
+          status: 'visitando',
+        });
+
+        await this.completeDataDiary({
+          id: obj.diary_id,
+          status: 'cancelada',
+        });
+
+        if (this.status === true) {
+          await this.listNewsMounted();
+        }
+        this.$q.loading.hide();
+        this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
     },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);

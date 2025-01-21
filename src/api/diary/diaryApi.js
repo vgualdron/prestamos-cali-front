@@ -36,6 +36,11 @@ export default {
     method: 'PUT',
     data,
   }),
+  completeData: (data) => http({
+    url: `${process.env.URL_API}/api/diary/complete-data/${data.id}`,
+    method: 'PUT',
+    data,
+  }),
   updateStatus: (data) => http({
     url: `${process.env.URL_API}/api/diary/update-status/${data.id}`,
     method: 'PUT',

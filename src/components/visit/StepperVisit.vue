@@ -1073,7 +1073,9 @@ export default {
     },
     async saveDateNew(field, value) {
       showLoading('Guardando ...', 'Por favor, espere', true);
-      const item = { ...this.item };
+      const item = {
+        id: this.item.id,
+      };
       item[field] = value.value ? value.value : value;
       await this.completeDataNew(item);
       await this.getItem();

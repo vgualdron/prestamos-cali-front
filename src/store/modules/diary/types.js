@@ -10,6 +10,7 @@ export default {
     SAVE_DIARY: '@actions/saveDiary',
     UPDATE_DIARY: '@actions/updateDiary',
     UPDATE_STATUS_DIARY: '@actions/updateStatusDiary',
+    COMPLETE_DATA_DIARY: '@actions/completeDataDiary',
     DELETE_DIARY: '@actions/deleteDiary',
   },
   getters: {
