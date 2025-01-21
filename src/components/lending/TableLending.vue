@@ -261,7 +261,7 @@
                 <q-icon name="block" color="red" />
               </b>
               <b
-                v-else-if="getBalance(props.row) === 0"
+                v-else-if="getBalance(props.row) <= 0"
                 title="Ya pagó todo el préstamo">
                 <q-icon name="block" color="red" />
               </b>
@@ -299,7 +299,7 @@
                   </q-badge>
                 </div>
               </div>
-              <b v-if="getBalance(props.row) === 0"
+              <b v-if="getBalance(props.row) <= 0"
                 title="Ya pagó todo el préstamo">
                 <q-icon name="block" color="red" />
               </b>
@@ -388,7 +388,7 @@
                   </div>
                 </div>
                 <b
-                  v-else-if="getBalance(props.row) === 0"
+                  v-else-if="getBalance(props.row) <= 0"
                   title="Ya pagó todo el préstamo">
                   <q-icon name="block" color="red" />
                 </b>
@@ -1315,7 +1315,7 @@ export default {
       if (row.discounts && row.discounts.length > 0) {
         totalDiscounts = row.discounts.reduce((result, discount) => (parseInt(result, 10) + parseInt(discount.amount, 10)), 0);
       }
-      return (total - totalPayments - totalDiscounts) === 0;
+      return (total - totalPayments - totalDiscounts) <= 0;
     },
     isCloseableFalses(row) {
       const total = row.has_double_interest ? this.valueWithInterest(row) : this.valueWithInterest(row);
