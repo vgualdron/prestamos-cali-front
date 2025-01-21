@@ -117,12 +117,12 @@
               </q-popup-edit>
             </q-btn>
           </q-td>
-          <q-td key="address_house" :props="props" @click="clickEditAddress(props.row, 'house')">
+          <q-td key="address_house" :props="props" @click="clickEditAddress(props.row, 'house')" class="wrap-text">
             <q-icon size="xs" name="edit"/>
             {{ props.row.address_house }}
             <br><b v-if="props.row.districtHouseName">Barrio: </b> {{ props.row.districtHouseName }}
           </q-td>
-          <q-td key="address_work" :props="props" @click="clickEditAddress(props.row, 'work')">
+          <q-td key="address_work" :props="props" @click="clickEditAddress(props.row, 'work')" class="wrap-text">
             <q-icon size="xs" name="edit" />
             {{ props.row.address_work }}
             <br><b v-if="props.row.districtWorkName">Barrio: </b> {{ props.row.districtWorkName }}
@@ -149,7 +149,7 @@
               />
             </q-popup-edit>
           </q-td>
-          <q-td key="observation" :props="props">
+          <q-td key="observation" :props="props" class="wrap-text">
             <q-icon size="xs" name="edit" />
             {{ props.row.observation }}
             <q-popup-edit :value="props.row.observation" v-slot="scope" buttons
@@ -157,13 +157,13 @@
               <q-input v-model="scope.value" dense autofocus />
             </q-popup-edit>
           </q-td>
-          <q-td key="name" :props="props">
+          <q-td key="name" :props="props" class="wrap-text">
             {{ props.row.name }}
           </q-td>
           <q-td key="phone" :props="props">
             {{ props.row.phone }}
           </q-td>
-          <q-td key="address" :props="props">
+          <q-td key="address" :props="props" class="wrap-text">
             {{ props.row.address }}
             <br><b>Barrio: </b> {{ props.row.districtName }}
           </q-td>
@@ -183,7 +183,7 @@
           <q-td key="districtOrder" :props="props">
             {{ props.row.districtOrder }}
           </q-td>
-          <q-td key="occupation" :props="props">
+          <q-td key="occupation" :props="props" class="wrap-text">
             {{ props.row.occupation }}
           </q-td>
           <q-td key="userSendName" :props="props">
@@ -251,6 +251,7 @@ export default {
           field: 'address_house',
           sortable: true,
           visible: true,
+          style: 'width: 200px',
         },
         {
           name: 'address_work',
@@ -259,6 +260,7 @@ export default {
           field: 'address_work',
           sortable: true,
           visible: true,
+          style: 'width: 200px',
         },
         {
           name: 'site_visit',
@@ -275,13 +277,14 @@ export default {
           field: 'observation',
           sortable: true,
           visible: true,
+          style: 'width: 200px',
         },
         {
           name: 'name',
           align: 'left',
           label: 'Nombre',
           field: 'name',
-          style: 'max-width: 300px',
+          style: 'width: 200px',
           classes: 'ellipsis',
           sortable: true,
           visible: true,
@@ -301,6 +304,7 @@ export default {
           field: 'address',
           sortable: true,
           visible: true,
+          style: 'width: 300px',
         },
         {
           name: 'cityName',
@@ -341,6 +345,7 @@ export default {
           field: 'occupation',
           sortable: true,
           visible: true,
+          style: 'width: 200px',
         },
         {
           name: 'userSendName',
@@ -349,6 +354,7 @@ export default {
           field: 'userSendName',
           sortable: true,
           visible: true,
+          style: 'width: 200px',
         },
         {
           name: 'status',
@@ -692,3 +698,14 @@ export default {
   },
 };
 </script>
+<style scoped>
+  .q-banner {
+    width: 95% !important;
+  }
+  .wrap-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+  }
+</style>

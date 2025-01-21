@@ -286,7 +286,7 @@ export default {
     async changeStatusReject(obj) {
       this.$q.dialog({
         title: 'Devolver a visita',
-        message: 'Está seguro que desea devolver a visitando?',
+        message: 'Está seguro que desea devolver a pendiente?',
         ok: {
           push: true,
         },
@@ -301,7 +301,7 @@ export default {
         showLoading('Guardando ...', 'Por favor, espere', true);
         await this.completeDataNew({
           id: obj.id,
-          status: 'visitando',
+          status: 'pendiente',
         });
 
         await this.completeDataDiary({
