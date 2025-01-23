@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <div class="row q-mt-md">
+    <!-- <div class="row q-mt-md">
       <div class="col-12 text-center">
         <q-input
           debounce="400"
@@ -17,7 +17,7 @@
           </template>
         </q-input>
       </div>
-    </div>
+    </div> -->
     <q-table
       v-if="columns && columns.length > 0"
       :data="items"

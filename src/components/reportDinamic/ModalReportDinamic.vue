@@ -160,11 +160,16 @@ export default {
   methods: {
     customFilterMethod(rows, terms) {
       console.log('filter:', terms);
+
       if (!terms || terms.trim() === '') {
         // Si el filtro está vacío, devolver todas las filas
         return rows;
       }
-      const filtered = rows.filter((row) => Object.keys(row).some((key) => row[key].toString().toLowerCase().includes(terms.toLowerCase())));
+
+      const filtered = rows.filter((row) => Object.keys(row).some((key) => {
+        const value = row[key];
+        return value !== null && value !== undefined && value.toString().toLowerCase().includes(terms.toLowerCase());
+      }));
 
       this.filteredRows = filtered;
 
