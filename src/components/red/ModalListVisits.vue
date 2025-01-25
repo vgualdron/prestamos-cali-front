@@ -48,6 +48,9 @@
                   <td class="td-table">
                     <b>FOTO SOLUCIÓN</b>
                   </td>
+                  <td class="td-table">
+                    <b>VIDEO</b>
+                  </td>
                 </tr>
                 <tr :class="{ 'bg-blue-3' : isToday(item.start_date) }" v-for="item in items" :key="`tr_td_${item.id}`">
                   <td class="td-table wrap-text">
@@ -112,6 +115,14 @@
                       class=""
                       @click="getUrlFile(item, 'file2_url')" />
                   </td>
+                  <td class="td-table">
+                    <q-btn
+                      v-if="item.file3_url"
+                      color="primary"
+                      icon="camera"
+                      class=""
+                      @click="getUrlFileVideo(item, 'file3_url')" />
+                  </td>
                 </tr>
               </tbody>
             </q-markup-table>
@@ -127,7 +138,13 @@
       v-if="showModalPreview"
       v-model="showModalPreview"
       :url="urlFile"
-      :type="'image'"
+      type="image"
+      :showBtnCancel="false"/>
+    <modal-preview-file
+      v-if="showModalPreviewVideo"
+      v-model="showModalPreviewVideo"
+      :url="urlFile"
+      type="video"
       :showBtnCancel="false"/>
   </div>
 </template>
@@ -141,6 +158,7 @@ export default {
       isLoading: false,
       showModal: false,
       showModalPreview: false,
+      showModalPreviewVideo: false,
       urlFile: '',
     };
   },
@@ -204,6 +222,10 @@ export default {
     getUrlFile(row, field) {
       this.urlFile = `${process.env.URL_FILES}${row[field]}`;
       this.showModalPreview = true;
+    },
+    getUrlFileVideo(row, field) {
+      this.urlFile = `${process.env.URL_FILES}${row[field]}`;
+      this.showModalPreviewVideo = true;
     },
     isToday(date) {
       return moment(date).isSame(moment(), 'day');

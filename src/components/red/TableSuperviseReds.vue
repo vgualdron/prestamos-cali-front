@@ -108,6 +108,15 @@
                   </q-item-section>
                 </q-item>
                 <q-item
+                  v-if="isDeleted(props.row)"
+                  clickable
+                  v-close-popup
+                  @click="openModal('delete', props.row)">
+                  <q-item-section>
+                    <q-item-label>Borrar visita no iniciada</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
                   clickable
                   v-close-popup
                   @click="openModal('normal', props.row)">
@@ -156,11 +165,17 @@
               v-if="props.row.collector_name"
               :color="getColorBadge(props.row.sector_code.replace(/C|B/gi, ''))"
               :text-color="getColorText(props.row.sector_code.replace(/C|B/gi, ''))">
-              {{ props.row.collector_name }}
+              {{ getFirstName(props.row.collector_name) }}
             </q-badge>
           </q-td>
           <q-td :props="props" key="district_order">
-            <q-icon v-if="props.row.reddirection_start_date" name="flag" color="black" size="md"/>
+            <q-badge
+              v-if="props.row.reddirection_end_date"
+              color="green"
+              text-color="white">
+              <q-icon name="check" color="white" />
+            </q-badge>
+            <q-icon v-if="props.row.reddirection_start_date && !props.row.reddirection_end_date" name="flag" color="black" size="md"/>
             {{ props.row.district_order }}
           </q-td>
           <q-td :props="props" class="text-wrap" key="news_name">
@@ -427,7 +442,7 @@ export default {
     },
     async userSelected() {
       showLoading('Cargando ...', 'Por favor, espere', true);
-      await this.listNewsMounted();
+      await this.initData();
       this.$q.loading.hide();
     },
   },
@@ -598,6 +613,7 @@ export default {
       getByLending: reddirectionTypes.actions.GET_BY_LENDING,
       saveReddirection: reddirectionTypes.actions.SAVE_REDDIRECTION,
       updateReddirection: reddirectionTypes.actions.UPDATE_REDDIRECTION,
+      deleteReddirection: reddirectionTypes.actions.DELETE_REDDIRECTION,
     }),
     ...mapActions(lendingTypes.PATH, {
       getLending: lendingTypes.actions.GET_LENDING,
@@ -607,9 +623,19 @@ export default {
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
+    getFirstName(fullName) {
+      if (!fullName || typeof fullName !== 'string') {
+        return '';
+      }
+      const parts = fullName.trim().split(/\s+/);
+      return parts[0];
+    },
+    isDeleted(row) {
+      return (this.reddirection && !this.reddirection.start_date && row.is_current);
+    },
     getRowClass(row) {
       let c = 'bg-white';
-      if (row.is_current) {
+      if (this.reddirection && this.reddirection.id === row.is_current) {
         c = 'bg-blue-2';
       } else if (row.has_visited) {
         c = 'bg-grey-5';
@@ -685,6 +711,28 @@ export default {
         await this.getByLending(row.lending_id);
         this.$q.loading.hide();
         this.showModalListVisits = true;
+      } else if (action === 'delete') {
+        this.$q.dialog({
+          title: 'Eliminar',
+          message: 'Está seguro que desea eliminar la visita a la dirección ?',
+          ok: {
+            push: true,
+          },
+          cancel: {
+            push: true,
+            color: 'negative',
+          },
+          persistent: true,
+        }).onOk(async () => {
+          showLoading('Borrando ...', 'Por favor, espere', true);
+          await this.deleteReddirection(this.itemSelected.is_current);
+          await this.initData();
+          this.$q.loading.hide();
+        }).onCancel(() => {
+          // console.log('>>>> Cancel')
+        }).onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
+        });
       }
     },
     async endVisit(row) {

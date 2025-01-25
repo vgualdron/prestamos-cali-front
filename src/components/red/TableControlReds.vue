@@ -57,24 +57,22 @@
       :pagination="pagination"
       :title="title"
       separator="cell"
-      class="q-mt-md"
+      class="q-mt-md xxx"
       row-key="order"
       striped
       grid
     >
     <template v-slot:item="props">
-        <div
-          class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
-        >
+        <div class="q-pa-xs col-xs-12 col-sm-12 col-md-12 col-lg-12 grid-style-transition">
           <q-card>
             <q-list bordered separator>
               <q-item>
                 <q-item-section>
                   <template>
-                    <q-item-label>
+                    <q-item-label class="text-bold">
                       Cobrador
                     </q-item-label>
-                    <q-item-label caption>
+                    <q-item-label>
                       {{ props.row.collector_name}}
                     </q-item-label>
                   </template>
@@ -83,10 +81,10 @@
               <q-item>
                 <q-item-section>
                   <template>
-                    <q-item-label>
+                    <q-item-label class="text-bold">
                       Código
                     </q-item-label>
-                    <q-item-label caption>
+                    <q-item-label>
                       {{ props.row.district_order}}
                     </q-item-label>
                   </template>
@@ -95,10 +93,10 @@
               <q-item>
                 <q-item-section>
                   <template>
-                    <q-item-label>
+                    <q-item-label class="text-bold">
                       Cliente
                     </q-item-label>
-                    <q-item-label caption>
+                    <q-item-label>
                       {{ props.row.new_name}}
                     </q-item-label>
                   </template>
@@ -107,10 +105,10 @@
               <q-item>
                 <q-item-section>
                   <template>
-                    <q-item-label>
+                    <q-item-label class="text-bold">
                       Nombre Ref
                     </q-item-label>
-                    <q-item-label caption>
+                    <q-item-label>
                       {{ props.row.description_ref}} - {{ props.row.type_ref}}
                     </q-item-label>
                   </template>
@@ -119,10 +117,10 @@
               <q-item>
                 <q-item-section>
                   <template>
-                    <q-item-label>
+                    <q-item-label class="text-bold">
                       Fecha
                     </q-item-label>
-                    <q-item-label caption>
+                    <q-item-label>
                       {{ formatDate(props.row.lending_first_date) }} - {{ formatDate(props.row.lending_end_date) }}
                     </q-item-label>
                   </template>
@@ -131,10 +129,10 @@
               <q-item>
                 <q-item-section>
                   <template>
-                    <q-item-label>
+                    <q-item-label class="text-bold">
                       Deuda
                     </q-item-label>
-                    <q-item-label caption>
+                    <q-item-label>
                       {{ formatPrice(props.row.value) }}
                     </q-item-label>
                   </template>
@@ -143,10 +141,10 @@
               <q-item>
                 <q-item-section>
                   <template>
-                    <q-item-label>
+                    <q-item-label class="text-bold">
                       Ruta
                     </q-item-label>
-                    <q-item-label caption>
+                    <q-item-label>
                       {{ props.row.listing_name }}
                     </q-item-label>
                   </template>
@@ -155,16 +153,16 @@
               <q-item >
                 <q-item-section>
                   <template>
-                    <q-item-label>
+                    <q-item-label class="text-bold">
                       Dirección
                     </q-item-label>
-                    <q-item-label caption>
+                    <q-item-label>
                       <a v-if="props.row.address_latitude" @click="generateLinkGoogleMaps(props.row)" class="link-style">
                         {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
                       </a>
-                      <b v-else>
+                      <p v-else>
                         {{ props.row.address }}, {{ props.row.district_name }}, {{ props.row.sector_name }}
-                      </b>
+                      </p>
                     </q-item-label>
                   </template>
                 </q-item-section>
@@ -172,10 +170,10 @@
               <q-item>
                 <q-item-section>
                   <template>
-                    <q-item-label>
+                    <q-item-label class="text-bold">
                       Nota
                     </q-item-label>
-                    <q-item-label caption>
+                    <q-item-label>
                       {{ props.row.new_observation }}
                     </q-item-label>
                   </template>
@@ -184,10 +182,10 @@
               <q-item class="bg-blue-1">
                 <q-item-section>
                   <template>
-                    <q-item-label>
+                    <q-item-label class="text-bold">
                       Quien atendió de la visita?
                     </q-item-label>
-                    <q-item-label caption>
+                    <q-item-label>
                       <q-icon size="xs" name="edit" />
                       {{ props.row.attended }}
                       <q-popup-edit :value="props.row.attended" v-slot="scope" buttons
@@ -226,10 +224,10 @@
               <q-item class="bg-blue-1">
                 <q-item-section>
                   <template>
-                    <q-item-label>
+                    <q-item-label class="text-bold">
                       Solución
                     </q-item-label>
-                    <q-item-label caption>
+                    <q-item-label>
                       <q-icon size="xs" name="edit" />
                       {{ props.row.solution }}
                       <q-popup-edit :value="props.row.solution" v-slot="scope" buttons
@@ -264,10 +262,10 @@
               <q-item class="bg-blue-1">
                 <q-item-section>
                   <template>
-                    <q-item-label>
+                    <q-item-label class="text-bold">
                       Observación de la visita
                     </q-item-label>
-                    <q-item-label caption>
+                    <q-item-label>
                       <q-icon size="xs" name="edit" />
                       {{ props.row.observation }}
                       <q-popup-edit :value="props.row.observation" v-slot="scope" buttons
@@ -281,10 +279,10 @@
               <q-item class="bg-blue-1">
                 <q-item-section>
                   <template>
-                    <q-item-label>
+                    <q-item-label class="text-bold">
                       Foto de la casa
                     </q-item-label>
-                    <q-item-label caption>
+                    <q-item-label>
                       <img
                         v-if="reddirection.file_url"
                         :src="getUrlFile(reddirection, 'file_url')"
@@ -296,25 +294,31 @@
               <q-item class="bg-blue-1">
                 <q-item-section>
                   <template>
-                    <q-item-label>
+                    <q-item-label class="text-bold">
                       Foto de la solución
                     </q-item-label>
-                    <q-item-label caption>
-                      <!-- <camera-photo
-                        :config="{
-                          name: 'FOTO_AVISO_REDDIRECTION',
-                          storage: 'reddirections',
-                          modelName: 'reddirections',
-                          modelId: reddirection.id
-                        }"
-                        state="creado"
-                        type="read"
-                        @updateStatus="sendNotificationPush"
-                      /> -->
+                    <q-item-label>
                       <img
                         v-if="reddirection.file2_url"
                         :src="getUrlFile(reddirection, 'file2_url')"
                         width="250rem"/>
+                    </q-item-label>
+                  </template>
+                </q-item-section>
+              </q-item>
+              <q-item class="bg-blue-1">
+                <q-item-section>
+                  <template>
+                    <q-item-label class="text-bold">
+                      Video
+                    </q-item-label>
+                    <q-item-label>
+                      <video
+                        v-if="reddirection.file3_url"
+                        :src="getUrlFile(reddirection, 'file3_url')"
+                        width="250rem"
+                        controls>
+                      </video>
                     </q-item-label>
                   </template>
                 </q-item-section>

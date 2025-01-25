@@ -150,7 +150,7 @@
               v-if="props.row.collector_name"
               :color="getColorBadge(props.row.sector_code.replace(/C|B/gi, ''))"
               :text-color="getColorText(props.row.sector_code.replace(/C|B/gi, ''))">
-              {{ props.row.collector_name }}
+              {{ getFirstName(props.row.collector_name) }}
             </q-badge>
           </q-td>
           <q-td :props="props" key="district_order">
@@ -587,6 +587,13 @@ export default {
     }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
+    },
+    getFirstName(fullName) {
+      if (!fullName || typeof fullName !== 'string') {
+        return '';
+      }
+      const parts = fullName.trim().split(/\s+/);
+      return parts[0];
     },
     getRowClass(row) {
       let c = 'bg-white';

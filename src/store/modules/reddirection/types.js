@@ -5,6 +5,7 @@ export default {
     UPDATE_REDDIRECTION: '@actions/updateReddirection',
     GET_CURRENT_BY_USER: '@actions/getCurrentByUser',
     GET_BY_LENDING: '@actions/getByLending',
+    DELETE_REDDIRECTION: '@actions/deleteReddirection',
   },
   getters: {
   },

@@ -9,11 +9,15 @@
         </q-card-section>
         <q-separator />
         <q-card-section class="scroll">
-          <div class="col-12 text-center">
-            <img
-              v-if="url"
-              :src="url"/>
-            </div>
+          <div v-if="url" class="col-12 text-center">
+            <img v-if="type === 'image'" :src="url"/>
+            <video
+              v-else
+              :src="url"
+              width="500rem"
+              controls>
+            </video>
+          </div>
         </q-card-section>
         <q-separator />
         <q-card-section
@@ -94,6 +98,7 @@ export default {
     type: {
       type: String,
       require: true,
+      default: 'image',
     },
     title: {
       type: String,

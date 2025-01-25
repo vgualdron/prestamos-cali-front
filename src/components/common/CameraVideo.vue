@@ -327,8 +327,9 @@ export default {
       this.$q.loading.hide();
       if (this.responseMessages && this.status) {
         this.showModal = false;
-        this.$emit('savedFile', { name });
         await this.fetchFile();
+        const { id } = this.item;
+        this.$emit('savedFile', { id, name });
       }
       this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
     },

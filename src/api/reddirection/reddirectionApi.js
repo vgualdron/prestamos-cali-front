@@ -19,4 +19,8 @@ export default {
     url: `${process.env.URL_API}/api/reddirections/get-by-lending/${id}`,
     method: 'GET',
   }),
+  delete: (id) => http({
+    url: `${process.env.URL_API}/api/reddirections/${id}`,
+    method: 'DELETE',
+  }),
 };
