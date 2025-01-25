@@ -227,7 +227,7 @@
               {{ props.row.amountFees }}
             </q-td>
             <q-td key="renovation" :props="props">
-              <template v-if="hasPaymentToday(props.row, 'renovacion', 0)">
+              <template v-if="hasPaymentToday(props.row, 'renovacion', 0) || hasPaymentToday(props.row, 'renovacion', 1)">
                 <q-badge
                   v-if="props.row.status === 'renovated'"
                   color="green">
@@ -271,7 +271,6 @@
                   label="R"
                   size="sm"
                   @click="addPaymentRenovation(props.row)"
-                  :disable="hasReddirectionsActive(props.row)"
                 />
               </b>
             </q-td>
