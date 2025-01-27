@@ -134,6 +134,18 @@ const routes = [
     ],
   },
   {
+    path: '/list-new-rejects',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Listar nuevos rechazados',
+        component: () => import('pages/NewReject.vue'),
+        meta: { permissions: ['new.listReject'] },
+      },
+    ],
+  },
+  {
     path: '/review-visit/:id',
     component: () => import('layouts/MainLayout.vue'),
     children: [

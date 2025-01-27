@@ -222,6 +222,7 @@ export default {
           userVisit: this.item.userVisit,
           novel_status: status,
           novel_observation: this.novel_observation,
+          attempts: status === 'pendiente' ? 1 : this.item.attempts,
         });
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
         await this.getStatus();
