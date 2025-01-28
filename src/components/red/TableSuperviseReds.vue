@@ -752,6 +752,7 @@ export default {
         await this.updateReddirection({
           ...row,
           status: 'finalizado',
+          end_date: Moment().format('YYYY-MM-DD HH:mm:ss'),
         });
         this.showModalListVisits = false;
         await this.initData();
