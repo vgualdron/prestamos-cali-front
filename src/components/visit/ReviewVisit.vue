@@ -244,6 +244,32 @@
                 <tbody>
                   <tr class="tr-table">
                     <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Cuenta activa:</p>
+                      <q-icon size="xs" name="edit" v-if="account_type_third && account_number_third && account_name_third"/>
+                      {{ item.account_active }}
+                      <q-popup-edit
+                        v-if="account_type_third && account_number_third && account_name_third"
+                        :value="item.account_active" v-slot="scope" buttons
+                        @input="val => saveDateNew('account_active', val)">
+                        <q-option-group
+                          v-model="scope.value"
+                          :options="[
+                            {
+                              label: 'principal',
+                              value: 'principal'
+                            },
+                            {
+                              label: 'tercero',
+                              value: 'tercero'
+                            },
+                          ]"
+                          color="primary"
+                        />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
                       <p class="text-subtitle1 text-weight-bold text-center">Tipo de cuenta:</p>
                       <q-icon size="xs" name="edit" />
                       {{ item.account_type }}
