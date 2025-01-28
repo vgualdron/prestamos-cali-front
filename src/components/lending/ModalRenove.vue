@@ -238,6 +238,15 @@
             </div>
           </q-btn-dropdown>
           <q-btn
+            v-if="validatedPermissions.repayment.status"
+            label="ADELANTAR"
+            color="primary"
+            class="col q-ml-sm"
+            :disabled="!date || amount <= 0 || amount > row.amount || action === 'up' || repayment === 0 || (repayment > 1000000 && discount >= 0)"
+            @click="renoveLending('repayment')"
+          />
+          <q-btn
+            v-else
             label="ADELANTAR"
             color="primary"
             class="col q-ml-sm"
@@ -262,6 +271,7 @@ import moment from 'moment';
 import { showLoading } from '../../helpers/showLoading';
 import questionTypes from '../../store/modules/question/types';
 import newTypes from '../../store/modules/new/types';
+import { havePermission } from '../../helpers/havePermission';
 
 export default {
   data() {
@@ -485,6 +495,15 @@ export default {
       set(val) {
         this.$emit('input', val);
       },
+    },
+    validatedPermissions() {
+      const statusRepayment = havePermission('lending.repayment');
+      return {
+        repayment: {
+          title: statusRepayment ? 'puede adelantar montos altos' : 'No tiene permisos',
+          status: statusRepayment,
+        },
+      };
     },
     totalAmount() {
       let newValue = 0;
