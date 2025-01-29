@@ -610,8 +610,8 @@ export default {
         });
       }
 
-      const beforePayments = this.getPaymentBeforeFirstDate(payments, firstDate);
-      if (beforePayments && (new Date(firstDate) < startDate)) {
+      const beforePayments = this.getPaymentBeforeFirstDate(payments, dateInit);
+      if (beforePayments) {
         beforePayments.forEach((payment) => {
           value -= parseInt(payment.amount, 10);
           dates.push({
@@ -660,7 +660,8 @@ export default {
         startDate.setDate(startDate.getDate() + 1); // Incrementa un día
         index += 1;
       }
-      const postPayments = this.getPaymentPostEndDate(payments, endDate);
+
+      const postPayments = this.getPaymentPostEndDate(payments, finishDate);
       if (postPayments) {
         postPayments.forEach((payment) => {
           value -= parseInt(payment.amount, 10);
