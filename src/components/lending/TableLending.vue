@@ -208,7 +208,15 @@
                   color="red">
                   FALSO
                 </q-badge>
+                <q-icon size="xs" name="edit" v-if="props.row.status === 'open' && hasPermission('list.editName')" />
                 {{ formatText(props.row.nameDebtor, 30) }}
+                <q-popup-edit
+                  v-if="props.row.status === 'open' && hasPermission('list.editDate')"
+                  :value="props.row.nameDebtor"
+                  v-slot="scope" buttons
+                  @input="val => changeRow('nameDebtor', val)">
+                  <q-input v-model="scope.value" dense autofocus type="text" />
+                </q-popup-edit>
               </p>
             </q-td>
             <q-td key="amount" :props="props">
@@ -1097,7 +1105,7 @@ export default {
       deleteDiscount: discountTypes.actions.DELETE_DISCOUNT,
     }),
     tdNameClass(row) {
-      let c = '';
+      let c = 'text-left';
       if (row.type === 'R') {
         if (row.expense_id && !row.file_id_r) {
           c = 'bg-blue-3';
@@ -1114,8 +1122,6 @@ export default {
       return c;
     },
     async acceptVoucherRenovation(value) {
-      console.log(value);
-      console.log(this.itemSelected);
       this.$q.dialog({
         title: 'Aceptar voucher',
         message: 'Está seguro que desea aceptar el voucher de renovación',
@@ -1152,8 +1158,6 @@ export default {
       });
     },
     async rejectVoucherRenovation(value) {
-      console.log(value);
-      console.log(this.itemSelected);
       this.$q.dialog({
         title: 'Rechazar voucher',
         message: 'Está seguro que desea rechazar el voucher de renovación',
@@ -1183,8 +1187,6 @@ export default {
       });
     },
     async acceptVoucherNew(value) {
-      console.log(value);
-      console.log(this.itemSelected);
       this.$q.dialog({
         title: 'Aceptar voucher',
         message: 'Está seguro que desea aceptar el voucher para cliente nuevo',
@@ -1221,8 +1223,6 @@ export default {
       });
     },
     async rejectVoucherNew(value) {
-      console.log(value);
-      console.log(this.itemSelected);
       this.$q.dialog({
         title: 'Rechazar voucher',
         message: 'Está seguro que desea rechazar el voucher del cliente nuevo',
@@ -1834,6 +1834,7 @@ export default {
       await this.updateLending({
         ...item,
       });
+      await this.getLendings(this.listingSelected.value);
       this.$q.loading.hide();
     },
     formatDateInit(date) {
