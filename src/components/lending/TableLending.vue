@@ -339,6 +339,13 @@
                       size="14px"
                       class="q-ml-xs pointer-cursor"
                     />
+                    <q-icon
+                      v-if="payment.id && payment.classes !== 'green'"
+                      name="close"
+                      size="14px"
+                      class="q-ml-xs pointer-cursor"
+                      @click="deletePayment(payment)"
+                    />
                   </q-badge>
                 </div>
               </div>

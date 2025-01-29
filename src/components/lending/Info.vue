@@ -64,7 +64,7 @@
               <b>Cobro debe hacer:</b>
               ({{ formatPrice(((info.capital.total * 2) - info.payments.total_payments) / (24 - info.days.days_work)) }})
             </td>
-            <td :class="(((info.payments.total_payments / info.days.days_work) * 24 ) / info.capital.total).toFixed(2) >= 2 ? 'bg-green-4' : 'bg-white'">
+            <td :class="(((info.payments.total_payments / info.days.days_work) * 24 ) / info.capital.total).toFixed(2) >= this.minPercentage ? 'bg-green-4' : 'bg-white'">
               <b>Porcentaje:</b>
               ({{ (((info.payments.total_payments / info.days.days_work) * 24 ) / info.capital.total).toFixed(2) }})
             </td>
@@ -102,6 +102,20 @@ export default {
   watch: {
   },
   computed: {
+    minPercentage() {
+      let v = 2;
+      const configurations = localStorage.getItem('configurations');
+      if (configurations) {
+        const configs = JSON.parse(configurations);
+        if (configs && configs.length > 0) {
+          const c = configs.find((con) => con.reference === 'PORCENTAJE_COBRO_DIARIO');
+          if (c) {
+            v = parseFloat(c.value);
+          }
+        }
+      }
+      return v;
+    },
   },
   methods: {
     hasPermission(value) {

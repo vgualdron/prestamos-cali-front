@@ -611,7 +611,7 @@ export default {
       }
 
       const beforePayments = this.getPaymentBeforeFirstDate(payments, firstDate);
-      if (beforePayments) {
+      if (beforePayments && (new Date(firstDate) < startDate)) {
         beforePayments.forEach((payment) => {
           value -= parseInt(payment.amount, 10);
           dates.push({
