@@ -614,8 +614,20 @@
             />
           </div>
           <div class="div-container">
-            <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 1</p>
+            <p class="text-subtitle1 text-weight-bold text-center">VIDEO VERIFICACIÓN CASA</p>
             <camera-video
+              :config="{
+                name: 'VIDEO_VERIFICACION_CASA_REFERENCIA_FAMILIAR_1',
+                storage: 'news',
+                modelName: 'news',
+                modelId: id
+              }"
+              @savedFile="sendNotificationPush"
+            />
+          </div>
+          <div class="div-container">
+            <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 1</p>
+            <upload-video
               :config="{
                 name: 'VIDEO_REFERENCIA_FAMILIAR_1',
                 storage: 'news',
@@ -727,8 +739,20 @@
               />
             </div>
             <div class="div-container">
-              <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 2</p>
+              <p class="text-subtitle1 text-weight-bold text-center">VIDEO VERIFICACIÓN CASA</p>
               <camera-video
+                :config="{
+                  name: 'VIDEO_VERIFICACION_CASA_REFERENCIA_FAMILIAR_2',
+                  storage: 'news',
+                  modelName: 'news',
+                  modelId: id
+                }"
+                @savedFile="sendNotificationPush"
+              />
+            </div>
+            <div class="div-container">
+              <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 2</p>
+              <upload-video
                 :config="{
                   name: 'VIDEO_REFERENCIA_FAMILIAR_2',
                   storage: 'news',
@@ -992,6 +1016,7 @@ import { mapState, mapActions } from 'vuex';
 import CameraPhoto from 'components/common/CameraPhoto.vue';
 import CameraVideo from 'components/common/CameraVideo.vue';
 import UploadImage from 'components/common/UploadImage.vue';
+import UploadVideo from 'components/common/UploadVideo.vue';
 import FormNews from 'components/review/FormNews.vue';
 import StateCases from 'components/visit/StateCases.vue';
 import { showNotifications } from '../../helpers/showNotifications';
@@ -1007,6 +1032,7 @@ export default {
     StateCases,
     FormNews,
     UploadImage,
+    UploadVideo,
   },
   data() {
     return {

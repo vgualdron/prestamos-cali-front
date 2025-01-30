@@ -1334,7 +1334,7 @@ export default {
       if (row.discounts && row.discounts.length > 0) {
         totalDiscounts = row.discounts.reduce((result, discount) => (parseInt(result, 10) + parseInt(discount.amount, 10)), 0);
       }
-      return (total - totalPayments - totalDiscounts) === 0;
+      return (total - totalPayments - totalDiscounts) <= 0;
     },
     isNew(row) {
       const date = new Date(row.created_at);

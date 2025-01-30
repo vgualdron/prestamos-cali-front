@@ -29,9 +29,9 @@
         </q-banner>
         <q-btn
           v-if="(!item && type !== 'read') || (item && item.status !== 'aprobado' && type !== 'read')"
-          label="Agregar video"
+          label="Cargar video"
           color="primary"
-          icon="add_a_photo"
+          icon="video_call"
           ref="camera"
           class="q-mt-sm"
           @click="initCamera" />

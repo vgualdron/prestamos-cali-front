@@ -56,7 +56,7 @@
         </template>
         <q-btn
           v-else-if="(!item && type !== 'read') || (item && item.status !== 'aprobado' && type !== 'read')"
-          label="Agregar video"
+          label="Grabar video"
           color="primary"
           icon="video_call"
           ref="camera"

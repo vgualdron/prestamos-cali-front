@@ -27,7 +27,7 @@
         </q-banner>
         <q-btn
           v-if="(!item && type !== 'read') || (item && item.status !== 'aprobado' && type !== 'read')"
-          label="Agregar foto"
+          label="Cargar foto"
           color="primary"
           icon="add_a_photo"
           ref="camera"

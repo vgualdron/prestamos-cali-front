@@ -55,7 +55,7 @@
         </template>
         <q-btn
           v-else-if="(!item && type !== 'read') || (item && item.status !== 'aprobado' && type !== 'read')"
-          label="Agregar foto"
+          label="Tomar foto"
           color="primary"
           icon="add_a_photo"
           ref="camera"

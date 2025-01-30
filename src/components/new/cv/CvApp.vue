@@ -436,6 +436,19 @@
           />
         </div>
         <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">VIDEO VERIFICACIÓN CASA</p>
+          <camera-video
+            :config="{
+              name: 'VIDEO_VERIFICACION_CASA_REFERENCIA_FAMILIAR_1',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            type="read"
+            :showApprove="false"
+          />
+        </div>
+        <div class="div-container">
           <p class="text-subtitle1 text-weight-bold text-center">VIDEO REFERENCIA FAMILIAR 1</p>
           <camera-video
             :config="{
@@ -487,6 +500,19 @@
           <camera-photo
             :config="{
               name: 'FOTO_CASA_REFERENCIA_FAMILIAR_2',
+              storage: 'news',
+              modelName: 'news',
+              modelId: id
+            }"
+            type="read"
+            :showApprove="false"
+          />
+        </div>
+        <div class="div-container">
+          <p class="text-subtitle1 text-weight-bold text-center">VIDEO VERIFICACIÓN CASA</p>
+          <camera-video
+            :config="{
+              name: 'VIDEO_VERIFICACION_CASA_REFERENCIA_FAMILIAR_2',
               storage: 'news',
               modelName: 'news',
               modelId: id
