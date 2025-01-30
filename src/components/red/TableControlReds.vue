@@ -655,7 +655,7 @@ export default {
       return [this.reddirection];
     },
     validatedPermissions() {
-      const statusAllCities = havePermission('red.allCitySupervise');
+      const statusAllCities = havePermission('red.allCityControl');
       return {
         allCities: {
           title: statusAllCities ? 'Todas las ciudades' : 'No tiene permisos',
