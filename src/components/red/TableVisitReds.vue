@@ -202,13 +202,13 @@
                     :disabled="!props.row.file_id || props.row.file2_id"
                     @click="openModal('payment', props.row)"
                   ></q-btn>
-                  <q-btn
+                  <!-- <q-btn
                     class="q-mt-sm"
                     label="Agregar pago con articulo"
                     color="green"
                     :disabled="!props.row.file_id || props.row.file2_id"
                     @click="openModal('article', props.row)"
-                  ></q-btn>
+                  ></q-btn> -->
                   <q-btn
                     class="q-mt-sm"
                     label="Agregar aviso"
