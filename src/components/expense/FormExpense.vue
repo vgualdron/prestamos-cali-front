@@ -10,9 +10,19 @@
         <q-separator />
         <q-card-section style="max-height: 60vh" class="scroll">
           <q-form @submit="onSubmit" class="q-gutter-md">
+            <q-input
+              outlined
+              v-model.trim="date"
+              label="Fecha *"
+              lazy-rules
+              type="datetime-local"
+              :rules="[(val) => (!!val) || '']"
+              hide-bottom-space
+              autocomplete="off"
+            />
             <q-select
               v-model="area_id"
-              class="q-mt-md"
+              class="q-mt-sm"
               outlined
               input-debounce="0"
               label="Area *"
@@ -141,7 +151,7 @@ export default {
           (val) => (!!val) || 'El campo es requerido',
         ],
       },
-      date: moment().format('YYYY-MM-DD HH:mm:ss'),
+      date: moment().format('YYYY-MM-DD HH:mm'),
       amount: null,
       status: 'borrador',
       area_id: null,

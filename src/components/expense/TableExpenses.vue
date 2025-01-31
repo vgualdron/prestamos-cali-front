@@ -50,7 +50,7 @@
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
-            v-if="props.row.file_url && (props.row.status === 'borrador' || props.row.status === 'rechazado')"
+            v-if="!props.row.file_url && (props.row.status === 'borrador' || props.row.status === 'rechazado')"
             icon="delete"
             class="q-mb-sm"
             color="red"
@@ -196,7 +196,7 @@ export default {
         },
       ],
       pagination: {
-        rowsPerPage: 50,
+        rowsPerPage: 0,
       },
       filter: '',
       data: [],
