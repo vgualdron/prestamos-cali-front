@@ -87,7 +87,7 @@
                     </q-item-section>
                   </q-item>
                   <q-item
-                    v-if="getBalance(props.row) <= 0 && allPaidsApproved(props.row) && props.row.type !== 'F'"
+                    v-if="getBalance(props.row) <= 0 && allPaidsApproved(props.row) && props.row.type !== 'F'  && !hasReddirectionsActive(props.row)"
                     clickable
                     v-close-popup
                     @click="openModal('renove', props.row)">
@@ -279,6 +279,7 @@
                   label="R"
                   size="sm"
                   @click="addPaymentRenovation(props.row)"
+                  :disable="hasReddirectionsActive(props.row)"
                 />
               </b>
             </q-td>
