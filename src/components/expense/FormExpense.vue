@@ -77,9 +77,7 @@
             <q-select
               v-model="user_id"
               class="q-mt-md"
-              use-input
               outlined
-              clearable
               input-debounce="0"
               label="Persona"
               :options="optionsUsers"
