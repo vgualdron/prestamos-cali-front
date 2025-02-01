@@ -46,7 +46,7 @@
           <tr class="">
             <td class="">
               <b>Meta mes:</b>
-              ({{ formatPrice(info.capital.total * 2) }})
+              ({{ formatPrice(info.capital.total * this.minPercentage) }})
             </td>
             <td class="">
               <b>Meta secre:</b>
@@ -58,11 +58,11 @@
             </td>
             <td class="">
               <b>Cobro falta:</b>
-              ({{ formatPrice((info.capital.total * 2) - info.payments.total_payments) }})
+              ({{ formatPrice((info.capital.total * this.minPercentage) - info.payments.total_payments) }})
             </td>
             <td class="">
               <b>Cobro debe hacer:</b>
-              ({{ formatPrice(((info.capital.total * 2) - info.payments.total_payments) / (24 - info.days.days_work)) }})
+              ({{ formatPrice(((info.capital.total * this.minPercentage) - info.payments.total_payments) / (24 - info.days.days_work)) }})
             </td>
             <td :class="(((info.payments.total_payments / info.days.days_work) * 24 ) / info.capital.total).toFixed(2) >= this.minPercentage ? 'bg-green-4' : 'bg-white'">
               <b>Porcentaje:</b>
