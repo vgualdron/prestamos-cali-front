@@ -49,7 +49,7 @@
               ({{ formatPrice(info.capital.total * this.minPercentage) }})
             </td>
             <td class="">
-              <b>Meta secre:</b>
+              <b>Proyección meta:</b>
               ({{ formatPrice((info.payments.total_payments / info.days.days_work) * 24 ) }})
             </td>
             <td class="">
@@ -71,6 +71,28 @@
             <td>
               <b>Cobro hoy:</b>
               ({{ formatPrice(info.paymentsToday.total_payments) }})
+            </td>
+          </tr>
+          <tr class="">
+            <td class="">
+            </td>
+            <td class="">
+            </td>
+            <td class="">
+              <b>Cobro lleva secre:</b>
+              ({{ formatPrice(info.paymentsSecre.total_payments) }})
+            </td>
+            <td class="">
+            </td>
+            <td class="">
+            </td>
+            <td :class="(((info.payments.total_payments / info.days.days_work) * 24 ) / info.capital.total).toFixed(2) >= this.minPercentage ? 'bg-green-4' : 'bg-white'">
+              <b>Porcentaje secre:</b>
+              ({{ (((info.paymentsSecre.total_payments / info.days.days_work) * 24 ) / info.capital.total).toFixed(2) }})
+            </td>
+            <td>
+              <b>Cobro hoy secre:</b>
+              ({{ formatPrice(info.paymentsTodaySecre.total_payments) }})
             </td>
           </tr>
         </tbody>
