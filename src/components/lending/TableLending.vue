@@ -1094,6 +1094,7 @@ export default {
     }),
     ...mapActions(newTypes.PATH, {
       getNew: newTypes.actions.GET_NEW,
+      updateStatusNew: newTypes.actions.UPDATE_STATUS_NEW,
     }),
     ...mapActions(paymentTypes.PATH, {
       deletePaid: paymentTypes.actions.DELETE_PAYMENT,
@@ -1232,6 +1233,10 @@ export default {
           id: this.itemSelected.file_id_n,
           status: 'aprobado',
           observation: value,
+        });
+        await this.updateStatusNew({
+          id: this.itemSelected.new_id,
+          status: 'consignado',
         });
         await this.getLendings(this.listingSelected.value);
         this.showModalPreviewN = false;
