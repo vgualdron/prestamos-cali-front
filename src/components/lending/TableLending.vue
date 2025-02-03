@@ -541,6 +541,7 @@
       :valuePayment="valuePayment"
       :row="itemSelected"
       :isStreet="itemSelected && itemSelected.reddirections && itemSelected.reddirections.length > 0"
+      :collector="getLastCollectorId(itemSelected)"
       type="nequi"
       @updateTable="getLendings"/>
     <modal-add-payment
@@ -549,6 +550,7 @@
       :valuePayment="valuePayment"
       :row="itemSelected"
       :isStreet="itemSelected && itemSelected.reddirections && itemSelected.reddirections.length > 0"
+      :collector="getLastCollectorId(itemSelected)"
       type="renovacion"
       @updateTable="getLendings"/>
     <modal-card-board
@@ -1123,6 +1125,21 @@ export default {
         }
       }
       return c;
+    },
+    getLastCollectorId(itemSelected) {
+      let id = null;
+      if (!itemSelected || !Array.isArray(itemSelected.reddirections) || itemSelected.reddirections.length === 0) {
+        if (this.user) {
+          id = this.user;
+        }
+      }
+
+      const lastRedirection = itemSelected.reddirections[itemSelected.reddirections.length - 1];
+      if (lastRedirection && lastRedirection.collector_id) {
+        id = lastRedirection.collector_id;
+      }
+
+      return id;
     },
     async acceptVoucherRenovation(value) {
       this.$q.dialog({

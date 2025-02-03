@@ -86,6 +86,10 @@ export default {
       required: false,
       default: false,
     },
+    collector: {
+      required: false,
+      default: null,
+    },
     valuePayment: {
       required: true,
     },
@@ -96,6 +100,7 @@ export default {
       this.amount = parseInt(this.valuePayment, 10);
     }
     this.$q.loading.hide();
+    console.log(this.collector);
   },
   computed: {
     ...mapState(paymentTypes.PATH, {
@@ -172,6 +177,7 @@ export default {
         is_street: this.isStreet,
         status: this.type === 'renovacion' ? 'aprobado' : 'creado',
         file_id: this.type === 'renovacion' ? null : this.file.id,
+        collector_id: this.collector,
       });
       this.$q.loading.hide();
       if (this.paymentResponseMessages && this.paymentResponseMessages.data) {

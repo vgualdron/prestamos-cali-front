@@ -246,6 +246,7 @@
       :valuePayment="reddirection.value"
       :row="itemSelected"
       :isStreet="true"
+      :collector="getLastCollectorId()"
       type="nequi"
       @addPayment="onAddPayment"/>
     <modal-add-payment
@@ -254,6 +255,7 @@
       :valuePayment="reddirection.value"
       :row="itemSelected"
       :isStreet="true"
+      :collector="getLastCollectorId()"
       type="articulo"
       @addPayment="onAddPayment"/>
     <modal-photo
@@ -302,6 +304,7 @@ import lendingTypes from '../../store/modules/lending/types';
 import reddirectionTypes from '../../store/modules/reddirection/types';
 import zoneTypes from '../../store/modules/zone/types';
 import userTypes from '../../store/modules/user/types';
+import commonTypes from '../../store/modules/common/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { havePermission } from '../../helpers/havePermission';
@@ -373,6 +376,9 @@ export default {
     },
   },
   computed: {
+    ...mapState(commonTypes.PATH, [
+      'user',
+    ]),
     ...mapState(zoneTypes.PATH, {
       zones: 'zones',
       zoneStatus: 'status',
@@ -476,6 +482,13 @@ export default {
       this.polling = setInterval(async () => {
         await this.initData();
       }, 120000);
+    },
+    getLastCollectorId() {
+      let id = null;
+      if (this.user) {
+        id = this.user;
+      }
+      return id;
     },
     async openModal(action, row) {
       this.itemSelected = { ...row };
