@@ -540,6 +540,7 @@
       v-model="showModalPaymentNequi"
       :valuePayment="valuePayment"
       :row="itemSelected"
+      :isStreet="itemSelected && itemSelected.reddirections && itemSelected.reddirections.length > 0"
       type="nequi"
       @updateTable="getLendings"/>
     <modal-add-payment
@@ -547,6 +548,7 @@
       v-model="showModalPaymentRenovation"
       :valuePayment="valuePayment"
       :row="itemSelected"
+      :isStreet="itemSelected && itemSelected.reddirections && itemSelected.reddirections.length > 0"
       type="renovacion"
       @updateTable="getLendings"/>
     <modal-card-board
@@ -1702,10 +1704,12 @@ export default {
       this.itemSelected = { ...row };
     },
     addPaymentNequi(row) {
+      this.itemSelected = { ...row };
       this.valuePayment = this.feeWithInterest(row);
       this.showModalPaymentNequi = true;
     },
     addPaymentRenovation(row) {
+      this.itemSelected = { ...row };
       this.valuePayment = this.getBalance(row);
       this.showModalPaymentRenovation = true;
     },
