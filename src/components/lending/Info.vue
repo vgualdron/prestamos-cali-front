@@ -86,7 +86,7 @@
             </td>
             <td class="">
             </td>
-            <td :class="(((info.payments.total_payments / info.days.days_work) * 24 ) / info.capital.total).toFixed(2) >= this.minPercentage ? 'bg-green-4' : 'bg-white'">
+            <td :class="(((info.paymentsSecre.total_payments / info.days.days_work) * 24 ) / info.capital.total).toFixed(2) >= this.minPercentage ? 'bg-green-4' : 'bg-white'">
               <b>Porcentaje secre:</b>
               ({{ (((info.paymentsSecre.total_payments / info.days.days_work) * 24 ) / info.capital.total).toFixed(2) }})
             </td>

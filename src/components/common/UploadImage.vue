@@ -138,7 +138,9 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchFile();
+    if (this.config && !this.config.notFetch) {
+      await this.fetchFile();
+    }
   },
   computed: {
     ...mapState(fileTypes.PATH, [

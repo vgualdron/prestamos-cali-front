@@ -50,7 +50,8 @@
                 name: 'FOTO_VOUCHER',
                 storage: 'news',
                 modelName: 'news',
-                modelId: props.row.id
+                modelId: props.row.id,
+                notFetch: !props.row.voucher_id,
               }"
             />
           </div>
