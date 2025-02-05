@@ -210,6 +210,12 @@
                 </q-badge>
                 <q-icon size="xs" name="edit" v-if="props.row.status === 'open' && hasPermission('list.editName')" />
                 {{ formatText(props.row.nameDebtor, 30) }}
+                <q-badge
+                  v-if="props.row.reddirections && props.row.reddirections.length > 0 && hasPermission('lending.countVisitsReds')"
+                  rounded
+                  color="red">
+                  {{ props.row.reddirections.length }}
+                </q-badge>
                 <q-popup-edit
                   v-if="props.row.status === 'open' && hasPermission('list.editDate')"
                   :value="props.row.nameDebtor"
