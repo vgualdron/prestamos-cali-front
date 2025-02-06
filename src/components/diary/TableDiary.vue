@@ -91,7 +91,7 @@
                 <q-card-section class="text-black">
                   <div class="wrap-text">
                     <div class="text-subtitle3 text-bold wrap-text">
-                      {{ item.sectorName }}
+                      {{ item.site_visit === 'trabajo' ? item.sectorNameWork : item.sectorNameHouse }}
                     </div>
                     <div class="text-subtitle3 text-bold wrap-text">
                       <span>
