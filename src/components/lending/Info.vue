@@ -75,6 +75,8 @@
           </tr>
           <tr class="">
             <td class="">
+              <b>Dias trabajados:</b>
+              ({{ info.days.days_work }})
             </td>
             <td class="">
             </td>
