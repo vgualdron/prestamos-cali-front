@@ -76,7 +76,8 @@
                 v-if="props.row.status === 'open'"
                 class="q-px-none"
                 :color="getBalance(props.row) <= 0 && allPaidsApproved(props.row) ? 'orange' : 'black'"
-                :outline="getBalance(props.row) <= 0 && allPaidsApproved(props.row) ? false : true">
+                :outline="getBalance(props.row) <= 0 && allPaidsApproved(props.row) ? false : true"
+                :disable="hasReddirectionsActive(props.row)">
                 <q-list>
                   <q-item
                     clickable
