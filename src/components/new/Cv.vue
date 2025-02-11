@@ -19,8 +19,8 @@
         </q-card-section>
         <q-separator />
         <q-card-section class="row q-pb-none block">
-          <cv-app v-if="row.type_cv === 'pdf' && onlyTable" :id="row.id" :onlyTable="onlyTable" :hideTable="hideTable"/>
-          <cv-app v-if="row.type_cv === 'app'" :id="row.id" :hideTable="hideTable"/>
+          <cv-app v-if="row.type_cv === 'pdf' && onlyTable" :id="row.id" :onlyTable="onlyTable" :showTable="showTable"/>
+          <cv-app v-if="row.type_cv === 'app'" :id="row.id" :showTable="showTable"/>
           <cv-pdf v-else-if="row.id" :id="row.id" :hidePages="hidePages"/>
         </q-card-section>
       </q-card>
@@ -47,6 +47,10 @@ export default {
     onlyTable: {
       type: Boolean,
       default: false,
+    },
+    showTable: {
+      type: Boolean,
+      default: true,
     },
     hidePages: {
       type: Array,

@@ -17,6 +17,7 @@
         class="q-mb-md q-ml-md"/>
     </div>
     <q-markup-table
+      v-if="showTable"
       id="div-container-table-cv"
       class="cv-table q-mb-sm"
       separator="cell"
@@ -708,9 +709,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    hideTable: {
+    showTable: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
   computed: {

@@ -300,7 +300,7 @@
     <cv
       v-model="showModalCv"
       v-if="showModalCv"
-      :hideTable="true"
+      :showTable="false"
       :hidePages="[1]"
       :row="{ id: reddirection.new_id, type_cv: reddirection.new_type_cv }" />
   </div>
