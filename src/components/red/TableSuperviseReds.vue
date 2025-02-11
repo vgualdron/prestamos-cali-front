@@ -52,7 +52,7 @@
           color="primary"
           field="edit"
           icon="location_on"
-          class="q-mt-none"
+          class="q-mt-none q-ml-sm"
           round
           @click="openInGoogleMaps(userSelected)"
         />
@@ -567,12 +567,20 @@ export default {
       });
     },
     optionsUsers() {
-      return this.users.map(({ name, id, sector_name_collector }) => {
+      return this.users.map(({
+        name,
+        id,
+        sector_name_collector,
+        latitude,
+        longitude,
+      }) => {
         const label = `${name} (${sector_name_collector || 'X'})`;
         return {
           label,
           name,
           value: id,
+          latitude,
+          longitude,
         };
       });
     },
