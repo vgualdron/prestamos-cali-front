@@ -47,6 +47,15 @@
           title="Click para refrescar la tabla"
           @click="initData()">
         </q-btn>
+        <q-btn
+          v-if="userSelected"
+          color="primary"
+          field="edit"
+          icon="location_on"
+          class="q-mt-none"
+          round
+          @click="openInGoogleMaps(userSelected)"
+        />
       </div>
     </div>
     <div class="row q-mt-xs">
@@ -622,6 +631,13 @@ export default {
     }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
+    },
+    openInGoogleMaps(userId) {
+      const user = this.optionsUsers.find((u) => u.value === userId);
+      if (user) {
+        const googleMapsUrl = `https://www.google.com/maps?q=${user.latitude},${user.longitude}`;
+        window.open(googleMapsUrl, '_blank');
+      }
     },
     getFirstName(fullName) {
       if (!fullName || typeof fullName !== 'string') {
