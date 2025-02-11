@@ -655,7 +655,7 @@ export default {
       return parts[0];
     },
     isDeleted(row) {
-      return (this.reddirection && !this.reddirection.start_date && row.is_current);
+      return (row && !row.reddirection_start_date && row.is_current);
     },
     getRowClass(row) {
       let c = 'bg-white';
