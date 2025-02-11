@@ -708,6 +708,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    hideTable: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     ...mapState(newTypes.PATH, {

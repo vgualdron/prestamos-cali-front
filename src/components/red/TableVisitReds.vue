@@ -229,6 +229,12 @@
                     color="primary"
                     @click="openModal('nequis', props.row)"
                   ></q-btn>
+                  <q-btn
+                    class="q-mt-sm"
+                    label="Ver pdf"
+                    color="primary"
+                    @click="openModal('cv', props.row)"
+                  ></q-btn>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -291,11 +297,18 @@
       }"
       @savedFile="updateDataVideo"
     />
+    <cv
+      v-model="showModalCv"
+      v-if="showModalCv"
+      :hideTable="true"
+      :hidePages="[1]"
+      :row="{ id: reddirection.new_id, type_cv: reddirection.new_type_cv }" />
   </div>
 </template>
 <script>
 import Moment from 'moment';
 import { mapState, mapActions } from 'vuex';
+import Cv from 'components/new/Cv.vue';
 import ModalListNequi from 'components/nequi/ModalListNequi.vue';
 import ModalPhoto from 'src/components/red/ModalPhoto.vue';
 import ModalVideo from 'src/components/red/ModalVideo.vue';
@@ -315,6 +328,7 @@ export default {
     ModalPhoto,
     ModalVideo,
     ModalAddPayment,
+    Cv,
   },
   data() {
     return {
@@ -345,6 +359,7 @@ export default {
       showModalPhotoWarning: false,
       showModalPaymentArticle: false,
       showModalVideo: false,
+      showModalCv: false,
       location: null,
       citySelected: 0,
     };
@@ -506,6 +521,8 @@ export default {
         this.showModalPhotoWarning = true;
       } else if (action === 'video') {
         this.showModalVideo = true;
+      } else if (action === 'cv') {
+        this.showModalCv = true;
       }
     },
     async generateLinkGoogleMaps(row) {

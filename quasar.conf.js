@@ -79,6 +79,15 @@ module.exports = function (ctx) {
         chain.plugin('eslint-webpack-plugin')
           .use(ESLintPlugin, [{ extensions: ['js', 'vue'] }]);
       },
+      extendWebpack(cfg) {
+        cfg.module.rules.push({
+          test: /\.m?js$/,
+          exclude: /(node_modules\/(?!pdfjs-dist))/,
+          use: {
+            loader: 'babel-loader',
+          },
+        });
+      },
     },
 
     // Full list of options: https://v1.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
