@@ -772,7 +772,7 @@ export default {
     async pollData() {
       this.polling = setInterval(async () => {
         await this.initData();
-      }, 120000);
+      }, 300000);
     },
     async openModal(action, row) {
       this.itemSelected = { ...row };
