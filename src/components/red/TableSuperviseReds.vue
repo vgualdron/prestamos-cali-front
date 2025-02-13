@@ -663,7 +663,7 @@ export default {
         c = 'bg-blue-2';
       } else if (row.has_visited) {
         c = 'bg-grey-5';
-      } else if (row.reddirection_start_date && this.isToday(row.reddirection_start_date)) {
+      } else if (row.reddirection_start_date && (this.isToday(row.latest_date) || this.isToday(row.reddirection_start_date))) {
         c = 'bg-orange-2';
       }
       return c;
