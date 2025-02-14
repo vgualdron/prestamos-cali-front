@@ -188,6 +188,10 @@
             {{ props.row.district_order }}
           </q-td>
           <q-td :props="props" class="text-wrap" key="news_name">
+            <q-icon v-if="props.row.latest_solution && props.row.latest_solution === 'acuerdo'" name="handshake" color="negative" size="sm"/>
+            <q-icon v-if="props.row.latest_solution && props.row.latest_solution === 'aviso'" name="description" color="orange" size="sm"/>
+            <q-icon v-if="props.row.latest_solution && props.row.latest_solution === 'no paga'" name="money_off" color="red" size="sm"/>
+            <q-icon v-if="props.row.latest_solution && props.row.latest_solution === 'pago'" name="attach_money" color="green" size="sm"/>
             {{ props.row.news_name }}
           </q-td>
           <q-td :props="props" key="total_value">
