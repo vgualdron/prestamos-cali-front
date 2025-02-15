@@ -161,7 +161,12 @@
             {{ props.row.name }}
           </q-td>
           <q-td key="phone" :props="props">
+            <q-icon size="xs" name="edit" />
             {{ props.row.phone }}
+            <q-popup-edit :value="props.row.phone" v-slot="scope" buttons
+              @input="val => save('phone', val)">
+              <q-input v-model="scope.value" dense autofocus />
+            </q-popup-edit>
           </q-td>
           <q-td key="address" :props="props" class="wrap-text">
             {{ props.row.address }}
