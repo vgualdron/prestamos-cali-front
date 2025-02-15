@@ -55,7 +55,7 @@
                 <tr :class="{ 'bg-blue-3' : isToday(item.start_date) }" v-for="item in items" :key="`tr_td_${item.id}`">
                   <td class="td-table wrap-text">
                     <q-btn
-                      v-if="isToday(item.start_date) && item.status === 'activo'"
+                      v-if="item.status === 'activo'"
                       round
                       icon="do_not_touch"
                       class="q-ml-none"
