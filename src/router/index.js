@@ -65,8 +65,17 @@ export default (/* { store, ssrContext } */) => {
       });
       return;
     } catch (error) {
-      console.error('catch en el router', error);
-      if (error.response.status === 401) {
+      if (error.response.status === 499) {
+        Notify.create({
+          message: 'La diferencia entre la hora del servidor y de la APP no debe superar los 5 minutos.!',
+          icon: 'warning',
+          color: 'warning',
+          timeout: 10000,
+          textColor: 'black',
+          classes: '',
+          progress: true,
+        });
+      } else if (error.response.status === 401) {
         Notify.create({
           message: 'No hay una sesión activa, vuelva a iniciar sesión por favor!',
           icon: 'error',
