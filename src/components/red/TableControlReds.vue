@@ -47,6 +47,15 @@
           title="Click para refrescar la tabla"
           @click="initData()">
         </q-btn>
+        <q-btn
+          v-if="userSelected"
+          color="primary"
+          field="edit"
+          icon="location_on"
+          class="q-mt-none q-ml-sm"
+          round
+          @click="openInGoogleMaps(userSelected)"
+        />
       </div>
     </div>
     <q-table
@@ -690,12 +699,20 @@ export default {
       });
     },
     optionsUsers() {
-      return this.users.map(({ name, id, sector_name_collector }) => {
+      return this.users.map(({
+        name,
+        id,
+        sector_name_collector,
+        latitude,
+        longitude,
+      }) => {
         const label = `${name} (${sector_name_collector || 'X'})`;
         return {
           label,
           name,
           value: id,
+          latitude,
+          longitude,
         };
       });
     },
@@ -751,6 +768,13 @@ export default {
       fetchLendings: lendingTypes.actions.FETCH_LENDINGS,
       fetchHistory: lendingTypes.actions.FETCH_HISTORY,
     }),
+    openInGoogleMaps(userId) {
+      const user = this.optionsUsers.find((u) => u.value === userId);
+      if (user) {
+        const googleMapsUrl = `https://www.google.com/maps?q=${user.latitude},${user.longitude}`;
+        window.open(googleMapsUrl, '_blank');
+      }
+    },
     getUrlFile(row, field) {
       return `${process.env.URL_FILES}${row[field]}`;
     },

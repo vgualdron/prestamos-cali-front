@@ -104,6 +104,14 @@
                 <q-item
                   clickable
                   v-close-popup
+                  @click="openModal('reddirections', props.row)">
+                  <q-item-section>
+                    <q-item-label>Ver visitas</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
                   @click="openModal('normal', props.row)">
                   <q-item-section>
                     <q-item-label>Ver cartulina</q-item-label>
@@ -248,6 +256,11 @@
       v-if="showModalCv"
       :row="itemSelected"
       :onlyTable="true"/>
+    <modal-list-visits
+      v-model="showModalListVisits"
+      v-if="showModalListVisits"
+      :items="reddirections"
+      :showEndVist="false"/>
   </div>
 </template>
 <script>
@@ -255,6 +268,7 @@ import Moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import ModalListNequi from 'components/nequi/ModalListNequi.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
+import ModalListVisits from 'components/red/ModalListVisits.vue';
 import Cv from 'components/new/Cv.vue';
 import newTypes from '../../store/modules/new/types';
 import zoneTypes from '../../store/modules/zone/types';
@@ -262,6 +276,7 @@ import yardTypes from '../../store/modules/yard/types';
 import userTypes from '../../store/modules/user/types';
 import lendingTypes from '../../store/modules/lending/types';
 import redcollectorTypes from '../../store/modules/redcollector/types';
+import reddirectionTypes from '../../store/modules/reddirection/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
 import { havePermission } from '../../helpers/havePermission';
@@ -271,6 +286,7 @@ export default {
     ModalListNequi,
     ModalCardBoard,
     Cv,
+    ModalListVisits,
   },
   data() {
     return {
@@ -391,6 +407,7 @@ export default {
       showModalHistory: false,
       showModalNequis: false,
       showModalCv: false,
+      showModalListVisits: false,
     };
   },
   props: {
@@ -449,6 +466,12 @@ export default {
     ...mapState(redcollectorTypes.PATH, {
       redcollectorStatus: 'status',
       redcollectorResponseMessages: 'responseMessages',
+    }),
+    ...mapState(reddirectionTypes.PATH, {
+      reddirection: 'reddirection',
+      reddirections: 'reddirections',
+      reddirectionStatus: 'status',
+      reddirectionResponseMessages: 'responseMessages',
     }),
     labelBtnAsig() {
       let label = 'Asignar';
@@ -585,6 +608,9 @@ export default {
       fetchLendings: lendingTypes.actions.FETCH_LENDINGS,
       fetchHistory: lendingTypes.actions.FETCH_HISTORY,
     }),
+    ...mapActions(reddirectionTypes.PATH, {
+      getByLending: reddirectionTypes.actions.GET_BY_LENDING,
+    }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
@@ -637,6 +663,11 @@ export default {
           type_cv: row.news_type_cv,
         };
         this.showModalCv = true;
+      } else if (action === 'reddirections') {
+        showLoading('consultando ...', 'Por favor, espere', true);
+        await this.getByLending(row.lending_id);
+        this.$q.loading.hide();
+        this.showModalListVisits = true;
       }
     },
     generateLinkGoogleMaps(row) {

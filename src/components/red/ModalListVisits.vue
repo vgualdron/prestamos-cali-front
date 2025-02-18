@@ -22,7 +22,7 @@
                     <b>FINALIZAR</b>
                   </td>
                   <td class="td-table">
-                    <b>FECHA</b>
+                    <b>FECHAS</b>
                   </td>
                   <td class="td-table">
                     <b>DIRECCIÓN</b>
@@ -52,10 +52,10 @@
                     <b>VIDEO</b>
                   </td>
                 </tr>
-                <tr :class="{ 'bg-blue-3' : isToday(item.start_date) }" v-for="item in items" :key="`tr_td_${item.id}`">
+                <tr :class="getRowClass(item)" v-for="item in items" :key="`tr_td_${item.id}`">
                   <td class="td-table wrap-text">
                     <q-btn
-                      v-if="isToday(item.start_date) && item.status === 'activo'"
+                      v-if="isToday(item.start_date) && item.status === 'activo' && showEndVist"
                       round
                       icon="do_not_touch"
                       class="q-ml-none"
@@ -64,12 +64,15 @@
                       @click="endVisit(item)">
                     </q-btn>
                   </td>
-                  <td class="td-table wrap-text">
+                  <td class="td-table wrap-text text-left">
                     <div>
-                      {{ formatDate(item.start_date) }}
+                      <b>ASIGNADO:</b> {{ formatDate(item.registered_date) }}
+                    </div>
+                    <div>
+                      <b>INICIO:</b> {{ formatDate(item.start_date) }}
                     </div>
                     <div v-if="item.end_date">
-                      {{ formatDate(item.end_date) }}
+                      <b>FIN:</b> {{ formatDate(item.end_date) }}
                     </div>
                     <div v-else>
                       {{ formatDate(nowDate()) }}
@@ -184,6 +187,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    showEndVist: {
+      type: Boolean,
+      default: true,
+    },
     items: {
       type: Array,
       default: () => [],
@@ -195,6 +202,16 @@ export default {
     },
     nowDate() {
       return moment();
+    },
+    getRowClass(row) {
+      console.log(row);
+      let c = 'bg-white';
+      if (row.start_date && this.isToday(row.start_date) && row.status === 'activo') {
+        c = 'bg-blue-2';
+      } else if (row.start_date && this.isToday(row.start_date) && row.status === 'finalizado') {
+        c = 'bg-orange-2';
+      }
+      return c;
     },
     calculateTimeDifference(startDate, endDate) {
       if (!moment(startDate).isValid() || !moment(endDate).isValid()) {

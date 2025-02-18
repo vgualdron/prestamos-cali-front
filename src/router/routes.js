@@ -432,6 +432,18 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/change-data-news',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Cambiar datos de clientes',
+        component: () => import('pages/ChangePdfNews.vue'),
+        meta: { permissions: ['news.changeDataNews'] },
+      },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
