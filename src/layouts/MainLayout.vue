@@ -142,6 +142,7 @@
       :userSend="user"
       :showUserSend="false"
     />
+    <info-user />
   </q-layout>
 </template>
 
@@ -151,6 +152,7 @@ import EssentialLink from 'components/common/EssentialLink.vue';
 import FormChangePassword from 'components/user/FormChangePassword.vue';
 import MapCurrentPosition from 'components/common/MapCurrentPosition.vue';
 import UploadImageProfile from 'components/common/UploadImageProfile.vue';
+import InfoUser from 'components/common/InfoUser.vue';
 import FormNews from 'components/new/FormNews.vue';
 import commonTypes from '../store/modules/common/types';
 import { showNotifications } from '../helpers/showNotifications';
@@ -164,6 +166,7 @@ export default {
     MapCurrentPosition,
     UploadImageProfile,
     FormNews,
+    InfoUser,
   },
   data() {
     return {

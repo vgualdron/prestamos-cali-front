@@ -3,6 +3,7 @@ export default function () {
     users: [],
     usersOptions: [],
     user: {},
+    info: {},
     responseMessages: [],
     status: false,
   };

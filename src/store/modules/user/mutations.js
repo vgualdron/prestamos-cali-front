@@ -10,6 +10,9 @@ export default {
   [types.mutations.SET_USER](state, payload) {
     state.user = payload;
   },
+  [types.mutations.SET_INFO](state, payload) {
+    state.info = payload;
+  },
   [types.mutations.SET_STATUS](state, payload) {
     state.status = payload;
   },

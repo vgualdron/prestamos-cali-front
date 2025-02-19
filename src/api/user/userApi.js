@@ -17,6 +17,10 @@ export default {
     url: `${process.env.URL_API}/api/user/get/${id}`,
     method: 'GET',
   }),
+  getInfo: () => http({
+    url: `${process.env.URL_API}/api/user/get-info`,
+    method: 'GET',
+  }),
   save: (data) => http({
     url: `${process.env.URL_API}/api/user/create`,
     method: 'POST',
