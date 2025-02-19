@@ -588,8 +588,9 @@ export default {
     },
     async updateData(value) {
       showLoading('Cargando ...', 'Por favor, espere', true);
+      console.log(value);
       const data = {
-        ...this.reddirection,
+        id: this.reddirection.id,
         file_id: value.id,
         start_date: Moment().format('YYYY-MM-DD HH:mm:ss'),
       };
@@ -600,7 +601,7 @@ export default {
     async updateDataWarning(value) {
       showLoading('Cargando ...', 'Por favor, espere', true);
       const data = {
-        ...this.reddirection,
+        id: this.reddirection.id,
         file2_id: value.id,
         attended: 'vacio',
         solution: 'aviso',
@@ -613,7 +614,7 @@ export default {
     async updateDataVideo(value) {
       showLoading('Cargando ...', 'Por favor, espere', true);
       const data = {
-        ...this.reddirection,
+        id: this.reddirection.id,
         file3_id: value.id,
         end_date: Moment().format('YYYY-MM-DD HH:mm:ss'),
       };
@@ -624,7 +625,7 @@ export default {
     async onAddPayment(value) {
       showLoading('Cargando ...', 'Por favor, espere', true);
       const data = {
-        ...this.reddirection,
+        id: this.reddirection.id,
         file2_id: value.idFile,
         solution: 'pago',
         end_date: Moment().format('YYYY-MM-DD HH:mm:ss'),

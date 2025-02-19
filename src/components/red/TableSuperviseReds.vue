@@ -787,7 +787,7 @@ export default {
       }).onOk(async () => {
         showLoading('Guardando ...', 'Por favor, espere', true);
         await this.updateReddirection({
-          ...row,
+          id: row.id,
           status: 'finalizado',
           end_date: Moment().format('YYYY-MM-DD HH:mm:ss'),
         });

@@ -906,7 +906,7 @@ export default {
     },
     async saveDate(field, value) {
       showLoading('Guardando ...', 'Por favor, espere', true);
-      const item = { ...this.reddirection };
+      const item = { id: this.reddirection.id };
       item[field] = value.value ? value.value : value;
       await this.updateReddirection(item);
       await this.listNewsMounted();
