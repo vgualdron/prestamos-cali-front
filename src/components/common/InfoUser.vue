@@ -34,7 +34,7 @@
                   Direcciones validas
                 </td>
                 <td>
-                  <b>{{ info.days * info.amountAddress }}</b>
+                  <b>{{ info.amountAddress }}</b>
                 </td>
               </tr>
               <tr class="">
