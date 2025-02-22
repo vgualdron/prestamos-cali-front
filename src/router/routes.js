@@ -444,6 +444,18 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/approved-protocol',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Protocolo de rutas',
+        component: () => import('pages/ApprovedProtocol.vue'),
+        meta: { permissions: ['protocol.list'] },
+      },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

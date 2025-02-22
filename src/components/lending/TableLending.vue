@@ -23,7 +23,7 @@
       @click="showModalListClosed = true">
     </q-btn>
     <div class="w-100">
-      <info v-if="info && info.yellowUp" :info="info"/>
+      <info v-if="info && info.yellowUp" :info="info" @changeStep="changeStep"/>
     </div>
     <div class="row q-mt-md">
       <div class="col-6 text-center">
@@ -1721,6 +1721,11 @@ export default {
         idList,
       });
       await this.getInfoListing(idList);
+      this.$q.loading.hide();
+    },
+    async changeStep() {
+      showLoading('consultando ...', 'Por favor, espere', true);
+      await this.getInfoListing(this.listingSelected.value);
       this.$q.loading.hide();
     },
     async save(field, value) {

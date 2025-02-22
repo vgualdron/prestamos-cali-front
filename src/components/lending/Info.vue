@@ -85,6 +85,19 @@
               ({{ formatPrice(info.paymentsSecre.total_payments) }})
             </td>
             <td class="">
+              <b>Protocolo:</b>
+              <b> {{ info.workplan.step_order }}</b>
+              <q-btn
+                v-if="info.workplan.step_order"
+                icon="navigate_next"
+                size="sm"
+                color="primary"
+                class="q-ml-sm"
+                :label="info.workplan.step_order + 1"
+                :title="`${info.workplan.step_order} - ${info.workplan.step_name}`"
+                @click="nextWorkPlan()">
+              </q-btn>
+              <q-badge color="green" v-else>Finalizado</q-badge>
             </td>
             <td class="">
             </td>
@@ -103,6 +116,9 @@
 </template>
 <script>
 import moment from 'moment';
+import { mapState, mapActions } from 'vuex';
+import commonTypes from '../../store/modules/common/types';
+import workplanTypes from '../../store/modules/workplan/types';
 import { showLoading } from '../../helpers/showLoading';
 import { havePermission } from '../../helpers/havePermission';
 
@@ -126,6 +142,9 @@ export default {
   watch: {
   },
   computed: {
+    ...mapState(commonTypes.PATH, [
+      'user',
+    ]),
     minPercentage() {
       let v = 2;
       const configurations = localStorage.getItem('configurations');
@@ -142,6 +161,10 @@ export default {
     },
   },
   methods: {
+    ...mapActions(workplanTypes.PATH, {
+      addWorkplan: workplanTypes.actions.ADD_WORKPLAN,
+      updateWorkplan: workplanTypes.actions.UPDATE_WORKPLAN,
+    }),
     hasPermission(value) {
       return havePermission(value);
     },
@@ -161,6 +184,35 @@ export default {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       }).format(val);
+    },
+    async nextWorkPlan() {
+      this.$q.dialog({
+        title: 'Pasar al siguiente',
+        message: 'Está seguro que desea pasar al siguiente paso?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        showLoading('Guardando ...', 'Por favor, espere', true);
+        await this.addWorkplan({
+          step_id: this.info.workplan.step_id,
+          listing_id: this.info.listing_id,
+          registered_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+          registered_by: this.user,
+        });
+        this.$emit('changeStep');
+        this.$q.loading.hide();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
     },
   },
   components: {

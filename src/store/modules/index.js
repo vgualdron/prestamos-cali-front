@@ -24,6 +24,7 @@ import nequi, { name as nequiName } from './nequi';
 import redcollector, { name as redcollectorName } from './redcollector';
 import reddirection, { name as reddirectionName } from './reddirection';
 import discount, { name as discountName } from './discount';
+import workplan, { name as workplanName } from './workplan';
 
 export default {
   [homeName]: home,
@@ -52,4 +53,5 @@ export default {
   [redcollectorName]: redcollector,
   [reddirectionName]: reddirection,
   [discountName]: discount,
+  [workplanName]: workplan,
 };
