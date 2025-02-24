@@ -74,7 +74,7 @@
       @click="approve('aprobado')">
     </q-btn>
     <q-btn
-      v-if="type === 'review' && item.status == 'visitando'"
+      v-if="type === 'review' && (item.status == 'visitando' || item.status == 'agendado')"
       label="RECHAZAR VISITA"
       class="q-ml-sm q-mt-xs text-center"
       color="red"
