@@ -1101,7 +1101,7 @@ export default {
     }),
     ...mapActions(newTypes.PATH, {
       getNew: newTypes.actions.GET_NEW,
-      updateStatusNew: newTypes.actions.UPDATE_STATUS_NEW,
+      completeDataNew: newTypes.actions.COMPLETE_DATA_NEW,
     }),
     ...mapActions(paymentTypes.PATH, {
       deletePaid: paymentTypes.actions.DELETE_PAYMENT,
@@ -1241,7 +1241,7 @@ export default {
           status: 'aprobado',
           observation: value,
         });
-        await this.updateStatusNew({
+        await this.completeDataNew({
           id: this.itemSelected.new_id,
           status: 'consignado',
         });

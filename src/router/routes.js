@@ -271,7 +271,7 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Agregar voucher a nuevos aprobados',
+        name: 'Consignar dinero a nuevos aprobados',
         component: () => import('pages/NewsApproved.vue'),
         meta: { permissions: ['expense.listNewApproved'] },
       },
@@ -309,6 +309,30 @@ const routes = [
         name: 'Agregar voucher a renovaciones',
         component: () => import('pages/ExpenseRenovated.vue'),
         meta: { permissions: ['expense.listRenovated'] },
+      },
+    ],
+  },
+  {
+    path: '/expense-office',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Aprobar gastos oficina',
+        component: () => import('pages/ExpenseOffice.vue'),
+        meta: { permissions: ['expense.listOffice'] },
+      },
+    ],
+  },
+  {
+    path: '/expense-accounts',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Aprobar gastos alquiler cuentas',
+        component: () => import('pages/ExpenseAccounts.vue'),
+        meta: { permissions: ['expense.listAccounts'] },
       },
     ],
   },
