@@ -1229,6 +1229,10 @@ export default {
         persistent: true,
       }).onOk(async () => {
         showLoading('Guardando ...', 'Por favor, espere', true);
+        await this.completeDataNew({
+          id: this.itemSelected.new_id,
+          status: 'consignado',
+        });
         const data = {
           id: this.itemSelected.expense_id,
           status: 'aprobado',
@@ -1240,10 +1244,6 @@ export default {
           id: this.itemSelected.file_id_n,
           status: 'aprobado',
           observation: value,
-        });
-        await this.completeDataNew({
-          id: this.itemSelected.new_id,
-          status: 'consignado',
         });
         await this.getLendings(this.listingSelected.value);
         this.showModalPreviewN = false;

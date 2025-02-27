@@ -202,7 +202,7 @@ export default {
       ],
       pagination: {
         rowsPerPage: 0,
-        sortBy: 'updated_at',
+        sortBy: 'date_update',
         descending: true,
       },
       filter: '',
