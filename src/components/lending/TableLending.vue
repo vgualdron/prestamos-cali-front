@@ -226,6 +226,21 @@
                 </q-popup-edit>
               </p>
             </q-td>
+            <q-td key="step" :props="props">
+              <div class="step"
+                v-if="props.row.status === 'open'
+                  && hasPermission('lending.editStep')
+                  && info
+                  && info.workplan
+                  && info.workplan.step_order"
+                @click="setStep(props.row)">
+                {{ props.row.step }}
+              </div>
+              <div v-else>
+                {{ info.workplan.step_order }}
+                {{ props.row.step }}
+              </div>
+            </q-td>
             <q-td key="amount" :props="props">
               {{ formatPrice(valueWithInterest(props.row)) }}
             </q-td>
@@ -521,8 +536,9 @@
           <q-tr class="bg-blue-2 text-primary">
             <q-td colspan="2"></q-td>
             <q-td><strong>Total {{ totalUnitsCollection }} cobros</strong></q-td>
+            <q-td></q-td>
             <q-td><strong>{{ formatPrice(totalRenovated) }}</strong></q-td>
-            <q-td colspan="4"></q-td>
+            <q-td colspan=""></q-td>
             <q-td><strong>{{ formatPrice(totalRenovation) }}</strong></q-td>
             <q-td><strong>{{ formatPrice(totalSecre) }}</strong></q-td>
             <q-td><strong>{{ formatPrice(totalRepayment) }}</strong></q-td>
@@ -733,6 +749,16 @@ export default {
           style: 'width: 250px',
           field: (row) => row.nameDebtor,
           format: (val) => `${val}`,
+          sortable: false,
+        },
+        {
+          name: 'step',
+          required: true,
+          label: 'Paso',
+          align: 'center',
+          style: 'width: 50px;',
+          field: (row) => row.step,
+          format: (val) => (val),
           sortable: false,
         },
         {
@@ -1845,6 +1871,34 @@ export default {
         // console.log('I am triggered on both OK and Cancel')
       });
     },
+    async setStep(row) {
+      this.$q.dialog({
+        title: 'Asignar paso del protocolo',
+        message: 'Está seguro que desea asignar el paso del protocolo ?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        console.log(row);
+        console.log(this.info.workplan.step_order);
+        showLoading('Cargando ...', 'Por favor, espere', true);
+        await this.updateLending({
+          id: row.id,
+          step: this.info.workplan.step_order,
+        });
+        await this.getLendings(this.listingSelected.value);
+        this.$q.loading.hide();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
+    },
     async renoveLending(row) {
       showLoading('Renovando ...', 'Por favor, espere', true);
       await this.renovateLending({ ...row });
@@ -1894,5 +1948,13 @@ export default {
   }
   #div-container-list > div.q-table__middle.scroll {
     overflow: visible !important;
+  }
+  .step {
+    width: 100%;
+    height: 100%;
+  }
+  .step:hover {
+    background: #00b4ff;
+    cursor: pointer;
   }
 </style>
