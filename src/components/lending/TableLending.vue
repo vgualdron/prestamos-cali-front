@@ -237,7 +237,6 @@
                 {{ props.row.step }}
               </div>
               <div v-else>
-                {{ info.workplan.step_order }}
                 {{ props.row.step }}
               </div>
             </q-td>
