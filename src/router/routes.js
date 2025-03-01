@@ -480,6 +480,18 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/task',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Tareas de ingeniería',
+        component: () => import('pages/Task.vue'),
+        meta: { permissions: ['task.list'] },
+      },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

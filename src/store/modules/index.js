@@ -25,6 +25,7 @@ import redcollector, { name as redcollectorName } from './redcollector';
 import reddirection, { name as reddirectionName } from './reddirection';
 import discount, { name as discountName } from './discount';
 import workplan, { name as workplanName } from './workplan';
+import task, { name as taskName } from './task';
 
 export default {
   [homeName]: home,
@@ -54,4 +55,5 @@ export default {
   [reddirectionName]: reddirection,
   [discountName]: discount,
   [workplanName]: workplan,
+  [taskName]: task,
 };
