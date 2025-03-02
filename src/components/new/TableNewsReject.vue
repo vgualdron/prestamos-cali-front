@@ -84,6 +84,11 @@
           {{  props.row.occupation }}
         </q-td>
       </template>
+      <template v-slot:body-cell-userSendName="props">
+        <q-td :props="props" class="wrap-text">
+          {{  props.row.userSendName }}
+        </q-td>
+      </template>
     </q-table>
   </div>
 </template>
