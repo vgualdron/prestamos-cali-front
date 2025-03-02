@@ -95,8 +95,8 @@ export default {
           align: 'left',
           label: 'Nombre',
           field: 'name',
-          style: 'max-width: 300px',
-          classes: 'ellipsis',
+          style: 'max-width: 200px',
+          classes: 'wrap-text',
           sortable: true,
           visible: true,
         },
@@ -120,6 +120,18 @@ export default {
           name: 'address',
           align: 'left',
           label: 'Dirección',
+          style: 'max-width: 200px',
+          classes: 'wrap-text',
+          field: 'address',
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'observation',
+          align: 'left',
+          label: 'Observación',
+          style: 'max-width: 200px',
+          classes: 'wrap-text',
           field: 'address',
           sortable: true,
           visible: true,
@@ -263,3 +275,11 @@ export default {
   },
 };
 </script>
+<style scoped>
+  .wrap-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+  }
+</style>
