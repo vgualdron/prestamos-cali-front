@@ -66,12 +66,20 @@
               <q-input v-model="scope.value" dense autofocus />
             </q-popup-edit> -->
           <q-btn
-            v-if="props.row.id && props.row.diary_id"
+            v-if="props.row.id && props.row.diary_id && !props.row.lending_id && !props.row.expense_id"
             class=""
             color="orange"
             label="DEVOLVER"
             title="Click para devolver a visita"
             @click="changeStatusReject(props.row)">
+          </q-btn>
+          <q-btn
+            v-if="props.row.id && props.row.lending_id && props.row.expense_id"
+            class=""
+            color="orange"
+            label="DEVOLVER ANTIGUO NUEVO"
+            title="Click para devolver antiguo nuevo"
+            @click="changeStatusNewOld(props.row)">
           </q-btn>
         </q-td>
       </template>
@@ -119,6 +127,8 @@ import UploadImage from 'components/common/UploadImage.vue';
 import CameraVideo from 'components/common/CameraVideo.vue';
 import Cv from 'components/new/Cv.vue';
 import newTypes from '../../store/modules/new/types';
+import expenseTypes from '../../store/modules/expense/types';
+import lendingTypes from '../../store/modules/lending/types';
 import diaryTypes from '../../store/modules/diary/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
@@ -243,6 +253,12 @@ export default {
     ...mapActions(diaryTypes.PATH, {
       completeDataDiary: diaryTypes.actions.COMPLETE_DATA_DIARY,
     }),
+    ...mapActions(lendingTypes.PATH, {
+      deleteLending: lendingTypes.actions.DELETE_LENDING,
+    }),
+    ...mapActions(expenseTypes.PATH, {
+      deleteExpense: expenseTypes.actions.DELETE_EXPENSE,
+    }),
     formatDate(date) {
       return moment(date).format('DD/MM/YYYY');
     },
@@ -274,16 +290,6 @@ export default {
       this.$q.loading.hide();
       this.isLoading = false;
     },
-    /* async saveDataNew(field, value) {
-      showLoading('Guardando ...', 'Por favor, espere', true);
-      const item = {
-        id: this.item.id,
-      };
-      item[field] = value.value ? value.value : value;
-      await this.completeDataNew(item);
-      await this.getItem();
-      this.$q.loading.hide();
-    }, */
     async changeStatusReject(obj) {
       this.$q.dialog({
         title: 'Devolver a visita',
@@ -308,6 +314,42 @@ export default {
         await this.completeDataDiary({
           id: obj.diary_id,
           status: 'cancelada',
+        });
+
+        if (this.status === true) {
+          await this.listNewsMounted();
+        }
+        this.$q.loading.hide();
+        this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
+    },
+    async changeStatusNewOld(obj) {
+      this.$q.dialog({
+        title: 'Devolver soliciud',
+        message: 'Está seguro que desea devolver el antiguo nuevo ?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        this.obj = obj;
+        showLoading('Guardando ...', 'Por favor, espere', true);
+
+        await this.deleteExpense(obj.expense_id);
+        await this.deleteLending(obj.lending_id);
+
+        await this.completeDataNew({
+          id: obj.id,
+          status: 'consignado',
         });
 
         if (this.status === true) {
