@@ -79,6 +79,11 @@
           {{  props.row.observation }}
         </q-td>
       </template>
+      <template v-slot:body-cell-occupation="props">
+        <q-td :props="props" class="wrap-text">
+          {{  props.row.occupation }}
+        </q-td>
+      </template>
     </q-table>
   </div>
 </template>
@@ -110,7 +115,7 @@ export default {
           align: 'left',
           label: 'Nombre',
           field: 'name',
-          style: 'max-width: 200px',
+          style: 'max-width: 350px',
           classes: 'wrap-text',
           sortable: true,
           visible: true,
@@ -135,7 +140,7 @@ export default {
           name: 'address',
           align: 'left',
           label: 'Dirección',
-          style: 'max-width: 200px',
+          style: 'max-width: 350px',
           classes: 'wrap-text',
           field: 'address',
           sortable: true,
@@ -145,7 +150,7 @@ export default {
           name: 'observation',
           align: 'left',
           label: 'Observación',
-          style: 'max-width: 200px',
+          style: 'max-width: 350px',
           classes: 'wrap-text',
           field: 'address',
           sortable: true,
@@ -180,6 +185,7 @@ export default {
           align: 'left',
           label: 'Ocupación',
           field: 'occupation',
+          style: 'max-width: 250px',
           sortable: true,
           visible: true,
         },
