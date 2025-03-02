@@ -207,7 +207,7 @@
                               {
                                 label: '400.000',
                                 value: 400000,
-                                disable: item.type_work !== 'propietario',
+                                disable: item.type_work !== 'propietario' && item.type_house !== 'propia',
                               },
                               {
                                 label: '500.000',
