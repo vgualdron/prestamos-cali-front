@@ -57,11 +57,26 @@
           </div>
         </q-td>
       </template>
+      <template v-slot:body-cell-name="props">
+        <q-td :props="props" class="wrap-text">
+          {{  props.row.name }}
+        </q-td>
+      </template>
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
           <q-badge :color="props.row.status === 'rechazado' ? 'red' : 'blue'">
             {{  props.row.status }}
           </q-badge>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-address="props">
+        <q-td :props="props" class="wrap-text">
+          {{  props.row.address }}
+        </q-td>
+      </template>
+      <template v-slot:body-cell-observation="props">
+        <q-td :props="props" class="wrap-text">
+          {{  props.row.observation }}
         </q-td>
       </template>
     </q-table>
