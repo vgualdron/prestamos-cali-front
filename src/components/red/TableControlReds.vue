@@ -292,10 +292,16 @@
                       Foto de la casa
                     </q-item-label>
                     <q-item-label>
-                      <img
-                        v-if="reddirection.file_url"
-                        :src="getUrlFile(reddirection, 'file_url')"
-                        width="250rem"/>
+                      <camera-photo
+                        :config="{
+                          name: 'FOTO_CASA_REDDIRECTION',
+                          storage: 'reddirections',
+                          modelName: 'reddirections',
+                          modelId: reddirection.id
+                        }"
+                        type="read"
+                        :showApprove="false"
+                      />
                     </q-item-label>
                   </template>
                 </q-item-section>
@@ -307,10 +313,16 @@
                       Foto de la solución
                     </q-item-label>
                     <q-item-label>
-                      <img
-                        v-if="reddirection.file2_url"
-                        :src="getUrlFile(reddirection, 'file2_url')"
-                        width="250rem"/>
+                      <camera-photo
+                        :config="{
+                          name: 'FOTO_AVISO_REDDIRECTION',
+                          storage: 'reddirections',
+                          modelName: 'reddirections',
+                          modelId: reddirection.id
+                        }"
+                        type="read"
+                        :showApprove="false"
+                      />
                     </q-item-label>
                   </template>
                 </q-item-section>
@@ -322,12 +334,16 @@
                       Video
                     </q-item-label>
                     <q-item-label>
-                      <video
-                        v-if="reddirection.file3_url"
-                        :src="getUrlFile(reddirection, 'file3_url')"
-                        width="250rem"
-                        controls>
-                      </video>
+                      <camera-video
+                        :config="{
+                          name: 'VIDEO_SOLUCION_REDDIRECTION',
+                          storage: 'reddirections',
+                          modelName: 'reddirections',
+                          modelId: reddirection.id
+                        }"
+                        type="read"
+                        :showApprove="false"
+                      />
                     </q-item-label>
                   </template>
                 </q-item-section>
@@ -421,7 +437,8 @@ import { mapState, mapActions } from 'vuex';
 import ModalListNequi from 'components/nequi/ModalListNequi.vue';
 import ModalCardBoard from 'components/lending/ModalCardBoard.vue';
 import ModalListVisits from 'components/red/ModalListVisits.vue';
-// import CameraPhoto from 'components/common/CameraPhoto.vue';
+import CameraPhoto from 'components/common/CameraPhoto.vue';
+import CameraVideo from 'components/common/CameraVideo.vue';
 import Cv from 'components/new/Cv.vue';
 import newTypes from '../../store/modules/new/types';
 import zoneTypes from '../../store/modules/zone/types';
@@ -440,7 +457,8 @@ export default {
     ModalCardBoard,
     ModalListVisits,
     Cv,
-    // CameraPhoto,
+    CameraPhoto,
+    CameraVideo,
   },
   data() {
     return {

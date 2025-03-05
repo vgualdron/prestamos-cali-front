@@ -103,12 +103,16 @@
                     {{ item.observation }}
                   </td>
                   <td class="td-table">
-                    <q-btn
-                      v-if="item.file_url"
-                      color="primary"
-                      icon="photo"
-                      class=""
-                      @click="getUrlFile(item, 'file_url')" />
+                    <camera-photo
+                      :config="{
+                        name: 'FOTO_CASA_REDDIRECTION',
+                        storage: 'reddirections',
+                        modelName: 'reddirections',
+                        modelId: item.id
+                      }"
+                      type="read"
+                      :showApprove="false"
+                    />
                   </td>
                   <td class="td-table">
                     <q-btn
@@ -117,14 +121,28 @@
                       icon="photo"
                       class=""
                       @click="getUrlFile(item, 'file2_url')" />
+                    <camera-photo
+                      :config="{
+                        name: 'FOTO_AVISO_REDDIRECTION',
+                        storage: 'reddirections',
+                        modelName: 'reddirections',
+                        modelId: item.id
+                      }"
+                      type="read"
+                      :showApprove="false"
+                    />
                   </td>
                   <td class="td-table">
-                    <q-btn
-                      v-if="item.file3_url"
-                      color="primary"
-                      icon="camera"
-                      class=""
-                      @click="getUrlFileVideo(item, 'file3_url')" />
+                    <camera-video
+                      :config="{
+                        name: 'VIDEO_SOLUCION_REDDIRECTION',
+                        storage: 'reddirections',
+                        modelName: 'reddirections',
+                        modelId: item.id
+                      }"
+                      type="read"
+                      :showApprove="false"
+                    />
                   </td>
                 </tr>
               </tbody>
@@ -154,6 +172,8 @@
 <script>
 import moment from 'moment';
 import ModalPreviewFile from 'components/common/ModalPreviewFile.vue';
+import CameraPhoto from 'components/common/CameraPhoto.vue';
+import CameraVideo from 'components/common/CameraVideo.vue';
 
 export default {
   data() {
@@ -167,6 +187,8 @@ export default {
   },
   components: {
     ModalPreviewFile,
+    CameraPhoto,
+    CameraVideo,
   },
   mounted() {
   },

@@ -1,5 +1,13 @@
 <template>
-  <div class="q-pa-md w-100">
+  <div class="q-pa-md w-100 text-center">
+    <q-btn
+      round
+      icon="refresh"
+      class="q-mt-none q-mb-sm"
+      color="primary"
+      title="Click para refrescar la tabla"
+      @click="initData()">
+    </q-btn>
     <q-markup-table
       class="markup-table"
       separator="cell"
@@ -16,10 +24,11 @@
         <tbody>
           <tr class="">
             <td v-for="(area) in cols" :key="`td_area_${area.id}`">
+              <div class="text-center text-bold">{{  getTasks(area.id).length }}</div>
               <q-card
-                v-for="(task, index) in getTasks(area.id)"
+                v-for="(task) in getTasks(area.id)"
                 :key="`d-card-task_${task.id}`"
-                :class="index === 0 ? 'my-card border-priority' : 'my-card'"
+                :class="getClass(task)"
                 outline
                 bordered
                 @click="setItem(task)">
@@ -28,18 +37,18 @@
                     <q-icon size="xs" name="edit" v-if="task.status === 'creado' && hasPermission('task.edit')" />
                     {{ task.name }}
                     <q-popup-edit
-                      v-show="task.status === 'open' && hasPermission('task.edit')"
+                      v-show="task.status === 'creado' && hasPermission('task.edit')"
                       :value="task.name"
                       v-slot="scope" buttons
                       @input="val => changeRow('name', val)">
                       <q-input v-model="scope.value" dense autofocus type="text" />
                     </q-popup-edit>
                   </div>
-                  <div class="text-grey text-subtitle2 text-wrap">
+                  <div class="text-subtitle2 text-wrap">
                     <q-icon size="xs" name="edit" v-if="task.status === 'creado' && hasPermission('task.edit')" />
                     Prioridad: {{ task.priority }}
                     <q-popup-edit
-                      v-show="task.status === 'open' && hasPermission('task.edit')"
+                      v-show="task.status === 'creado' && hasPermission('task.edit')"
                       :value="task.priority"
                       v-slot="scope" buttons
                       @input="val => changeRow('priority', val)">
@@ -54,19 +63,35 @@
                 </q-card-section>
                 <q-card-actions>
                   <q-btn
-                    v-if="hasPermission('task.delete')"
-                    outline
+                    v-if="hasPermission('task.delete') && task.status == 'creado'"
                     size="sm"
-                    color="dark"
+                    color="grey"
                     label="Eliminar"
                     @click="changeStatus(task, 'eliminado')"/>
                   <q-btn
-                    v-if="hasPermission('task.finalize')"
-                    outline
+                    v-if="hasPermission('task.finalize') && task.status === 'iniciado'"
                     size="sm"
                     color="primary"
                     label="Finalizar"
                     @click="changeStatus(task, 'finalizado')"/>
+                  <q-btn
+                    v-if="hasPermission('task.started') && !hasStarted"
+                    size="sm"
+                    color="green"
+                    label="Iniciar"
+                    @click="changeStatus(task, 'iniciado')"/>
+                  <q-btn
+                    v-if="hasPermission('task.next1') && task.status !== 'iniciado' && !hasNext1"
+                    size="sm"
+                    color="red"
+                    label="Siguiente 1"
+                    @click="changeStatus(task, 'siguiente1')"/>
+                  <q-btn
+                    v-if="hasPermission('task.next2') && task.status !== 'iniciado' && !hasNext2"
+                    size="sm"
+                    color="orange"
+                    label="Siguiente 2"
+                    @click="changeStatus(task, 'siguiente2')"/>
                   <q-space />
                   <q-btn
                     color="grey"
@@ -94,15 +119,17 @@
                   </div>
                 </q-slide-transition>
               </q-card>
-              <q-btn
-                v-if="hasPermission('task.add')"
-                icon="add"
-                class="q-ml-sm q-mt-sm"
-                size="sm"
-                color="primary"
-                title="Click para agregar un nuevo egreso"
-                @click="addRow(area.id)">
-              </q-btn>
+              <div class="text-center text-bold">
+                <q-btn
+                  v-if="hasPermission('task.add')"
+                  icon="add"
+                  class="q-ml-sm q-mt-sm"
+                  size="sm"
+                  color="primary"
+                  title="Click para agregar un nuevo egreso"
+                  @click="addRow(area.id)">
+                </q-btn>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -124,6 +151,7 @@ export default {
       date: moment().format('YYYY-MM-DD'),
       location: null,
       itemSelected: {},
+      polling: null,
       ts: [],
       colors: [
         'bg-yellow-3',
@@ -138,10 +166,8 @@ export default {
   props: {
   },
   async mounted() {
-    showLoading('Cargando ...', 'Por favor, espere', true);
-    await this.listAreas();
-    await this.list();
-    this.$q.loading.hide();
+    await this.initData();
+    await this.pollData();
   },
   watch: {
   },
@@ -158,6 +184,21 @@ export default {
     cols() {
       return this.areas.filter((a) => a.show_task === 1);
     },
+    hasStarted() {
+      const ts = this.ts.filter((t) => t.status === 'iniciado');
+      return ts && ts.length > 0;
+    },
+    hasNext1() {
+      const ts = this.ts.filter((t) => t.status === 'siguiente1');
+      return ts && ts.length > 0;
+    },
+    hasNext2() {
+      const ts = this.ts.filter((t) => t.status === 'siguiente2');
+      return ts && ts.length > 0;
+    },
+  },
+  beforeDestroy() {
+    clearInterval(this.polling);
   },
   methods: {
     ...mapActions(areaTypes.PATH, {
@@ -168,14 +209,38 @@ export default {
       addTask: taskTypes.actions.ADD_TASK,
       updateTask: taskTypes.actions.UPDATE_TASK,
     }),
+    async initData() {
+      showLoading('Cargando ...', 'Por favor, espere', true);
+      await this.listAreas();
+      await this.list();
+      this.$q.loading.hide();
+    },
+    async pollData() {
+      this.polling = setInterval(async () => {
+        await this.initData();
+      }, 60000);
+    },
     getColorStatus(value) {
       let color = 'primary';
-      if (value === 'finalizado') {
+      if (value === 'iniciado') {
         color = 'green';
-      } else if (value === 'borrado') {
+      } else if (value === 'siguiente1') {
         color = 'red';
+      } else if (value === 'siguiente2') {
+        color = 'orange';
       }
       return color;
+    },
+    getClass(row) {
+      let c = 'my-card';
+      if (row.status === 'iniciado') {
+        c = 'my-card border-green';
+      } else if (row.status === 'siguiente1') {
+        c = 'my-card border-red';
+      } else if (row.status === 'siguiente2') {
+        c = 'my-card border-orange';
+      }
+      return c;
     },
     hasPermission(value) {
       return havePermission(value);
@@ -204,12 +269,11 @@ export default {
       }).format(val);
     },
     async list() {
-      await this.listTask('creado');
+      await this.listTask(['creado', 'iniciado', 'siguiente1', 'siguiente2']);
 
-      // Asegurar que cada tarea tenga `expanded` como propiedad reactiva
       this.ts = this.tasks.map((task) => ({
         ...task,
-        expanded: false, // Inicialmente, todas las tareas están colapsadas
+        expanded: true,
       }));
     },
     getTasks(area_id) {
@@ -302,7 +366,7 @@ export default {
     vertical-align: top;
   }
   .my-card {
-    max-width: 250px;
+    max-width: 400px;
     border: solid 2px gray;
     margin-top: 10px;
   }
@@ -311,7 +375,18 @@ export default {
     word-wrap: break-word;
     word-break: break-word;
   }
-  .border-priority {
-    border: solid 2px rgb(240, 8, 58);
+  .border-green {
+    border: solid 4px rgb(8, 240, 58);
+    background: rgb(203, 230, 203);
+  }
+
+  .border-red {
+    border: solid 4px #f00808;
+    background: rgb(231, 214, 213);
+  }
+
+  .border-orange {
+    border: solid 4px #f0b208;
+    background: rgb(219, 201, 172);
   }
 </style>
