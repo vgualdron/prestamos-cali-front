@@ -911,7 +911,7 @@
           </div>
         </q-card-section>
       </q-card>
-      <form-news
+      <form-address
         v-if="showModalFormNews"
         v-model="showModalFormNews"
         :type="typeActionFormNew"
@@ -932,7 +932,7 @@ import { mapState, mapActions } from 'vuex';
 import CameraPhoto from 'components/common/CameraPhoto.vue';
 import CameraVideo from 'components/common/CameraVideo.vue';
 import StateCases from 'components/visit/StateCases.vue';
-import FormNews from 'components/review/FormNews.vue';
+import FormAddress from 'src/components/new/FormAddress.vue';
 import newTypes from '../../store/modules/new/types';
 import notificationTypes from '../../store/modules/notification/types';
 import userTypes from '../../store/modules/user/types';
@@ -1071,7 +1071,7 @@ export default {
     CameraPhoto,
     CameraVideo,
     StateCases,
-    FormNews,
+    FormAddress,
   },
 };
 </script>

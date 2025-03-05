@@ -1,6 +1,11 @@
 <template>
   <div class="q-pa-md">
     <div class="row q-mt-md">
+      <q-banner class="bg-info text-white">
+        Escribe alguna parte del nombre del cliente. Se mostraran máximo 20 registros para tener un buen rendimiento en la funcionalidad.
+      </q-banner>
+    </div>
+    <div class="row q-mt-md">
       <div class="col-10 text-center">
         <q-input
           debounce="400"
@@ -11,6 +16,7 @@
           clearable
           dense
           outlined
+          @keyup.enter="listNewsMounted"
         >
           <template v-slot:append>
             <q-icon name="search" />
@@ -52,6 +58,7 @@
               @click="openModal('cv', props.row)"
             ></q-btn>
             <upload-pdf
+              v-if="props.row.type_cv === 'pdf'"
               :config="{
               name: 'PDF_CV',
               storage: 'news',
@@ -60,7 +67,8 @@
             }"
             />
           </q-td>
-          <q-td key="calendar" :props="props">
+          <q-td key="type_cv" :props="props">
+            {{ props.row.type_cv }}
           </q-td>
           <q-td key="name" :props="props" class="wrap-text">
             {{ props.row.name }}
@@ -74,6 +82,21 @@
             <q-icon size="xs" name="edit" />
             {{ props.row.address_work }}
             <br><b v-if="props.row.districtWorkName">Barrio: </b> {{ props.row.districtWorkName }}
+          </q-td>
+          <q-td key="family_reference_address" :props="props" @click="clickEditAddress(props.row, 'ref1')" class="wrap-text">
+            <q-icon size="xs" name="edit" />
+            {{ props.row.family_reference_address }}
+            <br><b v-if="props.row.districtRef1Name">Barrio: </b> {{ props.row.districtRef1Name }}
+          </q-td>
+          <q-td key="family2_reference_address" :props="props" @click="clickEditAddress(props.row, 'ref2')" class="wrap-text">
+            <q-icon size="xs" name="edit" />
+            {{ props.row.family2_reference_address }}
+            <br><b v-if="props.row.districtRef2Name">Barrio: </b> {{ props.row.districtRef2Name }}
+          </q-td>
+          <q-td key="guarantor_address" :props="props" @click="clickEditAddress(props.row, 'ref2')" class="wrap-text">
+            <q-icon size="xs" name="edit" />
+            {{ props.row.guarantor_address }}
+            <br><b v-if="props.row.districtGuarantorName">Barrio: </b> {{ props.row.districtGuarantorName }}
           </q-td>
           <q-td key="observation" :props="props" class="wrap-text">
             <q-icon size="xs" name="edit" />
@@ -91,17 +114,18 @@
               <q-input v-model="scope.value" dense autofocus />
             </q-popup-edit>
           </q-td>
-          <q-td key="address" :props="props" class="wrap-text">
-            {{ props.row.address }}
-            <br><b>Barrio: </b> {{ props.row.districtName }}
-          </q-td>
           <q-td key="occupation" :props="props" class="wrap-text">
+            <q-icon size="xs" name="edit" />
             {{ props.row.occupation }}
+            <q-popup-edit :value="props.row.occupation" v-slot="scope" buttons
+              @input="val => save('occupation', val)">
+              <q-input v-model="scope.value" dense autofocus />
+            </q-popup-edit>
           </q-td>
         </q-tr>
       </template>
     </q-table>
-    <form-news
+    <form-address
       v-if="showModalFormNews"
       v-model="showModalFormNews"
       :type="typeActionFormNew"
@@ -119,7 +143,7 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import UploadPdf from 'components/common/UploadPdf.vue';
-import FormNews from 'components/review/FormNews.vue';
+import FormAddress from 'src/components/new/FormAddress.vue';
 import Cv from 'components/new/Cv.vue';
 import newTypes from '../../store/modules/new/types';
 import { showNotifications } from '../../helpers/showNotifications';
@@ -129,7 +153,7 @@ import { formatDateWithTime } from '../../helpers/formatDate';
 
 export default {
   components: {
-    FormNews,
+    FormAddress,
     UploadPdf,
     Cv,
   },
@@ -147,8 +171,8 @@ export default {
           visible: false,
         },
         {
-          name: 'calendar',
-          label: 'Agendar',
+          name: 'type_cv',
+          label: 'Tipo CV',
           align: 'center',
           visible: false,
         },
@@ -181,6 +205,33 @@ export default {
           style: 'width: 200px',
         },
         {
+          name: 'family_reference_address',
+          align: 'left',
+          label: 'Dirección Ref 1',
+          field: 'family_reference_address',
+          sortable: true,
+          visible: true,
+          style: 'width: 200px',
+        },
+        {
+          name: 'family2_reference_address',
+          align: 'left',
+          label: 'Dirección Ref 2',
+          field: 'family2_reference_address',
+          sortable: true,
+          visible: true,
+          style: 'width: 200px',
+        },
+        {
+          name: 'guarantor_address',
+          align: 'left',
+          label: 'Dirección Fiador',
+          field: 'guarantor_address',
+          sortable: true,
+          visible: true,
+          style: 'width: 200px',
+        },
+        {
           name: 'observation',
           align: 'left',
           label: 'Observación',
@@ -196,15 +247,6 @@ export default {
           field: 'phone',
           sortable: true,
           visible: true,
-        },
-        {
-          name: 'address',
-          align: 'left',
-          label: 'Dirección',
-          field: 'address',
-          sortable: true,
-          visible: true,
-          style: 'width: 300px',
         },
         {
           name: 'occupation',
@@ -225,13 +267,14 @@ export default {
       showModalFormNews: false,
       objSelected: {},
       typeActionFormNew: 'house',
-      query: '',
+      query: 'a',
       showModalCv: false,
     };
   },
   props: {
   },
-  mounted() {
+  async mounted() {
+    await this.listNewsMounted();
   },
   watch: {
   },

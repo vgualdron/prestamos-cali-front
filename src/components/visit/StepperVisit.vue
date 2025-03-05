@@ -995,7 +995,7 @@
           </q-stepper-navigation>
         </template>
       </q-stepper>
-      <form-news
+      <form-address
         v-if="showModalFormNews"
         v-model="showModalFormNews"
         :type="typeActionFormNew"
@@ -1017,7 +1017,7 @@ import CameraPhoto from 'components/common/CameraPhoto.vue';
 import CameraVideo from 'components/common/CameraVideo.vue';
 import UploadImage from 'components/common/UploadImage.vue';
 import UploadVideo from 'components/common/UploadVideo.vue';
-import FormNews from 'components/review/FormNews.vue';
+import FormAddress from 'src/components/new/FormAddress.vue';
 import StateCases from 'components/visit/StateCases.vue';
 import { showNotifications } from '../../helpers/showNotifications';
 import newTypes from '../../store/modules/new/types';
@@ -1030,7 +1030,7 @@ export default {
     CameraPhoto,
     CameraVideo,
     StateCases,
-    FormNews,
+    FormAddress,
     UploadImage,
     UploadVideo,
   },

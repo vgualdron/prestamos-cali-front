@@ -1,14 +1,14 @@
 <template>
   <q-page class="">
-    <table-news />
+    <table-news-change-pdf />
   </q-page>
 </template>
 
 <script>
-import TableNews from 'components/changePdfNews/TableNews.vue';
+import TableNewsChangePdf from 'src/components/new/TableNewsChangePdf.vue';
 
 export default {
-  components: { TableNews },
+  components: { TableNewsChangePdf },
   data() {
     return {
     };

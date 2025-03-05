@@ -156,7 +156,7 @@ import { removeAccents } from '../../helpers/removeAccents';
 export default {
   data() {
     return {
-      title: '',
+      title: 'Dirección',
       isLoading: false,
       optionsYards: [],
       optionsZones: [],
@@ -206,7 +206,10 @@ export default {
     },
   },
   async mounted() {
+    console.log(this.obj);
+    showLoading('Cargando ...', 'Por favor, espere', true);
     await this.initData();
+    this.$q.loading.hide();
   },
   watch: {
     yards(val) {

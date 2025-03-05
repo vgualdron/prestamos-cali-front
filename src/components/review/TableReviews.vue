@@ -203,7 +203,7 @@
         </q-tr>
       </template>
     </q-table>
-    <form-news
+    <form-address
       v-if="showModalFormNews"
       v-model="showModalFormNews"
       :type="typeActionFormNew"
@@ -214,7 +214,7 @@
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
-import FormNews from 'components/review/FormNews.vue';
+import FormAddress from 'src/components/new/FormAddress.vue';
 import newTypes from '../../store/modules/new/types';
 import zoneTypes from '../../store/modules/zone/types';
 import yardTypes from '../../store/modules/yard/types';
@@ -227,7 +227,7 @@ import { formatDateWithTime } from '../../helpers/formatDate';
 
 export default {
   components: {
-    FormNews,
+    FormAddress,
   },
   data() {
     return {
