@@ -80,7 +80,9 @@ export default {
     };
   },
   async mounted() {
+    showLoading('Guardando ...', 'Por favor, espere', true);
     await this.listYards({ id: 0, displayAll: 1 });
+    this.$q.loading.hide();
   },
   watch: {
     yards(val) {
