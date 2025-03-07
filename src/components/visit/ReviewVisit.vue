@@ -82,6 +82,17 @@
                       </q-popup-edit>
                     </td>
                   </tr>
+                  <tr class="tr-table">
+                    <td class="td-table">
+                      <p class="text-subtitle1 text-weight-bold text-center">Teléfono:</p>
+                      <q-icon size="xs" name="edit" />
+                      {{ item.phone }}
+                      <q-popup-edit :value="item.phone" v-slot="scope" buttons
+                        @input="val => saveDateNew('phone', val)">
+                        <q-input v-model="scope.value" dense autofocus />
+                      </q-popup-edit>
+                    </td>
+                  </tr>
                 </tbody>
               </q-markup-table>
             </div>
