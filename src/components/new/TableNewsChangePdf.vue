@@ -93,7 +93,7 @@
             {{ props.row.family2_reference_address }}
             <br><b v-if="props.row.districtRef2Name">Barrio: </b> {{ props.row.districtRef2Name }}
           </q-td>
-          <q-td key="guarantor_address" :props="props" @click="clickEditAddress(props.row, 'ref2')" class="wrap-text">
+          <q-td key="guarantor_address" :props="props" @click="clickEditAddress(props.row, 'guarantor')" class="wrap-text">
             <q-icon size="xs" name="edit" />
             {{ props.row.guarantor_address }}
             <br><b v-if="props.row.districtGuarantorName">Barrio: </b> {{ props.row.districtGuarantorName }}
