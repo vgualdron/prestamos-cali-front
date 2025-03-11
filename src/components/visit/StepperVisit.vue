@@ -59,7 +59,7 @@
           :done="step > 1"
         >
           <div class="block-container">
-            <div class="div-container">
+            <!-- <div class="div-container">
               <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
               <div class="table-container">
                 <q-markup-table
@@ -131,7 +131,7 @@
                   </tbody>
                 </q-markup-table>
               </div>
-            </div>
+            </div> -->
             <div class="div-container">
               <p class="text-subtitle1 text-weight-bold text-center">LLENAR LOS SIGUIENTES DATOS:</p>
               <div class="table-container">

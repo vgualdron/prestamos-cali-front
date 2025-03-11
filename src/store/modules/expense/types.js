@@ -2,6 +2,7 @@ export default {
   PATH: '@module/expense',
   actions: {
     LIST_EXPENSES: '@actions/listExpenses',
+    LIST_EXPENSES_PENDINGS: '@actions/listExpensesPendings',
     LIST_EXPENSES_BY_USER: '@actions/listExpensesByUser',
     LIST_EXPENSES_BY_ITEM: '@actions/listExpensesByItem',
     GET_EXPENSE: '@actions/getExpense',
@@ -13,6 +14,7 @@ export default {
   },
   mutations: {
     SET_EXPENSES: '@mutations/setExpenses',
+    SET_EXPENSES_PENDINGS: '@mutations/setExpensesPendings',
     SET_EXPENSE: '@mutations/setExpense',
     SET_STATUS: '@mutations/setStatus',
     SET_RESPONSE_MESSAGES: '@mutations/setResponseMessages',

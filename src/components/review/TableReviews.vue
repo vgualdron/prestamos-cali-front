@@ -40,7 +40,7 @@
           class="q-ml-lg">
         </q-radio>
       </div>
-      <div class="col-1 text-center">
+      <div class="col-4 text-center">
         <q-btn
           v-if="userSelected"
           color="primary"
@@ -50,6 +50,7 @@
           round
           @click="openInGoogleMaps(userSelected)"
         />
+        {{ getDateLocation(userSelected) }}
       </div>
     </div>
     <q-table
@@ -535,6 +536,7 @@ export default {
         id,
         latitude,
         longitude,
+        date_location,
       }) => {
         const label = `${name}`;
         return {
@@ -542,6 +544,7 @@ export default {
           value: id,
           latitude,
           longitude,
+          date_location,
         };
       });
     },
@@ -591,6 +594,14 @@ export default {
         const googleMapsUrl = `https://www.google.com/maps?q=${user.latitude},${user.longitude}`;
         window.open(googleMapsUrl, '_blank');
       }
+    },
+    getDateLocation(userId) {
+      console.log(userId);
+      const user = this.optionsUsers.find((u) => u.value === userId);
+      if (user) {
+        return user.date_location;
+      }
+      return 'X';
     },
     isDateAllowed(date) {
       const today = new Date();

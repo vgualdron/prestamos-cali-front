@@ -42,7 +42,7 @@ export default {
     async pollData() {
       this.polling = setInterval(async () => {
         this.getLocation();
-      }, 300000);
+      }, 180000);
     },
     getLocation() {
       if (navigator.geolocation) {

@@ -21,6 +21,25 @@ export default {
       }
     }
   },
+  async [types.actions.LIST_EXPENSES_PENDINGS]({ commit }, payload) {
+    try {
+      const response = await expenseApi.list(payload);
+      commit(types.mutations.SET_STATUS, true);
+      commit(types.mutations.SET_EXPENSES_PENDINGS, response.data.data);
+    } catch (error) {
+      commit(types.mutations.SET_STATUS, false);
+      if (error.message !== 'Network Error') {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
+      } else {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, [
+          {
+            text: 'Error de red',
+            detail: 'Intente conectarse a otra red de internet',
+          },
+        ]);
+      }
+    }
+  },
   async [types.actions.LIST_EXPENSES_BY_USER]({ commit }, payload) {
     try {
       const response = await expenseApi.listByUser(payload);
