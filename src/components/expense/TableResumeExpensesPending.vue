@@ -52,18 +52,6 @@ export default {
       route: '/expense',
       columns: [
         {
-          name: 'actions',
-          label: 'Acciones',
-          align: 'center',
-          visible: false,
-        },
-        {
-          name: 'voucher',
-          label: 'Voucher',
-          align: 'center',
-          visible: false,
-        },
-        {
           name: 'amount',
           align: 'left',
           label: 'Valor',
