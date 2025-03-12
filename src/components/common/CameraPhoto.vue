@@ -220,6 +220,7 @@ export default {
   methods: {
     ...mapActions(fileTypes.PATH, {
       saveFile: fileTypes.actions.SAVE_FILE,
+      updateFile: fileTypes.actions.UPDATE_FILE,
       getFile: fileTypes.actions.GET_FILE,
     }),
     openInGoogleMaps() {
