@@ -152,6 +152,13 @@
                       <div v-if="!question || (question && question.status !== 'pendiente')" class="col-3 is-flex">
                         <div class="div-container">
                           <p class="text-subtitle1 text-weight-bold text-center">VIDEO AUTORIZA CUENTA TERCERO</p>
+                          <q-btn
+                            v-if="hasFile && hasFile.data && hasFile.data.id && hasPermission('lending.deleteFileAccountThird')"
+                            label="Borrar video"
+                            color="red"
+                            class="col q-my-none"
+                            @click="deleteFileVideo()"
+                          />
                           <upload-video
                             :config="{
                               name: 'VIDEO_AUTORIZA_CUENTA_TERCERO',
@@ -195,12 +202,15 @@
 import { mapState, mapActions } from 'vuex';
 import UploadVideo from 'components/common/UploadVideo.vue';
 import questionTypes from '../../store/modules/question/types';
+import fileTypes from '../../store/modules/file/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
+import { havePermission } from '../../helpers/havePermission';
 
 export default {
   data() {
     return {
+      hasFile: false,
       accountNumber: '',
       accountName: '',
       accountType: '',
@@ -218,6 +228,7 @@ export default {
   },
   async mounted() {
     await this.getStatusQuestionAccount(this.row);
+    this.fetchFile();
   },
   watch: {
   },
@@ -241,8 +252,25 @@ export default {
       saveQuestion: questionTypes.actions.SAVE_QUESTION,
       getStatusQuestion: questionTypes.actions.GET_STATUS_QUESTION,
     }),
+    ...mapActions(fileTypes.PATH, {
+      deleteFile: fileTypes.actions.DELETE_FILE,
+      getFile: fileTypes.actions.GET_FILE,
+    }),
+    hasPermission(value) {
+      return havePermission(value);
+    },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
+    },
+    async fetchFile() {
+      showLoading('consultando archivo ...', 'Por favor, espere', true);
+      const response = await this.getFile({
+        name: 'VIDEO_AUTORIZA_CUENTA_TERCERO',
+        modelName: 'news',
+        modelId: this.row.id,
+      });
+
+      this.hasFile = response;
     },
     async saveQuestionAccount(row) {
       console.log(row);
@@ -283,6 +311,29 @@ export default {
         this.accountType = value.account_type_third;
       }
       this.$q.loading.hide();
+    },
+    async deleteFileVideo() {
+      this.$q.dialog({
+        title: 'Eliminar video',
+        message: 'Está seguro que desea eliminar el video?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        showLoading('Guardando ...', 'Por favor, espere', true);
+        this.showDialog = false;
+        this.deleteFile(this.hasFile.data.id);
+        this.$q.loading.hide();
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
     },
   },
   components: {
