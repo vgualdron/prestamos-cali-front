@@ -537,7 +537,7 @@
             <q-td><strong>Total {{ totalUnitsCollection }} cobros</strong></q-td>
             <q-td></q-td>
             <q-td><strong>{{ formatPrice(totalRenovated) }}</strong></q-td>
-            <q-td colspan=""></q-td>
+            <q-td colspan="4"></q-td>
             <q-td><strong>{{ formatPrice(totalRenovation) }}</strong></q-td>
             <q-td><strong>{{ formatPrice(totalSecre) }}</strong></q-td>
             <q-td><strong>{{ formatPrice(totalRepayment) }}</strong></q-td>

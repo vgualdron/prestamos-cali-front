@@ -1,10 +1,15 @@
 <template>
   <q-page class="">
     <table-diary
-      v-if="dataTable && dataTable.length > 0"
-      :data="dataTable"
+      v-if="onlyOneItem && onlyOneItem.length > 0"
+      :data="onlyOneItem"
       type="visitor"
       @addVisit="addVisit"/>
+    <q-banner
+      v-else
+      class="bg-orange text-white q-ma-xl">
+      No tienes asignada ninguna visita.
+    </q-banner>
   </q-page>
 </template>
 

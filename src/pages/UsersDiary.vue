@@ -1,6 +1,6 @@
 <template>
-  <q-page class="">
-    <div class="row q-mt-md justify-center">
+  <q-page class="q-ma-md">
+    <div class="row justify-center">
       <div class="col-8">
         <q-btn-toggle
           v-if="zones && zones.length > 0"

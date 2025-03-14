@@ -14,6 +14,11 @@
             <b>
               {{ item.name }}
             </b>
+            <br v-if="type === 'review'">
+            <b v-if="type === 'review'">Enviado por:</b>
+            <b v-if="type === 'review'">
+              {{ item.userSendName }}
+            </b>
             <br>Estado:
             <q-badge :color="getColorStatus(item)">
               {{ item.status }}
@@ -45,11 +50,6 @@
           </div>
         </div>
       </template>
-
-      <template v-slot:body-story="prop">
-        <span class="text-weight-thin">The story is:</span> {{ prop.node.header }}
-      </template>
-
       <template v-slot:body-toggle="prop">
         <p class="text-caption">{{ prop.node.caption }}</p>
       </template>
