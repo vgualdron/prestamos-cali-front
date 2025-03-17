@@ -96,12 +96,6 @@
                     inline
                   />
                   <div v-if="!question" class="col-3 is-flex">
-                    <q-btn
-                      color="primary"
-                      icon="call_made"
-                      title="Solicitar permiso para aumentar el valor del prestamo"
-                      @click="saveQuestionLending(row)"
-                    />
                     <div class="q-display-inline">
                       <q-icon size="xs" name="edit" class="q-ml-sm" />
                       <b>{{ formatPrice(amountGet) }}</b>
@@ -150,6 +144,13 @@
                         />
                       </q-popup-edit>
                     </div>
+                    <q-btn
+                      color="primary"
+                      class="q-ml-sm"
+                      icon="call_made"
+                      title="Solicitar permiso para aumentar el valor del prestamo"
+                      @click="saveQuestionLending(row)"
+                    />
                   </div>
                   <div v-else-if="question.status === 'pendiente'" class="col-3 is-flex">
                     <q-btn
@@ -166,7 +167,12 @@
                       color="red"
                       class="">
                       {{ question.status }}
-                    </q-badge>
+                      <q-icon
+                        name="close"
+                        size="14px"
+                        class="q-ml-xs text-bold cursor-pointer"
+                        @click="removeQuestion(question)"/>
+                      </q-badge>
                   </template>
                   <template v-else-if="question.status === 'aprobado'">
                     <q-badge
@@ -526,6 +532,7 @@ export default {
   methods: {
     ...mapActions(questionTypes.PATH, {
       saveQuestion: questionTypes.actions.SAVE_QUESTION,
+      deleteQuestion: questionTypes.actions.DELETE_QUESTION,
       getStatusQuestion: questionTypes.actions.GET_STATUS_QUESTION,
     }),
     ...mapActions(newTypes.PATH, {
@@ -561,6 +568,30 @@ export default {
       await this.saveQuestion(data);
       await this.getStatusQuestionLending(row);
       this.$q.loading.hide();
+    },
+    removeQuestion(row) {
+      this.$q.dialog({
+        title: 'Eliminar',
+        message: 'Está seguro que desea eliminar la solicitud ?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        this.isLoadingTable = true;
+        await this.deleteQuestion(row.id);
+        this.showDialog = false;
+        this.isLoadingTable = false;
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
     },
     async getStatusQuestionLending(row) {
       showLoading('Consultando ...', 'Por favor, espere', true);
