@@ -10,6 +10,10 @@ export default {
     url: `${process.env.URL_API}/api/reddirections/get-current-by-user/${id}`,
     method: 'GET',
   }),
+  getByUserAndDate: ({ user, date }) => http({
+    url: `${process.env.URL_API}/api/reddirections/get-by-user-and-date/${user}/${date}`,
+    method: 'GET',
+  }),
   update: (data) => http({
     url: `${process.env.URL_API}/api/reddirections/${data.id}`,
     method: 'PUT',

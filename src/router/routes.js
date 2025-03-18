@@ -492,6 +492,18 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/report-time-collectors',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Reporte de tiempos de cobradores',
+        component: () => import('pages/ReportTimeCollectors.vue'),
+        meta: { permissions: ['reportTime.collectors'] },
+      },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
