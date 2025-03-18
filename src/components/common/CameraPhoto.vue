@@ -18,12 +18,12 @@
         <p v-else class="text-subtitle1 text-center">No se ha cargado archivo</p>
         <q-banner
           v-if="item && item.status == 'rechazado' && item.observation"
-          class="bg-red text-white q-ma-md">
+          class="bg-red text-white q-mx-auto q-mt-sm">
           {{ item.status }}: {{ item.observation }}
         </q-banner>
         <q-banner
           v-else-if="item && item.status == 'aprobado'"
-          class="bg-green text-white q-ma-md">
+          class="bg-green text-white q-mx-auto q-mt-sm">
           {{ item.status }}
         </q-banner>
         <template v-if="item && showApprove && type === 'read'">

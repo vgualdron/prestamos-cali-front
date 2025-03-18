@@ -300,7 +300,8 @@
                           modelId: reddirection.id
                         }"
                         type="read"
-                        :showApprove="false"
+                        :showApprove="reddirection.start_date != null"
+                        @updateStatus="updateStatusFile"
                       />
                     </q-item-label>
                   </template>
@@ -925,22 +926,17 @@ export default {
     async saveDate(field, value) {
       showLoading('Guardando ...', 'Por favor, espere', true);
       const item = { id: this.reddirection.id };
-      item[field] = value.value ? value.value : value;
+      item[field] = (value && value.value) ? value.value : value;
       await this.updateReddirection(item);
       await this.listNewsMounted();
       this.$q.loading.hide();
     },
-    async sendNotificationPush({ name, value }) {
-      const players = [this.item.collector_token];
-      const data = {
-        app_id: `${process.env.APP_ID_ONE_SIGNAL}`,
-        contents: { en: `Se ha ${value} el archivo ${name} de una visita` },
-        headings: { en: 'Haz click aquí y revisa' },
-        include_player_ids: players,
-        url: `${process.env.URL_FRONT}/visit-reds`,
-      };
-      await this.sendNotification(data);
-      this.listNewsMounted();
+    async updateStatusFile({ name, field, value }) {
+      if (name === 'FOTO_CASA_REDDIRECTION' && field === 'status') {
+        if (value === 'rechazado') {
+          this.saveDate('start_date', null);
+        }
+      }
     },
   },
 };

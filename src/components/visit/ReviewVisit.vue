@@ -390,6 +390,7 @@
                 modelId: id
               }"
               type="read"
+              :showApprove="item.visit_start_date !== null"
               @updateStatus="sendNotificationPush"
             />
           </div>
@@ -1059,12 +1060,17 @@ export default {
       const item = {
         id: this.item.id,
       };
-      item[field] = value.value ? value.value : value;
+      item[field] = (value && value.value) ? value.value : value;
       await this.completeDataNew(item);
       await this.getItem();
       this.$q.loading.hide();
     },
-    async sendNotificationPush({ name, value }) {
+    async sendNotificationPush({ name, value, field }) {
+      if (name === 'FOTO_CASA_CLIENTE' && field === 'status') {
+        if (value === 'rechazado') {
+          this.saveDateNew('visit_start_date', null);
+        }
+      }
       await this.getItem();
       const players = [this.item.userVisitToken];
       const data = {
