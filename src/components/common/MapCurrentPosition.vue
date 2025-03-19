@@ -44,27 +44,57 @@ export default {
         this.getLocation();
       }, 180000);
     },
-    getLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            // Almacenamos la latitud y longitud
-            this.location = {
-              lat: position.coords.latitude,
-              lon: position.coords.longitude,
-            };
-            this.updateLocation({ latitude: this.location.lat, longitude: this.location.lon });
-            this.initMap(this.location.lat, this.location.lon);
-            this.error = null; // Limpiar cualquier error
-          },
-          (err) => {
-            this.error = `Unable to retrieve location. Please allow access. ${err}`;
-            console.log(this.error);
-          },
-        );
-      } else {
-        this.error = 'Geolocation is not supported by this browser.';
-        console.log(this.error);
+    async getLocation() {
+      let error = '';
+      try {
+        if (!navigator.geolocation) {
+          error = 'Geolocation is not supported by this browser.';
+          return;
+        }
+
+        // Configuración de opciones para mejor precisión
+        const options = {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        };
+
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, options);
+        });
+
+        this.location = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+        };
+
+        this.updateLocation({ latitude: this.location.latitude, longitude: this.location.longitude });
+        this.initMap(this.location.latitude, this.location.longitude);
+
+        console.log('Ubicación obtenida con precisión de:', position.coords.accuracy, 'metros');
+      } catch (err) {
+        this.$q.loading.hide();
+        // Manejo detallado de errores
+        switch (err.code) {
+          case err.PERMISSION_DENIED:
+            error = 'Permiso de geolocalización denegado.';
+            break;
+          case err.POSITION_UNAVAILABLE:
+            error = 'Ubicación no disponible.';
+            break;
+          case err.TIMEOUT:
+            error = 'Tiempo de espera agotado.';
+            break;
+          default:
+            error = 'Error desconocido al obtener ubicación.';
+            break;
+        }
+        this.$q.notify({
+          type: 'negative',
+          message: error,
+        });
+        console.error('Error al obtener ubicación:', err);
       }
     },
     initMap(lat, lon) {

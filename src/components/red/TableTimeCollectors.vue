@@ -103,12 +103,23 @@
           <q-td :props="props" class="text-wrap" key="description_ref">
             {{ props.row.description_ref }}
           </q-td>
+          <q-td :props="props" class="text-wrap" key="nameDebtor">
+            {{ props.row.nameDebtor }}
+          </q-td>
           <q-td :props="props" class="text-wrap" key="solution">
             {{ props.row.solution }}
           </q-td>
           <q-td :props="props" class="text-wrap" key="observation">
             {{ props.row.observation }}
           </q-td>
+        </q-tr>
+      </template>
+      <template v-slot:bottom-row>
+        <q-tr class="bg-blue-2 text-primary">
+          <q-td class="text-center" colspan="3"><strong>Total {{ formatMinutesToHours(totalTimeVisit + totalTimeDisplacement) }}</strong></q-td>
+          <q-td class="text-center"><strong>{{ formatMinutesToHours(totalTimeVisit) }}</strong></q-td>
+          <q-td class="text-center"><strong>{{ formatMinutesToHours(totalTimeDisplacement) }}</strong></q-td>
+          <q-td colspan="7"></q-td>
         </q-tr>
       </template>
     </q-table>
@@ -192,6 +203,14 @@ export default {
           align: 'center',
           label: 'Referencia',
           field: 'description_ref',
+          style: 'max-width: 200px',
+          visible: true,
+        },
+        {
+          name: 'nameDebtor',
+          align: 'center',
+          label: 'Cliente',
+          field: 'nameDebtor',
           style: 'max-width: 200px',
           visible: true,
         },
@@ -307,6 +326,12 @@ export default {
     title() {
       return `${this.dataTable.length} visitas`;
     },
+    totalTimeVisit() {
+      return this.dataTable.reduce((sum, row) => sum + (row.time_visit || 0), 0);
+    },
+    totalTimeDisplacement() {
+      return this.dataTable.reduce((sum, row) => sum + (row.displacement || 0), 0);
+    },
   },
   beforeDestroy() {
     clearInterval(this.polling);
@@ -325,6 +350,11 @@ export default {
       updateReddirection: reddirectionTypes.actions.UPDATE_REDDIRECTION,
       deleteReddirection: reddirectionTypes.actions.DELETE_REDDIRECTION,
     }),
+    formatMinutesToHours(minutes) {
+      const hours = Math.floor(minutes / 60);
+      const mins = minutes % 60;
+      return `${hours}h ${mins}m`;
+    },
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
     },
