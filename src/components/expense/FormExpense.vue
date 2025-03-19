@@ -19,6 +19,7 @@
               :rules="[(val) => (!!val) || '']"
               hide-bottom-space
               autocomplete="off"
+              :disabled="true"
             />
             <q-select
               v-model="area_id"

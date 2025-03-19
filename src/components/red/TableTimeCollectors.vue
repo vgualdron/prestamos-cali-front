@@ -17,7 +17,22 @@
       </div>
     </div>
     <div class="row q-mt-md">
-      <div class="col-12 text-center">
+      <div class="col-2 text-center">
+        <q-input
+          outlined
+          v-model.trim="date"
+          label="Fecha *"
+          lazy-rules
+          type="date"
+          :min="minDate"
+          :rules="[(val) => (!!val) || '']"
+          hide-bottom-space
+          autocomplete="off"
+          :disabled="false"
+          dense
+        />
+      </div>
+      <div class="col-8 text-center">
         <b>Cobrador:</b>
         <q-radio
           v-for="user in optionsUsers"
@@ -28,6 +43,8 @@
           :key="user.value"
           class="q-ml-lg">
         </q-radio>
+      </div>
+      <div class="col-2 text-center">
         <q-btn
           round
           icon="refresh"
@@ -241,6 +258,8 @@ export default {
       polling: null,
       sectorSelected: 0,
       userSelected: 0,
+      date: Moment().format('YYYY-MM-DD'),
+      minDate: '2025-03-18',
     };
   },
   props: {
@@ -461,7 +480,7 @@ export default {
       return Moment(date).format('DD/MM/YYYY hh:mm A');
     },
     async listMounted() {
-      await this.getByUserAndDate({ user: this.userSelected, date: new Moment(new Date()).format('YYYY-MM-DD') });
+      await this.getByUserAndDate({ user: this.userSelected, date: this.date });
       if (this.status === false) {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
         this.data = [];
