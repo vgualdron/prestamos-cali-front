@@ -13,6 +13,10 @@ export default {
     url: `${process.env.URL_API}/api/diary/list-visits-review/${data.date}`,
     method: 'GET',
   }),
+  getByUserAndDate: ({ user, date }) => http({
+    url: `${process.env.URL_API}/api/diary/get-by-user-and-date/${user}/${date}`,
+    method: 'GET',
+  }),
   getStatusCases: (data) => http({
     url: `${process.env.URL_API}/api/diary/get-status-cases/${data.id}`,
     method: 'GET',

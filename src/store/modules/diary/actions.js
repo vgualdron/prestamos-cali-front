@@ -60,6 +60,25 @@ export default {
       }
     }
   },
+  async [types.actions.GET_BY_USER_AND_DATE]({ commit }, payload) {
+    try {
+      const response = await diaryApi.getByUserAndDate(payload);
+      commit(types.mutations.SET_STATUS, true);
+      commit(types.mutations.SET_DIARIES, response.data.data);
+    } catch (error) {
+      commit(types.mutations.SET_STATUS, false);
+      if (error.message !== 'Network Error') {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
+      } else {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, [
+          {
+            text: 'Error de red',
+            detail: 'Intente conectarse a otra red de internet',
+          },
+        ]);
+      }
+    }
+  },
   async [types.actions.GET_STATUS_CASES]({ commit }, payload) {
     try {
       const response = await diaryApi.getStatusCases(payload);

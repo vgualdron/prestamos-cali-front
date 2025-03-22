@@ -504,6 +504,18 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/report-time-advisors',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Reporte de tiempos de asesores',
+        component: () => import('pages/ReportTimeAdvisors.vue'),
+        meta: { permissions: ['reportTime.advisors'] },
+      },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

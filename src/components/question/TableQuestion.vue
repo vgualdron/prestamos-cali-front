@@ -272,7 +272,6 @@ export default {
         });
       }
       if (data.type === 'nuevo-antiguo' && data.status !== 'rechazado') {
-        console.log(data);
         const obj = JSON.parse(data.json);
         await this.renewOldLending({
           ...obj,
