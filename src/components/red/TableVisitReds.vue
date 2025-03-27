@@ -189,7 +189,7 @@
               <q-item>
                 <q-item-section>
                   <q-btn
-                    :disabled="props.row.file2_id"
+                    :disabled="false"
                     class="q-mt-sm"
                     label="Foto de la casa"
                     color="primary"
@@ -213,7 +213,7 @@
                     class="q-mt-sm"
                     label="Agregar aviso"
                     color="black"
-                    :disabled="!props.row.file_id || props.row.file2_id"
+                    :disabled="false"
                     @click="openModal('warning', props.row)"
                   ></q-btn>
                   <q-btn
