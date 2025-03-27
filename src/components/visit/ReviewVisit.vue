@@ -390,7 +390,7 @@
                 modelId: id
               }"
               type="read"
-              :showApprove="item.visit_start_date !== null"
+              :showApprove="true"
               @updateStatus="sendNotificationPush"
             />
           </div>
