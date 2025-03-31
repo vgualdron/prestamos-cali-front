@@ -111,6 +111,23 @@ export default {
           visible: true,
         },
         {
+          name: 'salary',
+          align: 'left',
+          label: 'Sueldo',
+          field: (row) => row.salary,
+          format: (val) => this.formatPrice(val),
+          sortable: true,
+          visible: true,
+        },
+        {
+          name: 'period',
+          align: 'left',
+          label: 'Periodo',
+          field: 'period',
+          sortable: true,
+          visible: true,
+        },
+        {
           name: 'status',
           align: 'left',
           label: 'Estado',
@@ -207,6 +224,14 @@ export default {
       listUsers: userTypes.actions.LIST_USERS,
       getUser: userTypes.actions.GET_USER,
     }),
+    formatPrice(val) {
+      return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(val);
+    },
     openInGoogleMaps(lat, lon) {
       const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
       window.open(googleMapsUrl, '_blank');

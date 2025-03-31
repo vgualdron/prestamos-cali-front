@@ -34,6 +34,7 @@
               :rules="rules.documentNumber"
               :disable="disableInputs || !user.editable"
               hide-bottom-space
+              dense
             />
             <q-input
               outlined
@@ -43,6 +44,7 @@
               :rules="rules.name"
               :disable="disableInputs || !user.editable"
               hide-bottom-space
+              dense
             />
             <q-input
               outlined
@@ -52,6 +54,7 @@
               :rules="rules.phone"
               :disable="disableInputs || !user.editable"
               hide-bottom-space
+              dense
             />
             <q-select
               v-model="user.yard"
@@ -71,6 +74,7 @@
               hide-bottom-space
               map-options
               emit-value
+              dense
             >
               <template v-slot:no-option>
                 <q-item>
@@ -97,6 +101,7 @@
               hide-bottom-space
               map-options
               emit-value
+              dense
             >
               <template v-slot:no-option>
                 <q-item>
@@ -106,6 +111,54 @@
                 </q-item>
               </template>
             </q-select>
+            <q-input
+              outlined
+              v-model.trim="user.salary"
+              label="Sueldo *"
+              lazy-rules
+              :rules="rules.salary"
+              :disable="disableInputs || !user.editable"
+              hide-bottom-space
+              dense
+              type="number"
+            />
+            <q-select
+              v-model="user.period"
+              class="q-mt-md"
+              outlined
+              input-debounce="0"
+              label="Opción *"
+              :disable="disableInputs || !user.editable"
+              :options="[
+                {
+                  id: 'semanal',
+                  name: 'semanal',
+                },
+                {
+                  id: 'quincenal',
+                  name: 'quincenal',
+                }
+              ]"
+              option-label="name"
+              option-value="id"
+              lazy-rules
+              hide-bottom-space
+              map-options
+              emit-value
+              dense
+            >
+            </q-select>
+            <q-input
+              outlined
+              v-model.trim="user.date_contract"
+              label="Fecha de contrato *"
+              lazy-rules
+              :rules="rules.date_contract"
+              :disable="disableInputs || !user.editable"
+              hide-bottom-space
+              type="date"
+              dense
+            />
             <q-checkbox
               v-if="modal.type==='E'"
               left-label
@@ -127,6 +180,7 @@
                   :disable="disableInputs || !user.editable"
                   :rules="rules.password"
                   autocomplete="new-password"
+                  dense
                 />
               </div>
               <div class="col-12 col-md q-pt-sm-md q-pt-xs-md q-pt-md-none q-pl -md-xs">
@@ -139,6 +193,7 @@
                   hide-bottom-space
                   :disable="disableInputs || !user.editable"
                   :rules="rules.confirmPassword"
+                  dense
                 />
               </div>
             </div>
@@ -198,6 +253,7 @@
   </div>
 </template>
 <script>
+import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import userTypes from '../../store/modules/user/types';
 import yardTypes from '../../store/modules/yard/types';
@@ -224,6 +280,9 @@ export default {
         yard: null,
         area: null,
         active: false,
+        salary: 0,
+        period: 'quincenal',
+        date_contract: '',
         password: '',
         confirmPassword: '',
         roles: [],
@@ -252,6 +311,12 @@ export default {
         ],
         area: [
           (val) => (!!val) || 'La area es requerida',
+        ],
+        salary: [
+          (val) => (val.length > 0) || 'El sueldo es requerido',
+        ],
+        date_contract: [
+          (val) => (!!val) || 'La fecha de contrato es requerida',
         ],
         password: [
           (val) => (!val || val.length >= 5) || 'La contraseña debe tener un mínimo de 5 caracteres',
@@ -348,6 +413,9 @@ export default {
         this.user.area = null;
         this.user.active = true;
         this.user.changeYard = false;
+        this.user.period = 'quincenal';
+        this.user.salary = 0;
+        this.user.date_contract = moment().format('YYYY-MM-DD');
         this.user.password = '';
         this.user.confirmPassword = '';
         this.user.roles = [];
@@ -361,11 +429,16 @@ export default {
     async showModal(id, user, type) {
       await Promise.all([this.listRoles(), this.listAreas(), this.listYards({ id: (id !== null ? user.yard : 0), displayAll: 0 })]);
       if (this.roleStatus === true && this.yardStatus === true) {
+        const date_contract = id !== null ? moment(user.date_contract).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
+        console.log(date_contract);
         this.user.id = id !== null ? id : null;
         this.user.documentNumber = id !== null ? user.documentNumber : '';
         this.user.name = id !== null ? user.name : '';
         this.user.phone = id !== null ? user.phone : '';
         this.user.yard = id !== null ? user.yard : null;
+        this.user.period = id !== null ? user.period : 'quincenal';
+        this.user.salary = id !== null ? user.salary : 0;
+        this.user.date_contract = date_contract;
         this.user.area = id !== null ? user.area : null;
         this.user.active = id !== null ? (user.active === 1) : true;
         this.user.editable = id !== null ? (user.editable === 1) : true;
