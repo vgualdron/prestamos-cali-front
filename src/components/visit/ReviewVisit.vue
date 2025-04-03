@@ -1040,7 +1040,6 @@ export default {
       await this.getNew(id);
     },
     async saveVoucher(data) {
-      console.log(data);
       if (data.field === 'status') {
         await this.saveDateNew('status', 'consignado');
         await this.addLending({
