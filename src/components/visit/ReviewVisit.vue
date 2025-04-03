@@ -1039,21 +1039,24 @@ export default {
       const { id } = this.$route.params;
       await this.getNew(id);
     },
-    async saveVoucher() {
-      await this.saveDateNew('status', 'consignado');
-      await this.addLending({
-        nameDebtor: this.item.name,
-        address: this.item.address,
-        phone: this.item.phone,
-        amount: this.item.quantity,
-        percentage: 32,
-        period: this.item.period,
-        status: 'open',
-        new_id: this.item.id,
-        type: 'N',
-        user_send: this.item.userSend,
-        city: this.item.city,
-      });
+    async saveVoucher(data) {
+      console.log(data);
+      if (data.field === 'status') {
+        await this.saveDateNew('status', 'consignado');
+        await this.addLending({
+          nameDebtor: this.item.name,
+          address: this.item.address,
+          phone: this.item.phone,
+          amount: this.item.quantity,
+          percentage: 32,
+          period: this.item.period,
+          status: 'open',
+          new_id: this.item.id,
+          type: 'N',
+          user_send: this.item.userSend,
+          city: this.item.city,
+        });
+      }
     },
     async saveDateNew(field, value) {
       showLoading('Guardando ...', 'Por favor, espere', true);

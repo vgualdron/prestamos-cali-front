@@ -432,10 +432,7 @@ export default {
       this.item[field] = value.value ? value.value : value;
       await this.updateFile(this.item);
       if (this.responseMessages && this.status) {
-        console.log({ name, field, value });
-        if (field === 'status') {
-          this.$emit('updateStatus', { name, field, value });
-        }
+        this.$emit('updateStatus', { name, field, value });
         await this.fetchFile();
       }
     },
