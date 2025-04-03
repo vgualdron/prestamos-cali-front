@@ -14,12 +14,13 @@
               outlined
               v-model.trim="date"
               label="Fecha *"
-              lazy-rules
+              reactive-rules
               type="datetime-local"
               :rules="[(val) => (!!val) || '']"
               hide-bottom-space
               autocomplete="off"
-              :disabled="true"
+              :disable="true"
+              dense
             />
             <q-select
               v-model="area_id"
@@ -30,7 +31,7 @@
               :options="optionsAreas"
               option-label="name"
               option-value="id"
-              lazy-rules
+              reactive-rules
               :rules="[
                 (val) => (!!val) || 'El campo es requerido',
               ]"
@@ -39,6 +40,7 @@
               emit-value
               autocomplete="off"
               @input="changeArea"
+              dense
             >
               <template v-slot:no-option>
                 <q-item>
@@ -57,7 +59,7 @@
               :options="optionsItems"
               option-label="name"
               option-value="id"
-              lazy-rules
+              reactive-rules
               :rules="[
                 (val) => (!!val) || 'El campo es requerido',
               ]"
@@ -66,6 +68,7 @@
               emit-value
               autocomplete="off"
               @input="changeItem"
+              dense
             >
               <template v-slot:no-option>
                 <q-item>
@@ -84,12 +87,13 @@
               :options="optionsUsers"
               option-label="name"
               option-value="id"
-              lazy-rules
+              reactive-rules
               :rules="[]"
               hide-bottom-space
               map-options
               emit-value
               autocomplete="off"
+              dense
             >
               <template v-slot:no-option>
                 <q-item>
@@ -103,16 +107,29 @@
               outlined
               v-model="amount"
               label="Valor *"
-              lazy-rules
+              reactive-rules
               :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
               :hint="formattedPrice(amount)"
-              type="number"/>
+              type="number"
+              dense/>
+            <q-input
+              v-if="[3, 6, 10, 15].includes(item_id)"
+              outlined
+              v-model="fee"
+              label="Valor de los cuotas *"
+              reactive-rules
+              class="q-mt-none"
+              :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
+              :hint="formattedPrice(fee)"
+              type="number"
+              dense />
             <q-input
               outlined
               v-model="description"
               label="Descripción"
-              lazy-rules
-              type="text"/>
+              reactive-rules
+              type="text"
+              dense/>
             <q-separator />
             <div class="row text-center">
               <q-btn label="cancelar" type="reset" color="primary" :disable="isLoading"
@@ -152,6 +169,7 @@ export default {
       },
       date: moment().format('YYYY-MM-DD HH:mm'),
       amount: null,
+      fee: null,
       status: 'borrador',
       area_id: null,
       item_id: null,
@@ -258,6 +276,7 @@ export default {
       await this.addExpense({
         date: this.date,
         amount: this.amount,
+        fee: this.fee,
         status: this.status,
         description: this.description,
         user_id: this.user_id,
