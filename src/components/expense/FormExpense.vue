@@ -113,17 +113,6 @@
               type="number"
               dense/>
             <q-input
-              v-if="[3, 6, 10, 15].includes(item_id)"
-              outlined
-              v-model="fee"
-              label="Valor de los cuotas *"
-              reactive-rules
-              class="q-mt-none"
-              :rules="[val => val && val.length > 0 || 'Este campo es obligatorio']"
-              :hint="formattedPrice(fee)"
-              type="number"
-              dense />
-            <q-input
               outlined
               v-model="description"
               label="Descripción"
@@ -169,7 +158,6 @@ export default {
       },
       date: moment().format('YYYY-MM-DD HH:mm'),
       amount: null,
-      fee: null,
       status: 'borrador',
       area_id: null,
       item_id: null,
@@ -276,7 +264,6 @@ export default {
       await this.addExpense({
         date: this.date,
         amount: this.amount,
-        fee: this.fee,
         status: this.status,
         description: this.description,
         user_id: this.user_id,
