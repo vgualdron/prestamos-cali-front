@@ -47,6 +47,9 @@
                   <div class="text-subtitle2 text-wrap">
                     <q-icon size="xs" name="edit" v-if="task.status === 'creado' && hasPermission('task.edit')" />
                     Prioridad: {{ task.priority }}
+                    <div v-if="task.status === 'iniciado'">
+                      Para finalizar: {{ formatDate(task.end_date) }}
+                    </div>
                     <q-popup-edit
                       v-show="task.status === 'creado' && hasPermission('task.edit')"
                       :value="task.priority"
