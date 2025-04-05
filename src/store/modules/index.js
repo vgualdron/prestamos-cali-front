@@ -26,6 +26,8 @@ import reddirection, { name as reddirectionName } from './reddirection';
 import discount, { name as discountName } from './discount';
 import workplan, { name as workplanName } from './workplan';
 import task, { name as taskName } from './task';
+import loan, { name as loanName } from './loan';
+import deposit, { name as depositName } from './deposit';
 
 export default {
   [homeName]: home,
@@ -56,4 +58,6 @@ export default {
   [discountName]: discount,
   [workplanName]: workplan,
   [taskName]: task,
+  [loanName]: loan,
+  [depositName]: deposit,
 };

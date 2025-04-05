@@ -516,6 +516,30 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/loan',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Prestamos de empleados',
+        component: () => import('pages/Loan.vue'),
+        meta: { permissions: ['loan.list'] },
+      },
+    ],
+  },
+  {
+    path: '/deposit',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Abonos de prestamos',
+        component: () => import('pages/Deposit.vue'),
+        meta: { permissions: ['deposit.list'] },
+      },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
