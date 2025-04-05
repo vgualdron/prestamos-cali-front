@@ -230,7 +230,6 @@ export default {
     ...mapActions(depositTypes.PATH, {
       listDeposits: depositTypes.actions.LIST_DEPOSITS,
       updateDeposit: depositTypes.actions.UPDATE_DEPOSIT,
-      deleteDeposit: depositTypes.actions.DELETE_DEPOSIT,
     }),
     ...mapActions(notificationTypes.PATH, {
       sendNotification: notificationTypes.actions.SEND_NOTIFICATION,

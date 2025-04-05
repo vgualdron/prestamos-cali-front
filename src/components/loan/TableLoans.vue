@@ -51,20 +51,19 @@
               size="sm"
               @click="addDeposit(props.row)">
             </q-btn>
-            <br>
             <q-btn
               v-if="props.row.remaining == 0"
               label="Cerrar"
-              class="q-mt-none"
+              class="q-mt-none block"
               color="orange"
               title="Click para cerrar el prestamo"
               size="sm"
               @click="changeStatus(props.row)">
             </q-btn>
-            <br>
             <q-btn
               v-if="props.row.deposits && props.row.deposits.length > 0"
               size="sm"
+              class="block"
               :color="props.row.images && props.row.images.length > 0 ? 'primary' : 'grey'"
               @click="props.expand = !props.expand"
               :label="props.expand ? 'Ocultar pagos' : 'Ver pagos'"
@@ -125,7 +124,6 @@
                   <div class="col">
                     <div class="text-h6">{{ formatPrice(deposit.amount) }}</div>
                     <div class="text-subtitle2">
-                      Fecha:
                       <q-badge color="black">
                         {{ formatDateHour(deposit.date_transaction) }}
                       </q-badge><br>
@@ -139,7 +137,7 @@
                   </div>
                 </div>
                 <q-card-actions align="right" v-if="deposit.status == 'rechazado'">
-                  <q-btn outline color="red" size="sm">
+                  <q-btn outline color="red" size="sm" @click="removeDeposit(deposit)">
                     Eliminar pago
                   </q-btn>
                 </q-card-actions>
@@ -162,6 +160,7 @@ import { mapState, mapActions } from 'vuex';
 import Moment from 'moment';
 import ModalAddDeposit from 'components/loan/ModalAddDeposit.vue';
 import loanTypes from '../../store/modules/loan/types';
+import depositTypes from '../../store/modules/deposit/types';
 import notificationTypes from '../../store/modules/notification/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
@@ -272,6 +271,10 @@ export default {
       'status',
       'loan',
     ]),
+    ...mapState(depositTypes.PATH, {
+      responseMessagesDeposit: 'responseMessages',
+      statusDeposit: 'status',
+    }),
     dataTable() {
       const data = this.loans.map((element) => ({
         ...element,
@@ -288,6 +291,9 @@ export default {
       listLoans: loanTypes.actions.LIST_LOANS,
       updateLoan: loanTypes.actions.UPDATE_LOAN,
       deleteLoans: loanTypes.actions.DELETE_LOAN,
+    }),
+    ...mapActions(depositTypes.PATH, {
+      deleteDeposit: depositTypes.actions.DELETE_DEPOSIT,
     }),
     ...mapActions(notificationTypes.PATH, {
       sendNotification: notificationTypes.actions.SEND_NOTIFICATION,
@@ -369,6 +375,34 @@ export default {
         });
 
         if (this.status === true) {
+          await this.listMounted();
+        }
+        this.$q.loading.hide();
+        this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      });
+    },
+    async removeDeposit(obj) {
+      this.$q.dialog({
+        title: 'Eliminar pago',
+        message: 'Está seguro que desea eliminar el pago?',
+        ok: {
+          push: true,
+        },
+        cancel: {
+          push: true,
+          color: 'negative',
+          text: 'adsa',
+        },
+        persistent: true,
+      }).onOk(async () => {
+        this.obj = obj;
+        showLoading('Guardando ...', 'Por favor, espere', true);
+        await this.deleteDeposit(obj.id);
+        if (this.statusDeposit === true) {
           await this.listMounted();
         }
         this.$q.loading.hide();
