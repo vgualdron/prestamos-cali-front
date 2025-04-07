@@ -132,7 +132,7 @@
                       </q-badge>
                     </div>
                     <img
-                      :src="formatLink(props.row.file_id)"
+                      :src="formatLink(deposit.file.url)"
                       width="220rem" />
                   </div>
                 </div>
@@ -330,7 +330,7 @@ export default {
     async pollData() {
       this.polling = setInterval(async () => {
         await this.listMounted();
-      }, 60000);
+      }, 180000);
     },
     async listMounted() {
       showLoading('Cargando ...', 'Por favor, espere', true);
