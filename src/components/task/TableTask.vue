@@ -48,7 +48,7 @@
                     <q-icon size="xs" name="edit" v-if="task.status === 'creado' && hasPermission('task.edit')" />
                     Prioridad: {{ task.priority }}
                     <div v-if="task.status === 'iniciado'">
-                      Para finalizar: {{ formatDate(task.end_date) }}
+                      Para finalizar: {{ formatDateHour(task.end_date) }}
                     </div>
                     <q-popup-edit
                       v-show="task.status === 'creado' && hasPermission('task.edit')"
@@ -256,6 +256,9 @@ export default {
     },
     formatDate(date) {
       return moment(date).format('DD/MM/YYYY');
+    },
+    formatDateHour(date) {
+      return moment(date).format('DD/MM/YYYY hh:mm A');
     },
     setItem(row) {
       this.itemSelected = {
