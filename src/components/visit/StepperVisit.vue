@@ -1034,6 +1034,7 @@ import { showNotifications } from '../../helpers/showNotifications';
 import newTypes from '../../store/modules/new/types';
 import notificationTypes from '../../store/modules/notification/types';
 import userTypes from '../../store/modules/user/types';
+import diaryTypes from '../../store/modules/diary/types';
 import { showLoading } from '../../helpers/showLoading';
 
 export default {
@@ -1091,6 +1092,9 @@ export default {
     }),
     ...mapActions(userTypes.PATH, {
       listUsersByNameRole: userTypes.actions.LIST_USERS_BY_NAME_ROLE,
+    }),
+    ...mapActions(diaryTypes.PATH, {
+      completeDataDiary: diaryTypes.actions.COMPLETE_DATA_DIARY,
     }),
     showNotification(messages, status, align, timeout) {
       showNotifications(messages, status, align, timeout);
@@ -1156,6 +1160,10 @@ export default {
       }
     },
     async sendNotificationPush({ name }) {
+      await this.completeDataDiary({
+        id: this.item.id,
+        status: 'visitando',
+      });
       await this.listUsersReviews();
       const players = this.users.map((user) => user.pushToken);
       const data = {
