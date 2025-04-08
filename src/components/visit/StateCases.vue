@@ -19,9 +19,13 @@
             <b v-if="type === 'review'">
               {{ item.userSendName }}
             </b>
-            <br>Estado:
+            <br>Estado cliente:
             <q-badge :color="getColorStatus(item)">
               {{ item.status }}
+            </q-badge>
+            <br>Estado visita:
+            <q-badge :color="getColorStatus(item)">
+              {{ item.diary_status }}
             </q-badge>
             <br>Fecha inicio:
             <q-badge color="black">

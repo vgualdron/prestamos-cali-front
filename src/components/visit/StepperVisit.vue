@@ -1161,7 +1161,7 @@ export default {
     },
     async sendNotificationPush({ name }) {
       await this.completeDataDiary({
-        id: this.item.id,
+        id: this.item.diary_id,
         status: 'visitando',
       });
       await this.listUsersReviews();
