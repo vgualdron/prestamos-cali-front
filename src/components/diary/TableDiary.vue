@@ -31,6 +31,25 @@
                     <q-btn
                       v-if="item.status === 'agendado' && isDateAllowed(item.date)"
                       class="q-mb-xs"
+                      color="orange"
+                      size="md"
+                      @click="itemSelected = { ...item }"
+                    >
+                      {{ item.priority }}
+                      <q-popup-edit
+                        :value="item.priority"
+                        v-slot="scope"
+                        @input="val => editDiary('priority', val)"
+                        type="date"
+                        buttons>
+                        <q-input v-model="scope.value" type="number" dense autofocus />
+                      </q-popup-edit>
+                    </q-btn>
+                  </div>
+                  <div v-if="type !== 'visitor'" class="text-subtitle2 wrap-text">
+                    <q-btn
+                      v-if="item.status === 'agendado' && isDateAllowed(item.date)"
+                      class="q-mb-xs"
                       color="black"
                       icon="edit_calendar"
                       size="sm"
@@ -53,25 +72,6 @@
                       </q-popup-edit>
                     </q-btn>
                     {{ formatDate(item.date) }}
-                  </div>
-                  <div v-if="type !== 'visitor'" class="text-subtitle2 wrap-text">
-                    <q-btn
-                      v-if="item.status === 'agendado' && isDateAllowed(item.date)"
-                      class="q-mb-xs"
-                      color="orange"
-                      size="md"
-                      @click="itemSelected = { ...item }"
-                    >
-                      {{ item.priority }}
-                      <q-popup-edit
-                        :value="item.priority"
-                        v-slot="scope"
-                        @input="val => editDiary('priority', val)"
-                        type="date"
-                        buttons>
-                        <q-input v-model="scope.value" type="number" dense autofocus />
-                      </q-popup-edit>
-                    </q-btn>
                   </div>
                   <div v-if="type !== 'visitor'" class="text-subtitle2 wrap-text">
                     <q-btn
