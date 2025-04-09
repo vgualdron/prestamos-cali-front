@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md">
+    {{ onlyOneItem }}
     <q-markup-table
       class="markup-table q-mt-none"
       separator="cell"
@@ -19,7 +20,7 @@
         <tr>
           <td v-for="(el, i) in elements" :key="`td_${el.date}_${i}`" class="text-center">
             <p v-for="(item, j) in el.items" :key="`item_${item.date}_${j}`" class="text-center">
-              <q-card :class="{ 'glowing-border' : item.id === onlyOneItem.id }">
+              <q-card>
                 <q-card-section class="bg-teal-2 text-black q-pa-none">
                   <div class="text-subtitle1 text-bold wrap-text">
                     {{ item.new_name }}
