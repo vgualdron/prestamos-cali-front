@@ -19,7 +19,7 @@
         <tr>
           <td v-for="(el, i) in elements" :key="`td_${el.date}_${i}`" class="text-center">
             <p v-for="(item, j) in el.items" :key="`item_${item.date}_${j}`" class="text-center">
-              <q-card class="my-card">
+              <q-card :class="{ 'glowing-border' : item.id === onlyOneItem.id }">
                 <q-card-section class="bg-teal-2 text-black q-pa-none">
                   <div class="text-subtitle1 text-bold wrap-text">
                     {{ item.new_name }}
@@ -53,6 +53,25 @@
                       </q-popup-edit>
                     </q-btn>
                     {{ formatDate(item.date) }}
+                  </div>
+                  <div v-if="type !== 'visitor'" class="text-subtitle2 wrap-text">
+                    <q-btn
+                      v-if="item.status === 'agendado' && isDateAllowed(item.date)"
+                      class="q-mb-xs"
+                      color="orange"
+                      size="md"
+                      @click="itemSelected = { ...item }"
+                    >
+                      {{ item.priority }}
+                      <q-popup-edit
+                        :value="item.priority"
+                        v-slot="scope"
+                        @input="val => editDiary('priority', val)"
+                        type="date"
+                        buttons>
+                        <q-input v-model="scope.value" type="number" dense autofocus />
+                      </q-popup-edit>
+                    </q-btn>
                   </div>
                   <div v-if="type !== 'visitor'" class="text-subtitle2 wrap-text">
                     <q-btn
@@ -122,7 +141,7 @@
                 </q-card-section>
                 <q-separator />
                 <q-card-actions>
-                  <q-btn flat round icon="event" />
+                  <q-icon name="event" size="sm" class="q-mr-sm"/>
                   <span outline>
                     <b v-if="item.visit_start_date">
                       {{ formatHour(item.visit_start_date) }} - {{ formatDate(item.visit_start_date) }}
@@ -214,7 +233,21 @@ export default {
         date,
         items,
       }));
+      groupedByDate.sort((a, b) => new Date(a.date) - new Date(b.date));
       return groupedByDate;
+    },
+    onlyOneItem() {
+      const today = new Date().toISOString().slice(0, 10);
+
+      const items = this.elements.filter((obj) => obj.date === today).flatMap((obj) => obj.items);
+
+      console.log(items);
+      const visiting = items.find((item) => item.status === 'visitando');
+      if (visiting) {
+        return visiting;
+      }
+      const scheduled = items.find((item) => item.status === 'agendado');
+      return scheduled;
     },
   },
   methods: {
@@ -233,6 +266,7 @@ export default {
         new_id: this.itemSelected.new_id,
         date: this.itemSelected.date,
         status: this.itemSelected.status,
+        priority: this.itemSelected.priority,
       };
 
       data[field] = value.value ? value.value : value;
@@ -316,5 +350,9 @@ export default {
   }
   .markup-table td {
     border: solid 1px black;
+  }
+  .glowing-border {
+    border: 5px solid #00ff00;
+    box-shadow: 0 0 15px #00ff00;
   }
 </style>

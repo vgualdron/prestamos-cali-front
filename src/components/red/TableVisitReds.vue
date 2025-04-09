@@ -333,7 +333,6 @@ export default {
   data() {
     return {
       typeDiary: 'readwrite',
-      showModalDiary: false,
       obj: {},
       type: 'C',
       route: '/review',

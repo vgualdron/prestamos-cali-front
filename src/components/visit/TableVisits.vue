@@ -310,6 +310,7 @@ export default {
         new_id: this.itemSelected.new_id,
         date: this.itemSelected.date,
         status: this.itemSelected.status,
+        priority: this.itemSelected.priority,
       };
 
       data[field] = value.value ? value.value : value;

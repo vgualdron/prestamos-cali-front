@@ -232,7 +232,6 @@ export default {
   },
   data() {
     return {
-      showModalDiary: false,
       obj: {},
       type: 'C',
       route: '/review',
