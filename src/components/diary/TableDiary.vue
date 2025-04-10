@@ -20,7 +20,7 @@
         <tr>
           <td v-for="(el, i) in elements" :key="`td_${el.date}_${i}`" class="text-center">
             <p v-for="(item, j) in el.items" :key="`item_${item.date}_${j}`" class="text-center">
-              <q-card>
+              <q-card :class="{ 'glowing-border' : onlyOneItem && onlyOneItem.id === item.id }">
                 <q-card-section class="bg-teal-2 text-black q-pa-none">
                   <div class="text-subtitle1 text-bold wrap-text">
                     {{ item.new_name }}

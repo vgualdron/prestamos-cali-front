@@ -54,7 +54,7 @@
                   icon="check"
                   class="q-ml-md"
                   color="green"
-                  title="Click para revisar la cartulina"
+                  title="Click para aprobar al nuevo"
                   @click="completeNew(props.row)">
                 </q-btn>
               </q-td>

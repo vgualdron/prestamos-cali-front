@@ -39,17 +39,15 @@
     >
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
-          <div>
-            <q-btn
-              color="primary"
-              field="edit"
-              label="Revisar"
-              size="sm"
-              :disabled="!validatedPermissions.review.status"
-              :title="validatedPermissions.review.title"
-              @click="showVisit(props.row)"
-            />
-          </div>
+          <q-btn
+            color="primary"
+            field="edit"
+            label="Revisar"
+            size="sm"
+            :disabled="!validatedPermissions.review.status"
+            :title="validatedPermissions.review.title"
+            @click="showVisit(props.row)"
+          />
         </q-td>
       </template>
       <template v-slot:body-cell-date="props">
@@ -82,6 +80,11 @@
       <template v-slot:body-cell-new_name="props">
         <q-td class="wrap-text" :props="props">
           {{ props.row.new_name }}
+        </q-td>
+      </template>
+      <template v-slot:body-cell-new_observation="props">
+        <q-td class="wrap-text" :props="props">
+          {{ props.row.new_observation }}
         </q-td>
       </template>
       <template v-slot:body-cell-address_house="props">
@@ -156,7 +159,16 @@ export default {
           field: 'new_name',
           sortable: true,
           visible: true,
-          style: 'width: 300px',
+          style: 'width: 200px',
+        },
+        {
+          name: 'new_observation',
+          align: 'left',
+          label: 'Observación',
+          field: 'new_observation',
+          sortable: true,
+          visible: true,
+          style: 'width: 200px',
         },
         {
           name: 'site_visit',
