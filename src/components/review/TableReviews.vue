@@ -650,7 +650,15 @@ export default {
       return !row.address_house || !row.site_visit;
     },
     async listNewsMounted() {
-      await this.listNews(this.tab === 'one' ? ['creado'] : ['pendiente']);
+      let estados = [];
+      if (this.tab === 'one') {
+        estados = ['creado'];
+      } else if (this.tab === 'two') {
+        estados = ['pendiente'];
+      } else {
+        estados = ['minimo'];
+      }
+      await this.listNews(estados);
       if (this.status === false) {
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
         this.data = [];

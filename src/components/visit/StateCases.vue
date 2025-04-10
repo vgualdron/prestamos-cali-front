@@ -95,6 +95,15 @@
       :disable="!novel_observation || novel_observation.length < 5"
       @click="approve('pendiente')">
     </q-btn>
+    <q-btn
+      v-if="type === 'review' && (item.status == 'visitando' || item.status == 'agendado')"
+      label="FALTA MÍNIMO"
+      class="q-ml-sm q-mt-xs text-center"
+      color="blue"
+      size="md"
+      :disable="!novel_observation || novel_observation.length < 5"
+      @click="approve('minimo')">
+    </q-btn>
   </div>
 </template>
 <script>
@@ -226,7 +235,7 @@ export default {
           userVisit: this.item.userVisit,
           novel_status: status,
           novel_observation: this.novel_observation,
-          attempts: status === 'pendiente' ? 1 : this.item.attempts,
+          attempts: (['pendiente', 'minimo'].includes(status)) ? 1 : this.item.attempts,
         });
         this.showNotification(this.responseMessages, this.status, 'top-right', 5000);
         await this.getStatus();

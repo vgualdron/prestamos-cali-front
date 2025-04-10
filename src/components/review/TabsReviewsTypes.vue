@@ -14,6 +14,7 @@
       >
         <q-tab name="one" :label="labelOne" />
         <q-tab name="two" :label="labelTwo" />
+        <q-tab name="three" :label="labelThree" />
       </q-tabs>
       <q-separator />
       <q-tab-panels v-model="tab" animated>
@@ -22,6 +23,9 @@
         </q-tab-panel>
         <q-tab-panel name="two">
           <table-reviews tab="two"/>
+        </q-tab-panel>
+        <q-tab-panel name="three">
+          <table-reviews tab="three"/>
         </q-tab-panel>
       </q-tab-panels>
     </q-card>
@@ -41,6 +45,8 @@ export default {
       labelOne: 'Primera vez',
       prefixLabelTwo: 'Segunda vez',
       labelTwo: 'Segunda vez',
+      prefixLabelThree: 'Falta mínimo',
+      labelThree: 'Falta mínimo',
       polling: null,
     };
   },
@@ -72,15 +78,26 @@ export default {
     async getData() {
       showLoading('Consultando ...', 'Por favor, espere', true);
       if (this.tab === 'one') {
+        await this.listNews(['minimo']);
+        this.labelThree = `${this.prefixLabelThree} [ ${this.news.length} ]`;
         await this.listNews(['pendiente']);
         this.labelTwo = `${this.prefixLabelTwo} [ ${this.news.length} ]`;
         await this.listNews(['creado']);
         this.labelOne = `${this.prefixLabelOne} [ ${this.news.length} ]`;
+      } else if (this.tab === 'two') {
+        await this.listNews(['minimo']);
+        this.labelThree = `${this.prefixLabelThree} [ ${this.news.length} ]`;
+        await this.listNews(['creado']);
+        this.labelOne = `${this.prefixLabelOne} [ ${this.news.length} ]`;
+        await this.listNews(['pendiente']);
+        this.labelTwo = `${this.prefixLabelTwo} [ ${this.news.length} ]`;
       } else {
         await this.listNews(['creado']);
         this.labelOne = `${this.prefixLabelOne} [ ${this.news.length} ]`;
         await this.listNews(['pendiente']);
         this.labelTwo = `${this.prefixLabelTwo} [ ${this.news.length} ]`;
+        await this.listNews(['minimo']);
+        this.labelThree = `${this.prefixLabelThree} [ ${this.news.length} ]`;
       }
       this.$q.loading.hide();
     },
