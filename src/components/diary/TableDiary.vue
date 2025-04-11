@@ -1,6 +1,5 @@
 <template>
   <div class="q-pa-md">
-    {{ onlyOneItem }}
     <q-markup-table
       class="markup-table q-mt-none"
       separator="cell"
