@@ -23,6 +23,7 @@ export default {
   },
   async [types.actions.LIST_NEWS_FOR_UPDATE]({ commit }, payload) {
     try {
+      commit(types.mutations.SET_NEWS, []);
       const response = await newApi.listForUpdate(payload);
       commit(types.mutations.SET_STATUS, true);
       commit(types.mutations.SET_NEWS, response.data.data);
