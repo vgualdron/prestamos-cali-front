@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <div class="row q-mt-md">
       <q-banner class="bg-info text-white">
-        Escribe alguna parte del nombre del cliente. Se mostraran máximo 20 registros para tener un buen rendimiento en la funcionalidad.
+        Escribe alguna parte del nombre del cliente. Se mostraran máximo 5 registros para tener un buen rendimiento en la funcionalidad.
       </q-banner>
     </div>
     <div class="row q-mt-md">
@@ -65,6 +65,19 @@
               modelName: 'news',
               modelId: props.row.id
             }"
+            />
+          </q-td>
+          <q-td key="letter" :props="props">
+            ¿TENEMOS LA LETRA?: {{ props.row.has_letter === 1 ? 'SI' : 'NO' }} <br>
+            FECHA DE RECEPCIÓN: {{ formatDateHour(props.row.date_received_letter) }}
+            <camera-photo
+              :config="{
+                name: 'FOTO_RECEPCION_LETRA',
+                storage: 'news',
+                modelName: 'news',
+                modelId: props.row.id
+              }"
+              @savedFile="savedFileLetterClient"
             />
           </q-td>
           <q-td key="type_cv" :props="props">
@@ -141,10 +154,13 @@
   </div>
 </template>
 <script>
+import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import UploadPdf from 'components/common/UploadPdf.vue';
+import CameraPhoto from 'components/common/CameraPhoto.vue';
 import FormAddress from 'src/components/new/FormAddress.vue';
 import Cv from 'components/new/Cv.vue';
+import commonTypes from '../../store/modules/common/types';
 import newTypes from '../../store/modules/new/types';
 import { showNotifications } from '../../helpers/showNotifications';
 import { showLoading } from '../../helpers/showLoading';
@@ -155,6 +171,7 @@ export default {
   components: {
     FormAddress,
     UploadPdf,
+    CameraPhoto,
     Cv,
   },
   data() {
@@ -167,6 +184,12 @@ export default {
         {
           name: 'actions',
           label: 'PDF',
+          align: 'center',
+          visible: false,
+        },
+        {
+          name: 'letter',
+          label: 'Recepción letra',
           align: 'center',
           visible: false,
         },
@@ -279,6 +302,9 @@ export default {
   watch: {
   },
   computed: {
+    ...mapState(commonTypes.PATH, [
+      'user',
+    ]),
     ...mapState(newTypes.PATH, [
       'news',
       'responseMessages',
@@ -352,6 +378,12 @@ export default {
       completeDataNew: newTypes.actions.COMPLETE_DATA_NEW,
       updateUserSelectedReview: newTypes.actions.UPDATE_USER_SELECTED_REVIEW,
     }),
+    formatDate(date) {
+      return moment(date).format('DD/MM/YYYY');
+    },
+    formatDateHour(date) {
+      return moment(date).format('DD/MM/YYYY hh:mm A');
+    },
     async openModal(action, row) {
       this.itemSelected = { ...row };
       if (action === 'cv') {
@@ -426,6 +458,22 @@ export default {
       await this.completeDataNew(this.itemSelected);
       await this.listNewsMounted();
       this.$q.loading.hide();
+    },
+    async savedFileLetterClient(data) {
+      console.log(data);
+      console.log(moment);
+      if (data.id) {
+        showLoading('Guardando ...', 'Por favor, espere', true);
+        const item = {
+          id: this.itemSelected.id,
+          has_letter: 1,
+          who_received_letter: this.user,
+          date_received_letter: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        };
+        await this.completeDataNew(item);
+        await this.listNewsMounted();
+        this.$q.loading.hide();
+      }
     },
   },
 };
