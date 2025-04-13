@@ -70,7 +70,7 @@
           <q-td key="letter" :props="props">
             ¿TENEMOS LA LETRA?: {{ props.row.has_letter === 1 ? 'SI' : 'NO' }} <br>
             FECHA DE RECEPCIÓN: {{ formatDateHour(props.row.date_received_letter) }}
-            <camera-photo
+            <upload-image
               :config="{
                 name: 'FOTO_RECEPCION_LETRA',
                 storage: 'news',
@@ -157,7 +157,7 @@
 import moment from 'moment';
 import { mapState, mapActions } from 'vuex';
 import UploadPdf from 'components/common/UploadPdf.vue';
-import CameraPhoto from 'components/common/CameraPhoto.vue';
+import UploadImage from 'components/common/UploadImage.vue';
 import FormAddress from 'src/components/new/FormAddress.vue';
 import Cv from 'components/new/Cv.vue';
 import commonTypes from '../../store/modules/common/types';
@@ -171,7 +171,7 @@ export default {
   components: {
     FormAddress,
     UploadPdf,
-    CameraPhoto,
+    UploadImage,
     Cv,
   },
   data() {
