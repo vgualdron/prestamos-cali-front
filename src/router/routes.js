@@ -540,6 +540,18 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/list-news-for-letter',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Entrega de letras pendientes',
+        component: () => import('pages/NewsForLetter.vue'),
+        meta: { permissions: ['new.listForLetter'] },
+      },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

@@ -7,6 +7,7 @@ export default {
     UPDATE_SECTOR_SELECTED_REDS: '@actions/updateSectorSelectedReds',
     LIST_NEWS: '@actions/listNews',
     LIST_NEWS_FOR_UPDATE: '@actions/listNewsForUpdate',
+    LIST_NEWS_FOR_LETTER: '@actions/listNewsForLetter',
     LIST_NEWS_REDS: '@actions/listNewsReds',
     GET_NEW: '@actions/getNew',
     GET_NEW_BY_PHONE: '@actions/getNewByPhone',

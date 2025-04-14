@@ -41,6 +41,26 @@ export default {
       }
     }
   },
+  async [types.actions.LIST_NEWS_FOR_LETTER]({ commit }, payload) {
+    try {
+      commit(types.mutations.SET_NEWS, []);
+      const response = await newApi.listForLetter(payload);
+      commit(types.mutations.SET_STATUS, true);
+      commit(types.mutations.SET_NEWS, response.data.data);
+    } catch (error) {
+      commit(types.mutations.SET_STATUS, false);
+      if (error.message !== 'Network Error') {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, error.response.data.message);
+      } else {
+        commit(types.mutations.SET_RESPONSE_MESSAGES, [
+          {
+            text: 'Error de red',
+            detail: 'Intente conectarse a otra red de internet',
+          },
+        ]);
+      }
+    }
+  },
   async [types.actions.LIST_NEWS_REDS]({ commit }, status) {
     try {
       const response = await newApi.listReds(status);
