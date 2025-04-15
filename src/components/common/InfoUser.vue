@@ -18,13 +18,13 @@
       <q-card-section v-show="!isMinimized">
         <q-markup-table class="markup-table" separator="cell" dense>
           <tbody>
-            <tr>
+            <!-- <tr>
               <td>Días trabajados</td>
               <td><b>{{ info.days }}</b></td>
-            </tr>
+            </tr> -->
             <tr>
               <td>Direcciones requeridas</td>
-              <td><b>{{ info.days * info.amountDiary }}</b></td>
+              <td><b>30</b></td>
             </tr>
             <tr>
               <td>Direcciones válidas</td>
@@ -32,7 +32,7 @@
             </tr>
             <tr>
               <td>Descuento</td>
-              <td><b>{{ formatPrice(discount) }}</b></td>
+              <td><b>{{ formatPrice((info.price * 30) - total) }}</b></td>
             </tr>
           </tbody>
         </q-markup-table>
@@ -75,6 +75,11 @@ export default {
       if (r > 0) {
         total = this.info.price * r;
       }
+      return total;
+    },
+    total() {
+      let total = 0;
+      total = this.info.price * this.info.amountAddress;
       return total;
     },
   },
