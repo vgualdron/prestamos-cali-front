@@ -462,7 +462,7 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Cambiar datos de clientes',
+        name: 'Hoja de vida clientes',
         component: () => import('pages/ChangePdfNews.vue'),
         meta: { permissions: ['news.changeDataNews'] },
       },
@@ -549,6 +549,18 @@ const routes = [
         name: 'Entrega de letras pendientes',
         component: () => import('pages/NewsForLetter.vue'),
         meta: { permissions: ['new.listForLetter'] },
+      },
+    ],
+  },
+  {
+    path: '/approve-reception-letter',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Aprobación de recepción de letras',
+        component: () => import('pages/ApproveReceptionLetter.vue'),
+        meta: { permissions: ['new.approveReceptionLetter'] },
       },
     ],
   },

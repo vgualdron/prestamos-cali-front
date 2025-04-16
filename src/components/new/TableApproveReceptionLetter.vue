@@ -42,7 +42,9 @@
                   modelName: 'news',
                   modelId: props.row.id
                 }"
-                @savedFile="savedFileLetterClient"
+                type="read"
+                :showApprove="true"
+                @updateStatus="savedFileLetterClient"
               />
           </q-td>
           <q-td key="name" :props="props" class="wrap-text">
@@ -52,15 +54,7 @@
             {{ props.row.status }}
           </q-td>
           <q-td key="who_received_letter" :props="props">
-            <q-icon size="xs" name="edit" />
             {{ props.row.who_received_letter_name }}
-            <q-popup-edit :value="props.row.who_received_letter_name" v-slot="scope" buttons
-              @input="val => save('who_received_letter', val)">
-              <q-select
-                outlined
-                v-model="scope.value"
-                :options="optionsUsers"/>
-            </q-popup-edit>
           </q-td>
           <q-td key="address_house" :props="props" class="wrap-text">
             {{ props.row.address_house }}
@@ -215,7 +209,7 @@ export default {
         ...element,
         date: formatDateWithTime(element.approved_date),
       }));
-      return data;
+      return data.filter((d) => d.who_received_letter === this.user);
     },
     validatedPermissions() {
       const statusCreate = havePermission('new.create');
@@ -332,15 +326,16 @@ export default {
       this.$q.loading.hide();
     },
     async savedFileLetterClient(data) {
-      if (data.id) {
+      console.log(data);
+      if (data.name) {
         showLoading('Guardando ...', 'Por favor, espere', true);
-        const item = {
+        /* const item = {
           id: this.itemSelected.id,
           has_letter: 1,
           who_received_letter: this.user,
           date_received_letter: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
         };
-        await this.completeDataNew(item);
+        await this.completeDataNew(item); */
         await this.listNewsMounted();
         this.$q.loading.hide();
       }
